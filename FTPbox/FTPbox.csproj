@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>mBox.ico</ApplicationIcon>
+    <ApplicationIcon>main125.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -149,13 +149,16 @@
     <None Include="Resources\btn_donate_SM.gif" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\refresh.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\offline.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="done.ico" />
+    <Content Include="main125.ico" />
     <Content Include="mBox.ico" />
+    <None Include="Resources\refresh.ico" />
+    <None Include="Resources\offline60.ico" />
+    <None Include="Resources\main.ico" />
+    <None Include="Resources\done.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

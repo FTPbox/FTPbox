@@ -74,9 +74,30 @@ namespace FTPbox.Properties {
             }
         }
         
+        internal static System.Drawing.Icon done {
+            get {
+                object obj = ResourceManager.GetObject("done", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon main {
+            get {
+                object obj = ResourceManager.GetObject("main", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon offline {
             get {
                 object obj = ResourceManager.GetObject("offline", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon offline60 {
+            get {
+                object obj = ResourceManager.GetObject("offline60", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -85,6 +106,13 @@ namespace FTPbox.Properties {
             get {
                 object obj = ResourceManager.GetObject("project_support", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon refresh {
+            get {
+                object obj = ResourceManager.GetObject("refresh", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         

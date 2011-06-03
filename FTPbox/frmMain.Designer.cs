@@ -101,6 +101,7 @@
             this.fswFolders = new System.IO.FileSystemWatcher();
             this.fswFiles = new System.IO.FileSystemWatcher();
             this.WatchRemote = new System.Windows.Forms.Timer(this.components);
+            this.button3 = new System.Windows.Forms.Button();
             this.trayMenu.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -266,6 +267,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.bAddFTP);
@@ -802,7 +804,6 @@
             // 
             // fswFolders
             // 
-            this.fswFolders.EnableRaisingEvents = true;
             this.fswFolders.NotifyFilter = ((System.IO.NotifyFilters)(((System.IO.NotifyFilters.DirectoryName | System.IO.NotifyFilters.LastWrite)
                         | System.IO.NotifyFilters.LastAccess)));
             this.fswFolders.SynchronizingObject = this;
@@ -818,6 +819,16 @@
             // 
             this.WatchRemote.Interval = 5000;
             this.WatchRemote.Tick += new System.EventHandler(this.WatchRemote_Tick);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(251, 75);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 13;
+            this.button3.Text = "button3";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click_1);
             // 
             // frmMain
             // 
@@ -931,5 +942,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
+        private System.Windows.Forms.Button button3;
     }
 }
