@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>main125.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Icons\main125.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -49,66 +49,59 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="fMain.cs">
+    <Compile Include="Classes\aConsole.cs" />
+    <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Classes\Log.cs" />
+    <Compile Include="Forms\fMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="fMain.designer.cs">
+    <Compile Include="Forms\fMain.designer.cs">
       <DependentUpon>fMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="fNewDir.cs">
+    <Compile Include="Forms\fNewDir.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="fNewDir.designer.cs">
+    <Compile Include="Forms\fNewDir.designer.cs">
       <DependentUpon>fNewDir.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form1.cs">
+    <Compile Include="Forms\frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmMain.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmMain.Designer.cs">
+    <Compile Include="Forms\frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="FtpConnection.cs" />
-    <Compile Include="FtpDirectoryInfo.cs" />
-    <Compile Include="FtpException.cs" />
-    <Compile Include="FtpFileInfo.cs" />
-    <Compile Include="NewFTP.cs">
+    <Compile Include="Classes\FTPLib\FtpConnection.cs" />
+    <Compile Include="Classes\FTPLib\FtpDirectoryInfo.cs" />
+    <Compile Include="Classes\FTPLib\FtpException.cs" />
+    <Compile Include="Classes\FTPLib\FtpFileInfo.cs" />
+    <Compile Include="Forms\NewFTP.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="NewFTP.Designer.cs">
+    <Compile Include="Forms\NewFTP.Designer.cs">
       <DependentUpon>NewFTP.cs</DependentUpon>
     </Compile>
-    <Compile Include="newversion.cs">
+    <Compile Include="Forms\newversion.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="newversion.designer.cs">
+    <Compile Include="Forms\newversion.designer.cs">
       <DependentUpon>newversion.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WinApi.cs" />
-    <EmbeddedResource Include="fMain.resx">
+    <Compile Include="Classes\WinApi.cs" />
+    <EmbeddedResource Include="Forms\fMain.resx">
       <DependentUpon>fMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="fNewDir.resx">
+    <EmbeddedResource Include="Forms\fNewDir.resx">
       <DependentUpon>fNewDir.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmMain.resx">
+    <EmbeddedResource Include="Forms\frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NewFTP.resx">
+    <EmbeddedResource Include="Forms\NewFTP.resx">
       <DependentUpon>NewFTP.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="newversion.resx">
+    <EmbeddedResource Include="Forms\newversion.resx">
       <DependentUpon>newversion.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -122,7 +115,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="app.config" />
+    <None Include="Resources\app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -134,13 +127,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Box.ico" />
+    <None Include="Resources\Icons\Box.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ftpBox.ico" />
+    <None Include="Resources\Icons\ftpBox.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\synced.ico" />
+    <None Include="Resources\Icons\synced.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\project-support.jpg" />
@@ -149,16 +142,15 @@
     <None Include="Resources\btn_donate_SM.gif" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\offline.ico" />
+    <None Include="Resources\Icons\offline.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="done.ico" />
-    <Content Include="main125.ico" />
-    <Content Include="mBox.ico" />
-    <None Include="Resources\refresh.ico" />
-    <None Include="Resources\offline60.ico" />
-    <None Include="Resources\main.ico" />
-    <None Include="Resources\done.ico" />
+    <Content Include="Resources\Icons\done.ico" />
+    <Content Include="Resources\Icons\main125.ico" />
+    <Content Include="Resources\Icons\mBox.ico" />
+    <None Include="Resources\Icons\refresh.ico" />
+    <None Include="Resources\Icons\offline60.ico" />
+    <None Include="Resources\Icons\main.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

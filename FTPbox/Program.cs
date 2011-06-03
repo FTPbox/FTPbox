@@ -11,8 +11,12 @@ namespace FTPbox
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
+            // Allocate console
+            if (args.Length > 0 && args[0] == "-console")
+                aConsole.Allocate();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new frmMain());

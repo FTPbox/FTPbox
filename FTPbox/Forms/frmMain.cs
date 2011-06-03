@@ -17,7 +17,7 @@ namespace FTPbox
 {
     public partial class frmMain : Form
     {
-        Dictionary<string, DateTime> dick = new Dictionary<string, DateTime>();
+        //Dictionary<string, DateTime> dick = new Dictionary<string, DateTime>();
 
         //FileSystemWatcher fWatcher;     //file watcher
         //FileSystemWatcher dirWatcher;   //folder watcher
@@ -49,7 +49,7 @@ namespace FTPbox
         public bool gotpaths = false;
         
         bool OfflineMode = false;
-        
+
         public frmMain()
         {
             InitializeComponent();
@@ -421,11 +421,11 @@ namespace FTPbox
         /// <param name="path">the path to check</param>
         private void List_remote_subdirectories()
         {
-            dick.Clear();
+            //dick.Clear();
             ftp.SetCurrentDirectory(rPath());
             foreach (FtpFileInfo f in ftp.GetFiles())
             {
-                dick.Add(noSlashes(rPath()) + @"/" + f.Name, f.LastWriteTimeUtc.Value);
+                //dick.Add(noSlashes(rPath()) + @"/" + f.Name, f.LastWriteTimeUtc.Value);
                 //allfiles.Add(noSlashes(rPath()) + @"/" + f.Name);
             }
 
@@ -434,12 +434,12 @@ namespace FTPbox
                 if (d.Name != "." && d.Name != "..")
                 {
                     string path = noSlashes(rPath()) + "/" + noSlashes(d.Name);
-                    dick.Add(noSlashes(rPath()) + @"/" + d.Name, d.LastWriteTimeUtc.Value);
+                    //dick.Add(noSlashes(rPath()) + @"/" + d.Name, d.LastWriteTimeUtc.Value);
                     //allfiles.Add(path + @"/");
                     ftp.SetCurrentDirectory(path);
                     foreach (FtpFileInfo f2 in ftp.GetFiles())
                     {
-                        dick.Add(noSlashes(path + @"/" + f2.Name), f2.LastWriteTimeUtc.Value);
+                        //dick.Add(noSlashes(path + @"/" + f2.Name), f2.LastWriteTimeUtc.Value);
                         //allfiles.Add(path + @"/" + f2.Name);
                     }
                     foreach (FtpDirectoryInfo d2 in ftp.GetDirectories())
@@ -447,12 +447,12 @@ namespace FTPbox
                         if (d2.Name != "." && d2.Name != "..")
                         {
                             string path2 = noSlashes(path) + @"/" + d2.Name;
-                            dick.Add(path2 + @"/", d2.LastWriteTimeUtc.Value);
+                            //dick.Add(path2 + @"/", d2.LastWriteTimeUtc.Value);
                             //allfiles.Add(path2 + @"/");
                             ftp.SetCurrentDirectory(path2);
                             foreach (FtpFileInfo f2 in ftp.GetFiles())
                             {
-                                dick.Add(path2 + @"/" + f2.Name, f2.LastWriteTimeUtc.Value);
+                                //dick.Add(path2 + @"/" + f2.Name, f2.LastWriteTimeUtc.Value);
                                 //allfiles.Add(path2 + @"/" + f2.Name);
                             }
                         }
@@ -1519,14 +1519,37 @@ namespace FTPbox
 
         private void button3_Click_1(object sender, EventArgs e)
         {
-            List_remote_subdirectories();
-            //listall(rPath());
+            // We are using Forms, let's use background workers
+            // because we like background workers :3
+            BackgroundWorker lRemoteWrk = new BackgroundWorker();
+            lRemoteWrk.DoWork += new DoWorkEventHandler(lRemoteWrk_DoWork);
+            lRemoteWrk.RunWorkerCompleted += new RunWorkerCompletedEventHandler(lRemoteWrk_RunWorkerCompleted);
+            lRemoteWrk.RunWorkerAsync();
+        }
+
+        void lRemoteWrk_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // Retrieve the dictionary from the result
+            Dictionary<String, DateTime> fdDict = e.Result as Dictionary<String, DateTime>;
+
+            // Why are we doing this?
             string x = "";
-            foreach (KeyValuePair<string, DateTime> y in dick)
+            foreach (KeyValuePair<string, DateTime> y in fdDict)
             {
                 x = x + Environment.NewLine + y.Key + " " + y.Value.ToString();
             }
             MessageBox.Show(x);
+
+            // You can access form controls -HERE-
+        }
+
+        void lRemoteWrk_DoWork(object sender, DoWorkEventArgs e)
+        {
+            // Get the remote directories/files
+            Dictionary<String, DateTime> rtDict = listRemote();
+
+            // And our work is complete!
+            e.Result = rtDict;
         }
         
         /*
@@ -1592,6 +1615,81 @@ namespace FTPbox
         }
          * 
          * */
+
+        ////////////////////////////
+        // Nice code starts here! //
+        // Courtesy of NoFaTe     //
+        ////////////////////////////
+
+        /// <summary>
+        /// Gets a list of all directories and files in a pre-defined path
+        /// </summary>
+        /// <returns>A dictionary containing directory/file paths and last write times</returns>
+        private Dictionary<String, DateTime> listRemote()
+        {
+            // Set up the dictionary that will hold the directories and files
+            Dictionary<String, DateTime> fdDict = new Dictionary<String, DateTime>();
+
+            // Set our current directory
+            ftp.SetCurrentDirectory(rPath());
+
+            // Loop through files
+            foreach (FtpFileInfo fInfo in ftp.GetFiles())
+            {
+                // Got it? Add it!
+                Log.Write("File ({0})", noSlashes(String.Format("{0}/{1}", rPath(), fInfo.Name)));
+                fdDict.Add(noSlashes(String.Format("{0}/{1}", rPath(), fInfo.Name)), fInfo.LastWriteTimeUtc.Value);
+            }
+
+            // And directories
+            foreach (FtpDirectoryInfo dInfo in ftp.GetDirectories())
+            {
+                // You can't trick me!
+                if (dInfo.Name != "." && dInfo.Name != "..")
+                {
+                    getSetDirFiles(dInfo.Name, dInfo.LastWriteTimeUtc.Value, ref fdDict);
+                }
+            }
+
+            return fdDict;
+        }
+
+        /// <summary>
+        /// A nice internal function that loops through the directories and files
+        /// </summary>
+        /// <param name="path">The path to look into</param>
+        /// <param name="lastWriteTime">Last write time of the path</param>
+        /// <param name="fdDict">The dictionary in which to put found directories/files</param>
+        private void getSetDirFiles(string path, DateTime lastWriteTime, ref Dictionary<String, DateTime> fdDict)
+        {
+            // Clean up the path and add it to the dictionary
+            String newPath = noSlashes(String.Format("{0}/{1}", rPath(), path));
+            fdDict.Add(newPath, lastWriteTime);
+
+            Log.Write("Drct ({0})", newPath);
+
+            // Set our current directory
+            ftp.SetCurrentDirectory(newPath);
+
+            // Loop through files
+            foreach (FtpFileInfo fInfo in ftp.GetFiles())
+            {
+                // Got it? Add it!
+                Log.Write("File ({0})", noSlashes(String.Format("{0}/{1}", newPath, fInfo.Name)));
+                fdDict.Add(noSlashes(String.Format("{0}/{1}", newPath, fInfo.Name)), fInfo.LastWriteTimeUtc.Value);
+            }
+
+            // And directories
+            foreach (FtpDirectoryInfo dInfo in ftp.GetDirectories())
+            {
+                // You can't trick me!
+                if (dInfo.Name != "." && dInfo.Name != "..")
+                {
+                    // Spawn another loop
+                    getSetDirFiles(noSlashes(String.Format("{0}/{1}", path, dInfo.Name)), dInfo.LastWriteTimeUtc.Value, ref fdDict);
+                }
+            }
+        }
 
     }
 }
