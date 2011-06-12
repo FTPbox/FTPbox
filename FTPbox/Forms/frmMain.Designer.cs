@@ -47,6 +47,7 @@
             this.chkCloseToTray = new System.Windows.Forms.CheckBox();
             this.chkStartUp = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.bAddFTP = new System.Windows.Forms.Button();
@@ -101,7 +102,6 @@
             this.fswFolders = new System.IO.FileSystemWatcher();
             this.fswFiles = new System.IO.FileSystemWatcher();
             this.WatchRemote = new System.Windows.Forms.Timer(this.components);
-            this.button3 = new System.Windows.Forms.Button();
             this.trayMenu.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -126,12 +126,12 @@
             this.aboutToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.trayMenu.Name = "trayMenu";
-            this.trayMenu.Size = new System.Drawing.Size(153, 114);
+            this.trayMenu.Size = new System.Drawing.Size(137, 92);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -144,7 +144,7 @@
             this.toolStripMenuItem4,
             this.toolStripMenuItem5});
             this.recentFilesToolStripMenuItem.Name = "recentFilesToolStripMenuItem";
-            this.recentFilesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.recentFilesToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.recentFilesToolStripMenuItem.Text = "Recent Files";
             // 
             // toolStripMenuItem1
@@ -185,14 +185,14 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -284,6 +284,15 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "FTP Account";
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(251, 75);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 13;
+            this.button3.Text = "button3";
+            this.button3.UseVisualStyleBackColor = true;
+            // 
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(251, 46);
@@ -292,7 +301,6 @@
             this.button2.TabIndex = 12;
             this.button2.Text = "Clear";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Visible = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button1
@@ -303,7 +311,6 @@
             this.button1.TabIndex = 11;
             this.button1.Text = "Show";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // bAddFTP
@@ -804,6 +811,8 @@
             // 
             // fswFolders
             // 
+            this.fswFolders.EnableRaisingEvents = true;
+            this.fswFolders.IncludeSubdirectories = true;
             this.fswFolders.NotifyFilter = ((System.IO.NotifyFilters)(((System.IO.NotifyFilters.DirectoryName | System.IO.NotifyFilters.LastWrite)
                         | System.IO.NotifyFilters.LastAccess)));
             this.fswFolders.SynchronizingObject = this;
@@ -811,6 +820,7 @@
             // fswFiles
             // 
             this.fswFiles.EnableRaisingEvents = true;
+            this.fswFiles.IncludeSubdirectories = true;
             this.fswFiles.NotifyFilter = ((System.IO.NotifyFilters)(((System.IO.NotifyFilters.FileName | System.IO.NotifyFilters.LastWrite)
                         | System.IO.NotifyFilters.LastAccess)));
             this.fswFiles.SynchronizingObject = this;
@@ -819,16 +829,6 @@
             // 
             this.WatchRemote.Interval = 5000;
             this.WatchRemote.Tick += new System.EventHandler(this.WatchRemote_Tick);
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(251, 75);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 13;
-            this.button3.Text = "button3";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click_1);
             // 
             // frmMain
             // 

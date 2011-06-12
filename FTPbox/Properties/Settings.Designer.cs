@@ -225,5 +225,38 @@ namespace FTPbox.Properties {
                 this["lDateLog"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.ListDictionary Setting {
+            get {
+                return ((global::System.Collections.Specialized.ListDictionary)(this["Setting"]));
+            }
+            set {
+                this["Setting"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringDictionary rLog {
+            get {
+                return ((global::System.Collections.Specialized.StringDictionary)(this["rLog"]));
+            }
+            set {
+                this["rLog"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringDictionary lLog {
+            get {
+                return ((global::System.Collections.Specialized.StringDictionary)(this["lLog"]));
+            }
+            set {
+                this["lLog"] = value;
+            }
+        }
     }
 }

@@ -90,15 +90,14 @@ namespace FTPbox
 
                 foreach (FtpDirectoryInfo dir in ftp.GetDirectories())
                 {
-                    TreeNode ParentNode = new TreeNode();
-                    ParentNode.Text = dir.Name.ToString();
-                    treeView1.Nodes.Add(ParentNode);
-
-                    TreeNode ChildNode = new TreeNode();
-                    ChildNode.Text = dir.Name.ToString();
-
-                    if (ChildNode.Text != "." && ChildNode.Text != "..")
+                    if (dir.Name != "." && dir.Name != "..")
                     {
+                        TreeNode ParentNode = new TreeNode();
+                        ParentNode.Text = dir.Name.ToString();
+                        treeView1.Nodes.Add(ParentNode);
+
+                        TreeNode ChildNode = new TreeNode();
+                        ChildNode.Text = dir.Name.ToString();
                         ParentNode.Nodes.Add(ChildNode);
                     }
 

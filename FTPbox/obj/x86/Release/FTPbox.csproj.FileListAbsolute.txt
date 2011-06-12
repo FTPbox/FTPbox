@@ -1,0 +1,14 @@
+C:\Users\John\Desktop\New folder (2)\FTPbox\bin\Release\FTPbox.exe.config
+C:\Users\John\Desktop\New folder (2)\FTPbox\bin\Release\FTPbox.exe
+C:\Users\John\Desktop\New folder (2)\FTPbox\bin\Release\FTPbox.pdb
+C:\Users\John\Desktop\New folder (2)\FTPbox\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Users\John\Desktop\New folder (2)\FTPbox\obj\x86\Release\FTPbox.fMain.resources
+C:\Users\John\Desktop\New folder (2)\FTPbox\obj\x86\Release\FTPbox.fNewDir.resources
+C:\Users\John\Desktop\New folder (2)\FTPbox\obj\x86\Release\FTPbox.frmMain.resources
+C:\Users\John\Desktop\New folder (2)\FTPbox\obj\x86\Release\FTPbox.NewFTP.resources
+C:\Users\John\Desktop\New folder (2)\FTPbox\obj\x86\Release\FTPbox.newversion.resources
+C:\Users\John\Desktop\New folder (2)\FTPbox\obj\x86\Release\FTPbox.Properties.Resources.resources
+C:\Users\John\Desktop\New folder (2)\FTPbox\obj\x86\Release\GenerateResource.read.1.tlog
+C:\Users\John\Desktop\New folder (2)\FTPbox\obj\x86\Release\GenerateResource.write.1.tlog
+C:\Users\John\Desktop\New folder (2)\FTPbox\obj\x86\Release\FTPbox.exe
+C:\Users\John\Desktop\New folder (2)\FTPbox\obj\x86\Release\FTPbox.pdb

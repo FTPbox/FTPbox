@@ -60,6 +60,13 @@ namespace FTPbox.Properties {
             }
         }
         
+        internal static System.Drawing.Icon all_synced {
+            get {
+                object obj = ResourceManager.GetObject("all_synced", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon Box {
             get {
                 object obj = ResourceManager.GetObject("Box", resourceCulture);
@@ -95,6 +102,13 @@ namespace FTPbox.Properties {
             }
         }
         
+        internal static System.Drawing.Icon offline1 {
+            get {
+                object obj = ResourceManager.GetObject("offline1", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon offline60 {
             get {
                 object obj = ResourceManager.GetObject("offline60", resourceCulture);
@@ -116,6 +130,13 @@ namespace FTPbox.Properties {
             }
         }
         
+        internal static System.Drawing.Icon regular {
+            get {
+                object obj = ResourceManager.GetObject("regular", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon syncBox {
             get {
                 object obj = ResourceManager.GetObject("syncBox", resourceCulture);
@@ -126,6 +147,13 @@ namespace FTPbox.Properties {
         internal static System.Drawing.Icon synced {
             get {
                 object obj = ResourceManager.GetObject("synced", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon syncing {
+            get {
+                object obj = ResourceManager.GetObject("syncing", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

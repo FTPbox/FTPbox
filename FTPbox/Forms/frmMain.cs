@@ -12,17 +12,18 @@ using System.Diagnostics;
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Net;
 
 namespace FTPbox
 {
     public partial class frmMain : Form
     {
-        //Dictionary<string, DateTime> dick = new Dictionary<string, DateTime>();
+        Dictionary<string, DateTime> FullList = new Dictionary<string, DateTime>();
 
         //FileSystemWatcher fWatcher;     //file watcher
         //FileSystemWatcher dirWatcher;   //folder watcher
 
-        public FtpConnection ftp;
+        FtpConnection ftp;
 
         //Form instances
         NewFTP fNewFtp;
@@ -33,6 +34,9 @@ namespace FTPbox
         List<string> rDL  = new List<string>(FTPbox.Properties.Settings.Default.rDateLog.Split('|', '|'));
         List<string> lDL = new List<string>(FTPbox.Properties.Settings.Default.lDateLog.Split('|', '|'));
 
+        public StringDictionary rLog = new StringDictionary();
+        StringDictionary lLog = new StringDictionary();
+
         //recent files
         List<string> recentfiles = new List<string>();
 
@@ -40,10 +44,13 @@ namespace FTPbox
         TimeSpan timedif;
 
         //link:
-        string link = null;
+        public string link = null;
 
         //for not flooding with balloon tips:
-        string lasttip = null;
+        public string lasttip = null;
+
+        public string LastChangedFileFromRem = "";
+        public string LastChangedFolderFromRem = "";
 
         public bool loggedIn = false;
         public bool gotpaths = false;
@@ -57,6 +64,25 @@ namespace FTPbox
 
         private void frmMain_Load(object sender, EventArgs e)
         {
+            rLog = FTPbox.Properties.Settings.Default.rLog;
+            lLog = FTPbox.Properties.Settings.Default.lLog;
+
+            //ClearLog();
+            if (rLog == null)
+            {
+                rLog = new StringDictionary();
+                lLog = new StringDictionary();
+            }
+            else
+            {
+                foreach (KeyValuePair<string, string> s in rLog)
+                {
+                    if (s.Key != "" && s.Key != null)
+                    {
+                        Log.Write("in log: {0} - {1} - {2}", s.Key, s.Value, lLog[s.Key]);
+                    }
+                }
+            }
             KillPrevInstances();
             
             fNewFtp = new NewFTP();
@@ -75,12 +101,11 @@ namespace FTPbox
             
             CheckForUpdate();
 
-            WatchRemote.Start();
-
+            //WatchRemote.Start();
         }
 
         private void StartUpWork()
-        {
+        {   
             CheckAccount();
 
             GetServerTime();
@@ -94,12 +119,14 @@ namespace FTPbox
             Syncing();
             try
             {
-                StartupCheck();
+                //StartupCheck();
             }
             catch
             {
                 //MessageBox.Show(ex.Message);
             }
+
+            ListAllFiles();
 
             SetLocalWatcher();
 
@@ -314,8 +341,8 @@ namespace FTPbox
             fswFolders.Deleted += new FileSystemEventHandler(OnChanged);
             fswFolders.Renamed += new RenamedEventHandler(OnRenamed);
 
-            fswFiles.IncludeSubdirectories = subdirs();     //whether to raise events for changes on subdirectories or not
-            fswFolders.IncludeSubdirectories = subdirs();
+            fswFiles.IncludeSubdirectories = true; //subdirs();     //whether to raise events for changes on subdirectories or not
+            fswFolders.IncludeSubdirectories = true; //subdirs();
 
             fswFiles.EnableRaisingEvents = true;            //begin watching the files
             fswFolders.EnableRaisingEvents = true;          //begin watching the folders
@@ -323,18 +350,30 @@ namespace FTPbox
         }
 
         /// <summary>
-        /// FileSystemWatcher event
-        /// raised when a file/directory the app is watching has changed/been deleted/been created
+        /// FileSystemWatcher event, raised when a file/directory the app is watching has been changed/deleted/created
         /// </summary>
         private void OnChanged(object source, FileSystemEventArgs e)
         {
-            
-            string cPath = GetCommonPath(e.FullPath.Replace(e.Name, ""), false) + @"/";
+            FileInfo f = new FileInfo(e.FullPath);
+            string cPath = GetCommonPath(f.Directory.Name, false); //GetCommonPath(e.FullPath.Replace(e.Name, ""), false);
+            Log.Write("||||||| " + cPath);
+
+            string curPath = "";
+
+            try
+            {
+                curPath = ftp.GetCurrentDirectory();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
 
             string rFullpath = noSlashes(rPath()) + @"/" + cPath;
 
-            if (!OfflineMode)
+            if (!OfflineMode && e.Name != LastChangedFileFromRem && e.Name != LastChangedFolderFromRem && e.Name != LastChangedFolderFromRem)
             {
+                Log.Write("Gonna change {0}", e.Name);
                 if (e.ChangeType == WatcherChangeTypes.Created)
                 {
                     if (source == fswFiles)
@@ -365,7 +404,7 @@ namespace FTPbox
                                 DeleteRemote(e.Name, cPath, false);
                             }
                             catch { DoneSyncing(); }
-                            RemoveFromLog(e.FullPath);
+                            RemoveFromLog(cPath);
                         }
                         else
                         {
@@ -397,6 +436,20 @@ namespace FTPbox
                     }
                 }
             }
+            if (curPath != "")
+            {
+                try
+                {
+                    ftp.SetCurrentDirectory(curPath);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write(ex.Message);
+                }
+            }
+
+            LastChangedFolderFromRem = "";
+            LastChangedFileFromRem = "";
         }
 
         /// <summary>
@@ -413,53 +466,7 @@ namespace FTPbox
                 RenameRemote(e.OldName, e.Name, cPath);
             }
            
-        }
-
-        /// <summary>
-        /// lists all the files and folders in a path, including subfolders
-        /// </summary>
-        /// <param name="path">the path to check</param>
-        private void List_remote_subdirectories()
-        {
-            //dick.Clear();
-            ftp.SetCurrentDirectory(rPath());
-            foreach (FtpFileInfo f in ftp.GetFiles())
-            {
-                //dick.Add(noSlashes(rPath()) + @"/" + f.Name, f.LastWriteTimeUtc.Value);
-                //allfiles.Add(noSlashes(rPath()) + @"/" + f.Name);
-            }
-
-            foreach (FtpDirectoryInfo d in ftp.GetDirectories())
-            {
-                if (d.Name != "." && d.Name != "..")
-                {
-                    string path = noSlashes(rPath()) + "/" + noSlashes(d.Name);
-                    //dick.Add(noSlashes(rPath()) + @"/" + d.Name, d.LastWriteTimeUtc.Value);
-                    //allfiles.Add(path + @"/");
-                    ftp.SetCurrentDirectory(path);
-                    foreach (FtpFileInfo f2 in ftp.GetFiles())
-                    {
-                        //dick.Add(noSlashes(path + @"/" + f2.Name), f2.LastWriteTimeUtc.Value);
-                        //allfiles.Add(path + @"/" + f2.Name);
-                    }
-                    foreach (FtpDirectoryInfo d2 in ftp.GetDirectories())
-                    {
-                        if (d2.Name != "." && d2.Name != "..")
-                        {
-                            string path2 = noSlashes(path) + @"/" + d2.Name;
-                            //dick.Add(path2 + @"/", d2.LastWriteTimeUtc.Value);
-                            //allfiles.Add(path2 + @"/");
-                            ftp.SetCurrentDirectory(path2);
-                            foreach (FtpFileInfo f2 in ftp.GetFiles())
-                            {
-                                //dick.Add(path2 + @"/" + f2.Name, f2.LastWriteTimeUtc.Value);
-                                //allfiles.Add(path2 + @"/" + f2.Name);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        }       
 
         /// <summary>
         /// returns the common path of the two ftpBoxes (local and remote)
@@ -471,14 +478,21 @@ namespace FTPbox
             string cPath = path;
             if (fromRem)
             {
-                cPath = cPath.Replace(rPath(), "");
+                if (cPath.StartsWith(rPath()))
+                {
+                    cPath = cPath.Substring(rPath().Length, cPath.Length - rPath().Length);
+                }
                 cPath = cPath.Replace(@"/", @"\");
                 cPath = noSlashes(cPath);
                 return cPath + @"\";
             }
             else
             {
-                cPath = cPath.Replace(lPath(), "");
+                if (cPath.StartsWith(lPath()))
+                {
+                    cPath = cPath.Substring(lPath().Length, cPath.Length - lPath().Length);
+                    Log.Write("!!!!!!!!!!!!! " + cPath);
+                }
                 cPath = cPath.Replace(@"\", @"/");
                 cPath = noSlashes(cPath);
                 return cPath + @"/";
@@ -522,6 +536,7 @@ namespace FTPbox
             Syncing();
             string rFullPath = noSlashes(rPath()) + @"/" + cPath;
             ftp.SetCurrentDirectory(rFullPath);
+            Log.Write("&&&&&&&&&& {0} {1}", rFullPath, cPath);
 
             if (isDir)
             {
@@ -581,7 +596,7 @@ namespace FTPbox
                 link = null;
 
                 string locPath = noSlashes(lPath()) + @"\" + noSlashes(cPath) + @"\" + name;
-                RemoveFromLog(locPath);
+                RemoveFromLog(cPath);
 
             }
             DoneSyncing();
@@ -646,7 +661,7 @@ namespace FTPbox
         /// </summary>
         private void Syncing()
         {
-            tray.Icon = FTPbox.Properties.Resources.refresh;
+            tray.Icon = FTPbox.Properties.Resources.syncing;
             tray.Text = "FTPbox - Syncing...";
         }
 
@@ -655,7 +670,7 @@ namespace FTPbox
         /// </summary>
         private void DoneSyncing()
         {
-            tray.Icon = FTPbox.Properties.Resources.done;
+            tray.Icon = FTPbox.Properties.Resources.all_synced;
             tray.Text = "FTPbox - All files synced";
         }
 
@@ -667,7 +682,7 @@ namespace FTPbox
         private void bChangeBox_Click(object sender, EventArgs e)
         {
             newDir.ShowDialog();
-            StartupCheck();
+            //StartupCheck();
         }
 
         private void rOpenInBrowser_CheckedChanged(object sender, EventArgs e)
@@ -685,7 +700,11 @@ namespace FTPbox
                 {
                     if (link != null && link != "")
                     {
-                        Process.Start(link);
+                        try
+                        {
+                            Process.Start(link);
+                        }
+                        catch { }
                     }
                 }
                 else
@@ -744,7 +763,7 @@ namespace FTPbox
                 UpdateLog(lfilepath);
             }
 
-            foreach (string lf in Directory.GetFiles(lPath()))
+            foreach (string lf in Directory.GetFiles(lPath(), "*", SearchOption.AllDirectories))
             {
                 FileInfo fi = new FileInfo(lf);
 
@@ -769,10 +788,16 @@ namespace FTPbox
         /// <param name="remoteFilesDT">LastWriteTimeUTC of remote file</param>
         public void ChecKSameName(string path, string name, DateTime localFilesDT, DateTime? remoteFilesDT)
         {
-
-            if (log == null || !log.Contains(path))
+            string cPath = GetCommonPath(path, false);
+            cPath = cPath.Substring(0, cPath.Length - 1);
+            string FullLocalPath = noSlashes(lPath()) + @"\" + cPath.Replace(name, "").Replace(@"/", @"\");
+            string FullRemPath = noSlashes(rPath()) + @"/" + cPath.Replace(name, "");
+            cPath = cPath.Replace(@"/", @"\");
+            if (log == null || !log.Contains(cPath))
             {
-                ftp.SetLocalDirectory(lPath());
+                Log.Write("CheckSameName: --> log null or doesn't contain " + cPath);
+                ftp.SetLocalDirectory(FullLocalPath);
+                ftp.SetCurrentDirectory(FullRemPath);
                 ftp.GetFile(name, RemoveSymbols(name), false);
                 if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
                     tray.ShowBalloonTip(100, "FTPbox", string.Format("File {0} was updated.", name), ToolTipIcon.Info);
@@ -781,8 +806,9 @@ namespace FTPbox
             }
             else
             {
+                Log.Write("CheckSameName: --> contains " + cPath);
                 FileInfo lf = new FileInfo(path);
-                int i = log.IndexOf(path);
+                int i = log.IndexOf(cPath);
                 DateTime rD = DateTime.Parse(rDL[i]);
                 DateTime lD = DateTime.Parse(lDL[i]);
                 //DateTime rD = DateTime.ParseExact(rDL[i], "yyyy-MM-dd HH:mm tt", null);
@@ -791,7 +817,8 @@ namespace FTPbox
                 if (rD.ToString() != remoteFilesDT.ToString())
                 {
                     //MessageBox.Show(rD.CompareTo(remoteFilesDT).ToString());
-                    ftp.SetLocalDirectory(lPath());
+                    ftp.SetLocalDirectory(FullLocalPath);
+                    ftp.SetCurrentDirectory(FullRemPath);
                     ftp.GetFile(name, RemoveSymbols(name), false);
                     if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
                         tray.ShowBalloonTip(100, "FTPbox", string.Format("File {0} was updated.", name), ToolTipIcon.Info);
@@ -810,7 +837,7 @@ namespace FTPbox
                     {
                         //MessageBox.Show(rD.ToString() + Environment.NewLine + lD.ToString() + Environment.NewLine + remoteFilesDT.ToString() + Environment.NewLine + localFilesDT.ToString());
                         //MessageBox.Show("case 2");
-                        ftp.SetCurrentDirectory(rPath());
+                        ftp.SetCurrentDirectory(FullRemPath);
                         ftp.PutFile(path, name);
                         if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
                             tray.ShowBalloonTip(100, "FTPbox", string.Format("File {0} was updated.", name), ToolTipIcon.Info);
@@ -821,7 +848,8 @@ namespace FTPbox
                     {
                         //MessageBox.Show(rD.ToString() + Environment.NewLine + lD.ToString() + Environment.NewLine + remoteFilesDT.ToString() + Environment.NewLine + localFilesDT.ToString());
                         //MessageBox.Show(lD.CompareTo(localFilesDT).ToString());
-                        ftp.SetLocalDirectory(lPath());
+                        ftp.SetLocalDirectory(FullLocalPath);
+                        ftp.SetCurrentDirectory(FullRemPath);
                         ftp.GetFile(name, RemoveSymbols(name), false);
                         if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
                             tray.ShowBalloonTip(100, "FTPbox", string.Format("File {0} was updated.", name), ToolTipIcon.Info);
@@ -833,36 +861,40 @@ namespace FTPbox
         }
 
         public void UpdateLog(string lpath)
-        {
+        {/*
             FileInfo lfi = new FileInfo(lpath);
+            string LocPath = lpath;
+            if (LocPath.StartsWith(lPath()))
+            {
+                int i = lPath().Length;
+                LocPath = LocPath.Substring(i, LocPath.Length - i);
+            }
             string name = lfi.Name;
             string rDate = "";
 
-            foreach (FtpFileInfo rfi in ftp.GetFiles())
+            foreach (KeyValuePair<string, DateTime> FileOrDir in FullList)
             {
-                if (rfi.Name == name)
+                if (FileOrDir.Key == noSlashes((rPath() + @"/" + noSlashes(LocPath).Replace(@"\", @"/")).Replace(@"\", @"/")))
                 {
-                    rDate = TimeZoneInfo.ConvertTimeToUtc(rfi.LastWriteTime.Value).AddHours(timedif.Hours).ToString();
+                    rDate = TimeZoneInfo.ConvertTimeToUtc(FileOrDir.Value).AddHours(timedif.Hours).ToString();
                 }
             }
 
-            string dates = lfi.LastWriteTimeUtc.ToString() + Environment.NewLine + rDate + Environment.NewLine + "Logs:" + Environment.NewLine;
-            
-            if (log == null || !log.Contains(lpath))
+            if (log == null || !log.Contains(LocPath))
             {
-                log.Add(lpath);
+                log.Add(LocPath);
                 lDL.Add(lfi.LastWriteTimeUtc.ToString());
                 rDL.Add(rDate);
             }
             else
             {
-                RemoveFromLog(lpath);
-                log.Add(lpath);
+                RemoveFromLog(LocPath);
+                log.Add(LocPath);
                 lDL.Add(lfi.LastWriteTimeUtc.ToString());
                 rDL.Add(rDate);
             }
 
-            FTPbox.Properties.Settings.Default.log += "|" + lpath;
+            FTPbox.Properties.Settings.Default.log += "|" + LocPath;
             FTPbox.Properties.Settings.Default.lDateLog += "|" + lfi.LastWriteTimeUtc.ToString();
             FTPbox.Properties.Settings.Default.rDateLog += "|" + rDate;
             FTPbox.Properties.Settings.Default.Save();
@@ -870,92 +902,8 @@ namespace FTPbox
             if (link != "" && link != null)
             {
                 Get_Recent(name);
-            }
-
-            #region old
-            /*
-             * if (remoteDT != null)
-            {
-                FileInfo lfi = new FileInfo(lpath);
-                //ftp.SetCurrentDirectory(rPath);
-                //FtpFileInfo rfi = new FtpFileInfo(ftp, name);
-                DateTime localDT = lfi.LastWriteTimeUtc;
-                //DateTime remoteDT = rfi.LastWriteTimeUtc.Value;
-
-                if (log == null)
-                {
-                    //add the first value to the log
-                    log.Add(lpath);
-                    lDL.Add(localDT.ToString("yyyy-MM-dd HH:mm tt"));
-                    rDL.Add(remoteDT.Value.ToString("yyyy-MM-dd HH:mm tt"));
-                }
-                else if (!log.Contains(lpath))
-                {
-                    log.Add(lpath);
-                    lDL.Add(localDT.ToString("yyyy-MM-dd HH:mm tt"));
-                    rDL.Add(remoteDT.Value.ToString("yyyy-MM-dd HH:mm tt"));
-
-                }
-                else
-                {
-                    //change the datetimes of the existing value in log
-                    int i = log.IndexOf(lpath);
-                    rDL[i] = remoteDT.Value.ToString("yyyy-MM-dd HH:mm tt");
-                    lDL[i] = localDT.ToString("yyyy-MM-dd HH:mm tt");
-                }
-
-                SaveLog();
-            }
-            
-        }
-
-        public void Update_log(string lpath, string rDate)
-        {
-            if (rDate != null)
-            {
-                FileInfo lfi = new FileInfo(lpath);
-                DateTime lDate = lfi.LastWriteTimeUtc;
-
-                if (log == null || !log.Contains(lpath))
-                {
-                    log.Add(lpath);
-                    lDL.Add(lDate.ToString("yyyy-MM-dd HH:mm tt"));
-                    rDL.Add(rDate);
-                }
-                else
-                {
-                    //change the datetimes of the existing value in log
-                    int i = log.IndexOf(lpath);
-                    rDL.RemoveAt(i);
-                    lDL.RemoveAt(i);
-                    rDL.Add(rDate);
-                    lDL.Add(lDate.ToString("yyyy-MM-dd HH:mm tt"));
-                }
-
-                SaveLog();
-
-            } */
-            #endregion
-        }
-
-        /// <summary>
-        /// called when a file is deleted/renamed
-        /// </summary>
-        /// <param name="path">path to local file</param>
-        public void RemoveFromLog(string path)
-        {
-            try
-            {
-                int i = log.IndexOf(path);
-
-                log.RemoveAt(i);
-                lDL.RemoveAt(i);
-                rDL.RemoveAt(i);
-                
-                SaveLog();
-            }
-            catch { }
-        }
+            }*/
+        } 
 
         public void SaveLog()
         {
@@ -1052,7 +1000,7 @@ namespace FTPbox
 
         /// <summary>
         /// checks for an update
-        /// called on each start-up of this app.
+        /// called on each start-up of FTPbox.
         /// </summary>
         private void CheckForUpdate()
         {
@@ -1134,6 +1082,7 @@ namespace FTPbox
         {
             this.Show();
             this.WindowState = FormWindowState.Normal;
+            this.BringToFront();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1167,7 +1116,11 @@ namespace FTPbox
 
             if (noSlashes(rPath()) != null)
             {
-                if (rPath().StartsWith(@"/"))
+                if ((rPath() == @"/"))
+                {
+                    newlink = "";
+                }
+                else if (rPath().StartsWith(@"/"))
                 {
                     newlink = newlink + noSlashes(rPath()).Substring(1, noSlashes(rPath()).Length - 1) + @"/";
                 }
@@ -1195,6 +1148,11 @@ namespace FTPbox
         }
 
         private void button2_Click(object sender, EventArgs e)
+        {
+            ClearLog();
+        }
+
+        public void ClearLog()
         {
             FTPbox.Properties.Settings.Default.log = null;
             FTPbox.Properties.Settings.Default.lDateLog = null;
@@ -1237,13 +1195,14 @@ namespace FTPbox
                         fswFolders.Dispose();
                     }
                     OfflineMode = true;
-                    tray.Icon = FTPbox.Properties.Resources.offline60;
+                    tray.Icon = FTPbox.Properties.Resources.offline1;
                     tray.Text = "FTPbox - Offline";
                 }
 
                 if (!OfflineMode)
                 {
                     newList.Clear();
+                    
                     foreach (FtpFileInfo rfi in ftp.GetFiles())
                     {
                         newList.Add(RemoveSymbols(rfi.Name));
@@ -1270,7 +1229,7 @@ namespace FTPbox
                     }
 
                     oldList.Clear();
-                    oldList.AddRange(Directory.GetFiles(lPath()));
+                    oldList.AddRange(Directory.GetFiles(lPath(), "*", SearchOption.AllDirectories));
 
                     foreach (string s in oldList)
                     {
@@ -1290,6 +1249,7 @@ namespace FTPbox
                     }
                 }
                 lasttip = null;
+                
             }
             catch { }
         }
@@ -1485,13 +1445,6 @@ namespace FTPbox
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            FTPbox.Properties.Settings.Default.ftpHost = null;
-            FTPbox.Properties.Settings.Default.ftpPass = "";
-            FTPbox.Properties.Settings.Default.Save();
-        }
-
         public void Set_logged_in()
         {
             loggedIn = true;
@@ -1517,112 +1470,72 @@ namespace FTPbox
             catch { }
         }
 
-        private void button3_Click_1(object sender, EventArgs e)
+        private void ListAllFiles()
         {
-            // We are using Forms, let's use background workers
-            // because we like background workers :3
-            BackgroundWorker lRemoteWrk = new BackgroundWorker();
-            lRemoteWrk.DoWork += new DoWorkEventHandler(lRemoteWrk_DoWork);
-            lRemoteWrk.RunWorkerCompleted += new RunWorkerCompletedEventHandler(lRemoteWrk_RunWorkerCompleted);
-            lRemoteWrk.RunWorkerAsync();
+            try
+            {
+                //We are using forms, so let's use a background worker.
+                //cause NoFate is gay and loves background workers :3
+                BackgroundWorker lRemoteWrk = new BackgroundWorker();
+                lRemoteWrk.DoWork += new DoWorkEventHandler(lRemoteWrk_DoWork);
+                lRemoteWrk.RunWorkerCompleted += new RunWorkerCompletedEventHandler(lRemoteWrk_RunWorkerCompleted);
+                Log.Write("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+                lRemoteWrk.RunWorkerAsync();
+            }
+            catch {
+                Log.Write("Could not list remote files");
+            }
         }
 
         void lRemoteWrk_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // Retrieve the dictionary from the result
             Dictionary<String, DateTime> fdDict = e.Result as Dictionary<String, DateTime>;
+            FullList = fdDict;
 
-            // Why are we doing this?
-            string x = "";
-            foreach (KeyValuePair<string, DateTime> y in fdDict)
+            if (!OfflineMode)
             {
-                x = x + Environment.NewLine + y.Key + " " + y.Value.ToString();
+                CheckRemoteFiles();
+                //try
+               // {                    
+                    //CheckAllRemote();
+               // }
+               // catch (Exception ex)
+                //{
+                 //   Log.Write(ex.Message);
+                //}
+                //Thread.Sleep(5000);
+                //ListAllFiles();
             }
-            MessageBox.Show(x);
+
+            Log.Write("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
+            
 
             // You can access form controls -HERE-
         }
 
         void lRemoteWrk_DoWork(object sender, DoWorkEventArgs e)
         {
-            // Get the remote directories/files
-            Dictionary<String, DateTime> rtDict = listRemote();
-
-            // And our work is complete!
-            e.Result = rtDict;
-        }
-        
-        /*
-        List<string> l = new List<string>();
-        private void listall(string path)
-        {
-            ftp.SetCurrentDirectory(path);
-            foreach (FtpFileInfo f in ftp.GetFiles())
+            try
             {
-                l.Add(noSlashes(path) + @"/" + f.Name);
+                ftp.SetCurrentDirectory(rPath());
+                // Get the remote directories/files
+                Dictionary<String, DateTime> rtDict = listRemote();
+                // And our work is complete!
+                e.Result = rtDict;
             }
-
-            foreach (FtpDirectoryInfo d in ftp.GetDirectories())
-            {
-                l.Add(noSlashes(path) + @"/" + d.Name);
-                listall(noSlashes(path) + @"/" + d.Name);
-            }
-        }
-        
-        string meh;
-        string lastpath;
-
-        void ListFolders()
-        {
-
-            foreach (FtpDirectoryInfo dir in ftp.GetDirectories())
-            {
-                if (dir.Name != "." && dir.Name != "..")
-                {
-                    meh = meh + Environment.NewLine + ftp.GetCurrentDirectory() + "/" + dir.Name;
-                    try
-                    {
-                        ftp.SetCurrentDirectory(ftp.GetCurrentDirectory() + "/" + dir.Name);
-                        lastpath = ftp.GetCurrentDirectory() + "/" + dir.Name;
-                    }
-                    catch
-                    {
-                        ftp.SetCurrentDirectory(lastpath);
-                    }
-                    ListFolders();
-                }
-
-            }
+            catch { }
         }
 
-        List<string> all = new List<string>();
-        void listem(string path)
-        {
-            ftp.SetCurrentDirectory(path);
-
-            foreach (FtpFileInfo f in ftp.GetFiles())
-            {
-                all.Add(f.Name);
-            }
-            foreach (FtpDirectoryInfo d in ftp.GetDirectories())
-            {
-                if (d.Name != "." && d.Name != ".." && d.Name != null && d.Name != "")
-                {
-                    all.Add(path + "/" + d.Name);
-                    listall(path + "/" + d.Name);
-                }
-            }
-        }
-         * 
-         * */
-
-        ////////////////////////////
-        // Nice code starts here! //
-        // Courtesy of NoFaTe     //
-        ////////////////////////////
+        //////////////////////////
+        //Contribution of NoFaTe//
+        // (on Subdirectories)  //
+        //  thanks a lot man!   //
+        //////////////////////////
 
         /// <summary>
-        /// Gets a list of all directories and files in a pre-defined path
+        /// Gets a list of all directories and files in a path
         /// </summary>
         /// <returns>A dictionary containing directory/file paths and last write times</returns>
         private Dictionary<String, DateTime> listRemote()
@@ -1636,9 +1549,13 @@ namespace FTPbox
             // Loop through files
             foreach (FtpFileInfo fInfo in ftp.GetFiles())
             {
-                // Got it? Add it!
-                Log.Write("File ({0})", noSlashes(String.Format("{0}/{1}", rPath(), fInfo.Name)));
-                fdDict.Add(noSlashes(String.Format("{0}/{1}", rPath(), fInfo.Name)), fInfo.LastWriteTimeUtc.Value);
+                if (fInfo.Name != ".ftpquota")
+                {
+                    // Got it? Add it!
+                    fdDict.Add(noSlashes(String.Format("{0}/{1}", noSlashes(rPath()), fInfo.Name)), fInfo.LastWriteTimeUtc.Value);
+                    Log.Write("{0}/{1}", noSlashes(rPath()), fInfo.Name);
+                    //CheckRemoteFile(noSlashes(rPath()), fInfo.Name, fInfo.LastWriteTimeUtc.Value);
+                }
             }
 
             // And directories
@@ -1663,7 +1580,7 @@ namespace FTPbox
         private void getSetDirFiles(string path, DateTime lastWriteTime, ref Dictionary<String, DateTime> fdDict)
         {
             // Clean up the path and add it to the dictionary
-            String newPath = noSlashes(String.Format("{0}/{1}", rPath(), path));
+            String newPath = noSlashes(String.Format("{0}/{1}", noSlashes(rPath()), path)) + @"/";
             fdDict.Add(newPath, lastWriteTime);
 
             Log.Write("Drct ({0})", newPath);
@@ -1674,9 +1591,13 @@ namespace FTPbox
             // Loop through files
             foreach (FtpFileInfo fInfo in ftp.GetFiles())
             {
-                // Got it? Add it!
-                Log.Write("File ({0})", noSlashes(String.Format("{0}/{1}", newPath, fInfo.Name)));
-                fdDict.Add(noSlashes(String.Format("{0}/{1}", newPath, fInfo.Name)), fInfo.LastWriteTimeUtc.Value);
+                if (fInfo.Name != ".ftpquota")
+                {
+                    // Got it? Add it!
+                    Log.Write("File ({0})", noSlashes(String.Format("{0}{1}", newPath, fInfo.Name)));
+                    fdDict.Add(noSlashes(String.Format("{0}{1}", newPath, fInfo.Name)), fInfo.LastWriteTimeUtc.Value);
+                    //CheckRemoteFile(newPath, fInfo.Name, fInfo.LastWriteTimeUtc.Value);
+                }
             }
 
             // And directories
@@ -1691,5 +1612,179 @@ namespace FTPbox
             }
         }
 
+        /////////////////////
+        // End of NoFate's //
+        //  Contribution   //  
+        /////////////////////
+
+        public void CheckRemoteFile(string cPath, string name, DateTime rDT)
+        {
+            string prevDirectory = ftp.GetCurrentDirectory();
+            string FullRemPath = rPath();
+            string FullLocalPath = noSlashes(lPath());
+            string LocalFileDirParent = lPath();
+            if (cPath == "")
+            {
+                FullLocalPath = FullLocalPath + @"\" + name;
+            }
+            else
+            {
+                FullLocalPath = FullLocalPath + @"\" + noSlashes(cPath.Replace(@"/", @"\")) + @"\" + name;
+                FullRemPath = noSlashes(FullRemPath) + cPath;
+                LocalFileDirParent = noSlashes(LocalFileDirParent) + cPath.Replace(@"/", @"\");
+            }
+            Log.Write("cPath {0} -> name {1} -> rDT {2} ->Flp {3}", cPath, name, rDT.ToString(), FullLocalPath);
+            Log.Write(FullRemPath + " " + LocalFileDirParent);
+            Log.Write(prevDirectory);
+
+            if (rLog == null || lLog == null)
+            {
+                Log.Write("Log is null");
+                ftp.SetCurrentDirectory(FullRemPath);
+                ftp.SetLocalDirectory(LocalFileDirParent);
+                LastChangedFileFromRem = name;
+                ftp.GetFile(name, false);            
+            }
+            else
+            {
+
+            }
+
+            ftp.SetCurrentDirectory(prevDirectory);
+        }
+
+        public void CheckRemoteFiles()
+        {
+            foreach (KeyValuePair<string, DateTime> s in FullList)
+            {
+                DateTime rDT = s.Value;
+
+                if (s.Key.EndsWith(@"/"))
+                {
+
+                }
+                else
+                {
+                    int i = s.Key.LastIndexOf(@"/");
+                    string cPath = s.Key.Substring(0, i);
+                    string name = s.Key.Substring(i + 1, s.Key.Length - i - 1);
+                    string prevDirectory = ftp.GetCurrentDirectory();
+                    string FullRemPath = rPath();
+                    string FullLocalPath = noSlashes(lPath());
+                    string LocalFileDirParent = lPath();
+                    
+
+                    if (cPath == "")
+                    {
+                        FullLocalPath = FullLocalPath + @"\" + name;
+                    }
+                    else
+                    {
+                        FullLocalPath = FullLocalPath + @"\" + noSlashes(cPath.Replace(@"/", @"\")) + @"\" + name;
+                        FullRemPath = noSlashes(FullRemPath) + cPath;
+                        LocalFileDirParent = noSlashes(LocalFileDirParent) + cPath.Replace(@"/", @"\");
+                    }
+                    Log.Write("cPath {0} -> name {1} -> rDT {2} ->Flp {3}", cPath, name, rDT.ToString(), FullLocalPath);
+                    Log.Write(FullRemPath + " " + LocalFileDirParent);
+                    Log.Write(prevDirectory);
+
+                    if (rLog == null || lLog == null)
+                    {
+                        Log.Write("Log is null, gonna get {0}", name);
+                        ftp.SetCurrentDirectory(FullRemPath);
+                        ftp.SetLocalDirectory(LocalFileDirParent);
+                        LastChangedFileFromRem = name;
+                        LastChangedFolderFromRem = GetParentFolder(cPath);
+                        ftp.GetFile(name, false);
+                        UpdateTheLog(s.Key, s.Value);
+                    }
+                    else
+                    {
+
+                    }
+                }
+
+            }
+        }
+
+        public string GetParentFolder(string path)
+        {
+            string s = path;
+            if (s == "" || s == @"/")
+            {
+                return @"/";
+            }
+            else
+            {
+                if (s.EndsWith(@"/"))
+                    s = s.Substring(0, s.Length - 1);
+                int i = s.LastIndexOf(@"/");
+                s = s.Substring(i, s.Length - i);
+                return s;
+            }            
+        }
+
+        /// <summary>
+        /// Saves any file/folder changes to the local log
+        /// </summary>
+        /// <param name="cPath">common path to file/folder that changed</param>
+        /// <param name="rDTlog">remote file's LastWriteTimeUtc</param>
+        public void UpdateTheLog(string cPath, DateTime rDTlog)
+        {
+            string FullLocalPath = noSlashes(lPath());
+            string name = "";
+            DateTime lDTlog;
+
+            if (cPath.EndsWith(@"/"))
+            {
+                name = GetParentFolder(cPath);
+                if (cPath != "")
+                    FullLocalPath = FullLocalPath + @"\" + noSlashes(cPath.Replace(@"/", @"\")) + @"\" + name;
+                DirectoryInfo dInfo = new DirectoryInfo(FullLocalPath);
+                lDTlog = dInfo.LastWriteTimeUtc;
+            }
+            else
+            {
+               name = cPath.Substring(cPath.LastIndexOf("/") + 1, cPath.Length - cPath.LastIndexOf("/") - 1);
+               if (cPath != "")
+               {
+                   FullLocalPath = FullLocalPath + @"\" + noSlashes(cPath.Replace(@"/", @"\"));
+               }
+               FileInfo fInfo = new FileInfo(FullLocalPath);
+               lDTlog = fInfo.LastWriteTimeUtc;
+            }
+
+            RemoveFromLog(cPath);
+            rLog.Add(cPath, rDTlog.ToString());
+            lLog.Add(cPath, lDTlog.ToString());
+            SaveTheLog();
+
+            Log.Write("##########");
+            Log.Write("FLP {0} + name: {1} + rDTlog: {2} + lDTlog: {3} + cPath: {4}", FullLocalPath, name, rDTlog.ToString(), lDTlog.ToString(), cPath);
+            Log.Write("#########");
+        }
+
+        public void RemoveFromLog(string cPath)
+        {
+            if (rLog != null)
+            {
+                if (rLog.ContainsKey(cPath))
+                {
+                    rLog.Remove(cPath);
+                }
+                if (lLog.ContainsKey(cPath))
+                {
+                    lLog.Remove(cPath);
+                }
+            }
+        }
+
+        public void SaveTheLog()
+        {
+            FTPbox.Properties.Settings.Default.rLog = rLog;
+            FTPbox.Properties.Settings.Default.lLog = lLog;
+            FTPbox.Properties.Settings.Default.Save();
+        }
+        
     }
 }
