@@ -67,6 +67,13 @@ namespace FTPbox.Properties {
             }
         }
         
+        internal static System.Drawing.Icon AS {
+            get {
+                object obj = ResourceManager.GetObject("AS", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon Box {
             get {
                 object obj = ResourceManager.GetObject("Box", resourceCulture);
@@ -84,6 +91,13 @@ namespace FTPbox.Properties {
         internal static System.Drawing.Icon done {
             get {
                 object obj = ResourceManager.GetObject("done", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon ftpboxnew {
+            get {
+                object obj = ResourceManager.GetObject("ftpboxnew", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

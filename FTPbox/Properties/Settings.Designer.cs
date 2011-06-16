@@ -144,18 +144,6 @@ namespace FTPbox.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool subDirs {
-            get {
-                return ((bool)(this["subDirs"]));
-            }
-            set {
-                this["subDirs"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool delRem {
             get {
@@ -239,9 +227,10 @@ namespace FTPbox.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringDictionary rLog {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string rLog {
             get {
-                return ((global::System.Collections.Specialized.StringDictionary)(this["rLog"]));
+                return ((string)(this["rLog"]));
             }
             set {
                 this["rLog"] = value;
@@ -250,12 +239,25 @@ namespace FTPbox.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringDictionary lLog {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string lLog {
             get {
-                return ((global::System.Collections.Specialized.StringDictionary)(this["lLog"]));
+                return ((string)(this["lLog"]));
             }
             set {
                 this["lLog"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string nLog {
+            get {
+                return ((string)(this["nLog"]));
+            }
+            set {
+                this["nLog"] = value;
             }
         }
     }

@@ -9,7 +9,7 @@ using System.Resources;
 [assembly: AssemblyTitle("FTPbox")]
 [assembly: AssemblyDescription("sync to your host via ftp")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("sharpmindprojects.com")]
+[assembly: AssemblyCompany("ftpbox.org")]
 [assembly: AssemblyProduct("FTPbox")]
 [assembly: AssemblyCopyright("Copyright ©  2011")]
 [assembly: AssemblyTrademark("")]
@@ -33,6 +33,6 @@ using System.Resources;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.5.2.1")]
-[assembly: AssemblyFileVersion("1.5.2.1")]
+[assembly: AssemblyVersion("1.6.1.1")]
+[assembly: AssemblyFileVersion("1.6.1.1")]
 [assembly: NeutralResourcesLanguageAttribute("en")]

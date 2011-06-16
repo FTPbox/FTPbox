@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>regular_125.ico</ApplicationIcon>
+    <ApplicationIcon>ftpboxnew.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Classes\aConsole.cs" />
     <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Classes\INIclass.cs" />
     <Compile Include="Classes\Log.cs" />
     <Compile Include="Forms\fMain.cs">
       <SubType>Form</SubType>
@@ -150,9 +151,13 @@
     <None Include="Resources\regular_60.ico" />
     <None Include="Resources\offline.ico" />
     <None Include="Resources\regular.ico" />
+    <Content Include="ftpboxnew %281%29.ico" />
+    <Content Include="ftpboxnew.ico" />
     <Content Include="regular.ico" />
     <None Include="Resources\all synced.ico" />
     <Content Include="regular_125.ico" />
+    <None Include="Resources\AS.ico" />
+    <None Include="Resources\ftpboxnew.ico" />
     <Content Include="Resources\Icons\done.ico" />
     <Content Include="Resources\Icons\main125.ico" />
     <Content Include="Resources\Icons\mBox.ico" />

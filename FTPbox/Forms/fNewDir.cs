@@ -35,11 +35,11 @@ namespace FTPbox
         {
             FTPbox.Properties.Settings.Default.rPath = tFullDir.Text;
             FTPbox.Properties.Settings.Default.lPath = tPath.Text;
-            FTPbox.Properties.Settings.Default.subDirs = chkSubdirectories.Checked;
             FTPbox.Properties.Settings.Default.delRem = !chkDelRem.Checked;
-            FTPbox.Properties.Settings.Default.ftpParent = FTPbox.Properties.Settings.Default.ftpHost;
+            FTPbox.Properties.Settings.Default.ftpParent = tParent.Text;
             FTPbox.Properties.Settings.Default.Save();
 
+            ((frmMain)this.Tag).ClearLog();
             ((frmMain)this.Tag).UpdateDetails();
             ((frmMain)this.Tag).SetLocalWatcher();
             ((frmMain)this.Tag).gotpaths = true;
@@ -81,6 +81,8 @@ namespace FTPbox
                 ftp = new FtpConnection(host, port, UN, pass);
                 ftp.Open();
                 ftp.Login();
+
+                tParent.Text = FTPbox.Properties.Settings.Default.ftpHost;
 
                 treeView1.Nodes.Clear();
 
@@ -186,6 +188,12 @@ namespace FTPbox
                 }
             }
             return b;
+        }
+
+        private void tParent_TextChanged(object sender, EventArgs e)
+        {
+            FTPbox.Properties.Settings.Default.ftpParent = tParent.Text;
+            FTPbox.Properties.Settings.Default.Save();
         }
     }
 }

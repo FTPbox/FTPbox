@@ -40,14 +40,14 @@
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.chkSubdirectories = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.chkDelRem = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.tParent = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // bDone
             // 
-            this.bDone.Location = new System.Drawing.Point(338, 263);
+            this.bDone.Location = new System.Drawing.Point(338, 252);
             this.bDone.Name = "bDone";
             this.bDone.Size = new System.Drawing.Size(75, 23);
             this.bDone.TabIndex = 48;
@@ -57,7 +57,7 @@
             // 
             // bBrowse
             // 
-            this.bBrowse.Location = new System.Drawing.Point(339, 175);
+            this.bBrowse.Location = new System.Drawing.Point(339, 177);
             this.bBrowse.Name = "bBrowse";
             this.bBrowse.Size = new System.Drawing.Size(74, 23);
             this.bBrowse.TabIndex = 47;
@@ -68,7 +68,7 @@
             // tPath
             // 
             this.tPath.Enabled = false;
-            this.tPath.Location = new System.Drawing.Point(13, 178);
+            this.tPath.Location = new System.Drawing.Point(13, 179);
             this.tPath.Name = "tPath";
             this.tPath.Size = new System.Drawing.Size(320, 20);
             this.tPath.TabIndex = 46;
@@ -108,7 +108,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(11, 163);
+            this.label7.Location = new System.Drawing.Point(10, 163);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(68, 13);
             this.label7.TabIndex = 42;
@@ -123,26 +123,6 @@
             this.label6.TabIndex = 41;
             this.label6.Text = "Select Directory:";
             // 
-            // chkSubdirectories
-            // 
-            this.chkSubdirectories.AutoSize = true;
-            this.chkSubdirectories.Enabled = false;
-            this.chkSubdirectories.Location = new System.Drawing.Point(13, 226);
-            this.chkSubdirectories.Name = "chkSubdirectories";
-            this.chkSubdirectories.Size = new System.Drawing.Size(118, 17);
-            this.chkSubdirectories.TabIndex = 53;
-            this.chkSubdirectories.Text = "Sync subdirectories";
-            this.chkSubdirectories.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 210);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(36, 13);
-            this.label1.TabIndex = 49;
-            this.label1.Text = "Other:";
-            // 
             // chkDelRem
             // 
             this.chkDelRem.AutoSize = true;
@@ -152,16 +132,34 @@
             this.chkDelRem.TabIndex = 54;
             this.chkDelRem.Text = "Never delete remote files";
             this.chkDelRem.UseVisualStyleBackColor = true;
+            this.chkDelRem.Visible = false;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(10, 207);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(97, 13);
+            this.label1.TabIndex = 55;
+            this.label1.Text = "Account\'s full path:";
+            // 
+            // tParent
+            // 
+            this.tParent.Location = new System.Drawing.Point(13, 223);
+            this.tParent.Name = "tParent";
+            this.tParent.Size = new System.Drawing.Size(320, 20);
+            this.tParent.TabIndex = 56;
+            this.tParent.TextChanged += new System.EventHandler(this.tParent_TextChanged);
             // 
             // fNewDir
             // 
             this.AcceptButton = this.bDone;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(425, 298);
-            this.Controls.Add(this.chkDelRem);
-            this.Controls.Add(this.chkSubdirectories);
+            this.ClientSize = new System.Drawing.Size(425, 281);
+            this.Controls.Add(this.tParent);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.chkDelRem);
             this.Controls.Add(this.bDone);
             this.Controls.Add(this.bBrowse);
             this.Controls.Add(this.tPath);
@@ -195,8 +193,8 @@
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.CheckBox chkSubdirectories;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox chkDelRem;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox tParent;
     }
 }

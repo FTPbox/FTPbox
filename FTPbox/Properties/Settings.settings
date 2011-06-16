@@ -32,9 +32,6 @@
     <Setting Name="lPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">N/A</Value>
     </Setting>
-    <Setting Name="subDirs" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="delRem" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
@@ -56,10 +53,13 @@
     <Setting Name="Setting" Type="System.Collections.Specialized.ListDictionary" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="rLog" Type="System.Collections.Specialized.StringDictionary" Scope="User">
+    <Setting Name="rLog" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="lLog" Type="System.Collections.Specialized.StringDictionary" Scope="User">
+    <Setting Name="lLog" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="nLog" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

@@ -40,6 +40,7 @@ namespace FTPbox
                 MessageBox.Show("Could not connect to FTP server. Check your account details and try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
+            ((frmMain)this.Tag).ClearLog();
             ((frmMain)this.Tag).UpdateDetails();
             ((frmMain)this.Tag).loggedIn = true;
             //((fMain)this.Tag).Update_Acc_info(tHost.Text, tUsername.Text, tPass.Text, Convert.ToInt32(nPort.Value));
