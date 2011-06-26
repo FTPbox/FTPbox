@@ -34,14 +34,14 @@
             this.fbd = new System.Windows.Forms.FolderBrowserDialog();
             this.bBrowse = new System.Windows.Forms.Button();
             this.tPath = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
+            this.labFullPath = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tFullDir = new System.Windows.Forms.TextBox();
             this.treeView1 = new System.Windows.Forms.TreeView();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
+            this.labLocal = new System.Windows.Forms.Label();
+            this.labSelect = new System.Windows.Forms.Label();
             this.chkDelRem = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labParent = new System.Windows.Forms.Label();
             this.tParent = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
@@ -73,14 +73,14 @@
             this.tPath.Size = new System.Drawing.Size(320, 20);
             this.tPath.TabIndex = 46;
             // 
-            // label5
+            // labFullPath
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(10, 131);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(51, 13);
-            this.label5.TabIndex = 45;
-            this.label5.Text = "Full Path:";
+            this.labFullPath.AutoSize = true;
+            this.labFullPath.Location = new System.Drawing.Point(10, 131);
+            this.labFullPath.Name = "labFullPath";
+            this.labFullPath.Size = new System.Drawing.Size(51, 13);
+            this.labFullPath.TabIndex = 45;
+            this.labFullPath.Text = "Full Path:";
             // 
             // timer1
             // 
@@ -105,23 +105,23 @@
             this.treeView1.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterExpand);
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
-            // label7
+            // labLocal
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(10, 163);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(68, 13);
-            this.label7.TabIndex = 42;
-            this.label7.Text = "Local Folder:";
+            this.labLocal.AutoSize = true;
+            this.labLocal.Location = new System.Drawing.Point(10, 163);
+            this.labLocal.Name = "labLocal";
+            this.labLocal.Size = new System.Drawing.Size(68, 13);
+            this.labLocal.TabIndex = 42;
+            this.labLocal.Text = "Local Folder:";
             // 
-            // label6
+            // labSelect
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(10, 9);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(85, 13);
-            this.label6.TabIndex = 41;
-            this.label6.Text = "Select Directory:";
+            this.labSelect.AutoSize = true;
+            this.labSelect.Location = new System.Drawing.Point(10, 9);
+            this.labSelect.Name = "labSelect";
+            this.labSelect.Size = new System.Drawing.Size(85, 13);
+            this.labSelect.TabIndex = 41;
+            this.labSelect.Text = "Select Directory:";
             // 
             // chkDelRem
             // 
@@ -134,14 +134,14 @@
             this.chkDelRem.UseVisualStyleBackColor = true;
             this.chkDelRem.Visible = false;
             // 
-            // label1
+            // labParent
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 207);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 13);
-            this.label1.TabIndex = 55;
-            this.label1.Text = "Account\'s full path:";
+            this.labParent.AutoSize = true;
+            this.labParent.Location = new System.Drawing.Point(10, 207);
+            this.labParent.Name = "labParent";
+            this.labParent.Size = new System.Drawing.Size(97, 13);
+            this.labParent.TabIndex = 55;
+            this.labParent.Text = "Account\'s full path:";
             // 
             // tParent
             // 
@@ -158,16 +158,16 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(425, 281);
             this.Controls.Add(this.tParent);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labParent);
             this.Controls.Add(this.chkDelRem);
             this.Controls.Add(this.bDone);
             this.Controls.Add(this.bBrowse);
             this.Controls.Add(this.tPath);
-            this.Controls.Add(this.label5);
+            this.Controls.Add(this.labFullPath);
             this.Controls.Add(this.tFullDir);
             this.Controls.Add(this.treeView1);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
+            this.Controls.Add(this.labLocal);
+            this.Controls.Add(this.labSelect);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -187,14 +187,14 @@
         private System.Windows.Forms.FolderBrowserDialog fbd;
         private System.Windows.Forms.Button bBrowse;
         private System.Windows.Forms.TextBox tPath;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label labFullPath;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.TextBox tFullDir;
         private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label labLocal;
+        private System.Windows.Forms.Label labSelect;
         private System.Windows.Forms.CheckBox chkDelRem;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labParent;
         private System.Windows.Forms.TextBox tParent;
     }
 }

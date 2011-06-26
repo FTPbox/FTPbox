@@ -69,6 +69,42 @@ namespace FTPbox
             tUsername.Text = FTPbox.Properties.Settings.Default.ftpUsername;
             tPass.Text = FTPbox.Properties.Settings.Default.ftpPass;
             nPort.Value = Convert.ToDecimal(FTPbox.Properties.Settings.Default.ftpPort);
+            Set_Language(FTPbox.Properties.Settings.Default.lan);
+        }
+
+        private void Set_Language(string lan)
+        {
+            if (lan == "es")
+            {
+                this.Text = "FTPbox | Nueva cuenta FTP";
+                gDetails.Text = "Datos de la cuenta FTP";
+                labHost.Text = "Host:";
+                labPort.Text = "Puerto:";
+                labUN.Text = "Usuario:";
+                labPass.Text = "Contraseña";
+                bDone.Text = "Listo";
+            }
+            else if (lan == "de")
+            {
+                this.Text = "FTPbox | Neuer FTP Account";
+                gDetails.Text = "FTP login details";
+                labHost.Text = "Host:";
+                labPort.Text = "Port:";
+                labUN.Text = "Benutzername:";
+                labPass.Text = "Passwort:";
+                bDone.Text = "Fertig";
+
+            }
+            else
+            {
+                this.Text = "FTPbox | Update Available";
+                gDetails.Text = "FTP login details";
+                labHost.Text = "Host:";
+                labPort.Text = "Port:";
+                labUN.Text = "Username:";
+                labPass.Text = "Password:";
+                bDone.Text = "Done";
+            }
         }
 
     }

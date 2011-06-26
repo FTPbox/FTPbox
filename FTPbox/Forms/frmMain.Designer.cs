@@ -41,12 +41,14 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.gApp = new System.Windows.Forms.GroupBox();
+            this.labLang = new System.Windows.Forms.Label();
+            this.cmbLang = new System.Windows.Forms.ComboBox();
             this.chkShowNots = new System.Windows.Forms.CheckBox();
             this.chkCloseToTray = new System.Windows.Forms.CheckBox();
             this.chkStartUp = new System.Windows.Forms.CheckBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.gAccount = new System.Windows.Forms.GroupBox();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
@@ -54,45 +56,45 @@
             this.lPort = new System.Windows.Forms.Label();
             this.lHost = new System.Windows.Forms.Label();
             this.lUsername = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labPort = new System.Windows.Forms.Label();
+            this.labUN = new System.Windows.Forms.Label();
+            this.labHost = new System.Windows.Forms.Label();
             this.browser = new System.Windows.Forms.WebBrowser();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.label20 = new System.Windows.Forms.Label();
+            this.gLinks = new System.Windows.Forms.GroupBox();
+            this.labLinkClicked = new System.Windows.Forms.Label();
             this.tParent = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
+            this.labFullPath = new System.Windows.Forms.Label();
             this.rCopy2Clipboard = new System.Windows.Forms.RadioButton();
             this.rOpenInBrowser = new System.Windows.Forms.RadioButton();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.gDetails = new System.Windows.Forms.GroupBox();
             this.lDelRem = new System.Windows.Forms.Label();
             this.lLocPath = new System.Windows.Forms.Label();
             this.lRemPath = new System.Windows.Forms.Label();
             this.bChangeBox = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.labDelRem = new System.Windows.Forms.Label();
+            this.labLocPath = new System.Windows.Forms.Label();
+            this.labRemPath = new System.Windows.Forms.Label();
+            this.tabAbout = new System.Windows.Forms.TabPage();
             this.linkLabel4 = new System.Windows.Forms.LinkLabel();
             this.linkLabel3 = new System.Windows.Forms.LinkLabel();
             this.label19 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.lVersion = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.label12 = new System.Windows.Forms.Label();
+            this.labLangUsed = new System.Windows.Forms.Label();
+            this.labContact = new System.Windows.Forms.Label();
+            this.labSite = new System.Windows.Forms.Label();
+            this.labTeam = new System.Windows.Forms.Label();
+            this.labCurVersion = new System.Windows.Forms.Label();
+            this.gContribute = new System.Windows.Forms.GroupBox();
+            this.labDonate = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.gNotes = new System.Windows.Forms.GroupBox();
             this.label11 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
+            this.labContactMe = new System.Windows.Forms.Label();
+            this.labFree = new System.Windows.Forms.Label();
             this.bgWork = new System.ComponentModel.BackgroundWorker();
             this.tray = new System.Windows.Forms.NotifyIcon(this.components);
             this.fswFolders = new System.IO.FileSystemWatcher();
@@ -100,16 +102,16 @@
             this.CheckConnection = new System.Windows.Forms.Timer(this.components);
             this.trayMenu.SuspendLayout();
             this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.tabGeneral.SuspendLayout();
+            this.gApp.SuspendLayout();
+            this.gAccount.SuspendLayout();
             this.tabPage2.SuspendLayout();
-            this.groupBox6.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.groupBox4.SuspendLayout();
+            this.gLinks.SuspendLayout();
+            this.gDetails.SuspendLayout();
+            this.tabAbout.SuspendLayout();
+            this.gContribute.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.groupBox3.SuspendLayout();
+            this.gNotes.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fswFolders)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fswFiles)).BeginInit();
             this.SuspendLayout();
@@ -194,39 +196,64 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabGeneral);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabAbout);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(396, 285);
             this.tabControl1.TabIndex = 11;
             // 
-            // tabPage1
+            // tabGeneral
             // 
-            this.tabPage1.Controls.Add(this.groupBox2);
-            this.tabPage1.Controls.Add(this.groupBox1);
-            this.tabPage1.Controls.Add(this.browser);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(388, 259);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "General";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabGeneral.Controls.Add(this.gApp);
+            this.tabGeneral.Controls.Add(this.gAccount);
+            this.tabGeneral.Controls.Add(this.browser);
+            this.tabGeneral.Location = new System.Drawing.Point(4, 22);
+            this.tabGeneral.Name = "tabGeneral";
+            this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
+            this.tabGeneral.Size = new System.Drawing.Size(388, 259);
+            this.tabGeneral.TabIndex = 0;
+            this.tabGeneral.Text = "General";
+            this.tabGeneral.UseVisualStyleBackColor = true;
             // 
-            // groupBox2
+            // gApp
             // 
-            this.groupBox2.Controls.Add(this.chkShowNots);
-            this.groupBox2.Controls.Add(this.chkCloseToTray);
-            this.groupBox2.Controls.Add(this.chkStartUp);
-            this.groupBox2.Location = new System.Drawing.Point(8, 124);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(370, 107);
-            this.groupBox2.TabIndex = 3;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Application";
+            this.gApp.Controls.Add(this.labLang);
+            this.gApp.Controls.Add(this.cmbLang);
+            this.gApp.Controls.Add(this.chkShowNots);
+            this.gApp.Controls.Add(this.chkCloseToTray);
+            this.gApp.Controls.Add(this.chkStartUp);
+            this.gApp.Location = new System.Drawing.Point(8, 124);
+            this.gApp.Name = "gApp";
+            this.gApp.Size = new System.Drawing.Size(370, 107);
+            this.gApp.TabIndex = 3;
+            this.gApp.TabStop = false;
+            this.gApp.Text = "Application";
+            // 
+            // labLang
+            // 
+            this.labLang.AutoSize = true;
+            this.labLang.Location = new System.Drawing.Point(6, 77);
+            this.labLang.Name = "labLang";
+            this.labLang.Size = new System.Drawing.Size(58, 13);
+            this.labLang.TabIndex = 5;
+            this.labLang.Text = "Language:";
+            // 
+            // cmbLang
+            // 
+            this.cmbLang.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbLang.FormattingEnabled = true;
+            this.cmbLang.Items.AddRange(new object[] {
+            "English",
+            "Español",
+            "Deutsch"});
+            this.cmbLang.Location = new System.Drawing.Point(70, 74);
+            this.cmbLang.Name = "cmbLang";
+            this.cmbLang.Size = new System.Drawing.Size(96, 21);
+            this.cmbLang.TabIndex = 4;
+            this.cmbLang.SelectedIndexChanged += new System.EventHandler(this.cmbLang_SelectedIndexChanged);
             // 
             // chkShowNots
             // 
@@ -242,12 +269,13 @@
             // chkCloseToTray
             // 
             this.chkCloseToTray.AutoSize = true;
-            this.chkCloseToTray.Location = new System.Drawing.Point(7, 75);
+            this.chkCloseToTray.Location = new System.Drawing.Point(263, 29);
             this.chkCloseToTray.Name = "chkCloseToTray";
             this.chkCloseToTray.Size = new System.Drawing.Size(83, 17);
             this.chkCloseToTray.TabIndex = 3;
             this.chkCloseToTray.Text = "close to tray";
             this.chkCloseToTray.UseVisualStyleBackColor = true;
+            this.chkCloseToTray.Visible = false;
             this.chkCloseToTray.CheckedChanged += new System.EventHandler(this.chkCloseToTray_CheckedChanged);
             // 
             // chkStartUp
@@ -261,24 +289,24 @@
             this.chkStartUp.UseVisualStyleBackColor = true;
             this.chkStartUp.CheckedChanged += new System.EventHandler(this.chkStartUp_CheckedChanged);
             // 
-            // groupBox1
+            // gAccount
             // 
-            this.groupBox1.Controls.Add(this.button3);
-            this.groupBox1.Controls.Add(this.button2);
-            this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.bAddFTP);
-            this.groupBox1.Controls.Add(this.lPort);
-            this.groupBox1.Controls.Add(this.lHost);
-            this.groupBox1.Controls.Add(this.lUsername);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(8, 9);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(370, 109);
-            this.groupBox1.TabIndex = 2;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "FTP Account";
+            this.gAccount.Controls.Add(this.button3);
+            this.gAccount.Controls.Add(this.button2);
+            this.gAccount.Controls.Add(this.button1);
+            this.gAccount.Controls.Add(this.bAddFTP);
+            this.gAccount.Controls.Add(this.lPort);
+            this.gAccount.Controls.Add(this.lHost);
+            this.gAccount.Controls.Add(this.lUsername);
+            this.gAccount.Controls.Add(this.labPort);
+            this.gAccount.Controls.Add(this.labUN);
+            this.gAccount.Controls.Add(this.labHost);
+            this.gAccount.Location = new System.Drawing.Point(8, 9);
+            this.gAccount.Name = "gAccount";
+            this.gAccount.Size = new System.Drawing.Size(370, 109);
+            this.gAccount.TabIndex = 2;
+            this.gAccount.TabStop = false;
+            this.gAccount.Text = "FTP Account";
             // 
             // button3
             // 
@@ -289,6 +317,7 @@
             this.button3.Text = "button3";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Visible = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button2
             // 
@@ -325,7 +354,7 @@
             // lPort
             // 
             this.lPort.AutoSize = true;
-            this.lPort.Location = new System.Drawing.Point(68, 63);
+            this.lPort.Location = new System.Drawing.Point(83, 63);
             this.lPort.Name = "lPort";
             this.lPort.Size = new System.Drawing.Size(27, 13);
             this.lPort.TabIndex = 10;
@@ -334,7 +363,7 @@
             // lHost
             // 
             this.lHost.AutoSize = true;
-            this.lHost.Location = new System.Drawing.Point(68, 27);
+            this.lHost.Location = new System.Drawing.Point(83, 27);
             this.lHost.Name = "lHost";
             this.lHost.Size = new System.Drawing.Size(27, 13);
             this.lHost.TabIndex = 9;
@@ -343,38 +372,38 @@
             // lUsername
             // 
             this.lUsername.AutoSize = true;
-            this.lUsername.Location = new System.Drawing.Point(68, 45);
+            this.lUsername.Location = new System.Drawing.Point(83, 45);
             this.lUsername.Name = "lUsername";
             this.lUsername.Size = new System.Drawing.Size(27, 13);
             this.lUsername.TabIndex = 8;
             this.lUsername.Text = "N/A";
             // 
-            // label3
+            // labPort
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(4, 63);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(29, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "Port:";
+            this.labPort.AutoSize = true;
+            this.labPort.Location = new System.Drawing.Point(4, 63);
+            this.labPort.Name = "labPort";
+            this.labPort.Size = new System.Drawing.Size(29, 13);
+            this.labPort.TabIndex = 6;
+            this.labPort.Text = "Port:";
             // 
-            // label2
+            // labUN
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(4, 45);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(58, 13);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Username:";
+            this.labUN.AutoSize = true;
+            this.labUN.Location = new System.Drawing.Point(4, 45);
+            this.labUN.Name = "labUN";
+            this.labUN.Size = new System.Drawing.Size(58, 13);
+            this.labUN.TabIndex = 5;
+            this.labUN.Text = "Username:";
             // 
-            // label1
+            // labHost
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 27);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(32, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Host:";
+            this.labHost.AutoSize = true;
+            this.labHost.Location = new System.Drawing.Point(6, 27);
+            this.labHost.Name = "labHost";
+            this.labHost.Size = new System.Drawing.Size(32, 13);
+            this.labHost.TabIndex = 4;
+            this.labHost.Text = "Host:";
             // 
             // browser
             // 
@@ -388,8 +417,8 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.groupBox6);
-            this.tabPage2.Controls.Add(this.groupBox5);
+            this.tabPage2.Controls.Add(this.gLinks);
+            this.tabPage2.Controls.Add(this.gDetails);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -398,28 +427,28 @@
             this.tabPage2.Text = "FTPbox";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // groupBox6
+            // gLinks
             // 
-            this.groupBox6.Controls.Add(this.label20);
-            this.groupBox6.Controls.Add(this.tParent);
-            this.groupBox6.Controls.Add(this.label9);
-            this.groupBox6.Controls.Add(this.rCopy2Clipboard);
-            this.groupBox6.Controls.Add(this.rOpenInBrowser);
-            this.groupBox6.Location = new System.Drawing.Point(8, 123);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(374, 127);
-            this.groupBox6.TabIndex = 1;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Links";
+            this.gLinks.Controls.Add(this.labLinkClicked);
+            this.gLinks.Controls.Add(this.tParent);
+            this.gLinks.Controls.Add(this.labFullPath);
+            this.gLinks.Controls.Add(this.rCopy2Clipboard);
+            this.gLinks.Controls.Add(this.rOpenInBrowser);
+            this.gLinks.Location = new System.Drawing.Point(8, 128);
+            this.gLinks.Name = "gLinks";
+            this.gLinks.Size = new System.Drawing.Size(374, 127);
+            this.gLinks.TabIndex = 1;
+            this.gLinks.TabStop = false;
+            this.gLinks.Text = "Links";
             // 
-            // label20
+            // labLinkClicked
             // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(6, 55);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(221, 13);
-            this.label20.TabIndex = 18;
-            this.label20.Text = "When tray notification or recent file is clicked:";
+            this.labLinkClicked.AutoSize = true;
+            this.labLinkClicked.Location = new System.Drawing.Point(6, 55);
+            this.labLinkClicked.Name = "labLinkClicked";
+            this.labLinkClicked.Size = new System.Drawing.Size(221, 13);
+            this.labLinkClicked.TabIndex = 18;
+            this.labLinkClicked.Text = "When tray notification or recent file is clicked:";
             // 
             // tParent
             // 
@@ -429,14 +458,14 @@
             this.tParent.TabIndex = 5;
             this.tParent.TextChanged += new System.EventHandler(this.tParent_TextChanged);
             // 
-            // label9
+            // labFullPath
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 16);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(97, 13);
-            this.label9.TabIndex = 2;
-            this.label9.Text = "Account\'s full path:";
+            this.labFullPath.AutoSize = true;
+            this.labFullPath.Location = new System.Drawing.Point(6, 16);
+            this.labFullPath.Name = "labFullPath";
+            this.labFullPath.Size = new System.Drawing.Size(97, 13);
+            this.labFullPath.TabIndex = 2;
+            this.labFullPath.Text = "Account\'s full path:";
             // 
             // rCopy2Clipboard
             // 
@@ -461,26 +490,26 @@
             this.rOpenInBrowser.UseVisualStyleBackColor = true;
             this.rOpenInBrowser.CheckedChanged += new System.EventHandler(this.rOpenInBrowser_CheckedChanged);
             // 
-            // groupBox5
+            // gDetails
             // 
-            this.groupBox5.Controls.Add(this.lDelRem);
-            this.groupBox5.Controls.Add(this.lLocPath);
-            this.groupBox5.Controls.Add(this.lRemPath);
-            this.groupBox5.Controls.Add(this.bChangeBox);
-            this.groupBox5.Controls.Add(this.label7);
-            this.groupBox5.Controls.Add(this.label5);
-            this.groupBox5.Controls.Add(this.label4);
-            this.groupBox5.Location = new System.Drawing.Point(8, 9);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(374, 108);
-            this.groupBox5.TabIndex = 0;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Details";
+            this.gDetails.Controls.Add(this.lDelRem);
+            this.gDetails.Controls.Add(this.lLocPath);
+            this.gDetails.Controls.Add(this.lRemPath);
+            this.gDetails.Controls.Add(this.bChangeBox);
+            this.gDetails.Controls.Add(this.labDelRem);
+            this.gDetails.Controls.Add(this.labLocPath);
+            this.gDetails.Controls.Add(this.labRemPath);
+            this.gDetails.Location = new System.Drawing.Point(8, 9);
+            this.gDetails.Name = "gDetails";
+            this.gDetails.Size = new System.Drawing.Size(374, 113);
+            this.gDetails.TabIndex = 0;
+            this.gDetails.TabStop = false;
+            this.gDetails.Text = "Details";
             // 
             // lDelRem
             // 
             this.lDelRem.AutoSize = true;
-            this.lDelRem.Location = new System.Drawing.Point(111, 64);
+            this.lDelRem.Location = new System.Drawing.Point(312, 16);
             this.lDelRem.Name = "lDelRem";
             this.lDelRem.Size = new System.Drawing.Size(27, 13);
             this.lDelRem.TabIndex = 8;
@@ -490,7 +519,7 @@
             // lLocPath
             // 
             this.lLocPath.AutoSize = true;
-            this.lLocPath.Location = new System.Drawing.Point(111, 46);
+            this.lLocPath.Location = new System.Drawing.Point(26, 75);
             this.lLocPath.Name = "lLocPath";
             this.lLocPath.Size = new System.Drawing.Size(27, 13);
             this.lLocPath.TabIndex = 6;
@@ -499,7 +528,7 @@
             // lRemPath
             // 
             this.lRemPath.AutoSize = true;
-            this.lRemPath.Location = new System.Drawing.Point(111, 28);
+            this.lRemPath.Location = new System.Drawing.Point(26, 37);
             this.lRemPath.Name = "lRemPath";
             this.lRemPath.Size = new System.Drawing.Size(27, 13);
             this.lRemPath.TabIndex = 5;
@@ -507,7 +536,7 @@
             // 
             // bChangeBox
             // 
-            this.bChangeBox.Location = new System.Drawing.Point(293, 79);
+            this.bChangeBox.Location = new System.Drawing.Point(293, 84);
             this.bChangeBox.Name = "bChangeBox";
             this.bChangeBox.Size = new System.Drawing.Size(75, 23);
             this.bChangeBox.TabIndex = 4;
@@ -515,55 +544,55 @@
             this.bChangeBox.UseVisualStyleBackColor = true;
             this.bChangeBox.Click += new System.EventHandler(this.bChangeBox_Click);
             // 
-            // label7
+            // labDelRem
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 64);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(81, 13);
-            this.label7.TabIndex = 3;
-            this.label7.Text = "Delete Remote:";
-            this.label7.Visible = false;
+            this.labDelRem.AutoSize = true;
+            this.labDelRem.Location = new System.Drawing.Point(207, 16);
+            this.labDelRem.Name = "labDelRem";
+            this.labDelRem.Size = new System.Drawing.Size(81, 13);
+            this.labDelRem.TabIndex = 3;
+            this.labDelRem.Text = "Delete Remote:";
+            this.labDelRem.Visible = false;
             // 
-            // label5
+            // labLocPath
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 46);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(61, 13);
-            this.label5.TabIndex = 1;
-            this.label5.Text = "Local Path:";
+            this.labLocPath.AutoSize = true;
+            this.labLocPath.Location = new System.Drawing.Point(6, 55);
+            this.labLocPath.Name = "labLocPath";
+            this.labLocPath.Size = new System.Drawing.Size(61, 13);
+            this.labLocPath.TabIndex = 1;
+            this.labLocPath.Text = "Local Path:";
             // 
-            // label4
+            // labRemPath
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 28);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(72, 13);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Remote Path:";
+            this.labRemPath.AutoSize = true;
+            this.labRemPath.Location = new System.Drawing.Point(6, 19);
+            this.labRemPath.Name = "labRemPath";
+            this.labRemPath.Size = new System.Drawing.Size(72, 13);
+            this.labRemPath.TabIndex = 0;
+            this.labRemPath.Text = "Remote Path:";
             // 
-            // tabPage3
+            // tabAbout
             // 
-            this.tabPage3.Controls.Add(this.linkLabel4);
-            this.tabPage3.Controls.Add(this.linkLabel3);
-            this.tabPage3.Controls.Add(this.label19);
-            this.tabPage3.Controls.Add(this.label21);
-            this.tabPage3.Controls.Add(this.lVersion);
-            this.tabPage3.Controls.Add(this.label16);
-            this.tabPage3.Controls.Add(this.label18);
-            this.tabPage3.Controls.Add(this.label15);
-            this.tabPage3.Controls.Add(this.label14);
-            this.tabPage3.Controls.Add(this.label13);
-            this.tabPage3.Controls.Add(this.groupBox4);
-            this.tabPage3.Controls.Add(this.groupBox3);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(388, 259);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "About";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.tabAbout.Controls.Add(this.linkLabel4);
+            this.tabAbout.Controls.Add(this.linkLabel3);
+            this.tabAbout.Controls.Add(this.label19);
+            this.tabAbout.Controls.Add(this.label21);
+            this.tabAbout.Controls.Add(this.lVersion);
+            this.tabAbout.Controls.Add(this.labLangUsed);
+            this.tabAbout.Controls.Add(this.labContact);
+            this.tabAbout.Controls.Add(this.labSite);
+            this.tabAbout.Controls.Add(this.labTeam);
+            this.tabAbout.Controls.Add(this.labCurVersion);
+            this.tabAbout.Controls.Add(this.gContribute);
+            this.tabAbout.Controls.Add(this.gNotes);
+            this.tabAbout.Location = new System.Drawing.Point(4, 22);
+            this.tabAbout.Name = "tabAbout";
+            this.tabAbout.Padding = new System.Windows.Forms.Padding(3);
+            this.tabAbout.Size = new System.Drawing.Size(388, 259);
+            this.tabAbout.TabIndex = 2;
+            this.tabAbout.Text = "About";
+            this.tabAbout.UseVisualStyleBackColor = true;
             // 
             // linkLabel4
             // 
@@ -581,10 +610,10 @@
             this.linkLabel3.AutoSize = true;
             this.linkLabel3.Location = new System.Drawing.Point(234, 50);
             this.linkLabel3.Name = "linkLabel3";
-            this.linkLabel3.Size = new System.Drawing.Size(66, 13);
+            this.linkLabel3.Size = new System.Drawing.Size(70, 13);
             this.linkLabel3.TabIndex = 8;
             this.linkLabel3.TabStop = true;
-            this.linkLabel3.Text = "JohnTheGr8";
+            this.linkLabel3.Text = "FTPbox team";
             this.linkLabel3.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel3_LinkClicked);
             // 
             // label19
@@ -614,78 +643,78 @@
             this.lVersion.TabIndex = 8;
             this.lVersion.Text = "X.X.X (build X)";
             // 
-            // label16
+            // labLangUsed
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(64, 119);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(84, 13);
-            this.label16.TabIndex = 7;
-            this.label16.Text = "Language used:";
+            this.labLangUsed.AutoSize = true;
+            this.labLangUsed.Location = new System.Drawing.Point(64, 119);
+            this.labLangUsed.Name = "labLangUsed";
+            this.labLangUsed.Size = new System.Drawing.Size(84, 13);
+            this.labLangUsed.TabIndex = 7;
+            this.labLangUsed.Text = "Language used:";
             // 
-            // label18
+            // labContact
             // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(64, 96);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(64, 13);
-            this.label18.TabIndex = 5;
-            this.label18.Text = "Contact me:";
+            this.labContact.AutoSize = true;
+            this.labContact.Location = new System.Drawing.Point(64, 96);
+            this.labContact.Name = "labContact";
+            this.labContact.Size = new System.Drawing.Size(47, 13);
+            this.labContact.TabIndex = 5;
+            this.labContact.Text = "Contact:";
             // 
-            // label15
+            // labSite
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(64, 73);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(70, 13);
-            this.label15.TabIndex = 4;
-            this.label15.Text = "Official Page:";
+            this.labSite.AutoSize = true;
+            this.labSite.Location = new System.Drawing.Point(64, 73);
+            this.labSite.Name = "labSite";
+            this.labSite.Size = new System.Drawing.Size(84, 13);
+            this.labSite.TabIndex = 4;
+            this.labSite.Text = "Official Website:";
             // 
-            // label14
+            // labTeam
             // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(64, 50);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(55, 13);
-            this.label14.TabIndex = 3;
-            this.label14.Text = "Coded by:";
+            this.labTeam.AutoSize = true;
+            this.labTeam.Location = new System.Drawing.Point(64, 50);
+            this.labTeam.Name = "labTeam";
+            this.labTeam.Size = new System.Drawing.Size(59, 13);
+            this.labTeam.TabIndex = 3;
+            this.labTeam.Text = "The Team:";
             // 
-            // label13
+            // labCurVersion
             // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(64, 27);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(82, 13);
-            this.label13.TabIndex = 2;
-            this.label13.Text = "Current Version:";
+            this.labCurVersion.AutoSize = true;
+            this.labCurVersion.Location = new System.Drawing.Point(64, 27);
+            this.labCurVersion.Name = "labCurVersion";
+            this.labCurVersion.Size = new System.Drawing.Size(82, 13);
+            this.labCurVersion.TabIndex = 2;
+            this.labCurVersion.Text = "Current Version:";
             // 
-            // groupBox4
+            // gContribute
             // 
-            this.groupBox4.Controls.Add(this.label12);
-            this.groupBox4.Controls.Add(this.pictureBox1);
-            this.groupBox4.Controls.Add(this.linkLabel2);
-            this.groupBox4.Controls.Add(this.linkLabel1);
-            this.groupBox4.Location = new System.Drawing.Point(221, 155);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(160, 89);
-            this.groupBox4.TabIndex = 1;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Contribute";
+            this.gContribute.Controls.Add(this.labDonate);
+            this.gContribute.Controls.Add(this.pictureBox1);
+            this.gContribute.Controls.Add(this.linkLabel2);
+            this.gContribute.Controls.Add(this.linkLabel1);
+            this.gContribute.Location = new System.Drawing.Point(237, 155);
+            this.gContribute.Name = "gContribute";
+            this.gContribute.Size = new System.Drawing.Size(144, 89);
+            this.gContribute.TabIndex = 1;
+            this.gContribute.TabStop = false;
+            this.gContribute.Text = "Contribute";
             // 
-            // label12
+            // labDonate
             // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(6, 54);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(45, 13);
-            this.label12.TabIndex = 4;
-            this.label12.Text = "Donate:";
+            this.labDonate.AutoSize = true;
+            this.labDonate.Location = new System.Drawing.Point(6, 54);
+            this.labDonate.Name = "labDonate";
+            this.labDonate.Size = new System.Drawing.Size(45, 13);
+            this.labDonate.TabIndex = 4;
+            this.labDonate.Text = "Donate:";
             // 
             // pictureBox1
             // 
             this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox1.Image = global::FTPbox.Properties.Resources.donate;
-            this.pictureBox1.Location = new System.Drawing.Point(57, 54);
+            this.pictureBox1.Location = new System.Drawing.Point(64, 59);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(74, 21);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -715,17 +744,17 @@
             this.linkLabel1.Text = "Report a bug";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
-            // groupBox3
+            // gNotes
             // 
-            this.groupBox3.Controls.Add(this.label11);
-            this.groupBox3.Controls.Add(this.label10);
-            this.groupBox3.Controls.Add(this.label8);
-            this.groupBox3.Location = new System.Drawing.Point(7, 155);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(208, 89);
-            this.groupBox3.TabIndex = 0;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Notes";
+            this.gNotes.Controls.Add(this.label11);
+            this.gNotes.Controls.Add(this.labContactMe);
+            this.gNotes.Controls.Add(this.labFree);
+            this.gNotes.Location = new System.Drawing.Point(7, 155);
+            this.gNotes.Name = "gNotes";
+            this.gNotes.Size = new System.Drawing.Size(224, 89);
+            this.gNotes.TabIndex = 0;
+            this.gNotes.TabStop = false;
+            this.gNotes.Text = "Notes";
             // 
             // label11
             // 
@@ -736,23 +765,23 @@
             this.label11.TabIndex = 3;
             this.label11.Text = "- Copyright © 2011 - ftpbox.org";
             // 
-            // label10
+            // labContactMe
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 35);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(183, 13);
-            this.label10.TabIndex = 2;
-            this.label10.Text = "- Feel free to contact me for anything.";
+            this.labContactMe.AutoSize = true;
+            this.labContactMe.Location = new System.Drawing.Point(6, 35);
+            this.labContactMe.Name = "labContactMe";
+            this.labContactMe.Size = new System.Drawing.Size(183, 13);
+            this.labContactMe.TabIndex = 2;
+            this.labContactMe.Text = "- Feel free to contact me for anything.";
             // 
-            // label8
+            // labFree
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 19);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(164, 13);
-            this.label8.TabIndex = 0;
-            this.label8.Text = "- FTPbox is free and open-source";
+            this.labFree.AutoSize = true;
+            this.labFree.Location = new System.Drawing.Point(6, 19);
+            this.labFree.Name = "labFree";
+            this.labFree.Size = new System.Drawing.Size(164, 13);
+            this.labFree.TabIndex = 0;
+            this.labFree.Text = "- FTPbox is free and open-source";
             // 
             // bgWork
             // 
@@ -798,6 +827,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FTPbox | Options";
@@ -805,23 +835,23 @@
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.trayMenu.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.tabGeneral.ResumeLayout(false);
+            this.gApp.ResumeLayout(false);
+            this.gApp.PerformLayout();
+            this.gAccount.ResumeLayout(false);
+            this.gAccount.PerformLayout();
             this.tabPage2.ResumeLayout(false);
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
+            this.gLinks.ResumeLayout(false);
+            this.gLinks.PerformLayout();
+            this.gDetails.ResumeLayout(false);
+            this.gDetails.PerformLayout();
+            this.tabAbout.ResumeLayout(false);
+            this.tabAbout.PerformLayout();
+            this.gContribute.ResumeLayout(false);
+            this.gContribute.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
+            this.gNotes.ResumeLayout(false);
+            this.gNotes.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fswFolders)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fswFiles)).EndInit();
             this.ResumeLayout(false);
@@ -835,57 +865,57 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.TabPage tabGeneral;
+        private System.Windows.Forms.GroupBox gApp;
         private System.Windows.Forms.CheckBox chkShowNots;
         private System.Windows.Forms.CheckBox chkCloseToTray;
         private System.Windows.Forms.CheckBox chkStartUp;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gAccount;
         private System.Windows.Forms.Button bAddFTP;
         private System.Windows.Forms.Label lPort;
         private System.Windows.Forms.Label lHost;
         private System.Windows.Forms.Label lUsername;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labPort;
+        private System.Windows.Forms.Label labUN;
+        private System.Windows.Forms.Label labHost;
         private System.Windows.Forms.WebBrowser browser;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage tabAbout;
         private System.Windows.Forms.LinkLabel linkLabel4;
         private System.Windows.Forms.LinkLabel linkLabel3;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Label lVersion;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label labLangUsed;
+        private System.Windows.Forms.Label labContact;
+        private System.Windows.Forms.Label labSite;
+        private System.Windows.Forms.Label labTeam;
+        private System.Windows.Forms.Label labCurVersion;
+        private System.Windows.Forms.GroupBox gContribute;
+        private System.Windows.Forms.Label labDonate;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.LinkLabel linkLabel2;
         private System.Windows.Forms.LinkLabel linkLabel1;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox gNotes;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label labContactMe;
+        private System.Windows.Forms.Label labFree;
         private System.ComponentModel.BackgroundWorker bgWork;
         private System.Windows.Forms.NotifyIcon tray;
-        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.GroupBox gDetails;
         private System.Windows.Forms.Label lDelRem;
         private System.Windows.Forms.Label lLocPath;
         private System.Windows.Forms.Label lRemPath;
         private System.Windows.Forms.Button bChangeBox;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label labDelRem;
+        private System.Windows.Forms.Label labLocPath;
+        private System.Windows.Forms.Label labRemPath;
         private System.IO.FileSystemWatcher fswFolders;
         private System.IO.FileSystemWatcher fswFiles;
-        private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.GroupBox gLinks;
+        private System.Windows.Forms.Label labLinkClicked;
         private System.Windows.Forms.TextBox tParent;
-        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label labFullPath;
         private System.Windows.Forms.RadioButton rCopy2Clipboard;
         private System.Windows.Forms.RadioButton rOpenInBrowser;
         private System.Windows.Forms.Button button1;
@@ -898,5 +928,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Label labLang;
+        private System.Windows.Forms.ComboBox cmbLang;
     }
 }

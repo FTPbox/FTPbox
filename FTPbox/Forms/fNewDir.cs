@@ -105,8 +105,10 @@ namespace FTPbox
 
                 }
                 treeView1.SelectedNode = first;
+                Set_Language(FTPbox.Properties.Settings.Default.lan);
             }
             catch { this.Close(); }
+
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -194,6 +196,34 @@ namespace FTPbox
         {
             FTPbox.Properties.Settings.Default.ftpParent = tParent.Text;
             FTPbox.Properties.Settings.Default.Save();
+        }
+
+        private void Set_Language(string lan)
+        {
+            if (lan == "es")
+            {
+                this.Text = "Añade un nuevo directorio";
+                labSelect.Text = "Selecciona la dirección:";
+                labFullPath.Text = "Dirección completa:";
+                labLocal.Text = "Carpeta local:";
+                bBrowse.Text = "Explorar";
+            }
+            else if (lan == "de")
+            {
+                this.Text = "Ein Verzeichnis erstellen";
+                labSelect.Text = "Vollständigen Ordnerpfad auswählen:";
+                labFullPath.Text = "Vollständiger Pfad:";
+                labLocal.Text = "Lokaler Ordner:";
+                bBrowse.Text = "Durchsuchen";
+            }
+            else
+            {
+                this.Text = "Add a new directory";
+                labSelect.Text = "Select directory:";
+                labFullPath.Text = "Full path:";
+                labLocal.Text = "Local folder:";
+                bBrowse.Text = "Browse";
+            }
         }
     }
 }
