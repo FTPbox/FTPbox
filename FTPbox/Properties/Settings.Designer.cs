@@ -272,5 +272,29 @@ namespace FTPbox.Properties {
                 this["lan"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FTPorSFTP {
+            get {
+                return ((bool)(this["FTPorSFTP"]));
+            }
+            set {
+                this["FTPorSFTP"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string timedif {
+            get {
+                return ((string)(this["timedif"]));
+            }
+            set {
+                this["timedif"] = value;
+            }
+        }
     }
 }

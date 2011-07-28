@@ -80,9 +80,9 @@
             // 
             // bLearnMore
             // 
-            this.bLearnMore.Location = new System.Drawing.Point(89, 104);
+            this.bLearnMore.Location = new System.Drawing.Point(100, 104);
             this.bLearnMore.Name = "bLearnMore";
-            this.bLearnMore.Size = new System.Drawing.Size(95, 23);
+            this.bLearnMore.Size = new System.Drawing.Size(84, 23);
             this.bLearnMore.TabIndex = 13;
             this.bLearnMore.Text = "Learn More";
             this.bLearnMore.UseVisualStyleBackColor = true;
@@ -92,9 +92,9 @@
             // 
             this.bDownload.Location = new System.Drawing.Point(8, 104);
             this.bDownload.Name = "bDownload";
-            this.bDownload.Size = new System.Drawing.Size(75, 23);
+            this.bDownload.Size = new System.Drawing.Size(86, 23);
             this.bDownload.TabIndex = 12;
-            this.bDownload.Text = "Download";
+            this.bDownload.Text = "Update Now";
             this.bDownload.UseVisualStyleBackColor = true;
             this.bDownload.Click += new System.EventHandler(this.bDownload_Click);
             // 

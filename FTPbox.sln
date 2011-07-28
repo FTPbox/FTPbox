@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FTPbox", "FTPbox\FTPbox.csproj", "{934DC82D-E5FD-421B-932B-7F0135E0EB8B}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FTPbox_setup", "FTPbox_setup\FTPbox_setup.vdproj", "{8B28C55B-83C5-4C33-8A84-3B5C34CB2B4B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -11,8 +13,10 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{934DC82D-E5FD-421B-932B-7F0135E0EB8B}.Debug|x86.ActiveCfg = Debug|x86
 		{934DC82D-E5FD-421B-932B-7F0135E0EB8B}.Debug|x86.Build.0 = Debug|x86
-		{934DC82D-E5FD-421B-932B-7F0135E0EB8B}.Release|x86.ActiveCfg = Release|x86
-		{934DC82D-E5FD-421B-932B-7F0135E0EB8B}.Release|x86.Build.0 = Release|x86
+		{934DC82D-E5FD-421B-932B-7F0135E0EB8B}.Release|x86.ActiveCfg = Debug|x86
+		{934DC82D-E5FD-421B-932B-7F0135E0EB8B}.Release|x86.Build.0 = Debug|x86
+		{8B28C55B-83C5-4C33-8A84-3B5C34CB2B4B}.Debug|x86.ActiveCfg = Debug
+		{8B28C55B-83C5-4C33-8A84-3B5C34CB2B4B}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -49,8 +49,8 @@
             this.chkCloseToTray = new System.Windows.Forms.CheckBox();
             this.chkStartUp = new System.Windows.Forms.CheckBox();
             this.gAccount = new System.Windows.Forms.GroupBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.lMode = new System.Windows.Forms.Label();
+            this.labMode = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.bAddFTP = new System.Windows.Forms.Button();
             this.lPort = new System.Windows.Forms.Label();
@@ -225,9 +225,9 @@
             this.gApp.Controls.Add(this.chkShowNots);
             this.gApp.Controls.Add(this.chkCloseToTray);
             this.gApp.Controls.Add(this.chkStartUp);
-            this.gApp.Location = new System.Drawing.Point(8, 124);
+            this.gApp.Location = new System.Drawing.Point(8, 141);
             this.gApp.Name = "gApp";
-            this.gApp.Size = new System.Drawing.Size(370, 107);
+            this.gApp.Size = new System.Drawing.Size(370, 105);
             this.gApp.TabIndex = 3;
             this.gApp.TabStop = false;
             this.gApp.Text = "Application";
@@ -291,8 +291,8 @@
             // 
             // gAccount
             // 
-            this.gAccount.Controls.Add(this.button3);
-            this.gAccount.Controls.Add(this.button2);
+            this.gAccount.Controls.Add(this.lMode);
+            this.gAccount.Controls.Add(this.labMode);
             this.gAccount.Controls.Add(this.button1);
             this.gAccount.Controls.Add(this.bAddFTP);
             this.gAccount.Controls.Add(this.lPort);
@@ -303,47 +303,43 @@
             this.gAccount.Controls.Add(this.labHost);
             this.gAccount.Location = new System.Drawing.Point(8, 9);
             this.gAccount.Name = "gAccount";
-            this.gAccount.Size = new System.Drawing.Size(370, 109);
+            this.gAccount.Size = new System.Drawing.Size(370, 126);
             this.gAccount.TabIndex = 2;
             this.gAccount.TabStop = false;
             this.gAccount.Text = "FTP Account";
             // 
-            // button3
+            // lMode
             // 
-            this.button3.Location = new System.Drawing.Point(195, 75);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 13;
-            this.button3.Text = "button3";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Visible = false;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.lMode.AutoSize = true;
+            this.lMode.Location = new System.Drawing.Point(83, 81);
+            this.lMode.Name = "lMode";
+            this.lMode.Size = new System.Drawing.Size(27, 13);
+            this.lMode.TabIndex = 13;
+            this.lMode.Text = "N/A";
             // 
-            // button2
+            // labMode
             // 
-            this.button2.Location = new System.Drawing.Point(195, 46);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 12;
-            this.button2.Text = "Clear";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Visible = false;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.labMode.AutoSize = true;
+            this.labMode.Location = new System.Drawing.Point(6, 81);
+            this.labMode.Name = "labMode";
+            this.labMode.Size = new System.Drawing.Size(37, 13);
+            this.labMode.TabIndex = 12;
+            this.labMode.Text = "Mode:";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(195, 17);
+            this.button1.Location = new System.Drawing.Point(278, 32);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 11;
-            this.button1.Text = "Show";
+            this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Visible = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // bAddFTP
             // 
-            this.bAddFTP.Location = new System.Drawing.Point(308, 79);
+            this.bAddFTP.Location = new System.Drawing.Point(308, 96);
             this.bAddFTP.Name = "bAddFTP";
             this.bAddFTP.Size = new System.Drawing.Size(56, 24);
             this.bAddFTP.TabIndex = 0;
@@ -381,7 +377,7 @@
             // labPort
             // 
             this.labPort.AutoSize = true;
-            this.labPort.Location = new System.Drawing.Point(4, 63);
+            this.labPort.Location = new System.Drawing.Point(6, 63);
             this.labPort.Name = "labPort";
             this.labPort.Size = new System.Drawing.Size(29, 13);
             this.labPort.TabIndex = 6;
@@ -918,8 +914,6 @@
         private System.Windows.Forms.Label labFullPath;
         private System.Windows.Forms.RadioButton rCopy2Clipboard;
         private System.Windows.Forms.RadioButton rOpenInBrowser;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Timer CheckConnection;
         private System.Windows.Forms.ToolStripMenuItem recentFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
@@ -927,8 +921,10 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
-        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label labLang;
         private System.Windows.Forms.ComboBox cmbLang;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label lMode;
+        private System.Windows.Forms.Label labMode;
     }
 }

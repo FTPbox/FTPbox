@@ -31,10 +31,17 @@ namespace FTPbox
         {
             try
             {
-                Process.Start("https://sourceforge.net/projects/ftpbox");
+                string fpathtoexe = Application.StartupPath + @"\updater.exe";
+                Process.Start(fpathtoexe);
             }
             catch { }
-            this.Close();
+            //this.Close();
+            try
+            {
+                Process p = Process.GetCurrentProcess();
+                p.Kill();
+            }
+            catch { }
             Application.Exit();
         }
 
@@ -46,7 +53,6 @@ namespace FTPbox
             }
             catch { }
             this.Close();
-            Application.Exit();
         }
 
         private void bClose_Click(object sender, EventArgs e)
@@ -63,7 +69,7 @@ namespace FTPbox
                 labCurVer.Text = "Versión actual";
                 labNewVer.Text = "Nueva versión";
                 labQuest.Text = "¿Deseas descargar la nueva versión ahora?";
-                bDownload.Text = "Descargar";
+                bDownload.Text = "Actualizar";
                 bLearnMore.Text = "Conoce más";
                 bClose.Text = "No esta vez";
             }
@@ -74,7 +80,7 @@ namespace FTPbox
                 labCurVer.Text = "Aktuelle Version:";
                 labNewVer.Text = "Neue Version:";
                 labQuest.Text = "Wollen Sie die neue Version jetzt herunterladen?";
-                bDownload.Text = "Herunterladen";
+                bDownload.Text = "Aktuallisieren";
                 bLearnMore.Text = "Mehr erfahren";
                 bClose.Text = "Nicht dieses Mal";
             }
@@ -85,7 +91,7 @@ namespace FTPbox
                 labCurVer.Text = "Current Version:";
                 labNewVer.Text = "New Version:";
                 labQuest.Text = "Do you want to download the new version now?";
-                bDownload.Text = "Download";
+                bDownload.Text = "Update Now";
                 bLearnMore.Text = "Learn More";
                 bClose.Text = "Not this time";
             }

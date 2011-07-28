@@ -33,6 +33,8 @@
             this.bDone = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.gDetails = new System.Windows.Forms.GroupBox();
+            this.cMode = new System.Windows.Forms.ComboBox();
+            this.labMode = new System.Windows.Forms.Label();
             this.nPort = new System.Windows.Forms.NumericUpDown();
             this.labPort = new System.Windows.Forms.Label();
             this.labHost = new System.Windows.Forms.Label();
@@ -48,7 +50,7 @@
             // bDone
             // 
             this.bDone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bDone.Location = new System.Drawing.Point(169, 155);
+            this.bDone.Location = new System.Drawing.Point(169, 178);
             this.bDone.Name = "bDone";
             this.bDone.Size = new System.Drawing.Size(75, 23);
             this.bDone.TabIndex = 4;
@@ -64,6 +66,8 @@
             // 
             // gDetails
             // 
+            this.gDetails.Controls.Add(this.cMode);
+            this.gDetails.Controls.Add(this.labMode);
             this.gDetails.Controls.Add(this.nPort);
             this.gDetails.Controls.Add(this.labPort);
             this.gDetails.Controls.Add(this.labHost);
@@ -74,14 +78,36 @@
             this.gDetails.Controls.Add(this.tUsername);
             this.gDetails.Location = new System.Drawing.Point(11, 12);
             this.gDetails.Name = "gDetails";
-            this.gDetails.Size = new System.Drawing.Size(233, 136);
+            this.gDetails.Size = new System.Drawing.Size(233, 159);
             this.gDetails.TabIndex = 32;
             this.gDetails.TabStop = false;
             this.gDetails.Text = "FTP Login Details";
             // 
+            // cMode
+            // 
+            this.cMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cMode.FormattingEnabled = true;
+            this.cMode.Items.AddRange(new object[] {
+            "FTP",
+            "SFTP"});
+            this.cMode.Location = new System.Drawing.Point(86, 24);
+            this.cMode.Name = "cMode";
+            this.cMode.Size = new System.Drawing.Size(57, 21);
+            this.cMode.TabIndex = 24;
+            this.cMode.SelectedIndexChanged += new System.EventHandler(this.cMode_SelectedIndexChanged);
+            // 
+            // labMode
+            // 
+            this.labMode.AutoSize = true;
+            this.labMode.Location = new System.Drawing.Point(6, 27);
+            this.labMode.Name = "labMode";
+            this.labMode.Size = new System.Drawing.Size(37, 13);
+            this.labMode.TabIndex = 23;
+            this.labMode.Text = "Mode:";
+            // 
             // nPort
             // 
-            this.nPort.Location = new System.Drawing.Point(86, 50);
+            this.nPort.Location = new System.Drawing.Point(86, 129);
             this.nPort.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -104,7 +130,7 @@
             // labPort
             // 
             this.labPort.AutoSize = true;
-            this.labPort.Location = new System.Drawing.Point(6, 53);
+            this.labPort.Location = new System.Drawing.Point(6, 132);
             this.labPort.Name = "labPort";
             this.labPort.Size = new System.Drawing.Size(29, 13);
             this.labPort.TabIndex = 22;
@@ -113,7 +139,7 @@
             // labHost
             // 
             this.labHost.AutoSize = true;
-            this.labHost.Location = new System.Drawing.Point(6, 27);
+            this.labHost.Location = new System.Drawing.Point(6, 54);
             this.labHost.Name = "labHost";
             this.labHost.Size = new System.Drawing.Size(32, 13);
             this.labHost.TabIndex = 20;
@@ -121,7 +147,7 @@
             // 
             // tHost
             // 
-            this.tHost.Location = new System.Drawing.Point(86, 24);
+            this.tHost.Location = new System.Drawing.Point(86, 51);
             this.tHost.Name = "tHost";
             this.tHost.Size = new System.Drawing.Size(141, 20);
             this.tHost.TabIndex = 0;
@@ -129,7 +155,7 @@
             // labPass
             // 
             this.labPass.AutoSize = true;
-            this.labPass.Location = new System.Drawing.Point(6, 105);
+            this.labPass.Location = new System.Drawing.Point(6, 106);
             this.labPass.Name = "labPass";
             this.labPass.Size = new System.Drawing.Size(56, 13);
             this.labPass.TabIndex = 17;
@@ -138,7 +164,7 @@
             // labUN
             // 
             this.labUN.AutoSize = true;
-            this.labUN.Location = new System.Drawing.Point(6, 79);
+            this.labUN.Location = new System.Drawing.Point(6, 80);
             this.labUN.Name = "labUN";
             this.labUN.Size = new System.Drawing.Size(58, 13);
             this.labUN.TabIndex = 16;
@@ -146,7 +172,7 @@
             // 
             // tPass
             // 
-            this.tPass.Location = new System.Drawing.Point(86, 102);
+            this.tPass.Location = new System.Drawing.Point(86, 103);
             this.tPass.Name = "tPass";
             this.tPass.PasswordChar = '●';
             this.tPass.Size = new System.Drawing.Size(141, 20);
@@ -154,7 +180,7 @@
             // 
             // tUsername
             // 
-            this.tUsername.Location = new System.Drawing.Point(86, 76);
+            this.tUsername.Location = new System.Drawing.Point(86, 77);
             this.tUsername.Name = "tUsername";
             this.tUsername.Size = new System.Drawing.Size(141, 20);
             this.tUsername.TabIndex = 2;
@@ -164,7 +190,7 @@
             this.AcceptButton = this.bDone;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(252, 183);
+            this.ClientSize = new System.Drawing.Size(252, 208);
             this.Controls.Add(this.gDetails);
             this.Controls.Add(this.bDone);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -195,5 +221,7 @@
         private System.Windows.Forms.Label labUN;
         private System.Windows.Forms.TextBox tPass;
         private System.Windows.Forms.TextBox tUsername;
+        private System.Windows.Forms.ComboBox cMode;
+        private System.Windows.Forms.Label labMode;
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using FtpLib;
+using Tamir.SharpSsh.jsch;
 
 namespace FTPbox
 {
@@ -17,8 +18,11 @@ namespace FTPbox
         string UN;
         string pass;
         int port;
+        bool ftporsftp;
 
         FtpConnection ftp;
+
+        string sftproot = "/home";
 
         public fNewDir()
         {
@@ -43,30 +47,24 @@ namespace FTPbox
             ((frmMain)this.Tag).UpdateDetails();
             ((frmMain)this.Tag).SetLocalWatcher();
             ((frmMain)this.Tag).gotpaths = true;
-            try
-            {
-                ftp.Close();
-            }
-            catch { }
-            this.Close();
 
-            /*
-            if (rAlreadyExists(tFullDir.Text))
+            if (ftporsftp)
             {
-                MessageBox.Show(string.Format("Remote path {0} is already used in another box", tFullDir.Text), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else if (lAlreadyExists(tPath.Text))
-            {
-                MessageBox.Show(string.Format("Local path {0} is already used in another box", tPath.Text), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                try
+                {
+                    ftp.Close();
+                }
+                catch { }
             }
             else
             {
-                ((fMain)this.Tag).Get_new_directory(tFullDir.Text, tPath.Text, chkSubdirectories.Checked, chkDelRem.Checked);
-
-                ftp.Close();
-                this.Close();
+                try
+                {
+                    sftpc.quit();
+                }
+                catch { }
             }
-            */
+            this.Close();
         }       
 
         private void fNewDir_Load(object sender, EventArgs e)
@@ -77,10 +75,19 @@ namespace FTPbox
                 UN = FTPbox.Properties.Settings.Default.ftpUsername;
                 pass = FTPbox.Properties.Settings.Default.ftpPass;
                 port = FTPbox.Properties.Settings.Default.ftpPort;
+                ftporsftp = FTPbox.Properties.Settings.Default.FTPorSFTP;
 
-                ftp = new FtpConnection(host, port, UN, pass);
-                ftp.Open();
-                ftp.Login();
+                if (ftporsftp)
+                {
+                    ftp = new FtpConnection(host, port, UN, pass);
+                    ftp.Open();
+                    ftp.Login();
+                }
+                else
+                {
+                    sftp_login();
+                    sftproot = sftpc.pwd();
+                }
 
                 tParent.Text = FTPbox.Properties.Settings.Default.ftpHost;
 
@@ -90,19 +97,39 @@ namespace FTPbox
                 first.Text = "/";
                 treeView1.Nodes.Add(first);
 
-                foreach (FtpDirectoryInfo dir in ftp.GetDirectories())
+                if (ftporsftp)
                 {
-                    if (dir.Name != "." && dir.Name != "..")
+                    foreach (FtpDirectoryInfo dir in ftp.GetDirectories())
                     {
-                        TreeNode ParentNode = new TreeNode();
-                        ParentNode.Text = dir.Name.ToString();
-                        treeView1.Nodes.Add(ParentNode);
+                        if (dir.Name != "." && dir.Name != "..")
+                        {
+                            TreeNode ParentNode = new TreeNode();
+                            ParentNode.Text = dir.Name.ToString();
+                            treeView1.Nodes.Add(ParentNode);
 
-                        TreeNode ChildNode = new TreeNode();
-                        ChildNode.Text = dir.Name.ToString();
-                        ParentNode.Nodes.Add(ChildNode);
+                            TreeNode ChildNode = new TreeNode();
+                            ChildNode.Text = dir.Name.ToString();
+                            ParentNode.Nodes.Add(ChildNode);
+                        }
+
                     }
+                }
+                else
+                {
+                    foreach (ChannelSftp.LsEntry lse in sftpc.ls("."))
+                    {
+                        SftpATTRS attrs = lse.getAttrs();
+                        if (lse.getFilename() != "." && lse.getFilename() != ".." && attrs.getPermissionsString().StartsWith("d"))
+                        {
+                            TreeNode ParentNode = new TreeNode();
+                            ParentNode.Text = lse.getFilename();
+                            treeView1.Nodes.Add(ParentNode);
 
+                            TreeNode ChildNode = new TreeNode();
+                            ChildNode.Text = lse.getFilename();
+                            ParentNode.Nodes.Add(ChildNode);
+                        }
+                    }
                 }
                 treeView1.SelectedNode = first;
                 Set_Language(FTPbox.Properties.Settings.Default.lan);
@@ -127,6 +154,7 @@ namespace FTPbox
                 path = path.Substring(0, path.Length - 1);
             }
             tFullDir.Text = path;
+            tParent.Text = FTPbox.Properties.Settings.Default.ftpHost +path;
         }
 
         private void treeView1_AfterExpand(object sender, TreeViewEventArgs e)
@@ -138,17 +166,40 @@ namespace FTPbox
                 tn.Remove();
             }
 
-            foreach (FtpDirectoryInfo dir in ftp.GetDirectories(path))
+            if (ftporsftp)
             {
-                if (dir.Name != "." && dir.Name != "..")
+                foreach (FtpDirectoryInfo dir in ftp.GetDirectories(path))
                 {
-                    TreeNode ParentNode = new TreeNode();
-                    ParentNode.Text = dir.Name.ToString();
-                    e.Node.Nodes.Add(ParentNode);
+                    if (dir.Name != "." && dir.Name != "..")
+                    {
+                        TreeNode ParentNode = new TreeNode();
+                        ParentNode.Text = dir.Name.ToString();
+                        e.Node.Nodes.Add(ParentNode);
 
-                    TreeNode ChildNode = new TreeNode();
-                    ChildNode.Text = dir.Name.ToString();
-                    ParentNode.Nodes.Add(ChildNode);
+                        TreeNode ChildNode = new TreeNode();
+                        ChildNode.Text = dir.Name.ToString();
+                        ParentNode.Nodes.Add(ChildNode);
+                    }
+                }
+            }
+            else
+            {
+                SftpGoToRoot();
+                string fpath = sftproot + path;
+                sftpc.cd(fpath);
+                foreach (ChannelSftp.LsEntry lse in sftpc.ls("."))
+                {
+                    SftpATTRS attrs = lse.getAttrs();
+                    if (lse.getFilename() != "." && lse.getFilename() != ".." && attrs.getPermissionsString().StartsWith("d"))
+                    {
+                        TreeNode ParentNode = new TreeNode();
+                        ParentNode.Text = lse.getFilename();
+                        e.Node.Nodes.Add(ParentNode);
+
+                        TreeNode ChildNode = new TreeNode();
+                        ChildNode.Text = lse.getFilename();
+                        ParentNode.Nodes.Add(ChildNode);
+                    }
                 }
             }
         }
@@ -163,34 +214,7 @@ namespace FTPbox
             {
                 bDone.Enabled = false;
             }
-        }
-
-        private bool rAlreadyExists(string path)
-        {
-            bool b = false;
-            foreach (string s in FTPbox.Properties.Settings.Default.Boxes)
-            {
-                string[] comb = s.Split('|', '|');
-                if (comb[0] == path)
-                {
-                    b = true;
-                }
-            }
-            return b;
-        }
-        private bool lAlreadyExists(string path)
-        {
-            bool b = false;
-            foreach (string s in FTPbox.Properties.Settings.Default.Boxes)
-            {
-                string[] comb = s.Split('|', '|');
-                if (comb[1] == path)
-                {
-                    b = true;
-                }
-            }
-            return b;
-        }
+        }        
 
         private void tParent_TextChanged(object sender, EventArgs e)
         {
@@ -206,7 +230,9 @@ namespace FTPbox
                 labSelect.Text = "Selecciona la dirección:";
                 labFullPath.Text = "Dirección completa:";
                 labLocal.Text = "Carpeta local:";
+                labParent.Text = "Dirección completa de la cuent:";
                 bBrowse.Text = "Explorar";
+                bDone.Text = "Listo";
             }
             else if (lan == "de")
             {
@@ -214,7 +240,9 @@ namespace FTPbox
                 labSelect.Text = "Vollständigen Ordnerpfad auswählen:";
                 labFullPath.Text = "Vollständiger Pfad:";
                 labLocal.Text = "Lokaler Ordner:";
+                labParent.Text = "Vollständiger Kontopfad:";
                 bBrowse.Text = "Durchsuchen";
+                bDone.Text = "Fertig";
             }
             else
             {
@@ -222,7 +250,71 @@ namespace FTPbox
                 labSelect.Text = "Select directory:";
                 labFullPath.Text = "Full path:";
                 labLocal.Text = "Local folder:";
+                labParent.Text = "Account's full path:";
                 bBrowse.Text = "Browse";
+                bDone.Text = "Done";
+            }
+        }
+        
+        ChannelSftp sftpc;
+        private void sftp_login()
+        {
+            JSch jsch = new JSch();
+
+            String host = FTPbox.Properties.Settings.Default.ftpHost;
+            String user = FTPbox.Properties.Settings.Default.ftpUsername;
+
+            Session session = jsch.getSession(user, host, 22);
+
+            // username and password will be given via UserInfo interface.
+            UserInfo ui = new MyUserInfo();
+
+            session.setUserInfo(ui);
+
+            session.connect();
+
+            Channel channel = session.openChannel("sftp");
+            channel.connect();
+            sftpc = (ChannelSftp)channel;
+
+        }
+
+        public class MyUserInfo : UserInfo
+        {
+            public String getPassword() { return passwd; }
+            public bool promptYesNo(String str)
+            {
+                /*
+                DialogResult returnVal = MessageBox.Show(
+                    str,
+                    "SharpSSH_",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+                return (returnVal == DialogResult.Yes); */
+                return true;
+            }
+
+            String passwd = FTPbox.Properties.Settings.Default.ftpPass;
+
+            public String getPassphrase() { return null; }
+            public bool promptPassphrase(String message) { return true; }
+            public bool promptPassword(String message) { return true; }
+
+            public void showMessage(String message)
+            {
+                MessageBox.Show(
+                    message,
+                    "SharpSSH",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Asterisk);
+            }
+        }
+
+        public void SftpGoToRoot()
+        {
+            while (!sftpc.pwd().equals(sftproot))
+            {
+                sftpc.cd("..");
             }
         }
     }
