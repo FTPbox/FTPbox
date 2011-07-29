@@ -19,7 +19,7 @@ namespace FTPbox
         string pass;
         int port;
         bool ftporsftp;
-
+        
         FtpConnection ftp;
 
         string sftproot = "/home";
@@ -37,11 +37,12 @@ namespace FTPbox
 
         private void bDone_Click(object sender, EventArgs e)
         {
-            FTPbox.Properties.Settings.Default.rPath = tFullDir.Text;
-            FTPbox.Properties.Settings.Default.lPath = tPath.Text;
-            FTPbox.Properties.Settings.Default.delRem = !chkDelRem.Checked;
-            FTPbox.Properties.Settings.Default.ftpParent = tParent.Text;
-            FTPbox.Properties.Settings.Default.Save();
+            ((frmMain)this.Tag).UpdatePaths(tFullDir.Text, tPath.Text, tParent.Text);
+
+            //FTPbox.Properties.Settings.Default.rPath = tFullDir.Text;
+            //FTPbox.Properties.Settings.Default.lPath = tPath.Text;
+            //FTPbox.Properties.Settings.Default.ftpParent = tParent.Text;
+            //FTPbox.Properties.Settings.Default.Save();
 
             ((frmMain)this.Tag).ClearLog();
             ((frmMain)this.Tag).UpdateDetails();
@@ -71,11 +72,12 @@ namespace FTPbox
         {
             try
             {
-                host = FTPbox.Properties.Settings.Default.ftpHost;
-                UN = FTPbox.Properties.Settings.Default.ftpUsername;
-                pass = FTPbox.Properties.Settings.Default.ftpPass;
-                port = FTPbox.Properties.Settings.Default.ftpPort;
-                ftporsftp = FTPbox.Properties.Settings.Default.FTPorSFTP;
+                host = ((frmMain)this.Tag).ftpHost();
+                UN = ((frmMain)this.Tag).ftpUser();
+                pass = ((frmMain)this.Tag).ftpPass();
+                port = ((frmMain)this.Tag).ftpPort();
+                ftporsftp = ((frmMain)this.Tag).FTP();
+                ((frmMain)this.Tag).SetParent(host);
 
                 if (ftporsftp)
                 {
@@ -89,7 +91,12 @@ namespace FTPbox
                     sftproot = sftpc.pwd();
                 }
 
-                tParent.Text = FTPbox.Properties.Settings.Default.ftpHost;
+                if (((frmMain)this.Tag).ftpParent() == "")
+                    tParent.Text = ((frmMain)this.Tag).ftpHost();
+                else
+                    tParent.Text = ((frmMain)this.Tag).ftpParent();
+
+                Log.Write(((frmMain)this.Tag).ftpParent() + " " + ((frmMain)this.Tag).ftpHost());
 
                 treeView1.Nodes.Clear();
 
@@ -132,7 +139,7 @@ namespace FTPbox
                     }
                 }
                 treeView1.SelectedNode = first;
-                Set_Language(FTPbox.Properties.Settings.Default.lan);
+                Set_Language(((frmMain)this.Tag).lang());
             }
             catch { this.Close(); }
 
@@ -154,7 +161,7 @@ namespace FTPbox
                 path = path.Substring(0, path.Length - 1);
             }
             tFullDir.Text = path;
-            tParent.Text = FTPbox.Properties.Settings.Default.ftpHost +path;
+            tParent.Text = ((frmMain)this.Tag).ftpParent() + path;
         }
 
         private void treeView1_AfterExpand(object sender, TreeViewEventArgs e)
@@ -218,8 +225,9 @@ namespace FTPbox
 
         private void tParent_TextChanged(object sender, EventArgs e)
         {
-            FTPbox.Properties.Settings.Default.ftpParent = tParent.Text;
-            FTPbox.Properties.Settings.Default.Save();
+            //((frmMain)this.Tag).SetParent(tParent.Text);
+            //FTPbox.Properties.Settings.Default.ftpParent = tParent.Text;
+            //FTPbox.Properties.Settings.Default.Save();
         }
 
         private void Set_Language(string lan)
@@ -261,10 +269,10 @@ namespace FTPbox
         {
             JSch jsch = new JSch();
 
-            String host = FTPbox.Properties.Settings.Default.ftpHost;
-            String user = FTPbox.Properties.Settings.Default.ftpUsername;
+            host = ((frmMain)this.Tag).ftpHost();
+            UN = ((frmMain)this.Tag).ftpUser();
 
-            Session session = jsch.getSession(user, host, 22);
+            Session session = jsch.getSession(UN, host, 22);
 
             // username and password will be given via UserInfo interface.
             UserInfo ui = new MyUserInfo();
@@ -281,7 +289,8 @@ namespace FTPbox
 
         public class MyUserInfo : UserInfo
         {
-            public String getPassword() { return passwd; }
+            FTPbox.Classes.Settings sets = new FTPbox.Classes.Settings();
+            public String getPassword() { return sets.Get("Account/Password", ""); }
             public bool promptYesNo(String str)
             {
                 /*
@@ -293,9 +302,7 @@ namespace FTPbox
                 return (returnVal == DialogResult.Yes); */
                 return true;
             }
-
-            String passwd = FTPbox.Properties.Settings.Default.ftpPass;
-
+            
             public String getPassphrase() { return null; }
             public bool promptPassphrase(String message) { return true; }
             public bool promptPassword(String message) { return true; }

@@ -14,7 +14,6 @@ namespace FTPbox
 {
     public partial class NewFTP : Form
     {
-
         FtpConnection ftp;
         
         public NewFTP()
@@ -26,9 +25,15 @@ namespace FTPbox
         {
             bool ftporsftp;
             if (cMode.SelectedIndex == 0)
+            {
                 ftporsftp = true;
+                Log.Write("FTP");
+            }
             else
+            {
                 ftporsftp = false;
+                Log.Write("SFTP");
+            }
 
             try 
             {
@@ -41,31 +46,34 @@ namespace FTPbox
                 }
                 else
                 {
-                    FTPbox.Properties.Settings.Default.ftpPass = tPass.Text;
+                    ((frmMain)this.Tag).SetPass(tPass.Text);
+                    //FTPbox.Properties.Settings.Default.ftpPass = tPass.Text;
                     sftp_login();
                     //MessageBox.Show("SFTP Connected");
                     sftpc.quit();
-                }                
-
-                FTPbox.Properties.Settings.Default.ftpHost = tHost.Text;
-                FTPbox.Properties.Settings.Default.ftpPort = Convert.ToInt32(nPort.Value);
-                FTPbox.Properties.Settings.Default.ftpUsername = tUsername.Text;
-                FTPbox.Properties.Settings.Default.ftpPass = tPass.Text;
-                FTPbox.Properties.Settings.Default.FTPorSFTP = ftporsftp;
-                FTPbox.Properties.Settings.Default.timedif = "";
-                FTPbox.Properties.Settings.Default.Save();
+                }
+                ((frmMain)this.Tag).UpdateAccountInfo(tHost.Text, tUsername.Text, tPass.Text, Convert.ToInt32(nPort.Value), "", ftporsftp);
+                
+                //FTPbox.Properties.Settings.Default.ftpHost = tHost.Text;
+                //FTPbox.Properties.Settings.Default.ftpPort = Convert.ToInt32(nPort.Value);
+                //FTPbox.Properties.Settings.Default.ftpUsername = tUsername.Text;
+                //FTPbox.Properties.Settings.Default.ftpPass = tPass.Text;
+                //FTPbox.Properties.Settings.Default.FTPorSFTP = ftporsftp;
+                //FTPbox.Properties.Settings.Default.timedif = "";
+                //FTPbox.Properties.Settings.Default.Save();
 
             }
             catch
             {
                 MessageBox.Show("Could not connect to FTP server. Check your account details and try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
+            Log.Write("got new ftp acccount details");
             ((frmMain)this.Tag).ClearLog();
             ((frmMain)this.Tag).UpdateDetails();
             //((frmMain)this.Tag).GetServerTime();
             ((frmMain)this.Tag).loggedIn = true;
-
+            fNewDir fnewdir = new fNewDir();
+            fnewdir.ShowDialog();
             this.Close();           
         }
 
@@ -83,13 +91,13 @@ namespace FTPbox
 
         private void NewFTP_Load(object sender, EventArgs e)
         {
-            tHost.Text = FTPbox.Properties.Settings.Default.ftpHost;
-            tUsername.Text = FTPbox.Properties.Settings.Default.ftpUsername;
-            tPass.Text = FTPbox.Properties.Settings.Default.ftpPass;
-            nPort.Value = Convert.ToDecimal(FTPbox.Properties.Settings.Default.ftpPort);
-            Set_Language(FTPbox.Properties.Settings.Default.lan);
+            tHost.Text = ((frmMain)this.Tag).ftpHost();
+            tUsername.Text = ((frmMain)this.Tag).ftpUser();
+            tPass.Text = ((frmMain)this.Tag).ftpPass();
+            nPort.Value = 21;
+            Set_Language(((frmMain)this.Tag).lang());
 
-            if (FTPbox.Properties.Settings.Default.FTPorSFTP)
+            if (((frmMain)this.Tag).FTP())
             {
                 cMode.SelectedIndex = 0;
             }
@@ -162,7 +170,8 @@ namespace FTPbox
 
         public class MyUserInfo : UserInfo
         {
-            public String getPassword() { return passwd; }
+            FTPbox.Classes.Settings sets = new FTPbox.Classes.Settings();
+            public String getPassword() { return sets.Get("Account/Password", ""); }
             public bool promptYesNo(String str)
             {
                 /*
@@ -174,8 +183,6 @@ namespace FTPbox
                 return (returnVal == DialogResult.Yes); */
                 return true;
             }
-
-            String passwd = FTPbox.Properties.Settings.Default.ftpPass;
 
             public String getPassphrase() { return null; }
             public bool promptPassphrase(String message) { return true; }

@@ -120,7 +120,7 @@
             0});
             this.nPort.Name = "nPort";
             this.nPort.Size = new System.Drawing.Size(57, 20);
-            this.nPort.TabIndex = 1;
+            this.nPort.TabIndex = 3;
             this.nPort.Value = new decimal(new int[] {
             21,
             0,
@@ -176,14 +176,14 @@
             this.tPass.Name = "tPass";
             this.tPass.PasswordChar = '●';
             this.tPass.Size = new System.Drawing.Size(141, 20);
-            this.tPass.TabIndex = 3;
+            this.tPass.TabIndex = 2;
             // 
             // tUsername
             // 
             this.tUsername.Location = new System.Drawing.Point(86, 77);
             this.tUsername.Name = "tUsername";
             this.tUsername.Size = new System.Drawing.Size(141, 20);
-            this.tUsername.TabIndex = 2;
+            this.tUsername.TabIndex = 1;
             // 
             // NewFTP
             // 

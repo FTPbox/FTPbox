@@ -15,6 +15,7 @@ using System.Threading;
 using System.Net;
 using Tamir.SharpSsh.jsch;
 using Tamir.SharpSsh.jsch.examples;
+using FTPbox.Classes;
 
 namespace FTPbox
 {
@@ -35,6 +36,7 @@ namespace FTPbox
         fNewDir newDir;
 
         List<List<string>> pending = new List<List<string>>();
+        Dictionary<string, string> RenamedList = new Dictionary<string, string>();
 
         //logs:
         List<string> log = new List<string>(FTPbox.Properties.Settings.Default.log.Split('|', '|'));
@@ -68,6 +70,8 @@ namespace FTPbox
         public bool downloading = false;
         public bool listing = false;
         public bool recentlycreated = false;
+
+        Settings AppSettings = new Settings();
         
         public frmMain()
         {
@@ -80,8 +84,8 @@ namespace FTPbox
             KillPrevInstances();
 
             //ClearLog();
-            
-            foreach (string s in FTPbox.Properties.Settings.Default.nLog.Split('|', '|'))
+
+            foreach (string s in nLog().Split('|', '|'))
             {
                 Log.Write("In Log: {0}", s);
             }
@@ -117,13 +121,13 @@ namespace FTPbox
 
             UpdateDetails();
 
-            if (FTPbox.Properties.Settings.Default.timedif == "" || FTPbox.Properties.Settings.Default.timedif == null)
+            if (AppSettings.Get("Settings/Timedif", "") == "" || AppSettings.Get("Settings/Timedif", "") == null)
             {
                 GetServerTime();
             }
             else
             {
-                timedif = TimeSpan.Parse(FTPbox.Properties.Settings.Default.timedif);
+                timedif = TimeSpan.Parse(AppSettings.Get("Settings/Timedif", ""));
             }
 
             Syncing();
@@ -182,6 +186,7 @@ namespace FTPbox
 
                 if (FTP())
                 {
+                    Log.Write("FTP");
                     ftp = new FtpConnection(ftpHost(), ftpPort(), ftpUser(), ftpPass());
                     ftpbg = new FtpConnection(ftpHost(), ftpPort(), ftpUser(), ftpPass());
                     ftp.Open();
@@ -195,12 +200,14 @@ namespace FTPbox
                 }
                 else
                 {
+                    Log.Write("SFTP");
                     sftp_login();
                     this.ShowInTaskbar = false;
                     this.Hide();
                     this.ShowInTaskbar = true;
                     loggedIn = true;
-                }               
+                }
+                newDir.ShowDialog();
             }
         }
 
@@ -237,7 +244,20 @@ namespace FTPbox
                         SftpCDtoRoot();
                         Log.Write(rpath + " | " + sftpc.pwd());
                         //sftpc.cd(rpath);
-                        sftpc.lcd(lPath());
+                        if (!Directory.Exists(lPath()))
+                        {
+                            newDir.ShowDialog();
+                            if (!gotpaths)
+                            {
+                                try
+                                {
+                                    Process p = Process.GetCurrentProcess();
+                                    p.Kill();
+                                }
+                                catch { }
+                            }
+                        }
+                            
                     }
                     catch (SftpException e)
                     {
@@ -267,15 +287,16 @@ namespace FTPbox
             lUsername.Text = ftpUser();
             lPort.Text = ftpPort().ToString();
             chkStartUp.Checked = CheckStartup();
+
             if (FTP())
                 lMode.Text = "FTP";
             else
                 lMode.Text = "SFTP";
 
-            FTPbox.Properties.Settings.Default.startup = CheckStartup();
+            AppSettings.Put("Settings/Startup", CheckStartup().ToString());
+            //FTPbox.Properties.Settings.Default.startup = CheckStartup();
 
             chkShowNots.Checked = ShowNots();
-            chkCloseToTray.Checked = CloseToTray();
             tParent.Text = ftpParent();
 
             lVersion.Text = Application.ProductVersion.ToString().Substring(0, 5) + @" Beta";
@@ -285,10 +306,6 @@ namespace FTPbox
             lLocPath.Text = lPath();
             tParent.Text = ftpParent();
 
-            if (delRem())
-                lDelRem.Text = @"Yes";
-            else
-                lDelRem.Text = @"No";
             if (OpenInBrowser())
                 rOpenInBrowser.Checked = true;
             else
@@ -297,33 +314,33 @@ namespace FTPbox
 
         #region variables
 
-        private string ftpHost()
+        public string ftpHost()
         {
-            return FTPbox.Properties.Settings.Default.ftpHost;
+            return AppSettings.Get("Account/Host", "");
         }
 
-        private string ftpUser()
+        public string ftpUser()
         {
-            return FTPbox.Properties.Settings.Default.ftpUsername;
+            return AppSettings.Get("Account/Username", "");
         }
 
-        private string ftpPass()
+        public string ftpPass()
         {
-            return FTPbox.Properties.Settings.Default.ftpPass;
+            return AppSettings.Get("Account/Password", "");
         }
 
-        private int ftpPort()
+        public int ftpPort()
         {
-            return FTPbox.Properties.Settings.Default.ftpPort;
+            return AppSettings.Get("Account/Port", 21);
         }
 
-        private string rPath()
+        public string rPath()
         {
             if (FTP())
-                return FTPbox.Properties.Settings.Default.rPath;
+                return AppSettings.Get("Paths/rPath", "");
             else
             {
-                string rpath = FTPbox.Properties.Settings.Default.rPath;
+                string rpath = AppSettings.Get("Paths/rPath", "");
                 if (rpath == "/")
                     rpath = "";
                 else if (rpath.StartsWith("/"))
@@ -332,79 +349,54 @@ namespace FTPbox
             }
         }
 
-        private string lPath()
+        public string lPath()
         {
-            return FTPbox.Properties.Settings.Default.lPath;
-        }
-
-        bool delRem()
-        {
-            return FTPbox.Properties.Settings.Default.delRem;
+            return AppSettings.Get("Paths/lPath", "");
         }
 
         bool StartOnStartup()
         {
-            return FTPbox.Properties.Settings.Default.startup;
+            return bool.Parse(AppSettings.Get("Settings/Startup", "True"));
         }
 
         bool ShowNots()
         {
-            return FTPbox.Properties.Settings.Default.shownots;
-        }
-        
-        bool CloseToTray()
-        {
-            return FTPbox.Properties.Settings.Default.closetotray;
+            return bool.Parse(AppSettings.Get("Settings/ShowNots", "True"));
         }
 
         bool OpenInBrowser()
         {
-            return FTPbox.Properties.Settings.Default.openinbrowser;
+            return bool.Parse(AppSettings.Get("Settings/OpenInBrowser", "True"));
         }
 
-        string ftpParent()
+        public string ftpParent()
         {
-            return FTPbox.Properties.Settings.Default.ftpParent;
-        }
-        
-        string currentlog()
-        {
-            return FTPbox.Properties.Settings.Default.log;
-        }
-
-        string currentrDateLog()
-        {
-            return FTPbox.Properties.Settings.Default.rDateLog;
-        }
-
-        string currentlDateLog()
-        {
-            return FTPbox.Properties.Settings.Default.lDateLog;
+            return AppSettings.Get("Paths/Parent", ftpHost());
         }
 
         string nLog()
         {
-            return FTPbox.Properties.Settings.Default.nLog;
+            return AppSettings.Get("Log/nLog", "");
         }
 
         string rLog()
         {
-            return FTPbox.Properties.Settings.Default.rLog;
+            return AppSettings.Get("Log/rLog", "");
         }
 
         string lLog()
         {
-            return FTPbox.Properties.Settings.Default.lLog;
+            return AppSettings.Get("Log/lLog", "");
         }
 
-        string lang()
+        public string lang()
         {
-            return FTPbox.Properties.Settings.Default.lan;
+            return AppSettings.Get("Settings/Language", "");
         }
 
-        bool FTP()
+        public bool FTP()
         {
-            return FTPbox.Properties.Settings.Default.FTPorSFTP;
+            return bool.Parse(AppSettings.Get("Account/FTPorSFTP", "True"));
         }
 
         #endregion
@@ -550,7 +542,7 @@ namespace FTPbox
                 else if (e.ChangeType == WatcherChangeTypes.Deleted)
                 {
                     Log.Write("ooooooooooooooooo Deleted");
-                    if (delRem() && !downloading)
+                    if (!downloading)
                     {
                         if (source == fswFiles)
                         {
@@ -665,6 +657,8 @@ namespace FTPbox
                         ls.Add(e.FullPath);
                         ls.Add("false");
                         pending.Add(ls);
+                        RenamedList.Add(e.OldName.Replace(@"\", @"/"), e.Name.Replace(@"\", @"/"));
+                        Log.Write("Added to list: {0} - {1}", e.OldName.Replace(@"\", @"/"), e.Name.Replace(@"\", @"/"));
                         SftpRename(e.OldName, e.Name, cPath, e.FullPath, false);
                     }
                         //SftpRename(e.OldName, e.Name, cPath, e.FullPath, false);
@@ -683,6 +677,8 @@ namespace FTPbox
                         ls.Add(e.FullPath);
                         ls.Add("true");
                         pending.Add(ls);
+                        RenamedList.Add(e.OldName.Replace(@"\", @"/"), e.Name.Replace(@"\", @"/"));
+                        Log.Write("Added to list: {0} - {1}", e.OldName.Replace(@"\", @"/"), e.Name.Replace(@"\", @"/"));
                         SftpRename(e.OldName, e.Name, cPath, e.FullPath, true);
                     }
                         //SftpRename(e.OldName, e.Name, cPath, e.FullPath, true);
@@ -975,8 +971,9 @@ namespace FTPbox
 
         private void rOpenInBrowser_CheckedChanged(object sender, EventArgs e)
         {
-            FTPbox.Properties.Settings.Default.openinbrowser = rOpenInBrowser.Checked;
-            FTPbox.Properties.Settings.Default.Save();
+            AppSettings.Put("Settings/OpenInBrowser", rOpenInBrowser.Checked.ToString());
+            //FTPbox.Properties.Settings.Default.openinbrowser = rOpenInBrowser.Checked;
+            //FTPbox.Properties.Settings.Default.Save();
         }
 
         private void tray_BalloonTipClicked(object sender, EventArgs e)
@@ -1030,8 +1027,9 @@ namespace FTPbox
 
         private void tParent_TextChanged(object sender, EventArgs e)
         {
-            FTPbox.Properties.Settings.Default.ftpParent = tParent.Text;
-            FTPbox.Properties.Settings.Default.Save();
+            AppSettings.Put("Paths/Parent", tParent.Text);
+            //FTPbox.Properties.Settings.Default.ftpParent = tParent.Text;
+            //FTPbox.Properties.Settings.Default.Save();
         }
 
         public void StartupCheck()
@@ -1186,20 +1184,16 @@ namespace FTPbox
             }
             catch { }
 
-            FTPbox.Properties.Settings.Default.startup = chkStartUp.Checked;
-            FTPbox.Properties.Settings.Default.Save();
+            AppSettings.Put("Settings/Startup", chkStartUp.Checked.ToString());
+            //FTPbox.Properties.Settings.Default.startup = chkStartUp.Checked;
+            //FTPbox.Properties.Settings.Default.Save();
         }
 
         private void chkShowNots_CheckedChanged(object sender, EventArgs e)
         {
-            FTPbox.Properties.Settings.Default.shownots = chkShowNots.Checked;
-            FTPbox.Properties.Settings.Default.Save();
-        }
-
-        private void chkCloseToTray_CheckedChanged(object sender, EventArgs e)
-        {
-            FTPbox.Properties.Settings.Default.closetotray = chkCloseToTray.Checked;
-            FTPbox.Properties.Settings.Default.Save();
+            AppSettings.Put("Settings/ShowNots", chkShowNots.Checked.ToString());
+            //FTPbox.Properties.Settings.Default.shownots = chkShowNots.Checked;
+            //FTPbox.Properties.Settings.Default.Save();
         }
 
         /// <summary>
@@ -1256,22 +1250,28 @@ namespace FTPbox
         {
             try
             {
-                browser.Navigate(@"http://sharpmindprojects.com/project_versions.txt");
+                browser.Navigate(@"http://ftpbox.org/latestversion.txt");
             }
             catch { }
         }
 
         private void browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            string data = browser.Document.Body.InnerText;
-            string[] nVersion = data.Split(':', ';');
-            //MessageBox.Show(data, "asd");
-            if (nVersion[5] != Application.ProductVersion)
+            try
             {
-                newversion nvform = new newversion(nVersion[5]);
-                nvform.ShowDialog();
-                this.Show();
-                // show dialog box for  download now, learn more and remind me next time
+                string version = browser.Document.Body.InnerText;
+
+                if (version != Application.ProductVersion)
+                {
+                    newversion nvform = new newversion(version);
+                    nvform.ShowDialog();
+                    this.Show();
+                    // show dialog box for  download now, learn more and remind me next time
+                }
+            }
+            catch
+            {
+                Log.Write("Server down");
             }
         }
 
@@ -1308,7 +1308,7 @@ namespace FTPbox
         bool ExitedFromTray = false;
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (CloseToTray() && !ExitedFromTray && e.CloseReason != CloseReason.WindowsShutDown)
+            if (!ExitedFromTray && e.CloseReason != CloseReason.WindowsShutDown)
             {
                 e.Cancel = true;
                 this.Hide();
@@ -1390,9 +1390,12 @@ namespace FTPbox
 
         public void ClearLog()
         {
-            FTPbox.Properties.Settings.Default.nLog = "";
-            FTPbox.Properties.Settings.Default.lLog = "";
-            FTPbox.Properties.Settings.Default.rLog = "";
+            AppSettings.Put("Log/nLog", "");
+            AppSettings.Put("Log/rLog", "");
+            AppSettings.Put("Log/lLog", "");
+            //FTPbox.Properties.Settings.Default.nLog = "";
+            //FTPbox.Properties.Settings.Default.lLog = "";
+            //FTPbox.Properties.Settings.Default.rLog = "";
         }
 
         #region check internet connection
@@ -1580,8 +1583,9 @@ namespace FTPbox
                             TimeSpan x = now - rnow;
                             timedif = x;
 
-                            FTPbox.Properties.Settings.Default.timedif = timedif.ToString();
-                            FTPbox.Properties.Settings.Default.Save();
+                            AppSettings.Put("Settings/Timedif", timedif.ToString());
+                            //FTPbox.Properties.Settings.Default.timedif = timedif.ToString();
+                            //FTPbox.Properties.Settings.Default.Save();
                         }
                     }
                     Log.Write("Created");
@@ -1640,8 +1644,9 @@ namespace FTPbox
                     }
 
                     Log.Write("Timedif.TotalSeconds: {0}", timedif.TotalSeconds);
-                    FTPbox.Properties.Settings.Default.timedif = timedif.ToString();
-                    FTPbox.Properties.Settings.Default.Save();
+                    AppSettings.Put("Settings/Timedif", timedif.ToString());
+                    //FTPbox.Properties.Settings.Default.timedif = timedif.ToString();
+                    //FTPbox.Properties.Settings.Default.Save();
                     try
                     {
                         sftpc.rmdir(fname);
@@ -1771,7 +1776,7 @@ namespace FTPbox
                         {
                             Log.Write("[Error listing]: {0}", ex.Message);
                             sftpc.quit();
-                            SftpBgLogin();
+                            sftp_login();
                             SftpCDtoRoot();
                             lRemoteWrk.CancelAsync();
                         }
@@ -1840,7 +1845,7 @@ namespace FTPbox
                     Log.Write(ex.Message);
                     vv = null;
                     sftpc.quit();
-                    SftpBgLogin();
+                    sftp_login();
                     SftpCDtoRoot();
                     lRemoteWrk.CancelAsync();
                 }
@@ -2096,7 +2101,7 @@ namespace FTPbox
         {
             if (!downloading)
             {
-                List<string> Namelog = new List<string>(FTPbox.Properties.Settings.Default.nLog.Split('|', '|'));
+                List<string> Namelog = new List<string>(nLog().Split('|', '|'));
 
                 string comPath = noSlashes(fRemPath) + "/" + name;
 
@@ -2133,6 +2138,7 @@ namespace FTPbox
                             string thename = name.Substring(i + 1, name.Length - i - 1);
                             Log.Write("*SFTP* Gonna delete remote file, name: {0} cPath: {1}", thename, cPath);
                             SftpDelete(thename, cPath, true);
+                            RemoveFromLog(comPath);
                         }
                         else
                         {
@@ -2172,14 +2178,33 @@ namespace FTPbox
 
                             fswFiles.EnableRaisingEvents = true;
 
-                            if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
-                                tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
-                            lasttip = string.Format("File {0} was updated.", name);
+                            if (RenamedList.ContainsKey(comPath))
+                            {
+                                string nameOld = comPath;
+                                string nameNew;
+                                RenamedList.TryGetValue(comPath, out nameNew);
 
-                            UpdateTheLog(comPath, lastwritetime);
-                            Get_Link(fRemPath, name);
-                            downloading = false;
-                            DoneSyncing();
+                                if (ShowNots())
+                                    tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("renamed", true), nameOld, nameNew), ToolTipIcon.Info);
+                                Get_Link("", nameNew);
+
+                                RemoveFromLog(nameOld);
+                                UpdateTheLog(nameNew, DateTime.UtcNow);
+
+                                DoneSyncing();
+                                RenamedList.Remove(nameOld);
+                                RemoveFromLog(nameOld);
+                            }
+                            else
+                            {
+                                if (ShowNots())
+                                    tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
+
+                                UpdateTheLog(comPath, lastwritetime);
+                                Get_Link(fRemPath, name);
+                                downloading = false;
+                                DoneSyncing();
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -2201,7 +2226,8 @@ namespace FTPbox
                             {
                                 string cPath = comPath.Substring(0, comPath.LastIndexOf(name));
                                 Log.Write("*SFTP* Gonna delete remote file, name: {0} cPath: {1}", name, cPath);
-                                SftpDelete(name, cPath, false);
+                               SftpDelete(name, cPath, false);
+                             
                             }
                             else
                             {
@@ -2214,15 +2240,34 @@ namespace FTPbox
                                     fswFiles.EnableRaisingEvents = false;
                                     SftpDownloadFile(comPath);
 
-                                    if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
-                                        tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
-                                    lasttip = string.Format("File {0} was updated.", name);
+                                    if (RenamedList.ContainsKey(comPath))
+                                    {
+                                        string nameOld = comPath;
+                                        string nameNew;
+                                        RenamedList.TryGetValue(comPath, out nameNew);
 
-                                    fswFiles.EnableRaisingEvents = true;
-                                    Get_Link(fRemPath, name);
-                                    UpdateTheLog(comPath, lastwritetime);
-                                    downloading = false;
-                                    DoneSyncing();
+                                        if (ShowNots())
+                                            tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("renamed", true), nameOld, nameNew), ToolTipIcon.Info);
+                                        Get_Link("", nameNew);
+
+                                        RemoveFromLog(nameOld);
+                                        UpdateTheLog(nameNew, DateTime.UtcNow);
+
+                                        DoneSyncing();
+                                        RenamedList.Remove(nameOld);
+                                        RemoveFromLog(nameOld);
+                                    }
+                                    else
+                                    {
+                                        if (ShowNots())
+                                            tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
+
+                                        fswFiles.EnableRaisingEvents = true;
+                                        Get_Link(fRemPath, name);
+                                        UpdateTheLog(comPath, lastwritetime);
+                                        downloading = false;
+                                        DoneSyncing();
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
@@ -2296,15 +2341,34 @@ namespace FTPbox
                             SftpDownloadFile(dlPath);
                         }
 
-                        if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
-                            tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
-                        lasttip = string.Format("File {0} was updated.", name);
+                        if (RenamedList.ContainsKey(comPath))
+                        {
+                            string nameOld = comPath;
+                            string nameNew;
+                            RenamedList.TryGetValue(comPath, out nameNew);
 
-                        fswFiles.EnableRaisingEvents = true;
-                        Get_Link(comPath, name);
-                        UpdateTheLog(cPath, rDT);
-                        downloading = false;
-                        DoneSyncing();
+                            if (ShowNots())
+                                tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("renamed", true), nameOld, nameNew), ToolTipIcon.Info);
+                            Get_Link("", nameNew);
+
+                            RemoveFromLog(nameOld);
+                            UpdateTheLog(nameNew, DateTime.UtcNow);
+
+                            DoneSyncing();
+                            RenamedList.Remove(nameOld);
+                            RemoveFromLog(nameOld);
+                        }
+                        else
+                        {
+                            if (ShowNots())
+                                tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
+
+                            fswFiles.EnableRaisingEvents = true;
+                            Get_Link(comPath, name);
+                            UpdateTheLog(cPath, rDT);
+                            downloading = false;
+                            DoneSyncing();
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -2338,11 +2402,33 @@ namespace FTPbox
                             SftpProgressMonitor monitor = new MyProgressMonitor();
                             sftpc.put(FullLocalPath, rPathToCD, monitor, ChannelSftp.OVERWRITE);
                         }
-                        if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
-                            tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
-                        lasttip = string.Format("File {0} was updated.", name);
-                        UpdateTheLog(cPath, GetLWTof(FullRemPath, name));
-                        DoneSyncing();
+
+                        if (RenamedList.ContainsKey(comPath))
+                        {
+                            string nameOld = comPath;
+                            string nameNew;
+                            RenamedList.TryGetValue(comPath, out nameNew);
+
+                            if (ShowNots())
+                                tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("renamed", true), nameOld, nameNew), ToolTipIcon.Info);
+                            Get_Link("", nameNew);
+
+                            RemoveFromLog(nameOld);
+                            UpdateTheLog(nameNew, DateTime.UtcNow);
+
+                            DoneSyncing();
+                            RenamedList.Remove(nameOld);
+                            RemoveFromLog(nameOld);
+                        }
+                        else
+                        {
+                            if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
+                                tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
+                            lasttip = string.Format("File {0} was updated.", name);
+                            UpdateTheLog(cPath, GetLWTof(FullRemPath, name));
+                            DoneSyncing();
+                        }
+
                     }
                     catch (Exception ex)
                     {
@@ -2386,14 +2472,33 @@ namespace FTPbox
 
                         Get_Link(comPath, name);
 
-                        if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
-                            tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
-                        lasttip = string.Format("File {0} was updated.", name);
+                        if (RenamedList.ContainsKey(comPath))
+                        {
+                            string nameOld = comPath;
+                            string nameNew;
+                            RenamedList.TryGetValue(comPath, out nameNew);                         
 
-                        fswFiles.EnableRaisingEvents = true;
-                        UpdateTheLog(cPath, SftpGetLastWriteTime(cPath));// DateTime.UtcNow);
-                        downloading = false;
-                        DoneSyncing();
+                            if (ShowNots())
+                                tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("renamed", true), nameOld, nameNew), ToolTipIcon.Info);
+                            Get_Link("", nameNew);
+
+                            RemoveFromLog(nameOld);
+                            UpdateTheLog(nameNew, DateTime.UtcNow);
+
+                            DoneSyncing();
+                            RenamedList.Remove(nameOld);
+                            RemoveFromLog(nameOld);
+                        }
+                        else
+                        {
+                            if (ShowNots())
+                                tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
+
+                            fswFiles.EnableRaisingEvents = true;
+                            UpdateTheLog(cPath, SftpGetLastWriteTime(cPath));// DateTime.UtcNow);
+                            downloading = false;
+                            DoneSyncing();
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -2469,10 +2574,13 @@ namespace FTPbox
             }
 
             RemoveFromLog(cPath);
-            FTPbox.Properties.Settings.Default.nLog += cPath + "|";
-            FTPbox.Properties.Settings.Default.rLog += rDTlog.ToString() + "|";
-            FTPbox.Properties.Settings.Default.lLog += lDTlog.ToString() + "|";
-            FTPbox.Properties.Settings.Default.Save();
+            AppSettings.Put("Log/nLog", nLog() + cPath + "|");
+            AppSettings.Put("Log/rLog", rLog() + rDTlog.ToString() + "|");
+            AppSettings.Put("Log/lLog", lLog() + lDTlog.ToString() + "|");
+            //FTPbox.Properties.Settings.Default.nLog += cPath + "|";
+            //FTPbox.Properties.Settings.Default.rLog += rDTlog.ToString() + "|";
+            //FTPbox.Properties.Settings.Default.lLog += lDTlog.ToString() + "|";
+            //FTPbox.Properties.Settings.Default.Save();
 
             Log.Write("##########");
             Log.Write("FLP {0} + name: {1} + rDTlog: {2} + lDTlog: {3} + cPath: {4}", FullLocalPath, name, rDTlog.ToString(), lDTlog.ToString(), cPath);
@@ -2487,9 +2595,9 @@ namespace FTPbox
         {
             if (nLog().Contains(cPath))
             {
-                List<string> Namelog = new List<string>(FTPbox.Properties.Settings.Default.nLog.Split('|', '|'));
-                List<string> remoteDL = new List<string>(FTPbox.Properties.Settings.Default.rLog.Split('|', '|'));
-                List<string> localDL = new List<string>(FTPbox.Properties.Settings.Default.lLog.Split('|', '|'));
+                List<string> Namelog = new List<string>(nLog().Split('|', '|'));
+                List<string> remoteDL = new List<string>(rLog().Split('|', '|'));
+                List<string> localDL = new List<string>(lLog().Split('|', '|'));
 
                 while (Namelog.Contains(cPath))
                 {
@@ -2498,22 +2606,24 @@ namespace FTPbox
                     remoteDL.RemoveAt(i);
                     localDL.RemoveAt(i);
                 }
-                FTPbox.Properties.Settings.Default.nLog = "";
-                FTPbox.Properties.Settings.Default.rLog = "";
-                FTPbox.Properties.Settings.Default.lLog = "";
+                ClearLog();
+
                 foreach (string s in Namelog)
                 {
-                    FTPbox.Properties.Settings.Default.nLog += s + "|";
+                    AppSettings.Put("Log/nLog", nLog() + s + "|");
+                    //FTPbox.Properties.Settings.Default.nLog += s + "|";
                 }
                 foreach (string s in remoteDL)
                 {
-                    FTPbox.Properties.Settings.Default.rLog += s + "|";
+                    AppSettings.Put("Log/rLog", rLog() + s + "|");
+                    //FTPbox.Properties.Settings.Default.rLog += s + "|";
                 }
                 foreach (string s in localDL)
                 {
-                    FTPbox.Properties.Settings.Default.lLog += s + "|";
+                    AppSettings.Put("Log/lLog", lLog() + s + "|");
+                    //FTPbox.Properties.Settings.Default.lLog += s + "|";
                 }
-                FTPbox.Properties.Settings.Default.Save();
+                //FTPbox.Properties.Settings.Default.Save();
             }
         }
 
@@ -2525,8 +2635,8 @@ namespace FTPbox
         DateTime GetrDateTime(string cPath)
         {
             DateTime dt;
-            List<string> Namelog = new List<string>(FTPbox.Properties.Settings.Default.nLog.Split('|', '|'));
-            List<string> remoteDL = new List<string>(FTPbox.Properties.Settings.Default.rLog.Split('|', '|'));
+            List<string> Namelog = new List<string>(nLog().Split('|', '|'));
+            List<string> remoteDL = new List<string>(rLog().Split('|', '|'));
 
             int i = Namelog.LastIndexOf(cPath);
             dt = DateTime.Parse(remoteDL[i]);
@@ -2542,8 +2652,8 @@ namespace FTPbox
         DateTime GetlDateTime(string cPath)
         {
             DateTime dt;
-            List<string> Namelog = new List<string>(FTPbox.Properties.Settings.Default.nLog.Split('|', '|'));
-            List<string> localDL = new List<string>(FTPbox.Properties.Settings.Default.lLog.Split('|', '|'));
+            List<string> Namelog = new List<string>(nLog().Split('|', '|'));
+            List<string> localDL = new List<string>(lLog().Split('|', '|'));
 
             int i = Namelog.LastIndexOf(cPath);
             dt = DateTime.Parse(localDL[i]);
@@ -2628,7 +2738,8 @@ namespace FTPbox
                 List<string> alllocal = new List<string>(Directory.GetDirectories(lPath(), "*", SearchOption.AllDirectories));
                 alllocal.AddRange(Directory.GetFiles(lPath(), "*", SearchOption.AllDirectories));
                 
-                List<string> Namelog = new List<string>(FTPbox.Properties.Settings.Default.nLog.Split('|', '|'));
+                List<string> Namelog = new List<string>(nLog().Split('|', '|'));
+                
                 foreach (string s in alllocal)
                 {
                     Log.Write("Checking local: {0}", s);
@@ -2663,11 +2774,23 @@ namespace FTPbox
                         if (!FTP() && cPath.StartsWith("/"))
                             cPath = cPath.Substring(1);
 
+                        string rempath = rPath();
+
+                        if (rempath.Equals("/"))
+                            rempath = "";
+                        else if (rempath.StartsWith("/"))
+                            rempath = rempath.Substring(1);
+
+                        string compath = noSlashes(rempath) + "/" + cPath;
+
+                        if (isDir)
+                            compath = compath + "/";
+
                         if (name != ".ftpquota")
                         {
                             if (Namelog.Contains(cPath))
                             {
-                                Log.Write("++++++++> {0} {1} {2} in {3}", cPath, path, name, s);
+                                Log.Write("++++++++> {0} {1} {2} in {3}", compath, path, name, s);
                                 if (FTP())
                                 {
                                     if (ftp.DirectoryExists(noSlashes(rPath()) + path))
@@ -2757,12 +2880,16 @@ namespace FTPbox
                                 {
                                     if (isDir)
                                     {
-                                        Log.Write("Gonna make folder {0} to remote server in pwd: {1}", cPath, sftpc.pwd());
-                                        sftpc.mkdir(cPath);
-                                        Log.Write("success");
-                                        if (ShowNots() && lasttip != string.Format("Folder {0} was created.", name))
-                                            tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("created", false), name), ToolTipIcon.Info);
-                                        lasttip = string.Format("Folder {0} was created.", name);
+                                        Log.Write("comPath: {0}", compath);
+                                        if (!FullList.ContainsKey(compath))
+                                        {
+                                            Log.Write("Gonna make folder {0} to remote server in pwd: {1}", cPath, sftpc.pwd());
+                                            sftpc.mkdir(cPath);
+                                            Log.Write("success");
+                                            if (ShowNots() && lasttip != string.Format("Folder {0} was created.", name))
+                                                tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("created", false), name), ToolTipIcon.Info);
+                                            lasttip = string.Format("Folder {0} was created.", name);
+                                        }
                                     }
                                     else
                                     {
@@ -2773,6 +2900,7 @@ namespace FTPbox
                                             tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("created", true), name), ToolTipIcon.Info);
                                         lasttip = string.Format("File {0} was created.", name);
                                     }
+                                    
 
                                 }
                                 Get_Link(path, name);
@@ -2816,7 +2944,7 @@ namespace FTPbox
 
         private void Get_Language()
         {
-            string curlan = FTPbox.Properties.Settings.Default.lan;
+            string curlan = lang();
 
             if (curlan == "" || curlan == null)
             {
@@ -2972,8 +3100,9 @@ namespace FTPbox
                 labDonate.Text = "Spenden:";
                 cmbLang.SelectedIndex = 2;
             }
-            FTPbox.Properties.Settings.Default.lan = lan;
-            FTPbox.Properties.Settings.Default.Save();
+            AppSettings.Put("Settings/Language", lan);
+            //FTPbox.Properties.Settings.Default.lan = lan;
+            //FTPbox.Properties.Settings.Default.Save();
         }
 
         private void cmbLang_SelectedIndexChanged(object sender, EventArgs e)
@@ -3213,8 +3342,8 @@ namespace FTPbox
         {
             JSch jsch = new JSch();
 
-            String host = FTPbox.Properties.Settings.Default.ftpHost;
-            String user = FTPbox.Properties.Settings.Default.ftpUsername;
+            String host = ftpHost();
+            String user = ftpUser();
 
             Session session = jsch.getSession(user, host, 22);
 
@@ -3231,26 +3360,7 @@ namespace FTPbox
             //sftpc = (ChannelSftp)channel;
         }
 
-        private void SftpBgLogin()
-        {
-            JSch jsch = new JSch();
-
-            String host = FTPbox.Properties.Settings.Default.ftpHost;
-            String user = FTPbox.Properties.Settings.Default.ftpUsername;
-
-            Session session = jsch.getSession(user, host, 22);
-
-            // username and password will be given via UserInfo interface.
-            UserInfo ui = new MyUserInfo();
-
-            session.setUserInfo(ui);
-
-            session.connect();
-
-            Channel channel = session.openChannel("sftp");
-            channel.connect();
-            sftpc = (ChannelSftp)channel;
-        }
+        
 
         /// <summary>
         /// Get LastWriteTime of remote file or folder in current directory
@@ -3511,20 +3621,19 @@ namespace FTPbox
             
             Log.Write("rFullOld: {0} | rFullNew: {1}", rFullOld, rFullNew);
 
-            if (fileexists)
+            Syncing();
+            try
             {
-                Syncing();
-                try
-                {
-                    sftpc.rename(rFullOld, rFullNew);
-                }
-                catch { }
+                //sftpc.rename(rFullOld, rFullNew);
+            }
+            catch { DoneSyncing(); }
 
-                if (ShowNots())
-                    tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("renamed", true), nameOld, nameNew), ToolTipIcon.Info);
-                lasttip = string.Format("{0} was renamed to {1}.", nameOld, nameNew);
-                Get_Link(cPath, newName);
+            if (ShowNots())
+                tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("renamed", true), nameOld, nameNew), ToolTipIcon.Info);
+            Get_Link("", rFullNew);
 
+            if (FTP())
+            {
                 if (!isDir)
                 {
                     string oldLogPath = (@"\" + noSlashes(oldName)).Replace(@"\", @"/");
@@ -3532,12 +3641,14 @@ namespace FTPbox
                     RemoveFromLog(oldLogPath);
                     UpdateTheLog(newLogPath, DateTime.UtcNow);//DateTime.UtcNow);
                 }
-                DoneSyncing();
             }
             else
             {
-                SftpCreate(FullPath, cPath, nameNew, isDir);
+                //RemoveFromLog(rFullOld);
+                //UpdateTheLog(rFullNew, DateTime.UtcNow);
             }
+                    
+            DoneSyncing();
             DoneSyncing();
         }
 
@@ -3546,24 +3657,34 @@ namespace FTPbox
             try
             {
                 string rpath = rPath();
+                Log.Write("1. " + rpath);
+                string home = "/home/" + ftpUser();
+                Log.Write("2. " + home);
                 if (rpath == "/")
                     rpath = "";
                 else if (rpath.StartsWith("/"))
+                {
                     rpath = rpath.Substring(1);
+                }
+                Log.Write("3. " + rpath);
 
-                string home = "/home/" + ftpUser() + "/" + rpath;
+                if (rpath != "")
+                    home = home + "/" + rpath;
+
+                Log.Write("Home: {0}", home);
+                
                 while (!sftpc.pwd().Equals(home)) 
                 {
-                    Log.Write("*SFTP* Going up one level from {0}", sftpc.pwd());
+                    Log.Write("*SFTP* Going up one level from {0} to get to {1}", sftpc.pwd(), home);
                     if (sftpc.pwd() == "/")
                         sftpc.cd(home.Substring(1));
                     else
                         sftpc.cd("..");                    
                 }
                 if (sftpc.pwd() == "/")
-            {
-                sftpc.cd(home.Substring(1));
-            }
+                {
+                    sftpc.cd(home.Substring(1));
+                }
             }
             catch (SftpException e)
             {
@@ -3602,7 +3723,8 @@ namespace FTPbox
 
         public class MyUserInfo : UserInfo
         {
-            public String getPassword() { return passwd; }
+            FTPbox.Classes.Settings sets = new FTPbox.Classes.Settings();
+            public String getPassword() { return sets.Get("Account/Password", ""); }
             public bool promptYesNo(String str)
             {
                 DialogResult returnVal = MessageBox.Show(
@@ -3612,9 +3734,7 @@ namespace FTPbox
                     MessageBoxIcon.Warning);
                 return (returnVal == DialogResult.Yes);
             }
-
-            String passwd = FTPbox.Properties.Settings.Default.ftpPass;
-
+                        
             public String getPassphrase() { return null; }
             public bool promptPassphrase(String message) { return true; }
             public bool promptPassword(String message) { return true; }
@@ -3714,6 +3834,33 @@ namespace FTPbox
             }
             pending.Clear();
             Log.Write("Done checking pending actions");
+        }
+
+        public void UpdateAccountInfo(string host, string username, string password, int port, string timedif, bool ftp)
+        {
+            AppSettings.Put("Account/Host", host);
+            AppSettings.Put("Account/Port", port);
+            AppSettings.Put("Account/Username", username);
+            AppSettings.Put("Account/Password", password);
+            AppSettings.Put("Account/FTPorSFTP", ftp.ToString());
+            AppSettings.Put("Settings/Timedif", "");
+        }
+
+        public void UpdatePaths(string rpath, string lpath, string parent)
+        {
+            AppSettings.Put("Paths/rPath", rpath);
+            AppSettings.Put("Paths/lPath", lpath);
+            AppSettings.Put("Paths/Parent", parent);
+        }
+
+        public void SetPass(string pass)
+        {
+            AppSettings.Put("Account/Password", pass);
+        }
+
+        public void SetParent(string parent)
+        {
+            AppSettings.Put("Paths/Parent", parent);
         }
 
     }

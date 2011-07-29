@@ -46,7 +46,6 @@
             this.labLang = new System.Windows.Forms.Label();
             this.cmbLang = new System.Windows.Forms.ComboBox();
             this.chkShowNots = new System.Windows.Forms.CheckBox();
-            this.chkCloseToTray = new System.Windows.Forms.CheckBox();
             this.chkStartUp = new System.Windows.Forms.CheckBox();
             this.gAccount = new System.Windows.Forms.GroupBox();
             this.lMode = new System.Windows.Forms.Label();
@@ -68,11 +67,9 @@
             this.rCopy2Clipboard = new System.Windows.Forms.RadioButton();
             this.rOpenInBrowser = new System.Windows.Forms.RadioButton();
             this.gDetails = new System.Windows.Forms.GroupBox();
-            this.lDelRem = new System.Windows.Forms.Label();
             this.lLocPath = new System.Windows.Forms.Label();
             this.lRemPath = new System.Windows.Forms.Label();
             this.bChangeBox = new System.Windows.Forms.Button();
-            this.labDelRem = new System.Windows.Forms.Label();
             this.labLocPath = new System.Windows.Forms.Label();
             this.labRemPath = new System.Windows.Forms.Label();
             this.tabAbout = new System.Windows.Forms.TabPage();
@@ -223,7 +220,6 @@
             this.gApp.Controls.Add(this.labLang);
             this.gApp.Controls.Add(this.cmbLang);
             this.gApp.Controls.Add(this.chkShowNots);
-            this.gApp.Controls.Add(this.chkCloseToTray);
             this.gApp.Controls.Add(this.chkStartUp);
             this.gApp.Location = new System.Drawing.Point(8, 141);
             this.gApp.Name = "gApp";
@@ -265,18 +261,6 @@
             this.chkShowNots.Text = "Show notifications";
             this.chkShowNots.UseVisualStyleBackColor = true;
             this.chkShowNots.CheckedChanged += new System.EventHandler(this.chkShowNots_CheckedChanged);
-            // 
-            // chkCloseToTray
-            // 
-            this.chkCloseToTray.AutoSize = true;
-            this.chkCloseToTray.Location = new System.Drawing.Point(263, 29);
-            this.chkCloseToTray.Name = "chkCloseToTray";
-            this.chkCloseToTray.Size = new System.Drawing.Size(83, 17);
-            this.chkCloseToTray.TabIndex = 3;
-            this.chkCloseToTray.Text = "close to tray";
-            this.chkCloseToTray.UseVisualStyleBackColor = true;
-            this.chkCloseToTray.Visible = false;
-            this.chkCloseToTray.CheckedChanged += new System.EventHandler(this.chkCloseToTray_CheckedChanged);
             // 
             // chkStartUp
             // 
@@ -488,11 +472,9 @@
             // 
             // gDetails
             // 
-            this.gDetails.Controls.Add(this.lDelRem);
             this.gDetails.Controls.Add(this.lLocPath);
             this.gDetails.Controls.Add(this.lRemPath);
             this.gDetails.Controls.Add(this.bChangeBox);
-            this.gDetails.Controls.Add(this.labDelRem);
             this.gDetails.Controls.Add(this.labLocPath);
             this.gDetails.Controls.Add(this.labRemPath);
             this.gDetails.Location = new System.Drawing.Point(8, 9);
@@ -501,16 +483,6 @@
             this.gDetails.TabIndex = 0;
             this.gDetails.TabStop = false;
             this.gDetails.Text = "Details";
-            // 
-            // lDelRem
-            // 
-            this.lDelRem.AutoSize = true;
-            this.lDelRem.Location = new System.Drawing.Point(312, 16);
-            this.lDelRem.Name = "lDelRem";
-            this.lDelRem.Size = new System.Drawing.Size(27, 13);
-            this.lDelRem.TabIndex = 8;
-            this.lDelRem.Text = "N/A";
-            this.lDelRem.Visible = false;
             // 
             // lLocPath
             // 
@@ -539,16 +511,6 @@
             this.bChangeBox.Text = "Change";
             this.bChangeBox.UseVisualStyleBackColor = true;
             this.bChangeBox.Click += new System.EventHandler(this.bChangeBox_Click);
-            // 
-            // labDelRem
-            // 
-            this.labDelRem.AutoSize = true;
-            this.labDelRem.Location = new System.Drawing.Point(207, 16);
-            this.labDelRem.Name = "labDelRem";
-            this.labDelRem.Size = new System.Drawing.Size(81, 13);
-            this.labDelRem.TabIndex = 3;
-            this.labDelRem.Text = "Delete Remote:";
-            this.labDelRem.Visible = false;
             // 
             // labLocPath
             // 
@@ -864,7 +826,6 @@
         private System.Windows.Forms.TabPage tabGeneral;
         private System.Windows.Forms.GroupBox gApp;
         private System.Windows.Forms.CheckBox chkShowNots;
-        private System.Windows.Forms.CheckBox chkCloseToTray;
         private System.Windows.Forms.CheckBox chkStartUp;
         private System.Windows.Forms.GroupBox gAccount;
         private System.Windows.Forms.Button bAddFTP;
@@ -899,11 +860,9 @@
         private System.ComponentModel.BackgroundWorker bgWork;
         private System.Windows.Forms.NotifyIcon tray;
         private System.Windows.Forms.GroupBox gDetails;
-        private System.Windows.Forms.Label lDelRem;
         private System.Windows.Forms.Label lLocPath;
         private System.Windows.Forms.Label lRemPath;
         private System.Windows.Forms.Button bChangeBox;
-        private System.Windows.Forms.Label labDelRem;
         private System.Windows.Forms.Label labLocPath;
         private System.Windows.Forms.Label labRemPath;
         private System.IO.FileSystemWatcher fswFolders;
