@@ -16,6 +16,8 @@ using System.Net;
 using Tamir.SharpSsh.jsch;
 using Tamir.SharpSsh.jsch.examples;
 using FTPbox.Classes;
+using Utilities.Encryption;
+
 
 namespace FTPbox
 {
@@ -72,6 +74,8 @@ namespace FTPbox
         public bool recentlycreated = false;
 
         Settings AppSettings = new Settings();
+        string DecryptionPassword = "removed";     //removed for security purposes
+        string DecryptionSalt = "removed";     //removed for security purposes
         
         public frmMain()
         {
@@ -316,17 +320,40 @@ namespace FTPbox
 
         public string ftpHost()
         {
-            return AppSettings.Get("Account/Host", "");
+            try
+            {
+                return AESEncryption.Decrypt(AppSettings.Get("Account/Host", ""), DecryptionPassword, DecryptionSalt, "SHA1", 2, "OFRna73m*aze01xY", 256);
+            }
+            catch
+            {
+                return "";
+            }             
         }
 
         public string ftpUser()
         {
-            return AppSettings.Get("Account/Username", "");
+            string x = AppSettings.Get("Account/Username", "");
+            try
+            {
+                return AESEncryption.Decrypt(x, DecryptionPassword, DecryptionSalt, "SHA1", 2, "OFRna73m*aze01xY", 256);
+            }
+            catch
+            {
+                return "";
+            }     
         }
 
         public string ftpPass()
         {
-            return AppSettings.Get("Account/Password", "");
+            string x = AppSettings.Get("Account/Password", "");
+            try
+            {
+                return AESEncryption.Decrypt(x, DecryptionPassword, DecryptionSalt, "SHA1", 2, "OFRna73m*aze01xY", 256);
+            }
+            catch
+            {
+                return "";
+            } 
         }
 
         public int ftpPort()
@@ -1903,7 +1930,7 @@ namespace FTPbox
                 if (fInfo.Name != ".ftpquota")
                 {
                     // Got it? Add it!
-                    Log.Write("*SFTP* File ({0})", noSlashes(String.Format("{0}{1}", newPath, fInfo.Name)));
+                    Log.Write("*FTP* File ({0})", noSlashes(String.Format("{0}{1}", newPath, fInfo.Name)));
                     fdDict.Add(noSlashes(String.Format("{0}{1}", newPath, fInfo.Name)), fInfo.LastWriteTimeUtc.Value.AddHours(timedif.Hours));
                 }
             }
@@ -2929,7 +2956,7 @@ namespace FTPbox
         {
             Thread.Sleep(5000);
             FullList = new Dictionary<string, DateTime>();
-            //ListAllFiles();
+            ListAllFiles();
         }
 
         void MakeChangesBGW_DoWork(object sender, DoWorkEventArgs e)
@@ -3724,7 +3751,13 @@ namespace FTPbox
         public class MyUserInfo : UserInfo
         {
             FTPbox.Classes.Settings sets = new FTPbox.Classes.Settings();
-            public String getPassword() { return sets.Get("Account/Password", ""); }
+            
+            public String getPassword() { 
+                return Decrypt(sets.Get("Account/Password", ""),
+                "removed",
+                "removed",
+                "SHA1", 2, "OFRna73m*aze01xY", 256);
+            }
             public bool promptYesNo(String str)
             {
                 DialogResult returnVal = MessageBox.Show(
@@ -3747,6 +3780,41 @@ namespace FTPbox
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Asterisk);
             }
+
+            #region Decrypt Method
+            public static string Decrypt(string CipherText, string Password,
+              string Salt, string HashAlgorithm,
+              int PasswordIterations = 2, string InitialVector = "OFRna73m*aze01xY",
+              int KeySize = 256)
+            {
+                if (string.IsNullOrEmpty(CipherText))
+                    return "";
+                byte[] InitialVectorBytes = Encoding.ASCII.GetBytes(InitialVector);
+                byte[] SaltValueBytes = Encoding.ASCII.GetBytes(Salt);
+                byte[] CipherTextBytes = Convert.FromBase64String(CipherText);
+                System.Security.Cryptography.PasswordDeriveBytes DerivedPassword = new System.Security.Cryptography.PasswordDeriveBytes(Password, SaltValueBytes, HashAlgorithm, PasswordIterations);
+                byte[] KeyBytes = DerivedPassword.GetBytes(KeySize / 8);
+                System.Security.Cryptography.RijndaelManaged SymmetricKey = new System.Security.Cryptography.RijndaelManaged();
+                SymmetricKey.Mode = System.Security.Cryptography.CipherMode.CBC;
+                byte[] PlainTextBytes = new byte[CipherTextBytes.Length];
+                int ByteCount = 0;
+                using (System.Security.Cryptography.ICryptoTransform Decryptor = SymmetricKey.CreateDecryptor(KeyBytes, InitialVectorBytes))
+                {
+                    using (MemoryStream MemStream = new MemoryStream(CipherTextBytes))
+                    {
+                        using (System.Security.Cryptography.CryptoStream CryptoStream = new System.Security.Cryptography.CryptoStream(MemStream, Decryptor, System.Security.Cryptography.CryptoStreamMode.Read))
+                        {
+
+                            ByteCount = CryptoStream.Read(PlainTextBytes, 0, PlainTextBytes.Length);
+                            MemStream.Close();
+                            CryptoStream.Close();
+                        }
+                    }
+                }
+                SymmetricKey.Clear();
+                return Encoding.UTF8.GetString(PlainTextBytes, 0, ByteCount);
+            }
+            #endregion
         }
 
         public class MyProgressMonitor : SftpProgressMonitor
@@ -3838,6 +3906,9 @@ namespace FTPbox
 
         public void UpdateAccountInfo(string host, string username, string password, int port, string timedif, bool ftp)
         {
+            Log.Write(host);
+            Log.Write(username);
+            Log.Write(password);
             AppSettings.Put("Account/Host", host);
             AppSettings.Put("Account/Port", port);
             AppSettings.Put("Account/Username", username);

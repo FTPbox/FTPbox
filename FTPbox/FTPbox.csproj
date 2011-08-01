@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\aConsole.cs" />
+    <Compile Include="Classes\AESEncryption.cs" />
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\INIclass.cs" />
     <Compile Include="Classes\Log.cs" />

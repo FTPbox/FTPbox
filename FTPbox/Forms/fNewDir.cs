@@ -37,8 +37,11 @@ namespace FTPbox
 
         private void bDone_Click(object sender, EventArgs e)
         {
-            ((frmMain)this.Tag).UpdatePaths(tFullDir.Text, tPath.Text, tParent.Text);
+            if (!System.IO.Directory.Exists(tPath.Text))
+                System.IO.Directory.CreateDirectory(tPath.Text);
 
+            ((frmMain)this.Tag).UpdatePaths(tFullDir.Text, tPath.Text, tParent.Text);
+            
             //FTPbox.Properties.Settings.Default.rPath = tFullDir.Text;
             //FTPbox.Properties.Settings.Default.lPath = tPath.Text;
             //FTPbox.Properties.Settings.Default.ftpParent = tParent.Text;
@@ -95,6 +98,8 @@ namespace FTPbox
                     tParent.Text = ((frmMain)this.Tag).ftpHost();
                 else
                     tParent.Text = ((frmMain)this.Tag).ftpParent();
+
+                tPath.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\FTPbox";
 
                 Log.Write(((frmMain)this.Tag).ftpParent() + " " + ((frmMain)this.Tag).ftpHost());
 
@@ -290,19 +295,24 @@ namespace FTPbox
         public class MyUserInfo : UserInfo
         {
             FTPbox.Classes.Settings sets = new FTPbox.Classes.Settings();
-            public String getPassword() { return sets.Get("Account/Password", ""); }
+
+            public String getPassword()
+            {
+                return Decrypt(sets.Get("Account/Password", ""),
+                "removed",
+                "removed",
+                "SHA1", 2, "OFRna73m*aze01xY", 256);
+            }
             public bool promptYesNo(String str)
             {
-                /*
                 DialogResult returnVal = MessageBox.Show(
                     str,
-                    "SharpSSH_",
+                    "SharpSSH",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning);
-                return (returnVal == DialogResult.Yes); */
-                return true;
+                return (returnVal == DialogResult.Yes);
             }
-            
+
             public String getPassphrase() { return null; }
             public bool promptPassphrase(String message) { return true; }
             public bool promptPassword(String message) { return true; }
@@ -315,6 +325,41 @@ namespace FTPbox
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Asterisk);
             }
+
+            #region Decrypt Method
+            public static string Decrypt(string CipherText, string Password,
+              string Salt = "Kosher", string HashAlgorithm = "SHA1",
+              int PasswordIterations = 2, string InitialVector = "OFRna73m*aze01xY",
+              int KeySize = 256)
+            {
+                if (string.IsNullOrEmpty(CipherText))
+                    return "";
+                byte[] InitialVectorBytes = Encoding.ASCII.GetBytes(InitialVector);
+                byte[] SaltValueBytes = Encoding.ASCII.GetBytes(Salt);
+                byte[] CipherTextBytes = Convert.FromBase64String(CipherText);
+                System.Security.Cryptography.PasswordDeriveBytes DerivedPassword = new System.Security.Cryptography.PasswordDeriveBytes(Password, SaltValueBytes, HashAlgorithm, PasswordIterations);
+                byte[] KeyBytes = DerivedPassword.GetBytes(KeySize / 8);
+                System.Security.Cryptography.RijndaelManaged SymmetricKey = new System.Security.Cryptography.RijndaelManaged();
+                SymmetricKey.Mode = System.Security.Cryptography.CipherMode.CBC;
+                byte[] PlainTextBytes = new byte[CipherTextBytes.Length];
+                int ByteCount = 0;
+                using (System.Security.Cryptography.ICryptoTransform Decryptor = SymmetricKey.CreateDecryptor(KeyBytes, InitialVectorBytes))
+                {
+                    using (System.IO.MemoryStream MemStream = new System.IO.MemoryStream(CipherTextBytes))
+                    {
+                        using (System.Security.Cryptography.CryptoStream CryptoStream = new System.Security.Cryptography.CryptoStream(MemStream, Decryptor, System.Security.Cryptography.CryptoStreamMode.Read))
+                        {
+
+                            ByteCount = CryptoStream.Read(PlainTextBytes, 0, PlainTextBytes.Length);
+                            MemStream.Close();
+                            CryptoStream.Close();
+                        }
+                    }
+                }
+                SymmetricKey.Clear();
+                return Encoding.UTF8.GetString(PlainTextBytes, 0, ByteCount);
+            }
+            #endregion
         }
 
         public void SftpGoToRoot()

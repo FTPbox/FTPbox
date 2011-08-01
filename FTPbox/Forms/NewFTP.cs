@@ -9,12 +9,15 @@ using System.Windows.Forms;
 using FtpLib;
 using System.Diagnostics;
 using Tamir.SharpSsh.jsch;
+using Utilities.Encryption;
 
 namespace FTPbox
 {
     public partial class NewFTP : Form
     {
         FtpConnection ftp;
+        string decpass = "removed";
+        string salt = "removed";
         
         public NewFTP()
         {
@@ -46,13 +49,19 @@ namespace FTPbox
                 }
                 else
                 {
-                    ((frmMain)this.Tag).SetPass(tPass.Text);
+                    string pass = AESEncryption.Encrypt(tPass.Text, decpass, salt, "SHA1", 2, "OFRna73m*aze01xY", 256);
+                    ((frmMain)this.Tag).SetPass(pass);
                     //FTPbox.Properties.Settings.Default.ftpPass = tPass.Text;
                     sftp_login();
                     //MessageBox.Show("SFTP Connected");
                     sftpc.quit();
                 }
-                ((frmMain)this.Tag).UpdateAccountInfo(tHost.Text, tUsername.Text, tPass.Text, Convert.ToInt32(nPort.Value), "", ftporsftp);
+                
+                string hostEncr = AESEncryption.Encrypt(tHost.Text, decpass, salt, "SHA1", 2, "OFRna73m*aze01xY", 256);
+                string unEncr = AESEncryption.Encrypt(tUsername.Text, decpass, salt, "SHA1", 2, "OFRna73m*aze01xY", 256);
+                string passEncr = AESEncryption.Encrypt(tPass.Text, decpass, salt, "SHA1", 2, "OFRna73m*aze01xY", 256);
+
+                ((frmMain)this.Tag).UpdateAccountInfo(hostEncr, unEncr, passEncr, Convert.ToInt32(nPort.Value), "", ftporsftp);
                 
                 //FTPbox.Properties.Settings.Default.ftpHost = tHost.Text;
                 //FTPbox.Properties.Settings.Default.ftpPort = Convert.ToInt32(nPort.Value);
@@ -62,19 +71,21 @@ namespace FTPbox
                 //FTPbox.Properties.Settings.Default.timedif = "";
                 //FTPbox.Properties.Settings.Default.Save();
 
+                
+                Log.Write("got new ftp acccount details");
+                ((frmMain)this.Tag).ClearLog();
+                ((frmMain)this.Tag).UpdateDetails();
+                //((frmMain)this.Tag).GetServerTime();
+                ((frmMain)this.Tag).loggedIn = true;
+                fNewDir fnewdir = new fNewDir();
+                fnewdir.ShowDialog();
+                this.Close();  
             }
             catch
             {
                 MessageBox.Show("Could not connect to FTP server. Check your account details and try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            Log.Write("got new ftp acccount details");
-            ((frmMain)this.Tag).ClearLog();
-            ((frmMain)this.Tag).UpdateDetails();
-            //((frmMain)this.Tag).GetServerTime();
-            ((frmMain)this.Tag).loggedIn = true;
-            fNewDir fnewdir = new fNewDir();
-            fnewdir.ShowDialog();
-            this.Close();           
+                     
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -171,17 +182,22 @@ namespace FTPbox
         public class MyUserInfo : UserInfo
         {
             FTPbox.Classes.Settings sets = new FTPbox.Classes.Settings();
-            public String getPassword() { return sets.Get("Account/Password", ""); }
+
+            public String getPassword()
+            {
+                return Decrypt(sets.Get("Account/Password", ""),
+                "removed",
+                "removed",
+                "SHA1", 2, "OFRna73m*aze01xY", 256);
+            }
             public bool promptYesNo(String str)
             {
-                /*
                 DialogResult returnVal = MessageBox.Show(
                     str,
-                    "SharpSSH_",
+                    "SharpSSH",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning);
-                return (returnVal == DialogResult.Yes); */
-                return true;
+                return (returnVal == DialogResult.Yes);
             }
 
             public String getPassphrase() { return null; }
@@ -196,6 +212,41 @@ namespace FTPbox
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Asterisk);
             }
+
+            #region Decrypt Method
+            public static string Decrypt(string CipherText, string Password,
+              string Salt = "Kosher", string HashAlgorithm = "SHA1",
+              int PasswordIterations = 2, string InitialVector = "OFRna73m*aze01xY",
+              int KeySize = 256)
+            {
+                if (string.IsNullOrEmpty(CipherText))
+                    return "";
+                byte[] InitialVectorBytes = Encoding.ASCII.GetBytes(InitialVector);
+                byte[] SaltValueBytes = Encoding.ASCII.GetBytes(Salt);
+                byte[] CipherTextBytes = Convert.FromBase64String(CipherText);
+                System.Security.Cryptography.PasswordDeriveBytes DerivedPassword = new System.Security.Cryptography.PasswordDeriveBytes(Password, SaltValueBytes, HashAlgorithm, PasswordIterations);
+                byte[] KeyBytes = DerivedPassword.GetBytes(KeySize / 8);
+                System.Security.Cryptography.RijndaelManaged SymmetricKey = new System.Security.Cryptography.RijndaelManaged();
+                SymmetricKey.Mode = System.Security.Cryptography.CipherMode.CBC;
+                byte[] PlainTextBytes = new byte[CipherTextBytes.Length];
+                int ByteCount = 0;
+                using (System.Security.Cryptography.ICryptoTransform Decryptor = SymmetricKey.CreateDecryptor(KeyBytes, InitialVectorBytes))
+                {
+                    using (System.IO.MemoryStream MemStream = new System.IO.MemoryStream(CipherTextBytes))
+                    {
+                        using (System.Security.Cryptography.CryptoStream CryptoStream = new System.Security.Cryptography.CryptoStream(MemStream, Decryptor, System.Security.Cryptography.CryptoStreamMode.Read))
+                        {
+
+                            ByteCount = CryptoStream.Read(PlainTextBytes, 0, PlainTextBytes.Length);
+                            MemStream.Close();
+                            CryptoStream.Close();
+                        }
+                    }
+                }
+                SymmetricKey.Clear();
+                return Encoding.UTF8.GetString(PlainTextBytes, 0, ByteCount);
+            }
+            #endregion
         }
 
         private void cMode_SelectedIndexChanged(object sender, EventArgs e)
