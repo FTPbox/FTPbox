@@ -50,7 +50,7 @@
             // bDone
             // 
             this.bDone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bDone.Location = new System.Drawing.Point(169, 178);
+            this.bDone.Location = new System.Drawing.Point(187, 178);
             this.bDone.Name = "bDone";
             this.bDone.Size = new System.Drawing.Size(75, 23);
             this.bDone.TabIndex = 4;
@@ -78,7 +78,7 @@
             this.gDetails.Controls.Add(this.tUsername);
             this.gDetails.Location = new System.Drawing.Point(11, 12);
             this.gDetails.Name = "gDetails";
-            this.gDetails.Size = new System.Drawing.Size(233, 159);
+            this.gDetails.Size = new System.Drawing.Size(247, 159);
             this.gDetails.TabIndex = 32;
             this.gDetails.TabStop = false;
             this.gDetails.Text = "FTP Login Details";
@@ -90,7 +90,7 @@
             this.cMode.Items.AddRange(new object[] {
             "FTP",
             "SFTP"});
-            this.cMode.Location = new System.Drawing.Point(86, 24);
+            this.cMode.Location = new System.Drawing.Point(100, 24);
             this.cMode.Name = "cMode";
             this.cMode.Size = new System.Drawing.Size(57, 21);
             this.cMode.TabIndex = 24;
@@ -107,7 +107,7 @@
             // 
             // nPort
             // 
-            this.nPort.Location = new System.Drawing.Point(86, 129);
+            this.nPort.Location = new System.Drawing.Point(100, 129);
             this.nPort.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -147,7 +147,7 @@
             // 
             // tHost
             // 
-            this.tHost.Location = new System.Drawing.Point(86, 51);
+            this.tHost.Location = new System.Drawing.Point(100, 51);
             this.tHost.Name = "tHost";
             this.tHost.Size = new System.Drawing.Size(141, 20);
             this.tHost.TabIndex = 0;
@@ -172,7 +172,7 @@
             // 
             // tPass
             // 
-            this.tPass.Location = new System.Drawing.Point(86, 103);
+            this.tPass.Location = new System.Drawing.Point(100, 103);
             this.tPass.Name = "tPass";
             this.tPass.PasswordChar = '●';
             this.tPass.Size = new System.Drawing.Size(141, 20);
@@ -180,7 +180,7 @@
             // 
             // tUsername
             // 
-            this.tUsername.Location = new System.Drawing.Point(86, 77);
+            this.tUsername.Location = new System.Drawing.Point(100, 77);
             this.tUsername.Name = "tUsername";
             this.tUsername.Size = new System.Drawing.Size(141, 20);
             this.tUsername.TabIndex = 1;
@@ -190,7 +190,7 @@
             this.AcceptButton = this.bDone;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(252, 208);
+            this.ClientSize = new System.Drawing.Size(270, 208);
             this.Controls.Add(this.gDetails);
             this.Controls.Add(this.bDone);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;

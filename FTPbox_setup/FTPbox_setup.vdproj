@@ -39,12 +39,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_9D7F956BD3A74F1393CF5AE14BDAC434"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_A5BDDDAF0A5C1DDE259B33C500918545"
         "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
@@ -65,6 +59,12 @@
         {
         "MsmKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
         "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DFD9774036EE49E9909D314E393D7675"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -253,26 +253,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9D7F956BD3A74F1393CF5AE14BDAC434"
-            {
-            "SourcePath" = "8:..\\..\\Updater\\updater\\updater\\bin\\Release\\appinfo.ini"
-            "TargetName" = "8:appinfo.ini"
-            "Tag" = "8:"
-            "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A5BDDDAF0A5C1DDE259B33C500918545"
             {
             "AssemblyRegister" = "3:1"
@@ -366,6 +346,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DFD9774036EE49E9909D314E393D7675"
+            {
+            "SourcePath" = "8:..\\..\\appinfo.ini"
+            "TargetName" = "8:appinfo.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -433,15 +433,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FTPbox"
-        "ProductCode" = "8:{02E7AE10-7099-40F1-9B5A-D3C3A3EB9992}"
-        "PackageCode" = "8:{F13BDBA2-02D1-4A5F-A1BB-6A6CF89A57B3}"
+        "ProductCode" = "8:{4AA5948E-399A-4FE4-BAB0-2959C41A67F4}"
+        "PackageCode" = "8:{E137A48B-BAA6-49E3-91EB-BD3405FF5E73}"
         "UpgradeCode" = "8:{C3AC21D9-1CD1-40EC-A4F8-F482D3922829}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.7.2"
+        "ProductVersion" = "8:1.7.3"
         "Manufacturer" = "8:ftpbox.org"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:ftpbox.org"
@@ -449,7 +449,7 @@
         "Subject" = "8:"
         "ARPCONTACT" = "8:ftpbox.org"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:"
+        "ARPCOMMENTS" = "8:Sync your files to your own host"
         "ARPURLINFOABOUT" = "8:"
         "ARPPRODUCTICON" = "8:_5A8936E4661D45059E7A3A40D235D007"
         "ARPIconIndex" = "3:0"

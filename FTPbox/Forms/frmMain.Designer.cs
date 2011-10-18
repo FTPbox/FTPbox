@@ -73,6 +73,7 @@
             this.labLocPath = new System.Windows.Forms.Label();
             this.labRemPath = new System.Windows.Forms.Label();
             this.tabAbout = new System.Windows.Forms.TabPage();
+            this.labSupportMail = new System.Windows.Forms.Label();
             this.linkLabel4 = new System.Windows.Forms.LinkLabel();
             this.linkLabel3 = new System.Windows.Forms.LinkLabel();
             this.label19 = new System.Windows.Forms.Label();
@@ -244,7 +245,9 @@
             this.cmbLang.Items.AddRange(new object[] {
             "English",
             "Español",
-            "Deutsch"});
+            "Deutsch",
+            "Français",
+            "Dutch"});
             this.cmbLang.Location = new System.Drawing.Point(70, 74);
             this.cmbLang.Name = "cmbLang";
             this.cmbLang.Size = new System.Drawing.Size(96, 21);
@@ -295,7 +298,7 @@
             // lMode
             // 
             this.lMode.AutoSize = true;
-            this.lMode.Location = new System.Drawing.Point(83, 81);
+            this.lMode.Location = new System.Drawing.Point(92, 81);
             this.lMode.Name = "lMode";
             this.lMode.Size = new System.Drawing.Size(27, 13);
             this.lMode.TabIndex = 13;
@@ -334,7 +337,7 @@
             // lPort
             // 
             this.lPort.AutoSize = true;
-            this.lPort.Location = new System.Drawing.Point(83, 63);
+            this.lPort.Location = new System.Drawing.Point(92, 63);
             this.lPort.Name = "lPort";
             this.lPort.Size = new System.Drawing.Size(27, 13);
             this.lPort.TabIndex = 10;
@@ -343,7 +346,7 @@
             // lHost
             // 
             this.lHost.AutoSize = true;
-            this.lHost.Location = new System.Drawing.Point(83, 27);
+            this.lHost.Location = new System.Drawing.Point(92, 27);
             this.lHost.Name = "lHost";
             this.lHost.Size = new System.Drawing.Size(27, 13);
             this.lHost.TabIndex = 9;
@@ -352,7 +355,7 @@
             // lUsername
             // 
             this.lUsername.AutoSize = true;
-            this.lUsername.Location = new System.Drawing.Point(83, 45);
+            this.lUsername.Location = new System.Drawing.Point(92, 45);
             this.lUsername.Name = "lUsername";
             this.lUsername.Size = new System.Drawing.Size(27, 13);
             this.lUsername.TabIndex = 8;
@@ -532,6 +535,7 @@
             // 
             // tabAbout
             // 
+            this.tabAbout.Controls.Add(this.labSupportMail);
             this.tabAbout.Controls.Add(this.linkLabel4);
             this.tabAbout.Controls.Add(this.linkLabel3);
             this.tabAbout.Controls.Add(this.label19);
@@ -552,10 +556,19 @@
             this.tabAbout.Text = "About";
             this.tabAbout.UseVisualStyleBackColor = true;
             // 
+            // labSupportMail
+            // 
+            this.labSupportMail.AutoSize = true;
+            this.labSupportMail.Location = new System.Drawing.Point(234, 113);
+            this.labSupportMail.Name = "labSupportMail";
+            this.labSupportMail.Size = new System.Drawing.Size(100, 13);
+            this.labSupportMail.TabIndex = 14;
+            this.labSupportMail.Text = "support@ftpbox.org";
+            // 
             // linkLabel4
             // 
             this.linkLabel4.AutoSize = true;
-            this.linkLabel4.Location = new System.Drawing.Point(234, 73);
+            this.linkLabel4.Location = new System.Drawing.Point(234, 67);
             this.linkLabel4.Name = "linkLabel4";
             this.linkLabel4.Size = new System.Drawing.Size(54, 13);
             this.linkLabel4.TabIndex = 9;
@@ -566,7 +579,7 @@
             // linkLabel3
             // 
             this.linkLabel3.AutoSize = true;
-            this.linkLabel3.Location = new System.Drawing.Point(234, 50);
+            this.linkLabel3.Location = new System.Drawing.Point(234, 44);
             this.linkLabel3.Name = "linkLabel3";
             this.linkLabel3.Size = new System.Drawing.Size(70, 13);
             this.linkLabel3.TabIndex = 8;
@@ -577,7 +590,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(234, 119);
+            this.label19.Location = new System.Drawing.Point(234, 136);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(79, 13);
             this.label19.TabIndex = 13;
@@ -586,16 +599,16 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(234, 96);
+            this.label21.Location = new System.Drawing.Point(234, 90);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(90, 13);
+            this.label21.Size = new System.Drawing.Size(93, 13);
             this.label21.TabIndex = 11;
-            this.label21.Text = "jtgftw@gmail.com";
+            this.label21.Text = "admin@ftpbox.org";
             // 
             // lVersion
             // 
             this.lVersion.AutoSize = true;
-            this.lVersion.Location = new System.Drawing.Point(234, 27);
+            this.lVersion.Location = new System.Drawing.Point(234, 21);
             this.lVersion.Name = "lVersion";
             this.lVersion.Size = new System.Drawing.Size(75, 13);
             this.lVersion.TabIndex = 8;
@@ -604,7 +617,7 @@
             // labLangUsed
             // 
             this.labLangUsed.AutoSize = true;
-            this.labLangUsed.Location = new System.Drawing.Point(64, 119);
+            this.labLangUsed.Location = new System.Drawing.Point(64, 136);
             this.labLangUsed.Name = "labLangUsed";
             this.labLangUsed.Size = new System.Drawing.Size(84, 13);
             this.labLangUsed.TabIndex = 7;
@@ -613,7 +626,7 @@
             // labContact
             // 
             this.labContact.AutoSize = true;
-            this.labContact.Location = new System.Drawing.Point(64, 96);
+            this.labContact.Location = new System.Drawing.Point(64, 90);
             this.labContact.Name = "labContact";
             this.labContact.Size = new System.Drawing.Size(47, 13);
             this.labContact.TabIndex = 5;
@@ -622,7 +635,7 @@
             // labSite
             // 
             this.labSite.AutoSize = true;
-            this.labSite.Location = new System.Drawing.Point(64, 73);
+            this.labSite.Location = new System.Drawing.Point(64, 67);
             this.labSite.Name = "labSite";
             this.labSite.Size = new System.Drawing.Size(84, 13);
             this.labSite.TabIndex = 4;
@@ -631,7 +644,7 @@
             // labTeam
             // 
             this.labTeam.AutoSize = true;
-            this.labTeam.Location = new System.Drawing.Point(64, 50);
+            this.labTeam.Location = new System.Drawing.Point(64, 44);
             this.labTeam.Name = "labTeam";
             this.labTeam.Size = new System.Drawing.Size(59, 13);
             this.labTeam.TabIndex = 3;
@@ -640,7 +653,7 @@
             // labCurVersion
             // 
             this.labCurVersion.AutoSize = true;
-            this.labCurVersion.Location = new System.Drawing.Point(64, 27);
+            this.labCurVersion.Location = new System.Drawing.Point(64, 21);
             this.labCurVersion.Name = "labCurVersion";
             this.labCurVersion.Size = new System.Drawing.Size(82, 13);
             this.labCurVersion.TabIndex = 2;
@@ -885,5 +898,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label lMode;
         private System.Windows.Forms.Label labMode;
+        private System.Windows.Forms.Label labSupportMail;
     }
 }

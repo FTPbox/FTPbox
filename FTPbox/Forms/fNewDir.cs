@@ -19,6 +19,8 @@ namespace FTPbox
         string pass;
         int port;
         bool ftporsftp;
+
+        ChannelSftp sftpc;
         
         FtpConnection ftp;
 
@@ -173,9 +175,20 @@ namespace FTPbox
         {
             string path = "/" + e.Node.FullPath.ToString().Replace('\\', '/');
 
-            foreach (TreeNode tn in e.Node.Nodes)
+            if (e.Node.Nodes.Count > 0)
             {
-                tn.Remove();
+                int i = e.Node.Index;                
+
+                foreach (TreeNode tn in e.Node.Nodes)
+                {
+                    try
+                    {
+                        treeView1.Nodes[i].Nodes.Remove(tn);                  
+                    }
+                    catch (Exception ex){
+                        MessageBox.Show(ex.Message);
+                    }
+                }
             }
 
             if (ftporsftp)
@@ -196,8 +209,17 @@ namespace FTPbox
             }
             else
             {
+                expandSFTP(path, e);
+            }
+        }
+
+        private void expandSFTP(string path, TreeViewEventArgs e)
+        {
+            try
+            {
                 SftpGoToRoot();
                 string fpath = sftproot + path;
+                Log.Write(fpath);
                 sftpc.cd(fpath);
                 foreach (ChannelSftp.LsEntry lse in sftpc.ls("."))
                 {
@@ -213,6 +235,12 @@ namespace FTPbox
                         ParentNode.Nodes.Add(ChildNode);
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                sftpc.quit();
+                sftp_login();
+                expandSFTP(path, e);
             }
         }
 
@@ -257,25 +285,45 @@ namespace FTPbox
                 bBrowse.Text = "Durchsuchen";
                 bDone.Text = "Fertig";
             }
+            else if (lan == "fr")
+            {
+                this.Text = "Ajouter un nouveau répertoire";
+                labSelect.Text = "Sélectionner un répertoire:";
+                labFullPath.Text = "Chemin complet:";
+                labLocal.Text = "Répertoire local:";
+                labParent.Text = "Chemin complet:";
+                bBrowse.Text = "Parcourir";
+                bDone.Text = "Terminer";
+            }
+            else if (lan == "du")
+            {
+                this.Text = "voeg een map toe";
+                labSelect.Text = "selecteer een map:";
+                labFullPath.Text = "Volledig pad:";
+                labLocal.Text = "lokale map:";
+                labParent.Text = "Account's full path:";
+                bBrowse.Text = "Zoeken";
+                bDone.Text = "Gereed";
+            }
             else
             {
                 this.Text = "Add a new directory";
                 labSelect.Text = "Select directory:";
                 labFullPath.Text = "Full path:";
                 labLocal.Text = "Local folder:";
-                labParent.Text = "Account's full path:";
+                labParent.Text = "Volledig account pad:";
                 bBrowse.Text = "Browse";
                 bDone.Text = "Done";
             }
         }
-        
-        ChannelSftp sftpc;
+
         private void sftp_login()
         {
             JSch jsch = new JSch();
 
             host = ((frmMain)this.Tag).ftpHost();
             UN = ((frmMain)this.Tag).ftpUser();
+            port = ((frmMain)this.Tag).ftpPort();
 
             Session session = jsch.getSession(UN, host, 22);
 
@@ -283,6 +331,8 @@ namespace FTPbox
             UserInfo ui = new MyUserInfo();
 
             session.setUserInfo(ui);
+
+            session.setPort(port);
 
             session.connect();
 
@@ -366,8 +416,34 @@ namespace FTPbox
         {
             while (!sftpc.pwd().equals(sftproot))
             {
-                sftpc.cd("..");
+                try
+                {
+                    sftpc.cd("..");
+                }
+                catch { 
+                    Log.Write("errrrror");
+                    sftpc.quit();
+                    sftp_login();
+                }
             }
+        }
+
+        private void treeView1_AfterCollapse(object sender, TreeViewEventArgs e)
+        {
+            int i = e.Node.Nodes.Count;
+            Log.Write(i.ToString());
+
+            Log.Write(e.Node.FullPath);
+            
+            int ind = treeView1.Nodes.IndexOf(e.Node);            
+
+            while (i != 0)
+            {
+                treeView1.Nodes.RemoveAt(i);
+                i -= 1;
+                Log.Write(i.ToString());
+            }
+            
         }
     }
 }

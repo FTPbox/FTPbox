@@ -73,6 +73,8 @@ namespace FTPbox
         public bool listing = false;
         public bool recentlycreated = false;
 
+        public bool failedlisting = false;
+
         Settings AppSettings = new Settings();
         string DecryptionPassword = "removed";     //removed for security purposes
         string DecryptionSalt = "removed";     //removed for security purposes
@@ -358,7 +360,11 @@ namespace FTPbox
 
         public int ftpPort()
         {
-            return AppSettings.Get("Account/Port", 21);
+            int i = 21;
+            if (!FTP())
+                i = 22;
+
+            return AppSettings.Get("Account/Port", i);
         }
 
         public string rPath()
@@ -547,23 +553,26 @@ namespace FTPbox
                     }
                     else
                     {
-                        try
+                        if (e.Name != "webint")
                         {
-                            if (FTP())
-                                CreateRemote(e.FullPath, cPath, name, true);
-                            else
+                            try
                             {
-                                List<string> ls = new List<string>();
-                                ls.Add("cr");
-                                ls.Add(e.FullPath);
-                                ls.Add(cPath);
-                                ls.Add(name);
-                                ls.Add("true");
-                                pending.Add(ls);
-                            }
+                                if (FTP())
+                                    CreateRemote(e.FullPath, cPath, name, true);
+                                else
+                                {
+                                    List<string> ls = new List<string>();
+                                    ls.Add("cr");
+                                    ls.Add(e.FullPath);
+                                    ls.Add(cPath);
+                                    ls.Add(name);
+                                    ls.Add("true");
+                                    pending.Add(ls);
+                                }
                                 //SftpCreate(e.FullPath, cPath, name, true);
+                            }
+                            catch { DoneSyncing(); }
                         }
-                        catch { DoneSyncing(); }
                     }
                 }
                 else if (e.ChangeType == WatcherChangeTypes.Deleted)
@@ -684,7 +693,11 @@ namespace FTPbox
                         ls.Add(e.FullPath);
                         ls.Add("false");
                         pending.Add(ls);
-                        RenamedList.Add(e.OldName.Replace(@"\", @"/"), e.Name.Replace(@"\", @"/"));
+                        try
+                        {
+                            RenamedList.Add(e.OldName.Replace(@"\", @"/"), e.Name.Replace(@"\", @"/"));
+                        }
+                        catch { }
                         Log.Write("Added to list: {0} - {1}", e.OldName.Replace(@"\", @"/"), e.Name.Replace(@"\", @"/"));
                         SftpRename(e.OldName, e.Name, cPath, e.FullPath, false);
                     }
@@ -954,6 +967,14 @@ namespace FTPbox
             {
                 tray.Text = "FTPbox - Aktuallisieren...";
             }
+            else if (lang() == "fr")
+            {
+                tray.Text = "FTPbox - Synchronisation...";
+            }
+            else if (lang() == "du")
+            {
+                tray.Text = "FTPbox – Synchroniseren";
+            }
             else
             {
                 tray.Text = "FTPbox - Syncing...";
@@ -975,6 +996,14 @@ namespace FTPbox
             else if (lang() == "de")
             {
                 tray.Text = "FTPbox - Alle Daten sind aktuell";
+            }
+            else if (lang() == "fr")
+            {
+                tray.Text = "FTPbox - Fichiers synchronisés";
+            }
+            else if (lang() == "du")
+            {
+                tray.Text = "FTPbox – Alle bestanden gesynchroniseerd";
             }
             else
             {
@@ -1043,6 +1072,14 @@ namespace FTPbox
                 else if (lang() == "de")
                 {
                     tray.ShowBalloonTip(30, "FTPbox", "Link wurde in die Zwischenablage koppiert", ToolTipIcon.Info);
+                }
+                else if (lang() == "fr")
+                {
+                    tray.ShowBalloonTip(30, "FTPbox", "Lien copié dans le presse-papiers", ToolTipIcon.Info);
+                }
+                else if (lang() == "du")
+                {
+                    tray.ShowBalloonTip(30, "FTPbox", "Link naar klembord gekopieerd", ToolTipIcon.Info);
                 }
                 else
                 {
@@ -1689,7 +1726,7 @@ namespace FTPbox
             {
                 Log.Write(ex.Message);
                 MessageBox.Show("Error creating directory. Make sure your FTP account has permissions to create directories! " + 
-                    "If your account has the permissions needed but this error keeps on showing, feel free to contact me!", "Error", MessageBoxButtons.OK);
+                    "If your account has the permissions needed but this error keeps on showing, feel free to contact me!" + Environment.NewLine + "Error message: " + ex.Message, "Error", MessageBoxButtons.OK);
                 Application.Exit();
             }
         }
@@ -1750,6 +1787,7 @@ namespace FTPbox
                 listing = false;
                 // Retrieve the dictionary from the result
                 //Thread.Sleep(10000);
+                //Thread.Sleep(5000);
                 Dictionary<String, DateTime> fdDict = e.Result as Dictionary<String, DateTime>;
 
                 FullList = new Dictionary<string, DateTime>();
@@ -1760,7 +1798,16 @@ namespace FTPbox
                 else
                 {
                     //CheckPending();
+                    
                     CheckLocal();
+                    if (failedlisting)
+                    {
+                        Log.Write("!!error");
+                        sftpc.quit();
+                        sftp_login();
+                        SftpCDtoRoot();
+                        failedlisting = false;
+                    }
                     ListAllFiles();
                 }
                 
@@ -1810,7 +1857,7 @@ namespace FTPbox
                         // And our work is complete!
 
                     }
-                    catch { }
+                    catch (Exception ex) { Log.Write("ERROR!!! " + ex.Message); }
                 }
             }
         }
@@ -1852,7 +1899,7 @@ namespace FTPbox
                 foreach (FtpDirectoryInfo dInfo in ftpbg.GetDirectories())
                 {
                     // You can't trick me!
-                    if (dInfo.Name != "." && dInfo.Name != "..")
+                    if (dInfo.Name != "." && dInfo.Name != ".." && dInfo.Name != "webint")
                     {
                         getSetDirFiles(dInfo.Name, dInfo.LastWriteTimeUtc.Value.AddHours(timedif.Hours), ref fdDict);
                     }
@@ -1880,26 +1927,29 @@ namespace FTPbox
                 {
                     Log.Write("Found: {0}", lse.getFilename());
                     SftpATTRS attrs = lse.getAttrs();
-                    if (attrs.isDir())
+                    if (lse.getFilename() != "webint")
                     {
-                        // Loop through directories
-                        if (lse.getFilename() != "." && lse.getFilename() != "..")
+                        if (attrs.isDir())
                         {
-                            getSetDirFilesSFTP(lse.getFilename(), attrs.getMtimeString().AddSeconds(timedif.TotalSeconds), ref fdDict);
+                            // Loop through directories
+                            if (lse.getFilename() != "." && lse.getFilename() != "..")
+                            {
+                                getSetDirFilesSFTP(lse.getFilename(), attrs.getMtimeString().AddSeconds(timedif.TotalSeconds), ref fdDict);
+                            }
                         }
-                    }
-                    else
-                    {
-                        // Loop through files
-                        if (lse.getFilename() != ".ftpquota")
+                        else
                         {
-                            // Got it? Add it!
-                            fdDict.Add(noSlashes(String.Format("{0}/{1}", noSlashes(rPath()), lse.getFilename())), attrs.getMtimeString().AddSeconds(timedif.TotalSeconds));
-                            Log.Write("sftp {0}/{1}", noSlashes(rPath()), lse.getFilename());
-                            //CheckRemoteFile(noSlashes(rPath()), fInfo.Name, fInfo.LastWriteTimeUtc.Value);
-                            CheckRemSftpFiles(lse.getFilename(), "", attrs.getMtimeString().AddSeconds(timedif.TotalSeconds), false);
+                            // Loop through files
+                            if (lse.getFilename() != ".ftpquota")
+                            {
+                                // Got it? Add it!
+                                fdDict.Add(noSlashes(String.Format("{0}/{1}", noSlashes(rPath()), lse.getFilename())), attrs.getMtimeString().AddSeconds(timedif.TotalSeconds));
+                                Log.Write("sftp {0}/{1}", noSlashes(rPath()), lse.getFilename());
+                                //CheckRemoteFile(noSlashes(rPath()), fInfo.Name, fInfo.LastWriteTimeUtc.Value);
+                                CheckRemSftpFiles(lse.getFilename(), "", attrs.getMtimeString().AddSeconds(timedif.TotalSeconds), false);
+                            }
+
                         }
-                        
                     }
                 }
             }
@@ -1920,29 +1970,35 @@ namespace FTPbox
 
             Log.Write("Drct ({0})", newPath);
 
-            // Set our current directory
-            ftpbg.SetCurrentDirectory(newPath);
-                
+            //CheckRemFtpFiles(newPath, lastWriteTime);
 
-            // Loop through files
-            foreach (FtpFileInfo fInfo in ftpbg.GetFiles())
+            if (ftpbg.DirectoryExists(newPath))
             {
-                if (fInfo.Name != ".ftpquota")
+                // Set our current directory
+                ftpbg.SetCurrentDirectory(newPath);
+
+                // Loop through files
+                foreach (FtpFileInfo fInfo in ftpbg.GetFiles())
                 {
-                    // Got it? Add it!
-                    Log.Write("*FTP* File ({0})", noSlashes(String.Format("{0}{1}", newPath, fInfo.Name)));
-                    fdDict.Add(noSlashes(String.Format("{0}{1}", newPath, fInfo.Name)), fInfo.LastWriteTimeUtc.Value.AddHours(timedif.Hours));
+                    if (fInfo.Name != ".ftpquota")
+                    {
+                        // Got it? Add it!
+                        Log.Write("*FTP* File ({0})", noSlashes(String.Format("{0}{1}", newPath, fInfo.Name)));
+                        fdDict.Add(noSlashes(String.Format("{0}{1}", newPath, fInfo.Name)), fInfo.LastWriteTimeUtc.Value.AddHours(timedif.Hours));
+                        string cpath = String.Format("{0}{1}", newPath, fInfo.Name);
+                        //CheckRemFtpFiles(cpath, fInfo.LastWriteTimeUtc.Value.AddHours(timedif.Hours));
+                    }
                 }
-            }
 
-            // And directories
-            foreach (FtpDirectoryInfo dInfo in ftpbg.GetDirectories())
-            {
-                // You can't trick me!
-                if (dInfo.Name != "." && dInfo.Name != "..")
+                // And directories
+                foreach (FtpDirectoryInfo dInfo in ftpbg.GetDirectories())
                 {
-                    // Spawn another loop
-                    getSetDirFiles(noSlashes(String.Format("{0}/{1}", path, dInfo.Name)), dInfo.LastWriteTimeUtc.Value.AddHours(timedif.Hours), ref fdDict);
+                    // You can't trick me!
+                    if (dInfo.Name != "." && dInfo.Name != "..")
+                    {
+                        // Spawn another loop
+                        getSetDirFiles(noSlashes(String.Format("{0}/{1}", path, dInfo.Name)), dInfo.LastWriteTimeUtc.Value.AddHours(timedif.Hours), ref fdDict);
+                    }
                 }
             }
         }
@@ -2123,6 +2179,179 @@ namespace FTPbox
                 }
             }
         }
+
+        #region CheckRemFtpFiles - will be added later
+        /*
+        public void CheckRemFtpFiles(string cpath, DateTime lwt)
+        {
+            DateTime rDT = lwt;
+
+            if (cpath.EndsWith(@"/"))
+            {
+                //means it's a folder
+                string path = lPath();
+                string remPath = cpath;
+                if (remPath.StartsWith(rPath()))
+                {
+                    remPath = remPath.Substring(rPath().Length);
+                }
+                path = path + @"\" + noSlashes(remPath.Replace(@"/", @"\"));
+
+                if (!Directory.Exists(path))
+                {
+                    if (DeletedList.Contains(cpath))
+                    {
+                        DeleteFolderFTP(cpath, true, ref ftpbg);
+                        DeletedList.Remove(cpath);
+
+                        string name = noSlashes(cpath).Substring(noSlashes(cpath).LastIndexOf("/") + 1);
+
+                        if (ShowNots() && lasttip != string.Format("Folder {0} was deleted.", name))
+                            tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("deleted", false), name), ToolTipIcon.Info);
+                        lasttip = string.Format("Folder {0} was deleted.", name);
+                        link = null;
+                    }
+                    else
+                    {
+                        List<string> Namelog = new List<string>(nLog().Split('|', '|'));
+                        if (!RenamedList.ContainsKey(cpath))
+                        {
+                            Directory.CreateDirectory(path);
+                            Log.Write("????> Created Directory: {0} (local)", path);
+                            DirectoryInfo d = new DirectoryInfo(path);
+                            if (ShowNots() && lasttip != string.Format("Folder {0} was created.", d.Name))
+                                tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("created", false), d.Name), ToolTipIcon.Info);
+                            lasttip = string.Format("Folder {0} was created.", d.Name);
+                            link = null;
+                        }
+                        else
+                        {
+                            Log.Write("namelog doesnt contain: {0}", cpath);
+                            //RenamedList.Remove(cpath);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //means it's a file
+                int i = cpath.LastIndexOf(@"/");
+                string cPath = cpath.Substring(0, i);
+                string name = cpath.Substring(i + 1, cpath.Length - i - 1);
+                string FullRemPath = noSlashes(cPath) + @"/";
+                string FullLocalPath = noSlashes(lPath());
+                string LocalFileDirParent = lPath();
+
+                string fLocalPath = noSlashes(lPath());
+
+                string comPath = cPath;
+
+                if (comPath.StartsWith(rPath()))
+                {
+                    comPath = comPath.Substring(rPath().Length, comPath.Length - rPath().Length);
+                }
+
+                if (cPath == "")
+                {
+                    FullLocalPath = noSlashes(FullLocalPath) + @"\" + name;
+                    fLocalPath = fLocalPath + @"\" + name;
+                }
+                else
+                {
+                    FullLocalPath = FullLocalPath + @"\" + noSlashes(comPath.Replace(@"/", @"\")) + @"\" + name;
+                    fLocalPath = fLocalPath + @"\" + noSlashes(comPath.Replace(@"/", @"\")) + @"\" + name;
+                    //FullRemPath = noSlashes(FullRemPath) + cPath;
+                    LocalFileDirParent = noSlashes(LocalFileDirParent) + @"\" + noSlashes(comPath.Replace(@"/", @"\"));
+                }
+                Log.Write("cPath {0} -> name {1} -> fullRP {2} ->Flp {3} -> comPath {4} -> LFDP {5}", cPath, name, FullRemPath, FullLocalPath, comPath, LocalFileDirParent);
+
+                if (nLog() == null || nLog() == "" || !nLog().Contains(cpath))
+                {
+                    try
+                    {
+                        Syncing();
+                        Log.Write("Log is null, gonna get {0}", name);
+                        ftpbg.SetCurrentDirectory(FullRemPath);
+                        ftpbg.SetLocalDirectory(LocalFileDirParent);
+                        LastChangedFileFromRem = name;
+                        LastChangedFolderFromRem = GetParentFolder(cPath);
+                        downloading = true;
+                        fswFiles.EnableRaisingEvents = false;
+                        ftpbg.GetFile(name, false);
+                        fswFiles.EnableRaisingEvents = true;
+
+                        if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
+                            tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
+                        lasttip = string.Format("File {0} was updated.", name);
+
+                        UpdateTheLog(cpath, lwt);
+                        Get_Link(comPath, name);
+                        downloading = false;
+                        DoneSyncing();
+                    }
+                    catch (Exception ex)
+                    {
+                        DoneSyncing();
+                        Log.Write("[ERROR] -> " + ex.Message);
+                    }
+                }
+                else
+                {
+                    if (File.Exists(fLocalPath))
+                    {
+                        FileInfo f = new FileInfo(fLocalPath);
+                        CheckExistingFile(name, cpath, FullRemPath, FullLocalPath, LocalFileDirParent, f.LastWriteTimeUtc, lwt, comPath);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            if (DeletedList.Contains(cpath))
+                            {
+                                ftpbg.SetCurrentDirectory(FullRemPath);
+                                ftpbg.RemoveFile(name);
+                                DeletedList.Remove(cpath);
+
+                                if (ShowNots() && lasttip != string.Format("File {0} was deleted.", name))
+                                    tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("deleted", true), name), ToolTipIcon.Info);
+                                lasttip = string.Format("File {0} was deleted.", name);
+                                link = null;
+
+                                string logpath = "/" + cPath.Substring(rPath().Length);
+                                RemoveFromLog(logpath);
+                            }
+                            else
+                            {
+                                Syncing();
+                                Log.Write("Log not null but {0} doesnt exist!", cpath);
+                                ftpbg.SetCurrentDirectory(FullRemPath);
+                                ftpbg.SetLocalDirectory(LocalFileDirParent);
+                                downloading = true;
+                                fswFiles.EnableRaisingEvents = false;
+                                ftpbg.GetFile(name, false);
+
+                                if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
+                                    tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
+                                lasttip = string.Format("File {0} was updated.", name);
+
+                                fswFiles.EnableRaisingEvents = true;
+                                Get_Link(comPath, name);
+                                UpdateTheLog(cpath, lwt);
+                                downloading = false;
+                                DoneSyncing();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            DoneSyncing();
+                            Log.Write("[ERROR] -> " + ex.Message);
+                        }
+                    }
+                }
+            }
+        }        
+        */
+        #endregion
 
         public void CheckRemSftpFiles(string name, string fRemPath, DateTime lastwritetime, bool isDir)
         {
@@ -2748,6 +2977,14 @@ namespace FTPbox
                     {
                         tray.Text = "FTPbox - Offline";
                     }
+                    else if (lang() == "fr")
+                    {
+                        tray.Text = "FTPbox - Hors ligne";
+                    }
+                    else if (lang() == "du")
+                    {
+                        tray.Text = "FTPbox – Offline";
+                    }
                     else
                     {
                         tray.Text = "FTPbox - Offline";
@@ -2820,6 +3057,45 @@ namespace FTPbox
                                 Log.Write("++++++++> {0} {1} {2} in {3}", compath, path, name, s);
                                 if (FTP())
                                 {
+                                    if (!FullList.ContainsKey(compath))
+                                    {
+                                        if (!RenamedList.ContainsValue(compath))
+                                        {
+                                            Log.Write("Case 1");
+                                            Log.Write("FTP > sorry, gotta delete {0}", compath);
+                                            if (isDir)
+                                            {
+                                                Directory.Delete(s, true);
+
+                                                if (ShowNots())
+                                                    tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("deleted", false), name), ToolTipIcon.Info);
+                                                lasttip = string.Format("Folder {0} was deleted.", name);
+                                                link = null;
+                                                RemoveFromLog(cPath);
+                                            }
+                                            else
+                                            {
+                                                File.Delete(s);
+
+                                                if (ShowNots())
+                                                    tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("deleted", true), name), ToolTipIcon.Info);
+                                                lasttip = string.Format("File {0} was deleted.", name);
+                                                link = null;
+                                                RemoveFromLog(cPath);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Log.Write("renamedlist contains value: {0}", compath);
+                                            foreach (KeyValuePair<string, string> k in RenamedList)
+                                            {
+                                                if (k.Value == compath)
+                                                    RenamedList.Remove(k.Key);
+                                            }
+                                        }
+                                    }
+                                    /////////////////////////////////
+                                    /*
                                     if (ftp.DirectoryExists(noSlashes(rPath()) + path))
                                     {
                                         ftp.SetCurrentDirectory(noSlashes(rPath()) + path);
@@ -2831,7 +3107,7 @@ namespace FTPbox
                                     else
                                     {
                                         File.Delete(s);
-                                    }
+                                    } */
                                 }
                                 else
                                 {
@@ -2939,7 +3215,11 @@ namespace FTPbox
                         Log.Write("recentlycreated is true");
                 }
             }
-            catch { }
+            catch (Exception ex) 
+            { 
+                Log.Write("Error::: " + ex.Message);
+                failedlisting = true;
+            }
             recentlycreated = false;
             Log.Write("$$$$$$$$$$$$ Done Checkin Local $$$$$$$$$$$$");
         }
@@ -2975,15 +3255,28 @@ namespace FTPbox
 
             if (curlan == "" || curlan == null)
             {
-                string locallang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+                string locallangtwoletter = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+                string locallang;
 
-                if (locallang != "en" && (locallang == "es" || locallang == "de"))
+                if (locallangtwoletter == "es")
+                    locallang = "Spanish";
+                else if (locallangtwoletter == "de")
+                    locallang = "German";
+                else if (locallangtwoletter == "fr")
+                    locallang = "French";
+                else if (locallangtwoletter == "du")
+                    locallang = "Dutch";
+                else
+                    locallang = "English";
+
+                if (locallangtwoletter != "en" && (locallangtwoletter == "es" || locallangtwoletter == "de" || locallangtwoletter == "fr" || locallangtwoletter == "du"))
                 {
-                    DialogResult x = MessageBox.Show("FTPbox detected that you use {0} as your computer language. Do you want to use {1} as the language of FTPbox as well?", 
-                        "FTPbox", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                    string msg = string.Format("FTPbox detected that you use {0} as your computer language. Do you want to use {1} as the language of FTPbox as well?", locallang, locallang);
+                    DialogResult x = MessageBox.Show(msg, "FTPbox", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
                     if (x == DialogResult.Yes)
                     {
-                        Set_Language(locallang);
+                        Set_Language(locallangtwoletter);
                     }
                     else
                     {
@@ -3004,6 +3297,7 @@ namespace FTPbox
 
         private void Set_Language(string lan)
         {
+            Log.Write("gon change language to: {0}", lan);
             if (lan == "en")
             {
                 this.Text = "FTPbox | Options";
@@ -3038,11 +3332,12 @@ namespace FTPbox
                 labLangUsed.Text = "Coded in:";
                 gNotes.Text = "Notes";
                 gContribute.Text = "Contribute";
-                labFree.Text = "- FTPbox is free and open-srouce";
+                labFree.Text = "- FTPbox is free and open-source";
                 labContactMe.Text = "- Feel free to contact me for anything.";
                 linkLabel1.Text = "Report a bug";
                 linkLabel2.Text = "Request a feature";
                 labDonate.Text = "Donate:";
+                labSupportMail.Text = "support@ftpbox.org";
                 cmbLang.SelectedIndex = 0;
             }
             else if (lan == "es")
@@ -3084,6 +3379,7 @@ namespace FTPbox
                 linkLabel1.Text = "Reporta un error";
                 linkLabel2.Text = "Pide una función";
                 labDonate.Text = "Dona:";
+                labSupportMail.Text = "soporte@ftpbox.org";
                 cmbLang.SelectedIndex = 1;
             }
             else if (lan == "de")
@@ -3125,7 +3421,95 @@ namespace FTPbox
                 linkLabel1.Text = "Einen Fehler melden";
                 linkLabel2.Text = "Ein Feature vorschlagen";
                 labDonate.Text = "Spenden:";
+                labSupportMail.Text = "support@ftpbox.org";
                 cmbLang.SelectedIndex = 2;
+            }
+            else if (lan == "fr")
+            {
+                this.Text = "FTPbox | Options";
+                //general tab
+                tabGeneral.Text = "Général";
+                gAccount.Text = "FTP Compte";
+                labHost.Text = "Hôte:";
+                labUN.Text = "Nom d'utilisateur:";
+                labPort.Text = "Port:";
+                labMode.Text = "Mode:";
+                bAddFTP.Text = "Changer";
+                gApp.Text = "Application";
+                //gWebInt.Text = "Interface Web";
+                //chkWebInt.Text = "Utiliser l'interface Web";
+                //labViewInBrowser.Text = "(Voir dans le navigateur)";
+                chkShowNots.Text = "Afficher les notifications";
+                chkStartUp.Text = "Lancer au démarage du système";
+                labLang.Text = "Langue:";
+                //ftpbox tab
+                gDetails.Text = "Détails";
+                labRemPath.Text = "Chemin distant:";
+                labLocPath.Text = "Chemin local:";
+                bChangeBox.Text = "Changer";
+                gLinks.Text = "Liens";
+                labFullPath.Text = "Chemin complet:";
+                labLinkClicked.Text = "Quand une notification ou un fichier récent est cliqué:";
+                rOpenInBrowser.Text = "Ouvrir le lien dans le navigateur par défaut";
+                rCopy2Clipboard.Text = "Copier le lien dans le presse-papiers";
+                //about tab
+                tabAbout.Text = "À propos";
+                labCurVersion.Text = "Version actuelle:";
+                labTeam.Text = "L'équipe:";
+                labSite.Text = "Site officiel:";
+                labContact.Text = "Contact:";
+                labLangUsed.Text = "Programmé en:";
+                gNotes.Text = "Notes";
+                gContribute.Text = "Contribuer";
+                labFree.Text = "- FTPbox est gratuit et open-source";
+                labContactMe.Text = "- N'hésitez pas à me contacter.";
+                linkLabel1.Text = "Reporter un bug";
+                linkLabel2.Text = "Proposer une fonctionnalité";
+                labDonate.Text = "Faites un don:";
+                labSupportMail.Text = "support@ftpbox.org";
+                cmbLang.SelectedIndex = 3;
+            }
+            else if (lan == "du")
+            {
+                this.Text = "FTPbox | Opties";
+                //general tab
+                tabGeneral.Text = "Algemeen";
+                gAccount.Text = "FTP Account";
+                labHost.Text = "Host:";
+                labUN.Text = "Gebruikersnaam:";
+                labPort.Text = "Poort:";
+                labMode.Text = "Mode:";
+                bAddFTP.Text = "Wijzig";
+                gApp.Text = "Applicatie";
+                chkShowNots.Text = "Toon notificaties";
+                chkStartUp.Text = "Start wanneer het systeem opstart";
+                labLang.Text = "Language:";
+                //ftpbox tab
+                gDetails.Text = "Details";
+                labRemPath.Text = "Extern pad:";
+                labLocPath.Text = "Lokaal pad:";
+                bChangeBox.Text = "Wijzig";
+                gLinks.Text = "Links";
+                labFullPath.Text = "Volledig account pad:";
+                labLinkClicked.Text = "Wanneer u klikt op de taakbalk notificatie of 'recent bestand':";
+                rOpenInBrowser.Text = "open link in standaard browser";
+                rCopy2Clipboard.Text = "Kopieer link naar het klembord";
+                //about tab
+                tabAbout.Text = "Over";
+                labCurVersion.Text = "Huidige versie:";
+                labTeam.Text = "Het team:";
+                labSite.Text = "officiele website:";
+                labContact.Text = "Contact:";
+                labLangUsed.Text = "Geprogrammeerd in:";
+                gNotes.Text = "Notities";
+                gContribute.Text = "Contributies";
+                labFree.Text = "- FTPbox is gratis en open-source";
+                labContactMe.Text = "- Aarzel niet contact met me op te nemen.";
+                linkLabel1.Text = "Meld en probleem";
+                linkLabel2.Text = "Verzoek een functie";
+                labDonate.Text = "doneer:";
+                labSupportMail.Text = "support@ftpbox.org";
+                cmbLang.SelectedIndex = 4;
             }
             AppSettings.Put("Settings/Language", lan);
             //FTPbox.Properties.Settings.Default.lan = lan;
@@ -3154,6 +3538,10 @@ namespace FTPbox
                         return "Datei {0} wurde erstellt.";
                     else if (lang() == "es")
                         return "El archivo {0} fue creado";
+                    else if (lang() == "fr")
+                        return "Le fichier {0} a été créé.";
+                    else if (lang() == "du")
+                        return "Bestand {0} is gecreëerd";                        
                     else
                         return "File {0} was created.";
                 }
@@ -3163,6 +3551,10 @@ namespace FTPbox
                         return "Ordner {0} wurde erstellt.";
                     else if (lang() == "es")
                         return "La carpeta {0} fue creada";
+                    else if (lang() == "fr")
+                        return "Le répertoire {0} a été créé.";
+                    else if (lang() == "du")
+                        return "Map {0} is gecreëerd";
                     else
                         return "Folder {0} was created.";
                 }
@@ -3175,6 +3567,10 @@ namespace FTPbox
                         return "Datei {0} wurde gelöscht.";
                     else if (lang() == "es")
                         return "El archivo {0} fue borrado.";
+                    else if (lang() == "fr")
+                        return "Le fichier {0} a été supprimé.";
+                    else if (lang() == "du")
+                        return "Bestand {0} is verwijdert.";
                     else
                         return "File {0} was deleted.";
                 }
@@ -3184,17 +3580,25 @@ namespace FTPbox
                         return "Ordner {0} wurde gelöscht.";
                     else if (lang() == "es")
                         return "La carpeta {0} fue borrada.";
+                    else if (lang() == "fr")
+                        return "Le répertoire {0} a été supprimé.";
+                    else if (lang() == "du")
+                        return "Map {0} is verwijdert.";
                     else
                         return "Folder {0} was deleted.";
                 }
-                
+
             }
             else if (not == "renamed")
             {
                 if (lang() == "de")
                     return "{0} wurde umbenannt in {1}";
                 else if (lang() == "es")
-                    return "El archivo {0} fue renombrado a {1}";
+                    return "{0} fue renombrado a {1}";
+                else if (lang() == "fr")
+                    return "{0} a été renommé en {1}.";
+                else if (lang() == "du")
+                    return "{0} is hernoemd naar {1}";
                 else
                     return "{0} was renamed to {1}.";
             }
@@ -3206,8 +3610,12 @@ namespace FTPbox
                         return "Datei {0} wurde geändert.";
                     else if (lang() == "es")
                         return "El archivo {0} fue cambiado.";
+                    else if (lang() == "fr")
+                        return "Le fichier {0} a été changé.";
+                    else if (lang() == "du")
+                        return "Bestand {0} is gewijzigd.";
                     else
-                        return "File {0} was created.";
+                        return "File {0} was changed.";
                 }
                 else
                 {
@@ -3215,8 +3623,12 @@ namespace FTPbox
                         return "Ordner {0} wurde geändert.";
                     else if (lang() == "es")
                         return "La carpeta {0} fue cambiada.";
+                    else if (lang() == "fr")
+                        return "Le répertoire {0} a été changé.";
+                    else if (lang() == "du")
+                        return "Map {0} is gewijzigd.";
                     else
-                        return "Folder {0} was created.";
+                        return "Folder {0} was changed.";
                 }
             }
             else //if (not == "updated")
@@ -3227,6 +3639,10 @@ namespace FTPbox
                         return "Datei {0} wurde aktuallisiert.";
                     else if (lang() == "es")
                         return "El archivo {0} fue actualizado.";
+                    else if (lang() == "fr")
+                        return "Le fichier {0} a été mis à jour.";
+                    else if (lang() == "du")
+                        return "Bestand {0} is geüpdatet";
                     else
                         return "File {0} was updated.";
                 }
@@ -3236,6 +3652,10 @@ namespace FTPbox
                         return "Ordner {0} wurde aktuallisiert.";
                     else if (lang() == "es")
                         return "La carpeta {0} fue actualizada.";
+                    else if (lang() == "fr")
+                        return "Le répertoire {0} a été mis à jour.";
+                    else if (lang() == "du")
+                        return "Map {0} is geüpdatet";
                     else
                         return "Folder {0} was updated.";
                 }
@@ -3378,6 +3798,8 @@ namespace FTPbox
             UserInfo ui = new MyUserInfo();
 
             session.setUserInfo(ui);
+
+            session.setPort(ftpPort());
 
             session.connect();
 
@@ -3702,11 +4124,35 @@ namespace FTPbox
                 
                 while (!sftpc.pwd().Equals(home)) 
                 {
-                    Log.Write("*SFTP* Going up one level from {0} to get to {1}", sftpc.pwd(), home);
-                    if (sftpc.pwd() == "/")
-                        sftpc.cd(home.Substring(1));
-                    else
-                        sftpc.cd("..");                    
+                    try
+                    {
+                        Log.Write("*SFTP* Going up one level from {0} to get to {1}", sftpc.pwd(), home);
+                        if (sftpc.pwd() == "/")
+                            sftpc.cd(home.Substring(1));
+                        else if (sftpc.pwd() == "/home/" + ftpUser())
+                        {
+                            sftpc.cd(rpath);
+                            Log.Write("Changed to rpath: {0}", rpath);
+                        }
+                        else
+                        {
+                            try
+                            {
+                                sftpc.cd("..");
+                            }
+                            catch (Exception ex)
+                            {
+                                sftpc.quit();
+                                sftp_login();
+                                Log.Write("ERRoR> " + ex.Message);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        sftpc.quit();
+                        sftp_login();
+                    }
                 }
                 if (sftpc.pwd() == "/")
                 {

@@ -81,9 +81,9 @@ namespace FTPbox
                 fnewdir.ShowDialog();
                 this.Close();  
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Could not connect to FTP server. Check your account details and try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not connect to FTP server. Check your account details and try again." + Environment.NewLine + " Error message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
                      
         }
@@ -143,6 +143,28 @@ namespace FTPbox
                 bDone.Text = "Fertig";
 
             }
+            else if (lan == "fr")
+            {
+                this.Text = "FTPbox | Nouveau compte FTP";
+                gDetails.Text = "Paramètres FTP";
+                labMode.Text = "Mode:";
+                labHost.Text = "Hôte:";
+                labPort.Text = "Port:";
+                labUN.Text = "Nom d'utilisateur:";
+                labPass.Text = "Mot de passe:";
+                bDone.Text = "Terminer";
+            }
+            else if (lan == "du")
+            {
+                this.Text = "FTPbox | Nieuwe FTP account";
+                gDetails.Text = "FTP login details";
+                labMode.Text = "Mode:";
+                labHost.Text = "Host:";
+                labPort.Text = "Poort:";
+                labUN.Text = "Gebruikersnaam:";
+                labPass.Text = "Wachtwoord:";
+                bDone.Text = "Gereed";
+            }
             else
             {
                 this.Text = "FTPbox | New FTP Account";
@@ -170,6 +192,8 @@ namespace FTPbox
             UserInfo ui = new MyUserInfo();
 
             session.setUserInfo(ui);
+
+            session.setPort(Convert.ToInt32(nPort.Value));
 
             session.connect();
 
@@ -253,12 +277,10 @@ namespace FTPbox
         {
             if (cMode.SelectedIndex == 0)
             {
-                nPort.Enabled = true;
                 nPort.Value = 21;
             }
             else
             {
-                nPort.Enabled = false;
                 nPort.Value = 22;
             }
         }       

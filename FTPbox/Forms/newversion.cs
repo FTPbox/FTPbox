@@ -84,6 +84,28 @@ namespace FTPbox
                 bLearnMore.Text = "Mehr erfahren";
                 bClose.Text = "Nicht dieses Mal";
             }
+            else if (lan == "fr")
+            {
+                this.Text = "FTPbox | Mise à jour disponible";
+                labInfo.Text = "Une nouvelle version de FTPbox est disponible";
+                labCurVer.Text = "Version actuelle:";
+                labNewVer.Text = "Nouvelle version:";
+                labQuest.Text = "Souhaitez-vous télécharger la nouvelle version maintenant?";
+                bDownload.Text = "Télécharger";
+                bLearnMore.Text = "Plus d'informations";
+                bClose.Text = "Pas maintenant";
+            }
+            else if (lan == "du")
+            {
+                this.Text = "FTPbox | Update beschikbaar";
+                labInfo.Text = "Een nieuwe versie van FTPbox is beschikbaar";
+                labCurVer.Text = "Huidige versie:";
+                labNewVer.Text = "Nieuwe versie:";
+                labQuest.Text = "Wilt u de nieuwste versie downloaden?";
+                bDownload.Text = "Download";
+                bLearnMore.Text = "Lees meer";
+                bClose.Text = "Niet nu";
+            }
             else
             {
                 this.Text = "FTPbox | Update Available";
