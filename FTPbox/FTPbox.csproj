@@ -37,11 +37,13 @@
     <ApplicationIcon>ftpboxnew.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DiffieHellman">
-      <HintPath>..\..\SharpSSH-1.1.1.13.src\bin\Release\DiffieHellman.dll</HintPath>
+    <Reference Include="DiffieHellman, Version=0.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Classes\DiffieHellman.dll</HintPath>
     </Reference>
-    <Reference Include="Org.Mentalis.Security">
-      <HintPath>..\..\SharpSSH-1.1.1.13.src\bin\Release\Org.Mentalis.Security.dll</HintPath>
+    <Reference Include="Org.Mentalis.Security, Version=1.0.13.715, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Classes\Org.Mentalis.Security.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -53,8 +55,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Tamir.SharpSSH">
-      <HintPath>..\..\SharpSSH-1.1.1.13.src\bin\Release\Tamir.SharpSSH.dll</HintPath>
+    <Reference Include="Tamir.SharpSSH, Version=1.1.1.13, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Classes\Tamir.SharpSSH.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +67,47 @@
     <Compile Include="Classes\INIclass.cs" />
     <Compile Include="Classes\Log.cs" />
     <Compile Include="Classes\Settings.cs" />
+    <Compile Include="Classes\ZipLib\Checksums\Adler32.cs" />
+    <Compile Include="Classes\ZipLib\Checksums\CRC32.cs" />
+    <Compile Include="Classes\ZipLib\Checksums\IChecksum.cs" />
+    <Compile Include="Classes\ZipLib\Checksums\StrangeCRC.cs" />
+    <Compile Include="Classes\ZipLib\Core\FileSystemScanner.cs" />
+    <Compile Include="Classes\ZipLib\Core\INameTransform.cs" />
+    <Compile Include="Classes\ZipLib\Core\IScanFilter.cs" />
+    <Compile Include="Classes\ZipLib\Core\NameFilter.cs" />
+    <Compile Include="Classes\ZipLib\Core\PathFilter.cs" />
+    <Compile Include="Classes\ZipLib\Core\StreamUtils.cs" />
+    <Compile Include="Classes\ZipLib\Core\WindowsPathUtils.cs" />
+    <Compile Include="Classes\ZipLib\Encryption\PkzipClassic.cs" />
+    <Compile Include="Classes\ZipLib\Encryption\ZipAESStream.cs" />
+    <Compile Include="Classes\ZipLib\Encryption\ZipAESTransform.cs" />
+    <Compile Include="Classes\ZipLib\SharpZipBaseException.cs" />
+    <Compile Include="Classes\ZipLib\Zip\Compression\Deflater.cs" />
+    <Compile Include="Classes\ZipLib\Zip\Compression\DeflaterConstants.cs" />
+    <Compile Include="Classes\ZipLib\Zip\Compression\DeflaterEngine.cs" />
+    <Compile Include="Classes\ZipLib\Zip\Compression\DeflaterHuffman.cs" />
+    <Compile Include="Classes\ZipLib\Zip\Compression\DeflaterPending.cs" />
+    <Compile Include="Classes\ZipLib\Zip\Compression\Inflater.cs" />
+    <Compile Include="Classes\ZipLib\Zip\Compression\InflaterDynHeader.cs" />
+    <Compile Include="Classes\ZipLib\Zip\Compression\InflaterHuffmanTree.cs" />
+    <Compile Include="Classes\ZipLib\Zip\Compression\PendingBuffer.cs" />
+    <Compile Include="Classes\ZipLib\Zip\Compression\Streams\DeflaterOutputStream.cs" />
+    <Compile Include="Classes\ZipLib\Zip\Compression\Streams\InflaterInputStream.cs" />
+    <Compile Include="Classes\ZipLib\Zip\Compression\Streams\OutputWindow.cs" />
+    <Compile Include="Classes\ZipLib\Zip\Compression\Streams\StreamManipulator.cs" />
+    <Compile Include="Classes\ZipLib\Zip\FastZip.cs" />
+    <Compile Include="Classes\ZipLib\Zip\IEntryFactory.cs" />
+    <Compile Include="Classes\ZipLib\Zip\WindowsNameTransform.cs" />
+    <Compile Include="Classes\ZipLib\Zip\ZipConstants.cs" />
+    <Compile Include="Classes\ZipLib\Zip\ZipEntry.cs" />
+    <Compile Include="Classes\ZipLib\Zip\ZipEntryFactory.cs" />
+    <Compile Include="Classes\ZipLib\Zip\ZipException.cs" />
+    <Compile Include="Classes\ZipLib\Zip\ZipExtraData.cs" />
+    <Compile Include="Classes\ZipLib\Zip\ZipFile.cs" />
+    <Compile Include="Classes\ZipLib\Zip\ZipHelperStream.cs" />
+    <Compile Include="Classes\ZipLib\Zip\ZipInputStream.cs" />
+    <Compile Include="Classes\ZipLib\Zip\ZipNameTransform.cs" />
+    <Compile Include="Classes\ZipLib\Zip\ZipOutputStream.cs" />
     <Compile Include="Forms\fMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -158,11 +202,14 @@
     <None Include="Resources\Icons\offline.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Tamir.SharpSSH.dll" />
     <None Include="Resources\syncing.ico" />
     <None Include="Resources\regular_60.ico" />
     <None Include="Resources\offline.ico" />
     <None Include="Resources\regular.ico" />
+    <Content Include="DiffieHellman.dll" />
     <Content Include="ftpboxnew.ico" />
+    <Content Include="Org.Mentalis.Security.dll" />
     <Content Include="regular.ico" />
     <None Include="Resources\all synced.ico" />
     <Content Include="regular_125.ico" />

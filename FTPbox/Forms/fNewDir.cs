@@ -301,7 +301,7 @@ namespace FTPbox
                 labSelect.Text = "selecteer een map:";
                 labFullPath.Text = "Volledig pad:";
                 labLocal.Text = "lokale map:";
-                labParent.Text = "Account's full path:";
+                labParent.Text = "Volledig account pad:";
                 bBrowse.Text = "Zoeken";
                 bDone.Text = "Gereed";
             }
@@ -311,7 +311,7 @@ namespace FTPbox
                 labSelect.Text = "Select directory:";
                 labFullPath.Text = "Full path:";
                 labLocal.Text = "Local folder:";
-                labParent.Text = "Volledig account pad:";
+                labParent.Text = "Account's full path:";
                 bBrowse.Text = "Browse";
                 bDone.Text = "Done";
             }

@@ -24,12 +24,12 @@ namespace FTPbox.Classes
             path = INIPath;
         }
 
-        public void IniWriteValue(string Section, string Key, string Value)
+        public void WriteValue(string Section, string Key, string Value)
         {
             WritePrivateProfileString(Section, Key, Value, this.path);
         }
 
-        public string IniReadValue(string Section, string Key)
+        public string ReadValue(string Section, string Key)
         {
             StringBuilder temp = new StringBuilder(255);
             int i = GetPrivateProfileString(Section, Key, "", temp, 255, this.path);

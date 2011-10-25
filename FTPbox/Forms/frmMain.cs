@@ -17,7 +17,7 @@ using Tamir.SharpSsh.jsch;
 using Tamir.SharpSsh.jsch.examples;
 using FTPbox.Classes;
 using Utilities.Encryption;
-
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace FTPbox
 {
@@ -78,7 +78,12 @@ namespace FTPbox
         Settings AppSettings = new Settings();
         string DecryptionPassword = "removed";     //removed for security purposes
         string DecryptionSalt = "removed";     //removed for security purposes
-        
+
+        bool updatewebintpending = false;
+        bool addremovewebintpending = false;
+        bool containswebintfolder = false;
+        bool changedfromcheck = true;
+
         public frmMain()
         {
             InitializeComponent();
@@ -140,7 +145,10 @@ namespace FTPbox
 
             //CheckLocal();
 
-            ListAllFiles();
+            if (chkWebInt.Checked)
+                CheckForWebIntUpdate();
+            else
+                ListAllFiles();
 
             SetLocalWatcher();
 
@@ -237,6 +245,8 @@ namespace FTPbox
                         catch { }
                     }
                 }
+                else
+                    gotpaths = true;
             }
             else
             {
@@ -263,7 +273,7 @@ namespace FTPbox
                                 catch { }
                             }
                         }
-                            
+                        gotpaths = true;
                     }
                     catch (SftpException e)
                     {
@@ -293,6 +303,12 @@ namespace FTPbox
             lUsername.Text = ftpUser();
             lPort.Text = ftpPort().ToString();
             chkStartUp.Checked = CheckStartup();
+
+            if (gotpaths)
+                WebIntExists();
+            /*
+            if (!chkWebInt.Checked)
+                changedfromcheck = false;*/
 
             if (FTP())
                 lMode.Text = "FTP";
@@ -776,7 +792,7 @@ namespace FTPbox
             }
             catch (Exception ex)
             {
-                Log.Write("[ERROR setting dir] -> {0}", rFullpath);
+                Log.Write("[ERROR setting dir] -> {0} message: {1}", rFullpath, ex.Message);
             }
 
             string nameOld = oldName;
@@ -872,7 +888,9 @@ namespace FTPbox
 
             if (isDir)
             {
-                ftp.RemoveDirectory(name);
+                //ftp.RemoveDirectory(name);
+
+                DeleteFolderFTP(noSlashes(rFullPath) + "/" + name, true, ref ftp);
 
                 if (ShowNots() && lasttip != string.Format("Folder {0} was deleted.", name))
                     tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("deleted", false), name), ToolTipIcon.Info);
@@ -915,7 +933,7 @@ namespace FTPbox
                 ftp.RemoveFile(name);
                 ftp.PutFile(FullPath, name);
 
-                if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
+                if (ShowNots()) //&& lasttip != string.Format("File {0} was updated.", name))
                     tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
                 lasttip = string.Format("File {0} was updated.", name);
                 Get_Link(cPath, name);
@@ -1415,6 +1433,8 @@ namespace FTPbox
             {
                 newlink = @"http://" + newlink;
             }
+
+            #region oldcode
             /*
             if (noSlashes(rPath()) != null)
             {
@@ -1436,6 +1456,8 @@ namespace FTPbox
                 }                
             }
             */
+            #endregion
+
             string spath = subpath;
             if (spath == "/")
                 spath = "";
@@ -1808,7 +1830,13 @@ namespace FTPbox
                         SftpCDtoRoot();
                         failedlisting = false;
                     }
-                    ListAllFiles();
+
+                    if (updatewebintpending)
+                        UploadWebInt();
+                    else if (addremovewebintpending)
+                        AddRemoveWebInt();
+                    else
+                        ListAllFiles();
                 }
                 
                 //Log.Write("GONNA LIST LOCAL FILES NOW");
@@ -1891,6 +1919,8 @@ namespace FTPbox
                         // Got it? Add it!
                         fdDict.Add(noSlashes(String.Format("{0}/{1}", noSlashes(rPath()), fInfo.Name)), fInfo.LastWriteTimeUtc.Value.AddHours(timedif.Hours));
                         Log.Write("{0}/{1}", noSlashes(rPath()), fInfo.Name);
+                        string cpath = string.Format("{0}/{1}", noSlashes(rPath()), fInfo.Name);
+                        //CheckRemFtpFiles(cpath, fInfo.LastWriteTimeUtc.Value.AddHours(timedif.Hours));
                         //CheckRemoteFile(noSlashes(rPath()), fInfo.Name, fInfo.LastWriteTimeUtc.Value);
                     }
                 }
@@ -2620,7 +2650,10 @@ namespace FTPbox
                                 tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
 
                             fswFiles.EnableRaisingEvents = true;
-                            Get_Link(comPath, name);
+                            if (FTP())
+                                Get_Link(comPath, name);
+                            else
+                                Get_Link("", comPath);
                             UpdateTheLog(cPath, rDT);
                             downloading = false;
                             DoneSyncing();
@@ -2949,6 +2982,16 @@ namespace FTPbox
 
         private void CheckConnection_Tick(object sender, EventArgs e)
         {
+            lasttip = null;
+            if (chkWebInt.Checked)
+            {
+                labViewInBrowser.Enabled = true;
+            }
+            else
+            {
+                labViewInBrowser.Enabled = false;
+            } 
+            
             try
             {
                 if (InternetOn())
@@ -3236,7 +3279,13 @@ namespace FTPbox
         {
             Thread.Sleep(5000);
             FullList = new Dictionary<string, DateTime>();
-            ListAllFiles();
+
+            if (updatewebintpending)
+                UploadWebInt();
+            else if (addremovewebintpending)
+                AddRemoveWebInt();
+            else
+                ListAllFiles();
         }
 
         void MakeChangesBGW_DoWork(object sender, DoWorkEventArgs e)
@@ -3310,6 +3359,9 @@ namespace FTPbox
                 labMode.Text = "Mode:";
                 bAddFTP.Text = "Change";
                 gApp.Text = "Application";
+                gWebInt.Text = "Web Interface";
+                chkWebInt.Text = "Use the Web Interface";
+                labViewInBrowser.Text = "(View in browser)";
                 chkShowNots.Text = "Show notifications";
                 chkStartUp.Text = "Start on system start-up";
                 labLang.Text = "Language:";
@@ -3352,6 +3404,9 @@ namespace FTPbox
                 labMode.Text = "Modo:";
                 bAddFTP.Text = "Cambiar";
                 gApp.Text = "Opciones de la aplicación";
+                gWebInt.Text = "Interfaz web";
+                chkWebInt.Text = "Usar la interfaz web";
+                labViewInBrowser.Text = "(Ver en el explorador)";
                 chkShowNots.Text = "Mostrar notificaciones";
                 chkStartUp.Text = "Iniciar al arranque del sistema";
                 labLang.Text = "Idioma:";
@@ -3394,6 +3449,9 @@ namespace FTPbox
                 labMode.Text = "Modus:";
                 bAddFTP.Text = "Aendern";
                 gApp.Text = "Programm";
+                gWebInt.Text = "Webinterface";
+                chkWebInt.Text = "Das Webinterface verwenden";
+                labViewInBrowser.Text = "(Im Browser anzeigen)";
                 chkShowNots.Text = "Benachrichtigungen anzeigen";
                 chkStartUp.Text = "Bei Systemstart automatisch starten";
                 labLang.Text = "Sprache:";
@@ -3436,9 +3494,9 @@ namespace FTPbox
                 labMode.Text = "Mode:";
                 bAddFTP.Text = "Changer";
                 gApp.Text = "Application";
-                //gWebInt.Text = "Interface Web";
-                //chkWebInt.Text = "Utiliser l'interface Web";
-                //labViewInBrowser.Text = "(Voir dans le navigateur)";
+                gWebInt.Text = "Interface Web";
+                chkWebInt.Text = "Utiliser l'interface Web";
+                labViewInBrowser.Text = "(Voir dans le navigateur)";
                 chkShowNots.Text = "Afficher les notifications";
                 chkStartUp.Text = "Lancer au démarage du système";
                 labLang.Text = "Langue:";
@@ -3481,6 +3539,9 @@ namespace FTPbox
                 labMode.Text = "Mode:";
                 bAddFTP.Text = "Wijzig";
                 gApp.Text = "Applicatie";
+                gWebInt.Text = "Web interface";
+                chkWebInt.Text = "Gebruik het web interface";
+                labViewInBrowser.Text = "(Bekijk in browser)";
                 chkShowNots.Text = "Toon notificaties";
                 chkStartUp.Text = "Start wanneer het systeem opstart";
                 labLang.Text = "Language:";
@@ -3670,117 +3731,7 @@ namespace FTPbox
             ListAllFiles();
             //FullList = new Dictionary<string, DateTime>();
             //FullList = listRemote();
-        }
-
-        //check if web interface is up to date
-        public void CheckWebInt()
-        {
-            string path = noSlashes(lPath()) + @"\ftpbox";
-            string fpath = path + "\version.txt";
-
-            string rpath = noSlashes(ftpParent()) + @"/";
-
-            if (!noSlashes(rpath).StartsWith("http://") && !noSlashes(rpath).StartsWith("https://"))
-            {
-                rpath = @"http://" + rpath;
-            }
-            if (noSlashes(rPath()) != null)
-            {
-                if ((rPath() == @"/"))
-                {
-                    //do nothing...
-                }
-                else if (rPath().StartsWith(@"/public_html/"))
-                {
-                    rpath = rpath + noSlashes(rPath().Substring(@"/public_html/".Length + 1, rPath().Length - @"/public_html/".Length - 1)) + @"/";
-                }
-                else if (rPath().StartsWith(@"/"))
-                {
-                    rpath = rpath + noSlashes(rPath()).Substring(1, noSlashes(rPath()).Length - 1) + @"/";
-                }
-                else
-                {
-                    rpath = rpath + noSlashes(rPath()) + @"/";
-                }
-            }
-            rpath = rpath + @"ftpbox/version.txt";
-            
-            wb.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(VersionBrowser_DocumentCompleted);
-            wb.Navigate(@"http://ftpbox.org/webintversion.txt");
-        }
-
-        private void VersionBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-        {
-            string source = wb.Document.Body.InnerText;
-            CheckWebIntVersion(source);
-            //MessageBox.Show(e.Url + Environment.NewLine + source);
-        }
-
-        private void CheckWebIntVersion(string version)
-        {
-            string curversion;
-            TextReader tr = new StreamReader(noSlashes(lPath()) + @"\ftpbox\version.txt");
-            curversion = tr.ReadLine();
-            tr.Close();
-
-            if (!curversion.Equals(version))
-            {
-                DownloadWebInt();
-            }
-        }
-
-        private void DownloadWebInt()
-        {
-            string path = noSlashes(lPath()) + @"\ftpbox";
-            string fpath = path + "\version.txt";
-
-            string rpath = noSlashes(ftpParent()) + @"/";
-
-            if (!noSlashes(rpath).StartsWith("http://") && !noSlashes(rpath).StartsWith("https://"))
-            {
-                rpath = @"http://" + rpath;
-            }
-            if (noSlashes(rPath()) != null)
-            {
-                if ((rPath() == @"/"))
-                {
-                    //do nothing...
-                }
-                else if (rPath().StartsWith(@"/public_html/"))
-                {
-                    rpath = rpath + noSlashes(rPath().Substring(@"/public_html/".Length + 1, rPath().Length - @"/public_html/".Length - 1)) + @"/";
-                }
-                else if (rPath().StartsWith(@"/"))
-                {
-                    rpath = rpath + noSlashes(rPath()).Substring(1, noSlashes(rPath()).Length - 1) + @"/";
-                }
-                else
-                {
-                    rpath = rpath + noSlashes(rPath()) + @"/";
-                }
-            }
-            rpath = rpath + @"ftpbox/version.txt";
-
-            WebClient wc = new WebClient();
-            wc.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCompleted);
-            wc.DownloadFile(rpath, Application.StartupPath);
-        }
-
-        private void DownloadCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-
-        }
-
-        public void ExtractWebInt()
-        {
-            
-        }
-
-        public void DeleteWebDivContent()
-        {
-            string path = noSlashes(lPath()) + "\ftpbox";
-            Directory.Delete(path);
-        }
+        }        
 
         ///SFTP Code Starting here
         ///hell yeah
@@ -3976,7 +3927,8 @@ namespace FTPbox
             {
                 try
                 {
-                    sftpc.rmdir(comPath + name);
+                    //sftpc.rmdir(comPath + name);
+                    DeleteFolderSFTP(comPath + name, true);
                 }
                 catch (SftpException e)
                 {
@@ -4059,7 +4011,6 @@ namespace FTPbox
                 nameNew = nameNew.Substring(1, nameNew.Length - 1);
             Log.Write("nameOld: {0} nameNew: {1}", nameOld, nameNew);
 
-            bool fileexists = true;
             string rFullOld = noSlashes(rFullpath) + "/" + nameOld;
             string rFullNew = noSlashes(rFullpath) + "/" + nameNew;
             if (rFullNew.StartsWith("/"))
@@ -4380,5 +4331,587 @@ namespace FTPbox
             AppSettings.Put("Paths/Parent", parent);
         }
 
+        /// <summary>
+        /// Delete a remote folder and everything inside it (FTP)
+        /// </summary>
+        /// <param name="path">path to folder to delete</param>
+        /// <param name="RemFromLog">True to also remove deleted stuf from log, false to not.</param>
+        public void DeleteFolderFTP(string path, bool RemFromLog, ref FtpConnection ftpcon)
+        {
+            ftpcon.SetCurrentDirectory(path);
+            foreach (FtpFileInfo fi in ftpcon.GetFiles())
+            {
+                string fpath = string.Format("{0}/{1}", path, fi.Name);
+                ftpcon.RemoveFile(fpath);
+                Log.Write("Gon'delete: {0}", fpath);
+                if (RemFromLog)
+                    RemoveFromLog(fpath);
+            }
+
+            foreach (FtpDirectoryInfo di in ftpcon.GetDirectories())
+            {
+                if (di.Name != "." && di.Name != "..")
+                {
+                    string fpath = string.Format("{0}/{1}", noSlashes(path), di.Name);
+                    Log.Write("Gon'delete files in: {0}", fpath);
+                    RecursiveDeleteFTP(fpath, RemFromLog, ref ftpcon);
+                }
+            }
+
+            ftpcon.RemoveDirectory(path);
+            if (RemFromLog)
+                RemoveFromLog(path);
+        }
+
+        public void RecursiveDeleteFTP(string path, bool RemFromLog, ref FtpConnection ftpcon)
+        {
+            ftpcon.SetCurrentDirectory(path);
+            foreach (FtpFileInfo fi in ftpcon.GetFiles())
+            {
+                string fpath = string.Format("{0}/{1}", path, fi.Name);
+                ftpcon.RemoveFile(fpath);
+                Log.Write("Gon'delete: {0}", fpath);
+                if (RemFromLog)
+                    RemoveFromLog(fpath);
+
+            }
+
+            foreach (FtpDirectoryInfo di in ftpcon.GetDirectories())
+            {
+                if (di.Name != "." && di.Name != "..")
+                {
+                    string fpath = string.Format("{0}/{1}", noSlashes(path), di.Name);
+                    Log.Write("Gon'delete files in: {0}", fpath);
+                    RecursiveDeleteFTP(fpath, RemFromLog, ref ftpcon);
+                }
+            }
+
+            ftpcon.RemoveDirectory(path);
+            if (RemFromLog)
+                RemoveFromLog(path);
+        }
+
+        /// <summary>
+        /// Delete a remote folder and everything inside it (SFTP)
+        /// </summary>
+        /// <param name="path">path to folder to delete</param>
+        /// <param name="RemFromLog">True to also remove deleted stuf from log, false to not.</param>
+        public void DeleteFolderSFTP(string path, bool RemFromLog)
+        {
+            foreach (ChannelSftp.LsEntry lse in sftpc.ls(path))
+            {
+                SftpATTRS attrs = lse.getAttrs();
+
+                if (lse.getFilename() != "." && lse.getFilename() != "..")
+                {
+                    if (attrs.isDir())
+                    {
+                        string fpath = string.Format("{0}/{1}", path, lse.getFilename());
+                        Log.Write("Gon'delete files in: {0}", fpath);
+                        RecursiveDeleteSFTP(fpath, RemFromLog);
+                    }
+                    else
+                    {
+                        string fpath = string.Format("{0}/{1}", path, lse.getFilename());
+                        sftpc.rm(fpath);
+                        Log.Write("Gon'delete: {0}", fpath);
+                        if (RemFromLog)
+                            RemoveFromLog(fpath);
+                    }
+                }
+            }
+            sftpc.rmdir(path);
+            if (RemFromLog)
+                RemoveFromLog(path);
+        }
+
+        public void RecursiveDeleteSFTP(string path, bool RemFromLog)
+        {
+            try
+            {
+
+                foreach (ChannelSftp.LsEntry lse in sftpc.ls(path))
+                {
+                    SftpATTRS attrs = lse.getAttrs();
+                    if (lse.getFilename() != "." && lse.getFilename() != "..")
+                    {
+                        if (attrs.isDir())
+                        {
+                            string fpath = string.Format("{0}/{1}", path, lse.getFilename());
+                            Log.Write("Gon'delete files in: {0}", fpath);
+                            RecursiveDeleteSFTP(fpath, RemFromLog);
+                        }
+                        else
+                        {
+                            string fpath = string.Format("{0}/{1}", path, lse.getFilename());
+                            sftpc.rm(fpath);
+                            Log.Write("Gon'delete: {0}", fpath);
+                            if (RemFromLog)
+                                RemoveFromLog(fpath);
+                        }
+                    }
+                }
+                sftpc.rmdir(path);
+                if (RemFromLog)
+                    RemoveFromLog(path);
+            }
+            catch (Exception ex)
+            {
+                Log.Write("ErrorRDSFTP: " + ex.Message);
+
+                sftpc.quit();
+                sftp_login();
+                SftpCDtoRoot();
+                
+                RecursiveDeleteSFTP(path, RemFromLog);
+            }
+        }
+
+        public void AddRemoveWebInt()
+        {
+            if (chkWebInt.Checked)
+            {
+                try
+                {
+                    Log.Write("containswebintfolder: " + containswebintfolder.ToString());
+                    if (!containswebintfolder)
+                        GetWebInt();
+                    else
+                    {
+                        Log.Write("Contains web int folder");
+                        updatewebintpending = false;
+                        DoneSyncing();
+                        ListAllFiles();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    chkWebInt.Checked = false;
+                    Log.Write("Could not download web interface with error: {0}", ex.Message);
+                }
+            }
+            else
+            {
+                DeleteWebInt(false);
+                ListAllFiles();
+
+                link = "";
+                if (ShowNots())
+                    tray.ShowBalloonTip(50, "FTPbox", get_webint_message("removed"), ToolTipIcon.Info);
+            }
+
+            addremovewebintpending = false;
+        }
+
+        public void GetWebInt()
+        {
+            CheckForFiles();
+            link = null;
+            if (ShowNots())
+                tray.ShowBalloonTip(100, "FTPbox", get_webint_message("downloading"), ToolTipIcon.Info);
+
+            string dllink = "http://ftpbox.org/webint.zip";
+            string path = noSlashes(lPath());
+            //DeleteWebInt();
+            WebClient wc = new WebClient();
+            wc.DownloadFileCompleted += new AsyncCompletedEventHandler(WebIntDownloaded);
+            wc.DownloadFileAsync(new Uri(dllink), Application.StartupPath + @"\webint.zip");
+        }
+
+        private void WebIntDownloaded(object sender, AsyncCompletedEventArgs e)
+        {
+            Log.Write("path: {0} | lpath: {1}", Application.StartupPath, Application.StartupPath + @"\WebInterface");
+
+            string data = @"|\webint\layout\css|\webint\layout\images\fancybox|\webint\layout\templates|\webint\system\classes|\webint\system\config|\webint\system\js|\webint\system\logs|\webint\system\savant\Savant3\resources|";
+            MakeWebIntFolders(data);
+
+            unZip(Application.StartupPath + @"\webint.zip", Application.StartupPath + @"\WebInterface");
+            Log.Write("unzipped");
+            updatewebintpending = true;
+            try
+            {
+                UploadWebInt();
+            }
+            catch
+            {
+                sftpc.quit();
+                sftp_login();
+                SftpCDtoRoot();
+                UploadWebInt();
+            }
+            //File.Delete(Application.StartupPath + @"\webint.zip");
+        }
+
+        public void DeleteWebInt(bool updating)
+        {
+            Log.Write("gonna remove web interface");
+
+            if (updating)
+            {
+                if (ShowNots())
+                    tray.ShowBalloonTip(100, "FTPbox", get_webint_message("updating"), ToolTipIcon.Info);
+            }
+            else
+            {
+                if (ShowNots())
+                    tray.ShowBalloonTip(100, "FTPbox", get_webint_message("removing"), ToolTipIcon.Info);
+            }
+
+            if (FTP())
+            {
+                ftpbg.SetCurrentDirectory(rPath());
+                DeleteFolderFTP(noSlashes(rPath()) + "/webint", false, ref ftpbg);
+            }
+            else
+            {
+                SftpCDtoRoot();
+                try
+                {
+                    DeleteFolderSFTP("webint", false);
+                }
+                catch (SftpException e) { Log.Write("Error:: {0}", e.Message); }
+            }
+        }
+
+        WebBrowser webintwb;
+        public void CheckForWebIntUpdate()
+        {
+            Log.Write("Gon'check for web interface");
+            try
+            {
+                Syncing();
+                webintwb = new WebBrowser();
+                webintwb.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(webintwb_DocumentCompleted);
+                webintwb.Navigate("http://ftpbox.org/webintversion.txt");
+            }
+            catch{
+                DoneSyncing();
+                ListAllFiles();
+            }
+        }
+
+        public void webintwb_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            string lpath = Application.StartupPath;
+            if (FTP())
+            {
+                ftpbg.SetCurrentDirectory(noSlashes(rPath()) + "/webint");
+                ftpbg.SetLocalDirectory(lpath);
+                ftpbg.GetFile("version.ini", false);
+            }
+            else
+            {
+                SftpCDtoRoot();
+                sftpc.lcd(lpath);
+
+                SftpProgressMonitor monitor = new MyProgressMonitor();
+                int mode = ChannelSftp.OVERWRITE;
+
+                sftpc.get("webint/version.ini", ".", monitor, mode);
+            }
+
+            string inipath = lpath + @"\version.ini";
+            IniFile ini = new IniFile(inipath);
+            string currentversion = ini.ReadValue("Version", "latest");
+            Log.Write("currentversion is: {0} when newest is: {1}", currentversion, webintwb.Document.Body.InnerText);
+
+            if (currentversion != webintwb.Document.Body.InnerText)
+            {
+                Syncing();
+                string data = @"|\webint\layout\css|\webint\layout\images\fancybox|\webint\layout\templates|\webint\system\classes|\webint\system\config|\webint\system\js|\webint\system\logs|\webint\system\savant\Savant3\resources|";
+                MakeWebIntFolders(data);              
+                DeleteWebInt(true);
+                GetWebInt();
+            }
+            else
+            {
+                DoneSyncing();
+                ListAllFiles();
+            }
+            File.Delete(inipath);
+        }
+
+        public void MakeWebIntFolders(string data)
+        {
+            List<string> all = new List<string>(data.Split('|', '|'));
+            foreach (string s in all)
+            {
+                try
+                {
+                    string path = Application.StartupPath + @"\WebInterface" + s;
+                    Directory.CreateDirectory(path);
+                    Log.Write("making folder: {0}", path);
+                }
+                catch { }
+            }
+        }
+
+        static void unZip(string fi, string dir)
+        {
+            using (ZipInputStream s = new ZipInputStream(File.OpenRead(fi)))
+            {
+                ZipEntry theEntry;
+                while ((theEntry = s.GetNextEntry()) != null)
+                {
+                    Console.WriteLine(theEntry.Name);
+
+                    string directoryName = Path.GetDirectoryName(theEntry.Name);
+                    string fileName = Path.GetFileName(theEntry.Name);
+
+                    if (directoryName.Length > 0) { Directory.CreateDirectory(directoryName); }
+
+                    if (!Directory.Exists(dir)) { Directory.CreateDirectory(dir); }
+
+                    if (fileName != String.Empty)
+                    {
+                        //Log.Write("dir: " + dir);
+                        //Log.Write("filename " + fileName);
+                        using (FileStream streamWriter = File.Create(String.Format(@"{0}\{1}", dir, theEntry.Name)))
+                        {
+                            int size = 2048;
+                            byte[] data = new byte[2048];
+                            while (true)
+                            {
+                                size = s.Read(data, 0, data.Length);
+                                if (size > 0)
+                                {
+                                    streamWriter.Write(data, 0, size);
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void UploadWebInt()
+        {
+            Log.Write("Gonna upload webint");
+
+            Syncing();
+            string path = Application.StartupPath + @"\WebInterface";
+
+            foreach (string d in Directory.GetDirectories(path, "*", SearchOption.AllDirectories))
+            {
+                Log.Write("dir: {0}", d);
+                string fname = d.Substring(path.Length, d.Length - path.Length);
+                fname = noSlashes(fname);
+                fname = fname.Replace(@"\", @"/");
+                Log.Write("fname: {0}", fname);
+
+                if (FTP())
+                {
+                    ftpbg.CreateDirectory(noSlashes(rPath()) + "/" + fname);
+                }
+                else
+                {
+                    SftpCDtoRoot();
+                    try
+                    {
+                        sftpc.mkdir(fname);
+                    }
+                    catch { }
+                }
+            }
+
+            foreach (string f in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
+            {
+                Log.Write("file: {0}", f);
+
+                FileAttributes attr = File.GetAttributes(f);
+                if ((attr & FileAttributes.Directory) != FileAttributes.Directory)
+                {
+                    FileInfo fi = new FileInfo(f);
+                    string fname = f.Substring(path.Length, f.Length - path.Length);
+                    fname = noSlashes(fname);
+                    fname = fname.Replace(@"\", @"/");
+                    string cpath = fname.Substring(0, fname.Length - fi.Name.Length);
+
+                    Log.Write("fname: {0} | cpath: {1}", fname, cpath);
+
+                    if (FTP())
+                    {
+                        ftpbg.SetCurrentDirectory(noSlashes(rPath()) + "/" + cpath);
+                        ftpbg.PutFile(f);
+                    }
+                    else
+                    {
+                        SftpProgressMonitor monitor = new MyProgressMonitor();
+                        sftpc.put(f, cpath, monitor, ChannelSftp.OVERWRITE);
+                    }
+                }
+            }
+
+            link = ftpParent();
+            if (!link.StartsWith("http://") || !link.StartsWith("https://"))
+                link = "http://" + link;
+            if (link.EndsWith("/"))
+                link = link + "webint";
+            else
+                link = link + "/webint";
+            //open link in browser
+
+            if (ShowNots())
+                tray.ShowBalloonTip(50, "FTPbox", get_webint_message("updated"), ToolTipIcon.Info);
+
+            Directory.Delete(Application.StartupPath + @"\WebInterface", true);
+            File.Delete(Application.StartupPath + @"\webint.zip");
+            try
+            {
+                Directory.Delete(Application.StartupPath + @"\webint", true);
+            }
+            catch { }
+
+            updatewebintpending = false;
+            DoneSyncing();
+            if (!FTP())
+            {
+                //sftpc.quit();
+                //sftp_login();
+            }
+            ListAllFiles();
+        }
+
+        public void CheckForFiles()
+        {
+            string p = Application.StartupPath;
+            if (File.Exists(p + @"\webint.zip"))
+                File.Delete(p + @"\webint.zip");
+            if (Directory.Exists(p + @"\webint"))
+                Directory.Delete(p + @"\webint", true);
+            if (Directory.Exists(p + @"\WebInterface"))
+                Directory.Delete(p + @"\WebInterface", true);
+            if (File.Exists(p + @"\version.ini"))
+                File.Delete(p + @"\version.ini");
+        }
+
+        private void chkWebInt_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!changedfromcheck)
+                addremovewebintpending = true;
+
+            changedfromcheck = false;
+            //AppSettings.Put("Settings/WebInterface", chkWebInt.Checked.ToString());
+        }
+
+        private void labViewInBrowser_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            string thelink = ftpParent();
+            if (!thelink.StartsWith("http://") || !thelink.StartsWith("https://"))
+                thelink = "http://" + thelink;
+            if (thelink.EndsWith("/"))
+                thelink = thelink + "webint";
+            else
+                thelink = thelink + "/webint";
+
+            Process.Start(thelink);
+        }
+
+        public void WebIntExists()
+        {
+            if (FTP())
+            {
+                try
+                {
+                    ftpbg.SetCurrentDirectory(rPath());
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Error: {0}", ex.Message);
+                }
+                Log.Write("Searching webint folder in path: " + ftpbg.GetCurrentDirectory() + " " + changedfromcheck.ToString());
+                if (ftpbg.DirectoryExists("webint"))
+                    chkWebInt.Checked = true;
+                else
+                    chkWebInt.Checked = false;
+            }
+            else
+            {
+                SftpCDtoRoot();
+                bool hasit = false;
+                foreach (ChannelSftp.LsEntry ls in sftpc.ls("."))
+                {
+                    if (ls.getFilename() == "webint")
+                        hasit = true;
+                }
+                chkWebInt.Checked = hasit;
+            }
+
+            changedfromcheck = false;
+        }
+
+        public string get_webint_message(string not)
+        {
+            if (not == "downloading")
+            {
+                if (lang() == "de")
+                    return "Das Webinterface wird heruntergeladen" + Environment.NewLine + "Das wird etwa eine Minute dauern";
+                else if (lang() == "es")
+                    return "La interfaz web será descargada" + Environment.NewLine + "Esto tomará un minuto.";
+                else if (lang() == "fr")
+                    return "L'interface web va être téléchargée." + Environment.NewLine + "Cela prendra quelques instants.";
+                else if (lang() == "du")
+                    return "Het Web Interface wordt gedownload." + Environment.NewLine + "Dit zal wat tijd nemen.";
+                else
+                    return "The Web Interface will be downloaded." + Environment.NewLine + "This will take a minute.";
+            }
+            else if (not == "removing")
+            {
+                if (lang() == "de")
+                    return "Das Webinterface löschen...";
+                else if (lang() == "es")
+                    return "Eliminando la interfaz web...";
+                else if (lang() == "fr")
+                    return "Suppression de l'interface web...";
+                else if (lang() == "du")
+                    return "Web Interface aan het verwijderen...";
+                else
+                    return "Removing the Web Interface...";
+            }
+            else if (not == "updated")
+            {
+                if (lang() == "de")
+                    return "Das Webinterface wurde aktuallisiert." + Environment.NewLine + "Hier klicken um es anzuzeigen und einzurichten";
+                else if (lang() == "es")
+                    return "La interfaz web ha sido actualizada." + Environment.NewLine + "Haz click aquí para verla y configurarla.";
+                else if (lang() == "fr")
+                    return "L'interface web a été mise à jour." + Environment.NewLine + "Cliquez ici pour voir et la configurer !";
+                else if (lang() == "du")
+                    return "Het Web Interface is geüpdatet" + Environment.NewLine + "Klik hier om het te bekijken en op te zetten";
+                else
+                    return "Web Interface has been updated." + Environment.NewLine + "Click here to view and set it up!";
+            }
+            else if (not == "updating")
+            {
+                if (lang() == "de")
+                    return "Das Webinterface aktualisieren...";
+                else if (lang() == "es")
+                    return "Actualizando la interfaz web...";
+                else if (lang() == "fr")
+                    return "la mise à jour de l'interface web...";
+                else if (lang() == "du")
+                    return "Web interface aan het updaten...";
+                else
+                    return "Updating the web interface...";
+            }
+            else // if (not == "removed")
+            {
+                if (lang() == "de")
+                    return "Das Webinterface wurde gelöscht.";
+                else if (lang() == "es")
+                    return "La interfaz web ha sido eliminada.";
+                else if (lang() == "fr")
+                    return "L'interface web a été supprimée.";
+                else if (lang() == "du")
+                    return "Het Web interface is verwijdert";
+                else
+                    return "Web interface has been removed.";
+            }            
+        }
     }
+    
 }
