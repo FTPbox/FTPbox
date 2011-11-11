@@ -17,3 +17,5 @@ Easy to Use
 FTPbox can be set up in seconds! You only have to fill in your FTP account's information and select local and remote paths to sync. After that, FTPbox will stay minimized in tray and work 
 in the background. Any change to your local folder will be applied to the remote folder, and vice versa.
 FTPbox is available in 5 languages: English, Spanish, German, French and Dutch
+
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=FTPbox&url=https://github.com/JohnTheGr8/FTPbox&title=FTPbox&language=en_GB&tags=github&category=software) 
