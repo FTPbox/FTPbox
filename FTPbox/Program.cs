@@ -17,6 +17,8 @@ namespace FTPbox
             if (args.Length > 0 && args[0] == "-console")
                 aConsole.Allocate();
 
+            Log.Init("FTPbox.log", l.Debug | l.Info | l.Warning | l.Error | l.Client, true);
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new frmMain());
