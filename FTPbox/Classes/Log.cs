@@ -1,4 +1,4 @@
-﻿/*************************************
+﻿﻿/*************************************
 * C# Logging Class
 * By NoFaTe
 * 
@@ -118,7 +118,7 @@ namespace FTPbox
             DateTime thisDate = DateTime.Now;
             CultureInfo culture = new CultureInfo("en-US");
 
-            finalWrite(String.Format("[{0}] {1}: {2}\r\n", thisDate.ToString("yyyy-MM-dd HH:mm:ss", culture), lItem.Caller, lItem.Text));
+            finalWrite(String.Format("<FONT COLOR='grey'>[{0}]</FONT> <FONT COLOR='green'>{1}:</FONT> {2} <br />", thisDate.ToString("yyyy-MM-dd HH:mm:ss", culture), lItem.Caller, lItem.Text));
 
             if ((_level & lItem.Level) != lItem.Level)
                 goto Finish;
@@ -151,7 +151,7 @@ namespace FTPbox
             Console.Write("{0}\r\n", lItem.Text);
             sColor(WHITE);
 
-            Finish:
+        Finish:
             lItem.IsDone = true;
         }
 

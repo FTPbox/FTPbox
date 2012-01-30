@@ -42,6 +42,9 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.gWebInt = new System.Windows.Forms.GroupBox();
+            this.labViewInBrowser = new System.Windows.Forms.LinkLabel();
+            this.chkWebInt = new System.Windows.Forms.CheckBox();
             this.gApp = new System.Windows.Forms.GroupBox();
             this.labLang = new System.Windows.Forms.Label();
             this.cmbLang = new System.Windows.Forms.ComboBox();
@@ -98,12 +101,10 @@
             this.fswFolders = new System.IO.FileSystemWatcher();
             this.fswFiles = new System.IO.FileSystemWatcher();
             this.CheckConnection = new System.Windows.Forms.Timer(this.components);
-            this.gWebInt = new System.Windows.Forms.GroupBox();
-            this.labViewInBrowser = new System.Windows.Forms.LinkLabel();
-            this.chkWebInt = new System.Windows.Forms.CheckBox();
             this.trayMenu.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabGeneral.SuspendLayout();
+            this.gWebInt.SuspendLayout();
             this.gApp.SuspendLayout();
             this.gAccount.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -115,7 +116,6 @@
             this.gNotes.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fswFolders)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fswFiles)).BeginInit();
-            this.gWebInt.SuspendLayout();
             this.SuspendLayout();
             // 
             // trayMenu
@@ -212,7 +212,6 @@
             this.tabGeneral.Controls.Add(this.gWebInt);
             this.tabGeneral.Controls.Add(this.gApp);
             this.tabGeneral.Controls.Add(this.gAccount);
-            this.tabGeneral.Controls.Add(this.browser);
             this.tabGeneral.Location = new System.Drawing.Point(4, 22);
             this.tabGeneral.Name = "tabGeneral";
             this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
@@ -221,11 +220,45 @@
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
             // 
+            // gWebInt
+            // 
+            this.gWebInt.Controls.Add(this.labViewInBrowser);
+            this.gWebInt.Controls.Add(this.chkWebInt);
+            this.gWebInt.Location = new System.Drawing.Point(8, 127);
+            this.gWebInt.Name = "gWebInt";
+            this.gWebInt.Size = new System.Drawing.Size(370, 57);
+            this.gWebInt.TabIndex = 11;
+            this.gWebInt.TabStop = false;
+            this.gWebInt.Text = "Web Interface";
+            // 
+            // labViewInBrowser
+            // 
+            this.labViewInBrowser.AutoSize = true;
+            this.labViewInBrowser.Location = new System.Drawing.Point(188, 25);
+            this.labViewInBrowser.Name = "labViewInBrowser";
+            this.labViewInBrowser.Size = new System.Drawing.Size(87, 13);
+            this.labViewInBrowser.TabIndex = 2;
+            this.labViewInBrowser.TabStop = true;
+            this.labViewInBrowser.Text = "(View in browser)";
+            this.labViewInBrowser.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labViewInBrowser_LinkClicked);
+            // 
+            // chkWebInt
+            // 
+            this.chkWebInt.AutoSize = true;
+            this.chkWebInt.Location = new System.Drawing.Point(9, 24);
+            this.chkWebInt.Name = "chkWebInt";
+            this.chkWebInt.Size = new System.Drawing.Size(130, 17);
+            this.chkWebInt.TabIndex = 1;
+            this.chkWebInt.Text = "Use the web interface";
+            this.chkWebInt.UseVisualStyleBackColor = true;
+            this.chkWebInt.CheckedChanged += new System.EventHandler(this.chkWebInt_CheckedChanged);
+            // 
             // gApp
             // 
             this.gApp.Controls.Add(this.labLang);
             this.gApp.Controls.Add(this.cmbLang);
             this.gApp.Controls.Add(this.chkShowNots);
+            this.gApp.Controls.Add(this.browser);
             this.gApp.Controls.Add(this.chkStartUp);
             this.gApp.Location = new System.Drawing.Point(8, 190);
             this.gApp.Name = "gApp";
@@ -248,14 +281,15 @@
             this.cmbLang.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbLang.FormattingEnabled = true;
             this.cmbLang.Items.AddRange(new object[] {
-            "English",
-            "Español",
-            "Deutsch",
-            "Français",
-            "Dutch"});
+            "English (en)",
+            "Español (es)",
+            "Deutsch (de)",
+            "Français (fr)",
+            "Dutch (nl)",
+            "Ελληνικά (el)"});
             this.cmbLang.Location = new System.Drawing.Point(72, 64);
             this.cmbLang.Name = "cmbLang";
-            this.cmbLang.Size = new System.Drawing.Size(96, 21);
+            this.cmbLang.Size = new System.Drawing.Size(112, 21);
             this.cmbLang.TabIndex = 4;
             this.cmbLang.SelectedIndexChanged += new System.EventHandler(this.cmbLang_SelectedIndexChanged);
             // 
@@ -395,7 +429,7 @@
             // 
             // browser
             // 
-            this.browser.Location = new System.Drawing.Point(375, 249);
+            this.browser.Location = new System.Drawing.Point(326, 60);
             this.browser.MinimumSize = new System.Drawing.Size(20, 20);
             this.browser.Name = "browser";
             this.browser.Size = new System.Drawing.Size(38, 20);
@@ -410,7 +444,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(388, 259);
+            this.tabPage2.Size = new System.Drawing.Size(388, 290);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "FTPbox";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -556,7 +590,7 @@
             this.tabAbout.Location = new System.Drawing.Point(4, 22);
             this.tabAbout.Name = "tabAbout";
             this.tabAbout.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAbout.Size = new System.Drawing.Size(388, 259);
+            this.tabAbout.Size = new System.Drawing.Size(388, 290);
             this.tabAbout.TabIndex = 2;
             this.tabAbout.Text = "About";
             this.tabAbout.UseVisualStyleBackColor = true;
@@ -794,39 +828,6 @@
             this.CheckConnection.Enabled = true;
             this.CheckConnection.Tick += new System.EventHandler(this.CheckConnection_Tick);
             // 
-            // gWebInt
-            // 
-            this.gWebInt.Controls.Add(this.labViewInBrowser);
-            this.gWebInt.Controls.Add(this.chkWebInt);
-            this.gWebInt.Location = new System.Drawing.Point(8, 127);
-            this.gWebInt.Name = "gWebInt";
-            this.gWebInt.Size = new System.Drawing.Size(370, 57);
-            this.gWebInt.TabIndex = 11;
-            this.gWebInt.TabStop = false;
-            this.gWebInt.Text = "Web Interface";
-            // 
-            // labViewInBrowser
-            // 
-            this.labViewInBrowser.AutoSize = true;
-            this.labViewInBrowser.Location = new System.Drawing.Point(188, 25);
-            this.labViewInBrowser.Name = "labViewInBrowser";
-            this.labViewInBrowser.Size = new System.Drawing.Size(87, 13);
-            this.labViewInBrowser.TabIndex = 2;
-            this.labViewInBrowser.TabStop = true;
-            this.labViewInBrowser.Text = "(View in browser)";
-            this.labViewInBrowser.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labViewInBrowser_LinkClicked);
-            // 
-            // chkWebInt
-            // 
-            this.chkWebInt.AutoSize = true;
-            this.chkWebInt.Location = new System.Drawing.Point(9, 24);
-            this.chkWebInt.Name = "chkWebInt";
-            this.chkWebInt.Size = new System.Drawing.Size(130, 17);
-            this.chkWebInt.TabIndex = 1;
-            this.chkWebInt.Text = "Use the web interface";
-            this.chkWebInt.UseVisualStyleBackColor = true;
-            this.chkWebInt.CheckedChanged += new System.EventHandler(this.chkWebInt_CheckedChanged);
-            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -845,6 +846,8 @@
             this.trayMenu.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
+            this.gWebInt.ResumeLayout(false);
+            this.gWebInt.PerformLayout();
             this.gApp.ResumeLayout(false);
             this.gApp.PerformLayout();
             this.gAccount.ResumeLayout(false);
@@ -863,8 +866,6 @@
             this.gNotes.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fswFolders)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fswFiles)).EndInit();
-            this.gWebInt.ResumeLayout(false);
-            this.gWebInt.PerformLayout();
             this.ResumeLayout(false);
 
         }

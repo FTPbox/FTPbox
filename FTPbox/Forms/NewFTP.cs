@@ -6,46 +6,75 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using FtpLib;
+//using FtpLib;
 using System.Diagnostics;
 using Tamir.SharpSsh.jsch;
 using Utilities.Encryption;
+using Starksoft.Net.Ftp;
 
 namespace FTPbox
 {
     public partial class NewFTP : Form
     {
-        FtpConnection ftp;
+        //FtpConnection ftp;
         string decpass = "removed";
         string salt = "removed";
+        FtpClient ftpc;
         
         public NewFTP()
         {
-            InitializeComponent();
+            InitializeComponent();           
         }
 
         private void bDone_Click(object sender, EventArgs e)
-        {
+        {            
             bool ftporsftp;
+            bool ftps = false;
+            bool ftpes = true;
+
             if (cMode.SelectedIndex == 0)
             {
                 ftporsftp = true;
-                Log.Write("FTP");
+                if (cEncryption.SelectedIndex != 0)
+                {
+                    ftps = true;
+                    if (cEncryption.SelectedIndex == 1)
+                    {
+                        Log.Write(l.Info, "FTPS Explicit");
+                        ftpes = true;
+                    }
+                    else
+                    {
+                        Log.Write(l.Info, "FTPS Implicit");
+                        ftpes = false;
+                    }
+                }
+                else
+                    Log.Write(l.Info, "Plain FTP");
             }
             else
             {
                 ftporsftp = false;
-                Log.Write("SFTP");
+                Log.Write(l.Info, "SFTP");
             }
 
             try 
             {
                 if (ftporsftp)
                 {
-                    ftp = new FtpConnection(tHost.Text, Convert.ToInt32(nPort.Value), tUsername.Text, tPass.Text);
-                    ftp.Open();
-                    ftp.Login();
-                    ftp.Close();
+                    ftpc = new FtpClient(tHost.Text, Convert.ToInt32(nPort.Value));
+
+                    if (ftps)
+                    {
+                        if (ftpes)
+                            ftpc.SecurityProtocol = FtpSecurityProtocol.Tls1OrSsl3Explicit;
+                        else
+                            ftpc.SecurityProtocol = FtpSecurityProtocol.Tls1OrSsl3Implicit;
+                        ftpc.ValidateServerCertificate += new EventHandler<ValidateServerCertificateEventArgs>(ftp_ValidateServerCertificate);
+                    }
+                    ftpc.Open(tUsername.Text, tPass.Text);
+                    Log.Write(l.Info, "Connected: " + ftpc.IsConnected.ToString());
+                    ftpc.Close();
                 }
                 else
                 {
@@ -55,13 +84,13 @@ namespace FTPbox
                     sftp_login();
                     //MessageBox.Show("SFTP Connected");
                     sftpc.quit();
-                }
+                }                
                 
                 string hostEncr = AESEncryption.Encrypt(tHost.Text, decpass, salt, "SHA1", 2, "OFRna73m*aze01xY", 256);
                 string unEncr = AESEncryption.Encrypt(tUsername.Text, decpass, salt, "SHA1", 2, "OFRna73m*aze01xY", 256);
                 string passEncr = AESEncryption.Encrypt(tPass.Text, decpass, salt, "SHA1", 2, "OFRna73m*aze01xY", 256);
 
-                ((frmMain)this.Tag).UpdateAccountInfo(hostEncr, unEncr, passEncr, Convert.ToInt32(nPort.Value), "", ftporsftp);
+                ((frmMain)this.Tag).UpdateAccountInfo(hostEncr, unEncr, passEncr, Convert.ToInt32(nPort.Value), "", ftporsftp, ftps, ftpes);
                 
                 //FTPbox.Properties.Settings.Default.ftpHost = tHost.Text;
                 //FTPbox.Properties.Settings.Default.ftpPort = Convert.ToInt32(nPort.Value);
@@ -72,18 +101,20 @@ namespace FTPbox
                 //FTPbox.Properties.Settings.Default.Save();
 
                 
-                Log.Write("got new ftp acccount details");
+                Log.Write(l.Debug, "got new ftp acccount details");
                 ((frmMain)this.Tag).ClearLog();
                 ((frmMain)this.Tag).UpdateDetails();
                 //((frmMain)this.Tag).GetServerTime();
                 ((frmMain)this.Tag).loggedIn = true;
                 fNewDir fnewdir = new fNewDir();
                 fnewdir.ShowDialog();
-                this.Close();  
+                this.Close();                   
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Could not connect to FTP server. Check your account details and try again." + Environment.NewLine + " Error message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (ftporsftp)
+                    Log.Write(l.Info, "Connected: " + ftpc.IsConnected.ToString());
             }
                      
         }
@@ -98,6 +129,14 @@ namespace FTPbox
             {
                 bDone.Enabled = false;
             }
+
+            if (cMode.SelectedIndex == 0)
+                cEncryption.Enabled = true;
+            else
+            {
+                cEncryption.SelectedIndex = 0;
+                cEncryption.Enabled = false;
+            }
         }
 
         private void NewFTP_Load(object sender, EventArgs e)
@@ -110,6 +149,15 @@ namespace FTPbox
 
             if (((frmMain)this.Tag).FTP())
             {
+                if (((frmMain)this.Tag).FTPS())
+                {
+                    if (((frmMain)this.Tag).FTPES())
+                        cEncryption.SelectedIndex = 1;
+                    else
+                        cEncryption.SelectedIndex = 2;
+                }
+                else
+                    cEncryption.SelectedIndex = 0;
                 cMode.SelectedIndex = 0;
             }
             else
@@ -120,11 +168,13 @@ namespace FTPbox
 
         private void Set_Language(string lan)
         {
+            Log.Write(l.Info, "Setting lang: {0}", lan);
             if (lan == "es")
             {
                 this.Text = "FTPbox | Nueva cuenta FTP";
                 gDetails.Text = "Datos de la cuenta FTP";
-                labMode.Text = "Modo:";
+                labMode.Text = "Protocolo:";
+                labEncryption.Text = "Cifrado:";
                 labHost.Text = "Host:";
                 labPort.Text = "Puerto:";
                 labUN.Text = "Usuario:";
@@ -135,7 +185,8 @@ namespace FTPbox
             {
                 this.Text = "FTPbox | Neuer FTP Account";
                 gDetails.Text = "FTP login details";
-                labMode.Text = "Modus:";
+                labMode.Text = "Protokoll:";
+                labEncryption.Text = "Verschlüsselung:";
                 labHost.Text = "Host:";
                 labPort.Text = "Port:";
                 labUN.Text = "Benutzername:";
@@ -147,29 +198,44 @@ namespace FTPbox
             {
                 this.Text = "FTPbox | Nouveau compte FTP";
                 gDetails.Text = "Paramètres FTP";
-                labMode.Text = "Mode:";
+                labMode.Text = "Protocole:";
+                labEncryption.Text = "Chiffrement:";
                 labHost.Text = "Hôte:";
                 labPort.Text = "Port:";
                 labUN.Text = "Nom d'utilisateur:";
                 labPass.Text = "Mot de passe:";
                 bDone.Text = "Terminer";
             }
-            else if (lan == "du")
+            else if (lan == "nl")
             {
                 this.Text = "FTPbox | Nieuwe FTP account";
                 gDetails.Text = "FTP login details";
-                labMode.Text = "Mode:";
+                labMode.Text = "Protocol:";
+                labEncryption.Text = "Encryption:";
                 labHost.Text = "Host:";
                 labPort.Text = "Poort:";
                 labUN.Text = "Gebruikersnaam:";
                 labPass.Text = "Wachtwoord:";
                 bDone.Text = "Gereed";
             }
+            else if (lan == "el")
+            {
+                this.Text = "FTPbox | Νέος Λογαργιασμός FTP";
+                gDetails.Text = "Στοιχεία Σύνδεσης";
+                labMode.Text = "Πρωτόκολλο:";
+                labEncryption.Text = "Κρυπτογράφηση:";
+                labHost.Text = "Κόμβος:";
+                labPort.Text = "Θύρα:";
+                labUN.Text = "Όνομα Χρήστη:";
+                labPass.Text = "Κωδικός:";
+                bDone.Text = "Τέλος";
+            }
             else
             {
                 this.Text = "FTPbox | New FTP Account";
                 gDetails.Text = "FTP login details";
-                labMode.Text = "Mode:";
+                labMode.Text = "Protocol:";
+                labEncryption.Text = "Encryption:";
                 labHost.Text = "Host:";
                 labPort.Text = "Port:";
                 labUN.Text = "Username:";
@@ -275,7 +341,7 @@ namespace FTPbox
 
         private void cMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cMode.SelectedIndex == 0)
+            if (cMode.SelectedIndex != 1)
             {
                 nPort.Value = 21;
             }
@@ -283,7 +349,18 @@ namespace FTPbox
             {
                 nPort.Value = 22;
             }
-        }       
+        }
+
+        private void ftp_ValidateServerCertificate(object sender, ValidateServerCertificateEventArgs e)
+        {
+            // display the certificate to the user and ask the user to either accept or reject the certificate
+            if (MessageBox.Show(e.Certificate.ToString(), "FTPbox - Accept this Certificate?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                // the user accepted the certicate so we need to inform the FtpClient Component that the certificate is valid
+                // be setting the IsCertificateValue property to true
+                e.IsCertificateValid = true;
+            }        
+        }
 
     }
 }

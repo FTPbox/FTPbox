@@ -45,6 +45,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Classes\Org.Mentalis.Security.dll</HintPath>
     </Reference>
+    <Reference Include="Starksoft.Net.Ftp">
+      <HintPath>Classes\Starksoft.Net.Ftp.dll</HintPath>
+    </Reference>
+    <Reference Include="Starksoft.Net.Proxy">
+      <HintPath>Classes\Starksoft.Net.Proxy.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -108,12 +114,6 @@
     <Compile Include="Classes\ZipLib\Zip\ZipInputStream.cs" />
     <Compile Include="Classes\ZipLib\Zip\ZipNameTransform.cs" />
     <Compile Include="Classes\ZipLib\Zip\ZipOutputStream.cs" />
-    <Compile Include="Forms\fMain.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\fMain.designer.cs">
-      <DependentUpon>fMain.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\fNewDir.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,10 +126,6 @@
     <Compile Include="Forms\frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="Classes\FTPLib\FtpConnection.cs" />
-    <Compile Include="Classes\FTPLib\FtpDirectoryInfo.cs" />
-    <Compile Include="Classes\FTPLib\FtpException.cs" />
-    <Compile Include="Classes\FTPLib\FtpFileInfo.cs" />
     <Compile Include="Forms\NewFTP.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -145,9 +141,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\WinApi.cs" />
-    <EmbeddedResource Include="Forms\fMain.resx">
-      <DependentUpon>fMain.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\fNewDir.resx">
       <DependentUpon>fNewDir.cs</DependentUpon>
     </EmbeddedResource>
@@ -202,14 +195,11 @@
     <None Include="Resources\Icons\offline.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Tamir.SharpSSH.dll" />
     <None Include="Resources\syncing.ico" />
     <None Include="Resources\regular_60.ico" />
     <None Include="Resources\offline.ico" />
     <None Include="Resources\regular.ico" />
-    <Content Include="DiffieHellman.dll" />
     <Content Include="ftpboxnew.ico" />
-    <Content Include="Org.Mentalis.Security.dll" />
     <Content Include="regular.ico" />
     <None Include="Resources\all synced.ico" />
     <Content Include="regular_125.ico" />

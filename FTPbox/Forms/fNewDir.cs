@@ -6,8 +6,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using FtpLib;
+//using FtpLib;
 using Tamir.SharpSsh.jsch;
+using Starksoft.Net.Ftp;
 
 namespace FTPbox
 {
@@ -18,11 +19,11 @@ namespace FTPbox
         string UN;
         string pass;
         int port;
-        bool ftporsftp;
+        bool ftporsftp, ftps, ftpes;
 
         ChannelSftp sftpc;
-        
-        FtpConnection ftp;
+
+        FtpClient ftpc;
 
         string sftproot = "/home";
 
@@ -48,17 +49,11 @@ namespace FTPbox
             //FTPbox.Properties.Settings.Default.lPath = tPath.Text;
             //FTPbox.Properties.Settings.Default.ftpParent = tParent.Text;
             //FTPbox.Properties.Settings.Default.Save();
-
-            ((frmMain)this.Tag).ClearLog();
-            ((frmMain)this.Tag).UpdateDetails();
-            ((frmMain)this.Tag).SetLocalWatcher();
-            ((frmMain)this.Tag).gotpaths = true;
-
             if (ftporsftp)
             {
                 try
                 {
-                    ftp.Close();
+                    ftpc.Close();
                 }
                 catch { }
             }
@@ -70,6 +65,12 @@ namespace FTPbox
                 }
                 catch { }
             }
+            ((frmMain)this.Tag).ClearLog();
+            ((frmMain)this.Tag).UpdateDetails();
+            ((frmMain)this.Tag).SetLocalWatcher();
+            ((frmMain)this.Tag).gotpaths = true;
+
+            
             this.Close();
         }       
 
@@ -82,13 +83,25 @@ namespace FTPbox
                 pass = ((frmMain)this.Tag).ftpPass();
                 port = ((frmMain)this.Tag).ftpPort();
                 ftporsftp = ((frmMain)this.Tag).FTP();
+                ftps = ((frmMain)this.Tag).FTPS();
+                ftpes = ((frmMain)this.Tag).FTPES();
                 ((frmMain)this.Tag).SetParent(host);
 
                 if (ftporsftp)
                 {
-                    ftp = new FtpConnection(host, port, UN, pass);
-                    ftp.Open();
-                    ftp.Login();
+                    ftpc = new FtpClient(host, port);
+
+                    if (ftps)
+                    {
+                        if (ftpes)
+                            ftpc.SecurityProtocol = FtpSecurityProtocol.Tls1OrSsl3Explicit;
+                        else
+                            ftpc.SecurityProtocol = FtpSecurityProtocol.Tls1OrSsl3Implicit;
+                        ftpc.ValidateServerCertificate += new EventHandler<ValidateServerCertificateEventArgs>(ftp_ValidateServerCertificate);
+                    }
+
+                    ftpc.Open(UN, pass);                    
+                    Log.Write(l.Info, "Connected: " + ftpc.IsConnected.ToString());
                 }
                 else
                 {
@@ -103,7 +116,7 @@ namespace FTPbox
 
                 tPath.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\FTPbox";
 
-                Log.Write(((frmMain)this.Tag).ftpParent() + " " + ((frmMain)this.Tag).ftpHost());
+                Log.Write(l.Debug, ((frmMain)this.Tag).ftpParent() + " " + ((frmMain)this.Tag).ftpHost());
 
                 treeView1.Nodes.Clear();
 
@@ -113,19 +126,18 @@ namespace FTPbox
 
                 if (ftporsftp)
                 {
-                    foreach (FtpDirectoryInfo dir in ftp.GetDirectories())
+                    foreach (FtpItem dir in ftpc.GetDirList())
                     {
-                        if (dir.Name != "." && dir.Name != "..")
+                        if (dir.Name != "." && dir.Name != ".." && dir.ItemType == FtpItemType.Directory)
                         {
                             TreeNode ParentNode = new TreeNode();
-                            ParentNode.Text = dir.Name.ToString();
+                            ParentNode.Text = dir.Name;
                             treeView1.Nodes.Add(ParentNode);
 
                             TreeNode ChildNode = new TreeNode();
-                            ChildNode.Text = dir.Name.ToString();
+                            ChildNode.Text = dir.Name;
                             ParentNode.Nodes.Add(ChildNode);
                         }
-
                     }
                 }
                 else
@@ -193,16 +205,16 @@ namespace FTPbox
 
             if (ftporsftp)
             {
-                foreach (FtpDirectoryInfo dir in ftp.GetDirectories(path))
+                foreach (FtpItem dir in ftpc.GetDirList(path))
                 {
-                    if (dir.Name != "." && dir.Name != "..")
+                    if (dir.Name != "." && dir.Name != ".." && dir.ItemType == FtpItemType.Directory)
                     {
                         TreeNode ParentNode = new TreeNode();
-                        ParentNode.Text = dir.Name.ToString();
+                        ParentNode.Text = dir.Name;
                         e.Node.Nodes.Add(ParentNode);
 
                         TreeNode ChildNode = new TreeNode();
-                        ChildNode.Text = dir.Name.ToString();
+                        ChildNode.Text = dir.Name;
                         ParentNode.Nodes.Add(ChildNode);
                     }
                 }
@@ -219,7 +231,7 @@ namespace FTPbox
             {
                 SftpGoToRoot();
                 string fpath = sftproot + path;
-                Log.Write(fpath);
+                Log.Write(l.Debug, fpath);
                 sftpc.cd(fpath);
                 foreach (ChannelSftp.LsEntry lse in sftpc.ls("."))
                 {
@@ -295,7 +307,7 @@ namespace FTPbox
                 bBrowse.Text = "Parcourir";
                 bDone.Text = "Terminer";
             }
-            else if (lan == "du")
+            else if (lan == "nl")
             {
                 this.Text = "voeg een map toe";
                 labSelect.Text = "selecteer een map:";
@@ -304,6 +316,16 @@ namespace FTPbox
                 labParent.Text = "Volledig account pad:";
                 bBrowse.Text = "Zoeken";
                 bDone.Text = "Gereed";
+            }
+            else if (lan == "el")
+            {
+                this.Text = "Αλλαγή Φακέλων";
+                labSelect.Text = "Επιλέξτε διεύθυνση:";
+                labFullPath.Text = "Πλήρης διεύθυνση:";
+                labLocal.Text = "Τοπικός Φάκελος:";
+                labParent.Text = "Πλήρης διεύθυνση του λογαριασμού:";
+                bBrowse.Text = "Αναζήτηση";
+                bDone.Text = "Τέλος";
             }
             else
             {
@@ -420,8 +442,8 @@ namespace FTPbox
                 {
                     sftpc.cd("..");
                 }
-                catch { 
-                    Log.Write("errrrror");
+                catch (Exception ex) { 
+                    Log.Write(l.Error, "errrrror: {0}", ex.Message);
                     sftpc.quit();
                     sftp_login();
                 }
@@ -431,19 +453,23 @@ namespace FTPbox
         private void treeView1_AfterCollapse(object sender, TreeViewEventArgs e)
         {
             int i = e.Node.Nodes.Count;
-            Log.Write(i.ToString());
+            Log.Write(l.Debug, i.ToString());
 
-            Log.Write(e.Node.FullPath);
+            Log.Write(l.Debug, e.Node.FullPath);
             
             int ind = treeView1.Nodes.IndexOf(e.Node);            
 
             while (i != 0)
             {
-                treeView1.Nodes.RemoveAt(i);
+                //treeView1.Nodes.RemoveAt(i);
                 i -= 1;
-                Log.Write(i.ToString());
-            }
-            
+                Log.Write(l.Debug, i.ToString());
+            }            
+        }
+
+        private void ftp_ValidateServerCertificate(object sender, ValidateServerCertificateEventArgs e)
+        {
+            e.IsCertificateValid = true;
         }
     }
 }

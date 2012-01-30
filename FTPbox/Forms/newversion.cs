@@ -49,7 +49,7 @@ namespace FTPbox
         {
             try
             {
-                Process.Start("http://ftpbox.org");
+                Process.Start("http://ftpbox.org/changelog/");
             }
             catch { }
             this.Close();

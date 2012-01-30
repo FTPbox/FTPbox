@@ -21,49 +21,37 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_461605EDB05840179A635C6ADD66B5E4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4D7029D3603535E93615281915D5738E"
+        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4D7029D3603535E93615281915D5738E"
+        "OwnerKey" = "8:_60FCA756AECD9008AB782998B46C8A34"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_5A8936E4661D45059E7A3A40D235D007"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_79E027320435F9386BD88D1BCD24C2BC"
+        "MsmKey" = "8:_60FCA756AECD9008AB782998B46C8A34"
         "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_79E027320435F9386BD88D1BCD24C2BC"
-        "OwnerKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A5BDDDAF0A5C1DDE259B33C500918545"
-        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A5BDDDAF0A5C1DDE259B33C500918545"
-        "OwnerKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_AA4E25A925B74761A14E533BFE3C447E"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
-        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DFD9774036EE49E9909D314E393D7675"
+        "MsmKey" = "8:_A69821586F6A4030BBB9574282AB049B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -76,13 +64,37 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_AA4E25A925B74761A14E533BFE3C447E"
+        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_60FCA756AECD9008AB782998B46C8A34"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A69821586F6A4030BBB9574282AB049B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A5BDDDAF0A5C1DDE259B33C500918545"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -94,7 +106,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A5BDDDAF0A5C1DDE259B33C500918545"
+        "OwnerKey" = "8:_4D7029D3603535E93615281915D5738E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -202,6 +220,57 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_461605EDB05840179A635C6ADD66B5E4"
+            {
+            "SourcePath" = "8:C:\\Program Files\\FTPbox\\appinfo.ini"
+            "TargetName" = "8:appinfo.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4D7029D3603535E93615281915D5738E"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Starksoft.Net.Proxy, Version=1.0.131.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_4D7029D3603535E93615281915D5738E"
+                    {
+                    "Name" = "8:Starksoft.Net.Proxy.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Starksoft.Net.Proxy.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5A8936E4661D45059E7A3A40D235D007"
             {
             "SourcePath" = "8:..\\FTPbox\\ftpboxnew.ico"
@@ -220,6 +289,37 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_60FCA756AECD9008AB782998B46C8A34"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Starksoft.Net.Ftp, Version=1.0.158.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_60FCA756AECD9008AB782998B46C8A34"
+                    {
+                    "Name" = "8:Starksoft.Net.Ftp.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Starksoft.Net.Ftp.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_79E027320435F9386BD88D1BCD24C2BC"
@@ -284,20 +384,20 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_AA4E25A925B74761A14E533BFE3C447E"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A69821586F6A4030BBB9574282AB049B"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:Updater, Version=1.2.0.0, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_AA4E25A925B74761A14E533BFE3C447E"
+                    "_A69821586F6A4030BBB9574282AB049B"
                     {
                     "Name" = "8:Updater.exe"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Updater\\updater\\updater\\bin\\Release\\Updater.exe"
+            "SourcePath" = "8:C:\\Program Files\\FTPbox\\Updater.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
@@ -344,26 +444,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DFD9774036EE49E9909D314E393D7675"
-            {
-            "SourcePath" = "8:..\\..\\appinfo.ini"
-            "TargetName" = "8:appinfo.ini"
-            "Tag" = "8:"
-            "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
         }
@@ -433,15 +513,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FTPbox"
-        "ProductCode" = "8:{054D17E1-788D-4481-84B8-D70F639F96BF}"
-        "PackageCode" = "8:{69225552-4EEE-4FF7-BB20-C5B64294D052}"
+        "ProductCode" = "8:{A05F2432-DCED-4F77-A755-98417F9DD8C7}"
+        "PackageCode" = "8:{251FA621-AB29-42C9-8147-25DDB4BE43AC}"
         "UpgradeCode" = "8:{C3AC21D9-1CD1-40EC-A4F8-F482D3922829}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.7.4"
+        "ProductVersion" = "8:1.8.1"
         "Manufacturer" = "8:ftpbox.org"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:ftpbox.org"
@@ -554,20 +634,6 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_49799D009E1A468E9DD96E0FBB9D67F5"
-            {
-            "Name" = "8:updater"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_AA4E25A925B74761A14E533BFE3C447E"
-            "Folder" = "8:_965BC775DE574B53B650B8FC9B6E8EB6"
-            "WorkingFolder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
-            "Icon" = "8:"
-            "Feature" = "8:"
-            }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_70564B8C124F49E589015CB9E2515343"
             {
             "Name" = "8:FTPbox"
