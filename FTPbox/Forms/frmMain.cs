@@ -1362,6 +1362,7 @@ namespace FTPbox
                 if (version != Application.ProductVersion)
                 {
                     newversion nvform = new newversion(version);
+                    nvform.Tag = this;
                     nvform.ShowDialog();
                     this.Show();
                     // show dialog box for  download now, learn more and remind me next time
@@ -3886,30 +3887,28 @@ namespace FTPbox
             try
             {
                 string rpath = rPath();
-                Log.Write(l.Debug, "1. " + rpath);
-                string home = "/home/" + ftpUser();
-                Log.Write(l.Debug, "2. " + home);
                 if (rpath == "/")
                     rpath = "";
                 else if (rpath.StartsWith("/"))
                 {
                     rpath = rpath.Substring(1);
                 }
-                Log.Write(l.Debug, "3. " + rpath);
+
+                string home = sftpc.getHome();
 
                 if (rpath != "")
-                    home = home + "/" + rpath;
+                    home = noSlashes(home) + "/" + rpath;
 
                 Log.Write(l.Debug, "Home: {0}", home);
-                
-                while (!sftpc.pwd().Equals(home)) 
+
+                while (!sftpc.pwd().Equals(home))
                 {
                     try
-                    {                        
-                        Log.Write(l.Debug, "*SFTP* Going up one level from {0} to get to {1}", sftpc.pwd(), home);
+                    {
+                        Log.Write(l.Debug, "*SFTP* Going up one level from {0} to get to {1} when sftpc.gethome() is: {2}", sftpc.pwd(), home, sftpc.getHome());
                         if (sftpc.pwd() == "/")
                             sftpc.cd(home.Substring(1));
-                        else if (sftpc.pwd() == "/home/" + ftpUser())
+                        else if (sftpc.pwd() == sftpc.getHome())
                         {
                             sftpc.cd(rpath);
                             Log.Write(l.Debug, "Changed to rpath: {0}", rpath);

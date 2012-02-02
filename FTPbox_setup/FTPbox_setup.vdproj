@@ -100,43 +100,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A69821586F6A4030BBB9574282AB049B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A5BDDDAF0A5C1DDE259B33C500918545"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_79E027320435F9386BD88D1BCD24C2BC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_68A8786F579B7E4D7087E087397D96BA"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3C403FAF8BB21968FB1A6F265BD69A8C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_98C9236D64A314FE0D448E89C95EAEA1"
+        "OwnerKey" = "8:_D2EB440D077BF087FDB92A2C7996BE62"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -148,7 +112,43 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_D2EB440D077BF087FDB92A2C7996BE62"
+        "OwnerKey" = "8:_98C9236D64A314FE0D448E89C95EAEA1"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_3C403FAF8BB21968FB1A6F265BD69A8C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_68A8786F579B7E4D7087E087397D96BA"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_79E027320435F9386BD88D1BCD24C2BC"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A5BDDDAF0A5C1DDE259B33C500918545"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A69821586F6A4030BBB9574282AB049B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -283,11 +283,6 @@
             "AssemblyAsmDisplayName" = "8:Starksoft.Net.Ftp, Version=1.0.158.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_3C403FAF8BB21968FB1A6F265BD69A8C"
-                    {
-                    "Name" = "8:Starksoft.Net.Ftp.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Starksoft.Net.Ftp.dll"
             "TargetName" = "8:"
@@ -416,11 +411,6 @@
             "AssemblyAsmDisplayName" = "8:Starksoft.Net.Proxy, Version=1.0.131.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_98C9236D64A314FE0D448E89C95EAEA1"
-                    {
-                    "Name" = "8:Starksoft.Net.Proxy.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Starksoft.Net.Proxy.dll"
             "TargetName" = "8:"
@@ -662,15 +652,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FTPbox"
-        "ProductCode" = "8:{60B64298-A946-4939-A733-F51742B2126A}"
-        "PackageCode" = "8:{AB699265-508E-42C8-974B-83EE1BDCB1B9}"
+        "ProductCode" = "8:{7E98E423-3C2F-4F98-B37B-F1F51327F97C}"
+        "PackageCode" = "8:{8A52E374-4EC1-45B3-A2C4-0BCF9B69AB19}"
         "UpgradeCode" = "8:{C3AC21D9-1CD1-40EC-A4F8-F482D3922829}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.8.2"
+        "ProductVersion" = "8:1.8.3"
         "Manufacturer" = "8:ftpbox.org"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:ftpbox.org"

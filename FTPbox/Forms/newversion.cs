@@ -62,61 +62,17 @@ namespace FTPbox
 
         private void Set_Language(string lan)
         {
-            if (lan == "es")
-            {
-                this.Text = "FTPbox | Actualización disponible";
-                labInfo.Text = "Una nueva versión de FTPbox está disponible";
-                labCurVer.Text = "Versión actual";
-                labNewVer.Text = "Nueva versión";
-                labQuest.Text = "¿Deseas descargar la nueva versión ahora?";
-                bDownload.Text = "Actualizar";
-                bLearnMore.Text = "Conoce más";
-                bClose.Text = "No esta vez";
-            }
-            else if (lan == "de")
-            {
-                this.Text = "FTPbox | Update verfuegbar";
-                labInfo.Text = "Neue Version von FTPBox ist verfügbar";
-                labCurVer.Text = "Aktuelle Version:";
-                labNewVer.Text = "Neue Version:";
-                labQuest.Text = "Wollen Sie die neue Version jetzt herunterladen?";
-                bDownload.Text = "Aktuallisieren";
-                bLearnMore.Text = "Mehr erfahren";
-                bClose.Text = "Nicht dieses Mal";
-            }
-            else if (lan == "fr")
-            {
-                this.Text = "FTPbox | Mise à jour disponible";
-                labInfo.Text = "Une nouvelle version de FTPbox est disponible";
-                labCurVer.Text = "Version actuelle:";
-                labNewVer.Text = "Nouvelle version:";
-                labQuest.Text = "Souhaitez-vous télécharger la nouvelle version maintenant?";
-                bDownload.Text = "Télécharger";
-                bLearnMore.Text = "Plus d'informations";
-                bClose.Text = "Pas maintenant";
-            }
-            else if (lan == "du")
-            {
-                this.Text = "FTPbox | Update beschikbaar";
-                labInfo.Text = "Een nieuwe versie van FTPbox is beschikbaar";
-                labCurVer.Text = "Huidige versie:";
-                labNewVer.Text = "Nieuwe versie:";
-                labQuest.Text = "Wilt u de nieuwste versie downloaden?";
-                bDownload.Text = "Download";
-                bLearnMore.Text = "Lees meer";
-                bClose.Text = "Niet nu";
-            }
-            else
-            {
-                this.Text = "FTPbox | Update Available";
-                labInfo.Text = "New version of FTPbox is available";
-                labCurVer.Text = "Current Version:";
-                labNewVer.Text = "New Version:";
-                labQuest.Text = "Do you want to download the new version now?";
-                bDownload.Text = "Update Now";
-                bLearnMore.Text = "Learn More";
-                bClose.Text = "Not this time";
-            }
+            string qmark = "?";
+            if (lan == "el") qmark = ";";
+
+            this.Text = "FTPbox | " + ((frmMain)this.Tag).languages.Get(lan + "/new_version/update_available", "Update Available");
+            labInfo.Text = ((frmMain)this.Tag).languages.Get(lan + "/new_version/new_v_available", "New version of FTPbox is available");
+            labCurVer.Text = ((frmMain)this.Tag).languages.Get(lan + "/new_version/current_version", "Current Version") + ":";
+            labNewVer.Text = ((frmMain)this.Tag).languages.Get(lan + "/new_version/new_ver", "New Version") + ":";
+            labQuest.Text = ((frmMain)this.Tag).languages.Get(lan + "/new_version/wanna_download", "Do you want to download the new version now") + qmark;
+            bDownload.Text = ((frmMain)this.Tag).languages.Get(lan + "/new_version/download", "Update Now");
+            bLearnMore.Text = ((frmMain)this.Tag).languages.Get(lan + "/new_version/learn_more", "Learn More");
+            bClose.Text = ((frmMain)this.Tag).languages.Get(lan + "/new_version/remind_me_next_time", "Not this time");                 
         }
     }
 }
