@@ -73,6 +73,7 @@
     <Compile Include="Classes\INIclass.cs" />
     <Compile Include="Classes\Log.cs" />
     <Compile Include="Classes\Settings.cs" />
+    <Compile Include="Classes\Translations.cs" />
     <Compile Include="Classes\ZipLib\Checksums\Adler32.cs" />
     <Compile Include="Classes\ZipLib\Checksums\CRC32.cs" />
     <Compile Include="Classes\ZipLib\Checksums\IChecksum.cs" />

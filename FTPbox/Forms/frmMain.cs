@@ -81,6 +81,7 @@ namespace FTPbox
         public bool failedlisting = false;
 
         Settings AppSettings = new Settings();
+        public Translations languages = new Translations();
         string DecryptionPassword = "removed";      //removed for security purposes
         string DecryptionSalt = "removed";          //removed for security purposes
 
@@ -1171,30 +1172,7 @@ namespace FTPbox
         private void Syncing()
         {
             tray.Icon = FTPbox.Properties.Resources.syncing;
-            if (lang() == "es")
-            {
-                tray.Text = "FTPbox - Sincronizando";
-            }
-            else if (lang() == "de")
-            {
-                tray.Text = "FTPbox - Aktuallisieren...";
-            }
-            else if (lang() == "fr")
-            {
-                tray.Text = "FTPbox - Synchronisation...";
-            }
-            else if (lang() == "nl")
-            {
-                tray.Text = "FTPbox – Synchroniseren";
-            }
-            else if (lang() == "el")
-            {
-                tray.Text = "FTPbox - Συγχρονισμός...";
-            }
-            else
-            {
-                tray.Text = "FTPbox - Syncing...";
-            }
+            tray.Text = languages.Get(lang() + "/tray/syncing", "FTPbox - Syncing");
         }
 
         /// <summary>
@@ -1205,43 +1183,28 @@ namespace FTPbox
             fswFiles.EnableRaisingEvents = true;
             fswFolders.EnableRaisingEvents = true;
             tray.Icon = FTPbox.Properties.Resources.AS;
-            if (lang() == "es")
-            {
-                tray.Text = "FTPbox - Todos los archivos sincronizados";
-            }
-            else if (lang() == "de")
-            {
-                tray.Text = "FTPbox - Alle Daten sind aktuell";
-            }
-            else if (lang() == "fr")
-            {
-                tray.Text = "FTPbox - Fichiers synchronisés";
-            }
-            else if (lang() == "nl")
-            {
-                tray.Text = "FTPbox – Alle bestanden gesynchroniseerd";
-            }
-            else if (lang() == "el")
-            {
-                tray.Text = "FTPbox - Όλα τα αρχεία είναι συγχρονισμένα";
-            }
-            else
-            {
-                tray.Text = "FTPbox - All files synced";
-            }
+            tray.Text = languages.Get(lang() + "/tray/synced", "FTPbox - All files synced");
             downloading = false;
             
         }
 
         private void bAddFTP_Click(object sender, EventArgs e)
         {
-            fNewFtp.ShowDialog();
+            AppSettings.Put("Account/Host", "");
+            AppSettings.Put("Account/Username", "");
+            AppSettings.Put("Account/Password", "");
+            AppSettings.Put("Paths/rPath", "");
+            AppSettings.Put("Paths/lPath", "");
+            ClearLog();
+            Application.Restart();
         }
 
         private void bChangeBox_Click(object sender, EventArgs e)
         {
-            newDir.ShowDialog();
+            AppSettings.Put("Paths/rPath", "");
+            AppSettings.Put("Paths/lPath", "");
             ClearLog();
+            Application.Restart();
             //StartupCheck();
         }
 
@@ -1285,30 +1248,7 @@ namespace FTPbox
         {
             if (ShowNots())
             {
-                if (lang() == "es")
-                {
-                    tray.ShowBalloonTip(30, "FTPbox", "Vinculo copiado al portapapeles.", ToolTipIcon.Info);
-                }
-                else if (lang() == "de")
-                {
-                    tray.ShowBalloonTip(30, "FTPbox", "Link wurde in die Zwischenablage koppiert", ToolTipIcon.Info);
-                }
-                else if (lang() == "fr")
-                {
-                    tray.ShowBalloonTip(30, "FTPbox", "Lien copié dans le presse-papiers", ToolTipIcon.Info);
-                }
-                else if (lang() == "nl")
-                {
-                    tray.ShowBalloonTip(30, "FTPbox", "Link naar klembord gekopieerd", ToolTipIcon.Info);
-                }
-                else if (lang() == "el")
-                {
-                    tray.ShowBalloonTip(30, "FTPbox", "Ο σύνδεσμος αντιγράφτηκε", ToolTipIcon.Info);
-                }
-                else
-                {
-                    tray.ShowBalloonTip(30, "FTPbox", "Link copied to clipboard", ToolTipIcon.Info);
-                }
+                tray.ShowBalloonTip(30, "FTPbox", languages.Get(lang() + "/tray/link_copied", "Link copied to clipboard"), ToolTipIcon.Info);               
                 link = null;
             }
         }
@@ -3174,30 +3114,7 @@ namespace FTPbox
                     }
                     OfflineMode = true;
                     tray.Icon = FTPbox.Properties.Resources.offline1;
-                    if (lang() == "es")
-                    {
-                        tray.Text = "FTPbox - Sin conexión";
-                    }
-                    else if (lang() == "de")
-                    {
-                        tray.Text = "FTPbox - Offline";
-                    }
-                    else if (lang() == "fr")
-                    {
-                        tray.Text = "FTPbox - Hors ligne";
-                    }
-                    else if (lang() == "nl")
-                    {
-                        tray.Text = "FTPbox – Offline";
-                    }
-                    else if (lang() == "el")
-                    {
-                        tray.Text = "FTPbox - Εκτός σύνδεσης";
-                    }
-                    else
-                    {
-                        tray.Text = "FTPbox - Offline";
-                    }
+                    tray.Text = languages.Get(lang() + "/tray/offline", "FTPbox - Offline");        
                 }
             }
             catch { }
@@ -3471,10 +3388,16 @@ namespace FTPbox
                     locallang = "Dutch";
                 else if (locallangtwoletter == "el")
                     locallang = "Greek";
+                else if (locallangtwoletter == "it")
+                    locallang = "Italian";
+                else if (locallangtwoletter == "tr")
+                    locallang = "Turkish";
+                else if (locallangtwoletter == "pt-BR")
+                    locallang = "Brazilian Portuguese";
                 else
                     locallang = "English";
-                
-                if (locallangtwoletter != "en" && (locallangtwoletter == "es" || locallangtwoletter == "de" || locallangtwoletter == "fr" || locallangtwoletter == "nl" || locallangtwoletter == "el"))
+
+                if (locallangtwoletter != "en" && (locallangtwoletter == "es" || locallangtwoletter == "de" || locallangtwoletter == "fr" || locallangtwoletter == "nl" || locallangtwoletter == "el" || locallangtwoletter == "it" || locallangtwoletter == "tr" || locallangtwoletter == "pt-BR"))
                 {
                     string msg = string.Format("FTPbox detected that you use {0} as your computer language. Do you want to use {1} as the language of FTPbox as well?", locallang, locallang);
                     DialogResult x = MessageBox.Show(msg, "FTPbox", MessageBoxButtons.YesNo, MessageBoxIcon.Information);                    
@@ -3502,310 +3425,74 @@ namespace FTPbox
 
         private void Set_Language(string lan)
         {
-            Log.Write(l.Debug, "gon change language to: {0}", lan);
+            Log.Write(l.Debug, "Changing language to: {0}", lan);
+            this.Text = "FTPbox | " + languages.Get(lan + "/main_form/options", "Options");
+            //general tab
+            tabGeneral.Text = languages.Get(lan + "/main_form/general", "General");
+            gAccount.Text = "FTP " + languages.Get(lan + "/main_form/account", "Account");
+            labHost.Text = languages.Get(lan + "/main_form/host", "Host") + ":";
+            labUN.Text = languages.Get(lan + "/main_form/username", "Username") + ":";
+            labPort.Text = languages.Get(lan + "/main_form/port", "Port") + ":";
+            labMode.Text = languages.Get(lan + "/main_form/mode", "Mode") + ":";
+            bAddFTP.Text = languages.Get(lan + "/main_form/change", "Change");
+            gApp.Text = languages.Get(lan + "/main_form/application", "Application");
+            gWebInt.Text = languages.Get(lan + "/web_interface/web_int", "Web Interface");
+            chkWebInt.Text = languages.Get(lan + "/web_interface/use_webint", "Use the Web Interface");
+            labViewInBrowser.Text = languages.Get(lan + "/web_interface/view", "(View in browser)");
+            chkShowNots.Text = languages.Get(lan + "/main_form/show_nots", "Show notifications");
+            chkStartUp.Text = languages.Get(lan + "/main_form/start_on_startup", "Start on system start-up");
+            labLang.Text = languages.Get(lan + "/main_form/language", "Language") + ":";
+            //ftpbox tab
+            gDetails.Text = languages.Get(lan + "/main_form/details", "Details");
+            labRemPath.Text = languages.Get(lan + "/main_form/remote_path", "Remote Path") + ":";
+            labLocPath.Text = languages.Get(lan + "/main_form/local_path", "Local Path") + ":";
+            bChangeBox.Text = languages.Get(lan + "/main_form/change", "Change");
+            gLinks.Text = languages.Get(lan + "/main_form/links", "Links");
+            labFullPath.Text = languages.Get(lan + "/main_form/account_full_path", "Account's full path") + ":";
+            labLinkClicked.Text = languages.Get(lan + "/main_form/when_not_clicked", "When tray notification or recent file is clicked") + ":";
+            rOpenInBrowser.Text = languages.Get(lan + "/main_form/open_in_browser", "Open link in default browser");
+            rCopy2Clipboard.Text = languages.Get(lan + "/main_form/copy", "Copy link to clipboard");
+            //about tab
+            tabAbout.Text = languages.Get(lan + "/main_form/about", "About");
+            labCurVersion.Text = languages.Get(lan + "/main_form/current_version", "Current Version") + ":";
+            labTeam.Text = languages.Get(lan + "/main_form/team", "The Team") + ":";
+            labSite.Text = languages.Get(lan + "/main_form/website", "Official Website") + ":";
+            labContact.Text = languages.Get(lan + "/main_form/contact", "Contact") + ":";
+            labLangUsed.Text = languages.Get(lan + "/main_form/coded_in", "Coded in") + ":";
+            gNotes.Text = languages.Get(lan + "/main_form/notes", "Notes");
+            gContribute.Text = languages.Get(lan + "/main_form/contribute", "Contribute");
+            labFree.Text = languages.Get(lan + "/main_form/ftpbox_is_free", "- FTPbox is free and open-source");
+            labContactMe.Text = languages.Get(lan + "/main_form/contact_me", "- Feel free to contact me for anything.");
+            linkLabel1.Text = languages.Get(lan + "/main_form/report_bug", "Report a bug");
+            linkLabel2.Text = languages.Get(lan + "/main_form/request_feature", "Request a feature");
+            labDonate.Text = languages.Get(lan + "/main_form/donate", "Donate") + ":";
+            labSupportMail.Text = "support@ftpbox.org";
+            //tray
+            optionsToolStripMenuItem.Text = languages.Get(lan + "/main_form/options", "Options");
+            recentFilesToolStripMenuItem.Text = languages.Get(lan + "/tray/recent_files", "Recent Files");
+            aboutToolStripMenuItem.Text = languages.Get(lan + "/main_form/about", "About");
+            exitToolStripMenuItem.Text = languages.Get(lan + "/tray/exit", "Exit");
+
             if (lan == "en")
-            {
-                this.Text = "FTPbox | Options";
-                //general tab
-                tabGeneral.Text = "General";
-                gAccount.Text = "FTP Account";
-                labHost.Text = "Host:";
-                labUN.Text = "Username:";
-                labPort.Text = "Port:";
-                labMode.Text = "Mode:";
-                bAddFTP.Text = "Change";
-                gApp.Text = "Application";
-                gWebInt.Text = "Web Interface";
-                chkWebInt.Text = "Use the Web Interface";
-                labViewInBrowser.Text = "(View in browser)";
-                chkShowNots.Text = "Show notifications";
-                chkStartUp.Text = "Start on system start-up";
-                labLang.Text = "Language:";
-                //ftpbox tab
-                gDetails.Text = "Details";
-                labRemPath.Text = "Remote Path:";
-                labLocPath.Text = "Local Path:";
-                bChangeBox.Text = "Change";
-                gLinks.Text = "Links";
-                labFullPath.Text = "Account's full path:";
-                labLinkClicked.Text = "When tray notification or recent file is clicked:";
-                rOpenInBrowser.Text = "Open link in default browser";
-                rCopy2Clipboard.Text = "Copy link to clipboard";
-                //about tab
-                tabAbout.Text = "About";
-                labCurVersion.Text = "Current Version:";
-                labTeam.Text = "The Team:";
-                labSite.Text = "Official Website:";
-                labContact.Text = "Contact:";
-                labLangUsed.Text = "Coded in:";
-                gNotes.Text = "Notes";
-                gContribute.Text = "Contribute";
-                labFree.Text = "- FTPbox is free and open-source";
-                labContactMe.Text = "- Feel free to contact me for anything.";
-                linkLabel1.Text = "Report a bug";
-                linkLabel2.Text = "Request a feature";
-                labDonate.Text = "Donate:";
-                labSupportMail.Text = "support@ftpbox.org";                
-                //tray
-                optionsToolStripMenuItem.Text = "Options";
-                recentFilesToolStripMenuItem.Text = "Recent Files";
-                aboutToolStripMenuItem.Text = "About";
-                exitToolStripMenuItem.Text = "Exit";
                 cmbLang.SelectedIndex = 0;
-            }
             else if (lan == "es")
-            {
-                this.Text = "FTPbox | Opciones";
-                //general tab
-                tabGeneral.Text = "General";
-                gAccount.Text = "Cuenta FTP";
-                labHost.Text = "Host:";
-                labUN.Text = "Usuario:";
-                labPort.Text = "Puerto:";
-                labMode.Text = "Modo:";
-                bAddFTP.Text = "Cambiar";
-                gApp.Text = "Opciones de la aplicación";
-                gWebInt.Text = "Interfaz web";
-                chkWebInt.Text = "Usar la interfaz web";
-                labViewInBrowser.Text = "(Ver en el explorador)";
-                chkShowNots.Text = "Mostrar notificaciones";
-                chkStartUp.Text = "Iniciar al arranque del sistema";
-                labLang.Text = "Idioma:";
-                //ftpbox tab
-                gDetails.Text = "Carpetas a sincronizar";
-                labRemPath.Text = "Carpeta remota:";
-                labLocPath.Text = "Carpeta local:";
-                bChangeBox.Text = "Cambiar";
-                gLinks.Text = "Creación de vinculos";
-                labFullPath.Text = "Dirección completa de la cuenta:";
-                labLinkClicked.Text = "Al clickear una notificación o un archivo reciente:";
-                rOpenInBrowser.Text = "Abrir vinculo en el explorador predeterminado";
-                rCopy2Clipboard.Text = "Copiar vinculo";
-                //about tab
-                tabAbout.Text = "Acerca";
-                labCurVersion.Text = "Versión actual:";
-                labTeam.Text = "El equipo:";
-                labSite.Text = "Sitio Web oficial:";
-                labContact.Text = "Contacto:";
-                labLangUsed.Text = "Escrito en:";
-                gNotes.Text = "Notas";
-                gContribute.Text = "Contribuye";
-                labFree.Text = "- FTPbox es gratuito y de código abierto";
-                labContactMe.Text = "- No dudes en contactarme sobre lo que sea";
-                linkLabel1.Text = "Reporta un error";
-                linkLabel2.Text = "Pide una función";
-                labDonate.Text = "Dona:";
-                labSupportMail.Text = "soporte@ftpbox.org";                
-                //tray
-                optionsToolStripMenuItem.Text = "Opciones";
-                recentFilesToolStripMenuItem.Text = "Archivos recientes";
-                aboutToolStripMenuItem.Text = "Acerca";
-                exitToolStripMenuItem.Text = "Salida";
                 cmbLang.SelectedIndex = 1;
-            }
             else if (lan == "de")
-            {
-                this.Text = "FTPbox | Optionen";
-                //general tab
-                tabGeneral.Text = "Allgemein";
-                gAccount.Text = "FTP Account";
-                labHost.Text = "Host:";
-                labUN.Text = "Benutzername:";
-                labPort.Text = "Port:";
-                labMode.Text = "Modus:";
-                bAddFTP.Text = "Aendern";
-                gApp.Text = "Programm";
-                gWebInt.Text = "Webinterface";
-                chkWebInt.Text = "Das Webinterface verwenden";
-                labViewInBrowser.Text = "(Im Browser anzeigen)";
-                chkShowNots.Text = "Benachrichtigungen anzeigen";
-                chkStartUp.Text = "Bei Systemstart automatisch starten";
-                labLang.Text = "Sprache:";
-                //ftpbox tab
-                gDetails.Text = "Details";
-                labRemPath.Text = "Pfad zum entfernten Server:";
-                labLocPath.Text = "Pfad zum lokalen Verzeichnis:";
-                bChangeBox.Text = "Ändern";
-                gLinks.Text = "Links";
-                labFullPath.Text = "Vollstaendiger Kontopfad:";
-                labLinkClicked.Text = "Wenn eine Benachrichtigung oder aktuelle Datei angeklickt wurde:";
-                rOpenInBrowser.Text = "Link im Standardbrowser öffnen";
-                rCopy2Clipboard.Text = "Link in Zwischenablage koppieren";
-                //about tab
-                tabAbout.Text = "Über";
-                labCurVersion.Text = "Aktuelle Version:";
-                labTeam.Text = "Das Team:";
-                labSite.Text = "Offizielle Webseite:";
-                labContact.Text = "Kontakt:";
-                labLangUsed.Text = "Programmiert in:";
-                gNotes.Text = "Notizen";
-                gContribute.Text = "Mitwirken";
-                labFree.Text = "- FTPBox ist kostenlos und open-source";
-                labContactMe.Text = "- Kontaktieren sie mich.";
-                linkLabel1.Text = "Einen Fehler melden";
-                linkLabel2.Text = "Ein Feature vorschlagen";
-                labDonate.Text = "Spenden:";
-                labSupportMail.Text = "support@ftpbox.org";
-                //tray
-                optionsToolStripMenuItem.Text = "Optionen";
-                recentFilesToolStripMenuItem.Text = "Neueste Dateien";
-                aboutToolStripMenuItem.Text = "Über";
-                exitToolStripMenuItem.Text = "Ausfahrt";
                 cmbLang.SelectedIndex = 2;
-            }
             else if (lan == "fr")
-            {
-                this.Text = "FTPbox | Options";
-                //general tab
-                tabGeneral.Text = "Général";
-                gAccount.Text = "FTP Compte";
-                labHost.Text = "Hôte:";
-                labUN.Text = "Nom d'utilisateur:";
-                labPort.Text = "Port:";
-                labMode.Text = "Mode:";
-                bAddFTP.Text = "Changer";
-                gApp.Text = "Application";
-                gWebInt.Text = "Interface Web";
-                chkWebInt.Text = "Utiliser l'interface Web";
-                labViewInBrowser.Text = "(Voir dans le navigateur)";
-                chkShowNots.Text = "Afficher les notifications";
-                chkStartUp.Text = "Lancer au démarrage du système";
-                labLang.Text = "Langue:";
-                //ftpbox tab
-                gDetails.Text = "Détails";
-                labRemPath.Text = "Chemin distant:";
-                labLocPath.Text = "Chemin local:";
-                bChangeBox.Text = "Changer";
-                gLinks.Text = "Liens";
-                labFullPath.Text = "Chemin complet:";
-                labLinkClicked.Text = "Quand une notification ou un fichier récent est cliqué:";
-                rOpenInBrowser.Text = "Ouvrir le lien dans le navigateur par défaut";
-                rCopy2Clipboard.Text = "Copier le lien dans le presse-papiers";
-                //about tab
-                tabAbout.Text = "À propos";
-                labCurVersion.Text = "Version actuelle:";
-                labTeam.Text = "L'équipe:";
-                labSite.Text = "Site officiel:";
-                labContact.Text = "Contact:";
-                labLangUsed.Text = "Programmé en:";
-                gNotes.Text = "Notes";
-                gContribute.Text = "Contribuer";
-                labFree.Text = "- FTPbox est gratuit et open-source";
-                labContactMe.Text = "- N'hésitez pas à me contacter.";
-                linkLabel1.Text = "Reporter un bug";
-                linkLabel2.Text = "Proposer une fonctionnalité";
-                labDonate.Text = "Faites un don:";
-                labSupportMail.Text = "support@ftpbox.org";
-                //tray
-                optionsToolStripMenuItem.Text = "Options";
-                recentFilesToolStripMenuItem.Text = "Fichiers récents";
-                aboutToolStripMenuItem.Text = "À propos";
-                exitToolStripMenuItem.Text = "Sortir";
                 cmbLang.SelectedIndex = 3;
-            }
             else if (lan == "nl")
-            {
-                this.Text = "FTPbox | Opties";
-                //general tab
-                tabGeneral.Text = "Algemeen";
-                gAccount.Text = "FTP Account";
-                labHost.Text = "Host:";
-                labUN.Text = "Gebruikersnaam:";
-                labPort.Text = "Poort:";
-                labMode.Text = "Mode:";
-                bAddFTP.Text = "Wijzig";
-                gApp.Text = "Applicatie";
-                gWebInt.Text = "Web interface";
-                chkWebInt.Text = "Gebruik het web interface";
-                labViewInBrowser.Text = "(Bekijk in browser)";
-                chkShowNots.Text = "Toon notificaties";
-                chkStartUp.Text = "Start wanneer het systeem opstart";
-                labLang.Text = "Language:";
-                //ftpbox tab
-                gDetails.Text = "Details";
-                labRemPath.Text = "Extern pad:";
-                labLocPath.Text = "Lokaal pad:";
-                bChangeBox.Text = "Wijzig";
-                gLinks.Text = "Links";
-                labFullPath.Text = "Volledig account pad:";
-                labLinkClicked.Text = "Wanneer u klikt op de taakbalk notificatie of 'recent bestand':";
-                rOpenInBrowser.Text = "open link in standaard browser";
-                rCopy2Clipboard.Text = "Kopieer link naar het klembord";
-                //about tab
-                tabAbout.Text = "Over";
-                labCurVersion.Text = "Huidige versie:";
-                labTeam.Text = "Het team:";
-                labSite.Text = "officiele website:";
-                labContact.Text = "Contact:";
-                labLangUsed.Text = "Geprogrammeerd in:";
-                gNotes.Text = "Notities";
-                gContribute.Text = "Contributies";
-                labFree.Text = "- FTPbox is gratis en open-source";
-                labContactMe.Text = "- Aarzel niet contact met me op te nemen.";
-                linkLabel1.Text = "Meld en probleem";
-                linkLabel2.Text = "Verzoek een functie";
-                labDonate.Text = "doneer:";
-                labSupportMail.Text = "support@ftpbox.org";
-                //tray
-                optionsToolStripMenuItem.Text = "Opties";
-                recentFilesToolStripMenuItem.Text = "Recente bestanden";
-                aboutToolStripMenuItem.Text = "Over";
-                exitToolStripMenuItem.Text = "uitgang";
                 cmbLang.SelectedIndex = 4;
-            }
             else if (lan == "el")
-            {
-                this.Text = "FTPbox | Ρυθμίσεις";
-                //general tab
-                tabGeneral.Text = "Γενικές";
-                gAccount.Text = "Λογαργιασμός FTP";
-                labHost.Text = "Κόμβος:";
-                labUN.Text = "Όνομα χρήστη:";
-                labPort.Text = "Θύρα:";
-                labMode.Text = "Πρωτόκολλο:";
-                bAddFTP.Text = "Αλλαγή";
-                gApp.Text = "Πρόγραμμα";
-                gWebInt.Text = "Web Interface";
-                chkWebInt.Text = "Χρήση του Web Interface";
-                labViewInBrowser.Text = "(Εμφάνιση στον browser)";
-                chkShowNots.Text = "Εμφάνιση Ειδοποιήσεων";
-                chkStartUp.Text = "Εκκίνηση με τα Windows";
-                labLang.Text = "Γλώσσα:";
-                //ftpbox tab
-                gDetails.Text = "Λεπτομέρειες";
-                labRemPath.Text = "Διαδρομή στον Server:";
-                labLocPath.Text = "Τοπικός Φάκελος:";
-                bChangeBox.Text = "Αλλαγή";
-                gLinks.Text = "Σύνδεσμοι";
-                labFullPath.Text = "Πλήρης διεύθυνση του λογαριασμού:";
-                labLinkClicked.Text = "όταν γινει κλικ σε μια ειδοποίηση ή ένα πρόσφατο αρχείο:";
-                rOpenInBrowser.Text = "άνοιγμα του αντίστοιχου συνδέσμου στον Browser";
-                rCopy2Clipboard.Text = "Αντιγραφή του συνδέσμου";
-                //about tab
-                tabAbout.Text = "Πληροφορίες";
-                labCurVersion.Text = "Έκδοση:";
-                labTeam.Text = "Η Ομάδα:";
-                labSite.Text = "Επίσημη Ιστοσελίδα:";
-                labContact.Text = "Επικοινωνία:";
-                labLangUsed.Text = "Γλώσσα Προγραμματισμού:";
-                gNotes.Text = "Σημειώσεις";
-                gContribute.Text = "Βοηθήστε";
-                labFree.Text = "- Το FTPbox διατίθεται δωρεάν";
-                labContactMe.Text = "- Επικοινωνήστε μαζί μου.";
-                linkLabel1.Text = "Αναφορά σφάλματος";
-                linkLabel2.Text = "Αίτημα χαρακτηριστικού";
-                labDonate.Text = "Δωρεά:";
-                labSupportMail.Text = "support@ftpbox.org";
-                //tray
-                optionsToolStripMenuItem.Text = "Ρυθμίσεις";
-                recentFilesToolStripMenuItem.Text = "Πρόσφατα Αρχεία";
-                aboutToolStripMenuItem.Text = "Πληροφορίες";
-                exitToolStripMenuItem.Text = "Έξοδος";
                 cmbLang.SelectedIndex = 5;
-            }
+            else if (lan == "it")
+                cmbLang.SelectedIndex = 6;
+            else if (lan == "tr")
+                cmbLang.SelectedIndex = 7;
+            else if (lan == "pt-BR")
+                cmbLang.SelectedIndex = 8;
+
             AppSettings.Put("Settings/Language", lan);
-            //FTPbox.Properties.Settings.Default.lan = lan;
-            //FTPbox.Properties.Settings.Default.Save();
         }
 
         private void cmbLang_SelectedIndexChanged(object sender, EventArgs e)
@@ -3823,153 +3510,31 @@ namespace FTPbox
 
         public string Get_Message(string not, bool file)
         {
+            string fileorfolder;
+            if (file)
+                fileorfolder = languages.Get(lang() + "/tray/file", "File");
+            else
+                fileorfolder = languages.Get(lang() + "/tray/folder", "Folder");
+
             if (not == "created")
             {
-                if (file)
-                {
-                    if (lang() == "de")
-                        return "Datei {0} wurde erstellt.";
-                    else if (lang() == "es")
-                        return "El archivo {0} fue creado";
-                    else if (lang() == "fr")
-                        return "Le fichier {0} a été créé.";
-                    else if (lang() == "nl")
-                        return "Bestand {0} is gecreëerd";
-                    else if (lang() == "el")
-                        return "Το αρχείο {0} δημιουργήθηκε.";
-                    else
-                        return "File {0} was created.";
-                }
-                else
-                {
-                    if (lang() == "de")
-                        return "Ordner {0} wurde erstellt.";
-                    else if (lang() == "es")
-                        return "La carpeta {0} fue creada";
-                    else if (lang() == "fr")
-                        return "Le répertoire {0} a été créé.";
-                    else if (lang() == "nl")
-                        return "Map {0} is gecreëerd";
-                    else if (lang() == "el")
-                        return "Ο φάκελος {0} δημιουργήθηκε.";
-                    else
-                        return "Folder {0} was created.";
-                }
+                return fileorfolder + " " + languages.Get(lang() + "/tray/created", "{0} was created.");
             }
             else if (not == "deleted")
             {
-                if (file)
-                {
-                    if (lang() == "de")
-                        return "Datei {0} wurde gelöscht.";
-                    else if (lang() == "es")
-                        return "El archivo {0} fue borrado.";
-                    else if (lang() == "fr")
-                        return "Le fichier {0} a été supprimé.";
-                    else if (lang() == "nl")
-                        return "Bestand {0} is verwijdert.";
-                    else if (lang() == "el")
-                        return "Το αρχείο {0} διαγράφτηκε.";
-                    else
-                        return "File {0} was deleted.";
-                }
-                else
-                {
-                    if (lang() == "de")
-                        return "Ordner {0} wurde gelöscht.";
-                    else if (lang() == "es")
-                        return "La carpeta {0} fue borrada.";
-                    else if (lang() == "fr")
-                        return "Le répertoire {0} a été supprimé.";
-                    else if (lang() == "nl")
-                        return "Map {0} is verwijdert.";
-                    else if (lang() == "el")
-                        return "Ο φάκελος {0} διαγράφτηκε.";
-                    else
-                        return "Folder {0} was deleted.";
-                }
-
+                return fileorfolder + " " + languages.Get(lang() + "/tray/deleted", "{0} was deleted.");
             }
             else if (not == "renamed")
             {
-                if (lang() == "de")
-                    return "{0} wurde umbenannt in {1}";
-                else if (lang() == "es")
-                    return "{0} fue renombrado a {1}";
-                else if (lang() == "fr")
-                    return "{0} a été renommé en {1}.";
-                else if (lang() == "nl")
-                    return "{0} is hernoemd naar {1}";
-                else if (lang() == "el")
-                    return "Το {0} μετονομάστηκε σε {1}";
-                else
-                    return "{0} was renamed to {1}.";
+                return languages.Get(lang() + "/tray/renamed", "{0} was reamed to {1}");
             }
             else if (not == "changed")
             {
-                if (file)
-                {
-                    if (lang() == "de")
-                        return "Datei {0} wurde geändert.";
-                    else if (lang() == "es")
-                        return "El archivo {0} fue cambiado.";
-                    else if (lang() == "fr")
-                        return "Le fichier {0} a été changé.";
-                    else if (lang() == "nl")
-                        return "Bestand {0} is gewijzigd.";
-                    else if (lang() == "el")
-                        return "Το αρχείο {0} τροποποιήθηκε.";
-                    else
-                        return "File {0} was changed.";
-                }
-                else
-                {
-                    if (lang() == "de")
-                        return "Ordner {0} wurde geändert.";
-                    else if (lang() == "es")
-                        return "La carpeta {0} fue cambiada.";
-                    else if (lang() == "fr")
-                        return "Le répertoire {0} a été changé.";
-                    else if (lang() == "nl")
-                        return "Map {0} is gewijzigd.";
-                    else if (lang() == "el")
-                        return "Ο φάκελος {0} τροποποιήθηκε.";
-                    else
-                        return "Folder {0} was changed.";
-                }
+                return fileorfolder + " " + languages.Get(lang() + "/tray/changed", "{0} was changed.");
             }
             else //if (not == "updated")
             {
-                if (file)
-                {
-                    if (lang() == "de")
-                        return "Datei {0} wurde aktuallisiert.";
-                    else if (lang() == "es")
-                        return "El archivo {0} fue actualizado.";
-                    else if (lang() == "fr")
-                        return "Le fichier {0} a été mis à jour.";
-                    else if (lang() == "nl")
-                        return "Bestand {0} is geüpdatet";
-                    else if (lang() == "el")
-                        return "Το αρχείο {0} ανανεώθηκε.";
-                    else
-                        return "File {0} was updated.";
-                }
-                else
-                {
-                    if (lang() == "de")
-                        return "Ordner {0} wurde aktuallisiert.";
-                    else if (lang() == "es")
-                        return "La carpeta {0} fue actualizada.";
-                    else if (lang() == "fr")
-                        return "Le répertoire {0} a été mis à jour.";
-                    else if (lang() == "nl")
-                        return "Map {0} is geüpdatet";
-                    else if (lang() == "el")
-                        return "Ο φάκελος {1} ανανεώθηκε.";
-                    else
-                        return "Folder {0} was updated.";
-                }
+                return fileorfolder + " " + languages.Get(lang() + "/tray/updated", "{0} was updated.");
             }
         }
 
@@ -5137,80 +4702,17 @@ namespace FTPbox
         public string get_webint_message(string not)
         {
             if (not == "downloading")
-            {
-                if (lang() == "de")
-                    return "Das Webinterface wird heruntergeladen" + Environment.NewLine + "Das wird etwa eine Minute dauern";
-                else if (lang() == "es")
-                    return "La interfaz web será descargada" + Environment.NewLine + "Esto tomará un minuto.";
-                else if (lang() == "fr")
-                    return "L'interface web va être téléchargée." + Environment.NewLine + "Cela prendra quelques instants.";
-                else if (lang() == "nl")
-                    return "Het Web Interface wordt gedownload." + Environment.NewLine + "Dit zal wat tijd nemen.";
-                else if (lang() == "el")
-                    return "Το web interface κατεβαίνει." + Environment.NewLine + "Αυτό θα πάρει ένα λεπτάκι...";
-                else
-                    return "The Web Interface will be downloaded." + Environment.NewLine + "This will take a minute.";
-            }
+                return languages.Get(lang() + "/web_interface/downloading", "The Web Interface will be downloaded.")
+                    + Environment.NewLine + languages.Get(lang() + "/web_interface/in_a_minute", "This will take a minute.");
             else if (not == "removing")
-            {
-                if (lang() == "de")
-                    return "Das Webinterface löschen...";
-                else if (lang() == "es")
-                    return "Eliminando la interfaz web...";
-                else if (lang() == "fr")
-                    return "Suppression de l'interface web...";
-                else if (lang() == "nl")
-                    return "Web Interface aan het verwijderen...";
-                else if (lang() == "el")
-                    return "Το web interface θα διαγραφεί...";
-                else
-                    return "Removing the Web Interface...";
-            }
+                return languages.Get(lang() + "/web_interface/removing", "Removing the Web Interface...");
             else if (not == "updated")
-            {
-                if (lang() == "de")
-                    return "Das Webinterface wurde aktuallisiert." + Environment.NewLine + "Hier klicken um es anzuzeigen und einzurichten";
-                else if (lang() == "es")
-                    return "La interfaz web ha sido actualizada." + Environment.NewLine + "Haz click aquí para verla y configurarla.";
-                else if (lang() == "fr")
-                    return "L'interface web a été mise à jour." + Environment.NewLine + "Cliquez ici pour voir et la configurer !";
-                else if (lang() == "nl")
-                    return "Het Web Interface is geüpdatet" + Environment.NewLine + "Klik hier om het te bekijken en op te zetten";
-                else if (lang() == "el")
-                    return "Το web interface ανανεώθηκε." + Environment.NewLine + "Κάντε κλικ εδώ για να το ελέγξετε και να κάνετε τις απαραίτητες ρυθμίσεις";
-                else
-                    return "Web Interface has been updated." + Environment.NewLine + "Click here to view and set it up!";
-            }
+                return languages.Get(lang() + "/web_interface/updated", "Web Interface has been updated.")
+                    + Environment.NewLine + languages.Get(lang() + "/web_interface/setup", "Click here to view and set it up!");
             else if (not == "updating")
-            {
-                if (lang() == "de")
-                    return "Das Webinterface aktualisieren...";
-                else if (lang() == "es")
-                    return "Actualizando la interfaz web...";
-                else if (lang() == "fr")
-                    return "la mise à jour de l'interface web...";
-                else if (lang() == "nl")
-                    return "Web interface aan het updaten...";
-                else if (lang() == "el")
-                    return "Το web interface ανανεώνεται...";
-                else
-                    return "Updating the web interface...";
-            }
+                return languages.Get(lang() + "/web_interface/updating", "Updating the web interface...");
             else // if (not == "removed")
-            {
-                if (lang() == "de")
-                    return "Das Webinterface wurde gelöscht.";
-                else if (lang() == "es")
-                    return "La interfaz web ha sido eliminada.";
-                else if (lang() == "fr")
-                    return "L'interface web a été supprimée.";
-                else if (lang() == "nl")
-                    return "Het Web interface is verwijdert";
-                else if (lang() == "el")
-                    return "Το web interface διαγράφτηκε.";
-                else
-                    return "Web interface has been removed.";
-            }            
+                return languages.Get(lang() + "/web_interface/removed", "Web interface has been removed.");
         }
 
         public void ftp_reconnect()

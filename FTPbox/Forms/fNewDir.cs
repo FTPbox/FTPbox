@@ -277,66 +277,13 @@ namespace FTPbox
 
         private void Set_Language(string lan)
         {
-            if (lan == "es")
-            {
-                this.Text = "Añade un nuevo directorio";
-                labSelect.Text = "Selecciona la dirección:";
-                labFullPath.Text = "Dirección completa:";
-                labLocal.Text = "Carpeta local:";
-                labParent.Text = "Dirección completa de la cuent:";
-                bBrowse.Text = "Explorar";
-                bDone.Text = "Listo";
-            }
-            else if (lan == "de")
-            {
-                this.Text = "Ein Verzeichnis erstellen";
-                labSelect.Text = "Vollständigen Ordnerpfad auswählen:";
-                labFullPath.Text = "Vollständiger Pfad:";
-                labLocal.Text = "Lokaler Ordner:";
-                labParent.Text = "Vollständiger Kontopfad:";
-                bBrowse.Text = "Durchsuchen";
-                bDone.Text = "Fertig";
-            }
-            else if (lan == "fr")
-            {
-                this.Text = "Ajouter un nouveau répertoire";
-                labSelect.Text = "Sélectionner un répertoire:";
-                labFullPath.Text = "Chemin complet:";
-                labLocal.Text = "Répertoire local:";
-                labParent.Text = "Chemin complet:";
-                bBrowse.Text = "Parcourir";
-                bDone.Text = "Terminer";
-            }
-            else if (lan == "nl")
-            {
-                this.Text = "voeg een map toe";
-                labSelect.Text = "selecteer een map:";
-                labFullPath.Text = "Volledig pad:";
-                labLocal.Text = "lokale map:";
-                labParent.Text = "Volledig account pad:";
-                bBrowse.Text = "Zoeken";
-                bDone.Text = "Gereed";
-            }
-            else if (lan == "el")
-            {
-                this.Text = "Αλλαγή Φακέλων";
-                labSelect.Text = "Επιλέξτε διεύθυνση:";
-                labFullPath.Text = "Πλήρης διεύθυνση:";
-                labLocal.Text = "Τοπικός Φάκελος:";
-                labParent.Text = "Πλήρης διεύθυνση του λογαριασμού:";
-                bBrowse.Text = "Αναζήτηση";
-                bDone.Text = "Τέλος";
-            }
-            else
-            {
-                this.Text = "Add a new directory";
-                labSelect.Text = "Select directory:";
-                labFullPath.Text = "Full path:";
-                labLocal.Text = "Local folder:";
-                labParent.Text = "Account's full path:";
-                bBrowse.Text = "Browse";
-                bDone.Text = "Done";
-            }
+            this.Text = ((frmMain)this.Tag).languages.Get(lan + "/paths/add_dir", "Add a new directory");
+            labSelect.Text = ((frmMain)this.Tag).languages.Get(lan + "/paths/select_dir", "Select directory") + ":";
+            labFullPath.Text = ((frmMain)this.Tag).languages.Get(lan + "/paths/full_path", "Full path") + ":";
+            labLocal.Text = ((frmMain)this.Tag).languages.Get(lan + "/paths/local_folder", "Local folder") + ":";
+            labParent.Text = ((frmMain)this.Tag).languages.Get(lan + "/main_form/account_full_path", "Account's full path") + ":";
+            bBrowse.Text = ((frmMain)this.Tag).languages.Get(lan + "/paths/browse", "Browse");
+            bDone.Text = ((frmMain)this.Tag).languages.Get(lan + "/new_account/done", "Done");
         }
 
         private void sftp_login()

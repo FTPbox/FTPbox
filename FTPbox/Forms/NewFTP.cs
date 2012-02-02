@@ -169,79 +169,15 @@ namespace FTPbox
         private void Set_Language(string lan)
         {
             Log.Write(l.Info, "Setting lang: {0}", lan);
-            if (lan == "es")
-            {
-                this.Text = "FTPbox | Nueva cuenta FTP";
-                gDetails.Text = "Datos de la cuenta FTP";
-                labMode.Text = "Protocolo:";
-                labEncryption.Text = "Cifrado:";
-                labHost.Text = "Host:";
-                labPort.Text = "Puerto:";
-                labUN.Text = "Usuario:";
-                labPass.Text = "Contraseña";
-                bDone.Text = "Listo";
-            }
-            else if (lan == "de")
-            {
-                this.Text = "FTPbox | Neuer FTP Account";
-                gDetails.Text = "FTP login details";
-                labMode.Text = "Protokoll:";
-                labEncryption.Text = "Verschlüsselung:";
-                labHost.Text = "Host:";
-                labPort.Text = "Port:";
-                labUN.Text = "Benutzername:";
-                labPass.Text = "Passwort:";
-                bDone.Text = "Fertig";
-
-            }
-            else if (lan == "fr")
-            {
-                this.Text = "FTPbox | Nouveau compte FTP";
-                gDetails.Text = "Paramètres FTP";
-                labMode.Text = "Protocole:";
-                labEncryption.Text = "Chiffrement:";
-                labHost.Text = "Hôte:";
-                labPort.Text = "Port:";
-                labUN.Text = "Nom d'utilisateur:";
-                labPass.Text = "Mot de passe:";
-                bDone.Text = "Terminer";
-            }
-            else if (lan == "nl")
-            {
-                this.Text = "FTPbox | Nieuwe FTP account";
-                gDetails.Text = "FTP login details";
-                labMode.Text = "Protocol:";
-                labEncryption.Text = "Encryption:";
-                labHost.Text = "Host:";
-                labPort.Text = "Poort:";
-                labUN.Text = "Gebruikersnaam:";
-                labPass.Text = "Wachtwoord:";
-                bDone.Text = "Gereed";
-            }
-            else if (lan == "el")
-            {
-                this.Text = "FTPbox | Νέος Λογαργιασμός FTP";
-                gDetails.Text = "Στοιχεία Σύνδεσης";
-                labMode.Text = "Πρωτόκολλο:";
-                labEncryption.Text = "Κρυπτογράφηση:";
-                labHost.Text = "Κόμβος:";
-                labPort.Text = "Θύρα:";
-                labUN.Text = "Όνομα Χρήστη:";
-                labPass.Text = "Κωδικός:";
-                bDone.Text = "Τέλος";
-            }
-            else
-            {
-                this.Text = "FTPbox | New FTP Account";
-                gDetails.Text = "FTP login details";
-                labMode.Text = "Protocol:";
-                labEncryption.Text = "Encryption:";
-                labHost.Text = "Host:";
-                labPort.Text = "Port:";
-                labUN.Text = "Username:";
-                labPass.Text = "Password:";
-                bDone.Text = "Done";
-            }
+            this.Text = "FTPbox | " + ((frmMain)this.Tag).languages.Get(lan + "/new_account/new_ftp", "New FTP Account");
+            gDetails.Text = ((frmMain)this.Tag).languages.Get(lan + "/new_account/login_details", "FTP login details");
+            labMode.Text = ((frmMain)this.Tag).languages.Get(lan + "/main_form/mode", "Protocol") + ":";
+            labEncryption.Text = ((frmMain)this.Tag).languages.Get(lan + "/new_account/encryption", "Encryption") + ":";
+            labHost.Text = ((frmMain)this.Tag).languages.Get(lan + "/main_form/host", "Host") + ":";
+            labPort.Text = ((frmMain)this.Tag).languages.Get(lan + "/main_form/port", "Port") + ":";
+            labUN.Text = ((frmMain)this.Tag).languages.Get(lan + "/main_form/username", "Username") + ":";
+            labPass.Text = ((frmMain)this.Tag).languages.Get(lan + "/main_form/password", "Password") + ":";
+            bDone.Text = ((frmMain)this.Tag).languages.Get(lan + "/new_account/done", "Done");
         }
 
         ChannelSftp sftpc;
