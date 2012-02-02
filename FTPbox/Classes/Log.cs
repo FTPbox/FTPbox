@@ -41,11 +41,13 @@ namespace FTPbox
 
         private static string _fname;
         private static l _level;
+        private static bool _debug;
 
-        public static void Init(string fname, l level, bool del)
+        public static void Init(string fname, l level, bool del, bool debug)
         {
             _fname = fname;
             _level = level;
+            _debug = debug;
 
             if (del)
             {
@@ -118,7 +120,8 @@ namespace FTPbox
             DateTime thisDate = DateTime.Now;
             CultureInfo culture = new CultureInfo("en-US");
 
-            finalWrite(String.Format("<FONT COLOR='grey'>[{0}]</FONT> <FONT COLOR='green'>{1}:</FONT> {2} <br />", thisDate.ToString("yyyy-MM-dd HH:mm:ss", culture), lItem.Caller, lItem.Text));
+            if (_debug)
+                finalWrite(String.Format("<font color=\"green\">[at {0} from {1}] : </font>{2} <br />", thisDate.ToString("yyyy-MM-dd HH:mm:ss", culture), lItem.Caller, lItem.Text));
 
             if ((_level & lItem.Level) != lItem.Level)
                 goto Finish;

@@ -33,6 +33,8 @@
             this.bDone = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.gDetails = new System.Windows.Forms.GroupBox();
+            this.labEncryption = new System.Windows.Forms.Label();
+            this.cEncryption = new System.Windows.Forms.ComboBox();
             this.cMode = new System.Windows.Forms.ComboBox();
             this.labMode = new System.Windows.Forms.Label();
             this.nPort = new System.Windows.Forms.NumericUpDown();
@@ -43,14 +45,13 @@
             this.labUN = new System.Windows.Forms.Label();
             this.tPass = new System.Windows.Forms.TextBox();
             this.tUsername = new System.Windows.Forms.TextBox();
-            this.cEncryption = new System.Windows.Forms.ComboBox();
-            this.labEncryption = new System.Windows.Forms.Label();
             this.gDetails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nPort)).BeginInit();
             this.SuspendLayout();
             // 
             // bDone
             // 
+            this.bDone.AccessibleName = "Done";
             this.bDone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bDone.Location = new System.Drawing.Point(221, 206);
             this.bDone.Name = "bDone";
@@ -68,6 +69,7 @@
             // 
             // gDetails
             // 
+            this.gDetails.AccessibleName = "FTP Details";
             this.gDetails.Controls.Add(this.labEncryption);
             this.gDetails.Controls.Add(this.cEncryption);
             this.gDetails.Controls.Add(this.cMode);
@@ -87,8 +89,32 @@
             this.gDetails.TabStop = false;
             this.gDetails.Text = "FTP Login Details";
             // 
+            // labEncryption
+            // 
+            this.labEncryption.AutoSize = true;
+            this.labEncryption.Location = new System.Drawing.Point(6, 54);
+            this.labEncryption.Name = "labEncryption";
+            this.labEncryption.Size = new System.Drawing.Size(60, 13);
+            this.labEncryption.TabIndex = 26;
+            this.labEncryption.Text = "Encryption:";
+            // 
+            // cEncryption
+            // 
+            this.cEncryption.AccessibleName = "Encryption";
+            this.cEncryption.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cEncryption.FormattingEnabled = true;
+            this.cEncryption.Items.AddRange(new object[] {
+            "None",
+            "require explicit FTP over TLS",
+            "require implicit FTP over TLS"});
+            this.cEncryption.Location = new System.Drawing.Point(100, 51);
+            this.cEncryption.Name = "cEncryption";
+            this.cEncryption.Size = new System.Drawing.Size(172, 21);
+            this.cEncryption.TabIndex = 25;
+            // 
             // cMode
             // 
+            this.cMode.AccessibleName = "FTP Protocol";
             this.cMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cMode.FormattingEnabled = true;
             this.cMode.Items.AddRange(new object[] {
@@ -111,6 +137,7 @@
             // 
             // nPort
             // 
+            this.nPort.AccessibleName = "Port";
             this.nPort.Location = new System.Drawing.Point(100, 156);
             this.nPort.Maximum = new decimal(new int[] {
             99999,
@@ -151,6 +178,7 @@
             // 
             // tHost
             // 
+            this.tHost.AccessibleName = "Host";
             this.tHost.Location = new System.Drawing.Point(100, 78);
             this.tHost.Name = "tHost";
             this.tHost.Size = new System.Drawing.Size(172, 20);
@@ -176,6 +204,7 @@
             // 
             // tPass
             // 
+            this.tPass.AccessibleName = "Password";
             this.tPass.Location = new System.Drawing.Point(100, 130);
             this.tPass.Name = "tPass";
             this.tPass.PasswordChar = '●';
@@ -184,36 +213,16 @@
             // 
             // tUsername
             // 
+            this.tUsername.AccessibleName = "Username";
             this.tUsername.Location = new System.Drawing.Point(100, 104);
             this.tUsername.Name = "tUsername";
             this.tUsername.Size = new System.Drawing.Size(172, 20);
             this.tUsername.TabIndex = 1;
             // 
-            // cEncryption
-            // 
-            this.cEncryption.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cEncryption.FormattingEnabled = true;
-            this.cEncryption.Items.AddRange(new object[] {
-            "None",
-            "require explicit FTP over TLS",
-            "require implicit FTP over TLS"});
-            this.cEncryption.Location = new System.Drawing.Point(100, 51);
-            this.cEncryption.Name = "cEncryption";
-            this.cEncryption.Size = new System.Drawing.Size(172, 21);
-            this.cEncryption.TabIndex = 25;
-            // 
-            // labEncryption
-            // 
-            this.labEncryption.AutoSize = true;
-            this.labEncryption.Location = new System.Drawing.Point(6, 54);
-            this.labEncryption.Name = "labEncryption";
-            this.labEncryption.Size = new System.Drawing.Size(60, 13);
-            this.labEncryption.TabIndex = 26;
-            this.labEncryption.Text = "Encryption:";
-            // 
             // NewFTP
             // 
             this.AcceptButton = this.bDone;
+            this.AccessibleName = "New FTP account";
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(304, 236);

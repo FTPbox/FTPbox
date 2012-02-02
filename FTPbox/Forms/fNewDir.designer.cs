@@ -47,6 +47,7 @@
             // 
             // bDone
             // 
+            this.bDone.AccessibleName = "Done";
             this.bDone.Location = new System.Drawing.Point(338, 252);
             this.bDone.Name = "bDone";
             this.bDone.Size = new System.Drawing.Size(75, 23);
@@ -57,6 +58,7 @@
             // 
             // bBrowse
             // 
+            this.bBrowse.AccessibleDescription = "Browse for local folder";
             this.bBrowse.Location = new System.Drawing.Point(339, 177);
             this.bBrowse.Name = "bBrowse";
             this.bBrowse.Size = new System.Drawing.Size(74, 23);
@@ -67,6 +69,7 @@
             // 
             // tPath
             // 
+            this.tPath.AccessibleName = "Local Folder";
             this.tPath.Enabled = false;
             this.tPath.Location = new System.Drawing.Point(13, 179);
             this.tPath.Name = "tPath";
@@ -90,6 +93,7 @@
             // 
             // tFullDir
             // 
+            this.tFullDir.AccessibleName = "Full Path";
             this.tFullDir.Enabled = false;
             this.tFullDir.Location = new System.Drawing.Point(67, 128);
             this.tFullDir.Name = "tFullDir";
@@ -98,6 +102,7 @@
             // 
             // treeView1
             // 
+            this.treeView1.AccessibleName = "Select remote path";
             this.treeView1.Location = new System.Drawing.Point(13, 25);
             this.treeView1.Name = "treeView1";
             this.treeView1.Size = new System.Drawing.Size(400, 97);
@@ -146,6 +151,7 @@
             // 
             // tParent
             // 
+            this.tParent.AccessibleName = "Account\'s HTTP path";
             this.tParent.Location = new System.Drawing.Point(13, 223);
             this.tParent.Name = "tParent";
             this.tParent.Size = new System.Drawing.Size(320, 20);
@@ -155,6 +161,7 @@
             // fNewDir
             // 
             this.AcceptButton = this.bDone;
+            this.AccessibleName = "New Paths";
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(425, 281);

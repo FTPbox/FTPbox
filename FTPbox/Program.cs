@@ -14,10 +14,12 @@ namespace FTPbox
         static void Main(string[] args)
         {
             // Allocate console
-            if (args.Length > 0 && args[0] == "-console")
+            if (args.Length > 0 && args.Contains("-console"))
                 aConsole.Allocate();
 
-            Log.Init("FTPbox.html", l.Debug | l.Info | l.Warning | l.Error | l.Client, true);
+            bool debug = args.Contains("-debug");
+
+            Log.Init("Debug.html", l.Debug | l.Info | l.Warning | l.Error | l.Client, true, debug);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

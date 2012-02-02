@@ -69,6 +69,7 @@
             // 
             // bClose
             // 
+            this.bClose.AccessibleDescription = "ignores the update";
             this.bClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.bClose.Location = new System.Drawing.Point(190, 104);
             this.bClose.Name = "bClose";
@@ -80,6 +81,7 @@
             // 
             // bLearnMore
             // 
+            this.bLearnMore.AccessibleDescription = "opens the changelog page";
             this.bLearnMore.Location = new System.Drawing.Point(100, 104);
             this.bLearnMore.Name = "bLearnMore";
             this.bLearnMore.Size = new System.Drawing.Size(84, 23);
@@ -90,6 +92,7 @@
             // 
             // bDownload
             // 
+            this.bDownload.AccessibleDescription = "updates to the new version";
             this.bDownload.Location = new System.Drawing.Point(8, 104);
             this.bDownload.Name = "bDownload";
             this.bDownload.Size = new System.Drawing.Size(86, 23);
@@ -128,6 +131,7 @@
             // newversion
             // 
             this.AcceptButton = this.bDownload;
+            this.AccessibleName = "New Version";
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bClose;
