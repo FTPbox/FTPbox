@@ -10,7 +10,7 @@ namespace FTPbox.Classes
     public class Settings
     {
         XmlDocument xmlDocument = new XmlDocument();
-        string documentPath = Application.StartupPath + "\\settings.xml";
+        string documentPath = Application.UserAppDataPath + "\\settings.xml";
 
         public  Settings()
         { 
