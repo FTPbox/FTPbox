@@ -64,6 +64,7 @@
             this.labHost = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.gLinks = new System.Windows.Forms.GroupBox();
+            this.rOpenLocal = new System.Windows.Forms.RadioButton();
             this.labLinkClicked = new System.Windows.Forms.Label();
             this.tParent = new System.Windows.Forms.TextBox();
             this.labFullPath = new System.Windows.Forms.Label();
@@ -88,6 +89,7 @@
             this.labTeam = new System.Windows.Forms.Label();
             this.labCurVersion = new System.Windows.Forms.Label();
             this.gContribute = new System.Windows.Forms.GroupBox();
+            this.labDonate = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
@@ -95,12 +97,9 @@
             this.label11 = new System.Windows.Forms.Label();
             this.labContactMe = new System.Windows.Forms.Label();
             this.labFree = new System.Windows.Forms.Label();
-            this.bgWork = new System.ComponentModel.BackgroundWorker();
             this.tray = new System.Windows.Forms.NotifyIcon(this.components);
             this.fswFolders = new System.IO.FileSystemWatcher();
             this.fswFiles = new System.IO.FileSystemWatcher();
-            this.CheckConnection = new System.Windows.Forms.Timer(this.components);
-            this.labDonate = new System.Windows.Forms.Label();
             this.trayMenu.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabGeneral.SuspendLayout();
@@ -290,7 +289,16 @@
             "Deutsch (de)",
             "Français (fr)",
             "Dutch (nl)",
-            "Ελληνικά (el)"});
+            "Ελληνικά (el)",
+            "Italian (it)",
+            "Turkish (tr)",
+            "Brazilian Portuguese (pt-BR)",
+            "Faroese (fo)",
+            "Swedish (sv)",
+            "Albanian (sq)",
+            "Romanian (ro)",
+            "Korean (ko)",
+            "Russian (ru)"});
             this.cmbLang.Location = new System.Drawing.Point(72, 64);
             this.cmbLang.Name = "cmbLang";
             this.cmbLang.Size = new System.Drawing.Size(112, 21);
@@ -353,7 +361,7 @@
             // lMode
             // 
             this.lMode.AutoSize = true;
-            this.lMode.Location = new System.Drawing.Point(92, 81);
+            this.lMode.Location = new System.Drawing.Point(114, 81);
             this.lMode.Name = "lMode";
             this.lMode.Size = new System.Drawing.Size(27, 13);
             this.lMode.TabIndex = 13;
@@ -394,7 +402,7 @@
             // lPort
             // 
             this.lPort.AutoSize = true;
-            this.lPort.Location = new System.Drawing.Point(92, 63);
+            this.lPort.Location = new System.Drawing.Point(114, 63);
             this.lPort.Name = "lPort";
             this.lPort.Size = new System.Drawing.Size(27, 13);
             this.lPort.TabIndex = 10;
@@ -403,7 +411,7 @@
             // lHost
             // 
             this.lHost.AutoSize = true;
-            this.lHost.Location = new System.Drawing.Point(92, 27);
+            this.lHost.Location = new System.Drawing.Point(114, 27);
             this.lHost.Name = "lHost";
             this.lHost.Size = new System.Drawing.Size(27, 13);
             this.lHost.TabIndex = 9;
@@ -412,7 +420,7 @@
             // lUsername
             // 
             this.lUsername.AutoSize = true;
-            this.lUsername.Location = new System.Drawing.Point(92, 45);
+            this.lUsername.Location = new System.Drawing.Point(114, 45);
             this.lUsername.Name = "lUsername";
             this.lUsername.Size = new System.Drawing.Size(27, 13);
             this.lUsername.TabIndex = 8;
@@ -459,6 +467,7 @@
             // 
             // gLinks
             // 
+            this.gLinks.Controls.Add(this.rOpenLocal);
             this.gLinks.Controls.Add(this.labLinkClicked);
             this.gLinks.Controls.Add(this.tParent);
             this.gLinks.Controls.Add(this.labFullPath);
@@ -466,10 +475,22 @@
             this.gLinks.Controls.Add(this.rOpenInBrowser);
             this.gLinks.Location = new System.Drawing.Point(8, 128);
             this.gLinks.Name = "gLinks";
-            this.gLinks.Size = new System.Drawing.Size(374, 127);
+            this.gLinks.Size = new System.Drawing.Size(374, 150);
             this.gLinks.TabIndex = 1;
             this.gLinks.TabStop = false;
             this.gLinks.Text = "Links";
+            // 
+            // rOpenLocal
+            // 
+            this.rOpenLocal.AutoSize = true;
+            this.rOpenLocal.Location = new System.Drawing.Point(19, 122);
+            this.rOpenLocal.Name = "rOpenLocal";
+            this.rOpenLocal.Size = new System.Drawing.Size(92, 17);
+            this.rOpenLocal.TabIndex = 19;
+            this.rOpenLocal.TabStop = true;
+            this.rOpenLocal.Text = "Open local file";
+            this.rOpenLocal.UseVisualStyleBackColor = true;
+            this.rOpenLocal.CheckedChanged += new System.EventHandler(this.rOpenLocal_CheckedChanged);
             // 
             // labLinkClicked
             // 
@@ -509,6 +530,7 @@
             this.rCopy2Clipboard.TabStop = true;
             this.rCopy2Clipboard.Text = "copy link to clipboard";
             this.rCopy2Clipboard.UseVisualStyleBackColor = true;
+            this.rCopy2Clipboard.CheckedChanged += new System.EventHandler(this.rCopy2Clipboard_CheckedChanged);
             // 
             // rOpenInBrowser
             // 
@@ -724,6 +746,16 @@
             this.gContribute.TabStop = false;
             this.gContribute.Text = "Contribute";
             // 
+            // labDonate
+            // 
+            this.labDonate.AutoSize = true;
+            this.labDonate.Location = new System.Drawing.Point(230, 19);
+            this.labDonate.Name = "labDonate";
+            this.labDonate.Size = new System.Drawing.Size(45, 13);
+            this.labDonate.TabIndex = 13;
+            this.labDonate.Text = "Donate:";
+            this.labDonate.Visible = false;
+            // 
             // pictureBox1
             // 
             this.pictureBox1.AccessibleDescription = "opens donate page";
@@ -798,10 +830,6 @@
             this.labFree.TabIndex = 0;
             this.labFree.Text = "- FTPbox is free and open-source";
             // 
-            // bgWork
-            // 
-            this.bgWork.WorkerReportsProgress = true;
-            // 
             // tray
             // 
             this.tray.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
@@ -827,21 +855,6 @@
             this.fswFiles.NotifyFilter = ((System.IO.NotifyFilters)(((System.IO.NotifyFilters.FileName | System.IO.NotifyFilters.LastWrite)
                         | System.IO.NotifyFilters.LastAccess)));
             this.fswFiles.SynchronizingObject = this;
-            // 
-            // CheckConnection
-            // 
-            this.CheckConnection.Enabled = true;
-            this.CheckConnection.Tick += new System.EventHandler(this.CheckConnection_Tick);
-            // 
-            // labDonate
-            // 
-            this.labDonate.AutoSize = true;
-            this.labDonate.Location = new System.Drawing.Point(230, 19);
-            this.labDonate.Name = "labDonate";
-            this.labDonate.Size = new System.Drawing.Size(45, 13);
-            this.labDonate.TabIndex = 13;
-            this.labDonate.Text = "Donate:";
-            this.labDonate.Visible = false;
             // 
             // frmMain
             // 
@@ -926,7 +939,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label labContactMe;
         private System.Windows.Forms.Label labFree;
-        private System.ComponentModel.BackgroundWorker bgWork;
         private System.Windows.Forms.NotifyIcon tray;
         private System.Windows.Forms.GroupBox gDetails;
         private System.Windows.Forms.Label lLocPath;
@@ -942,7 +954,6 @@
         private System.Windows.Forms.Label labFullPath;
         private System.Windows.Forms.RadioButton rCopy2Clipboard;
         private System.Windows.Forms.RadioButton rOpenInBrowser;
-        private System.Windows.Forms.Timer CheckConnection;
         private System.Windows.Forms.ToolStripMenuItem recentFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
@@ -959,5 +970,6 @@
         private System.Windows.Forms.LinkLabel labViewInBrowser;
         private System.Windows.Forms.CheckBox chkWebInt;
         private System.Windows.Forms.Label labDonate;
+        private System.Windows.Forms.RadioButton rOpenLocal;
     }
 }

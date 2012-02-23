@@ -24,7 +24,7 @@ namespace FTPbox
         {
             label3.Text = Application.ProductVersion.Substring(0, 5);
             label5.Text = newvers.Substring(0, 5);
-            Set_Language(FTPbox.Properties.Settings.Default.lan);
+            Set_Language(((frmMain)this.Tag).lang());
         }
 
         private void bDownload_Click(object sender, EventArgs e)

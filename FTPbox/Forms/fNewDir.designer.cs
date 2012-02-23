@@ -95,9 +95,9 @@
             // 
             this.tFullDir.AccessibleName = "Full Path";
             this.tFullDir.Enabled = false;
-            this.tFullDir.Location = new System.Drawing.Point(67, 128);
+            this.tFullDir.Location = new System.Drawing.Point(112, 128);
             this.tFullDir.Name = "tFullDir";
-            this.tFullDir.Size = new System.Drawing.Size(346, 20);
+            this.tFullDir.Size = new System.Drawing.Size(301, 20);
             this.tFullDir.TabIndex = 44;
             // 
             // treeView1

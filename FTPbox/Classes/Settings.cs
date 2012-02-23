@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Windows.Forms;
+using System.IO;
 
 namespace FTPbox.Classes
 {
     public class Settings
     {
         XmlDocument xmlDocument = new XmlDocument();
-        string documentPath = Application.StartupPath + "\\settings.xml";
+        string documentPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox\settings.xml");
 
         public  Settings()
         { 

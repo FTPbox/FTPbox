@@ -72,6 +72,7 @@
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\INIclass.cs" />
     <Compile Include="Classes\Log.cs" />
+    <Compile Include="Classes\recent.cs" />
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\Translations.cs" />
     <Compile Include="Classes\ZipLib\Checksums\Adler32.cs" />

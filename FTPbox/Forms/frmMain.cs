@@ -19,6 +19,7 @@ using FTPbox.Classes;
 using Utilities.Encryption;
 using ICSharpCode.SharpZipLib.Zip;
 using Starksoft.Net.Ftp;
+using System.Net.NetworkInformation;
 
 namespace FTPbox
 {
@@ -50,14 +51,12 @@ namespace FTPbox
         List<string> rDL  = new List<string>(FTPbox.Properties.Settings.Default.rDateLog.Split('|', '|'));
         List<string> lDL = new List<string>(FTPbox.Properties.Settings.Default.lDateLog.Split('|', '|'));        
 
-        //recent files
-        List<string> recentfiles = new List<string>();
-
         //Server's time
         TimeSpan timedif;
 
         //link:
         public string link = null;
+        public string locLink = null;
 
         //for not flooding with balloon tips:
         public string lasttip = null;
@@ -80,7 +79,7 @@ namespace FTPbox
 
         public bool failedlisting = false;
 
-        Settings AppSettings = new Settings();
+        Settings AppSettings;
         public Translations languages = new Translations();
         string DecryptionPassword = "removed";      //removed for security purposes
         string DecryptionSalt = "removed";          //removed for security purposes
@@ -90,16 +89,23 @@ namespace FTPbox
         bool containswebintfolder = false;
         bool changedfromcheck = true;
 
+        TrayAction _trayAct = new TrayAction();
+        recentFiles recentFiles = new recentFiles();
+
         public frmMain()
         {
             InitializeComponent();
         }
 
         private void frmMain_Load(object sender, EventArgs e)
-        {            
+        {
             //FTPbox.Properties.Settings.Default.ftpUsername = "";
             KillPrevInstances();
-            
+            CheckSettingsFilePath();
+
+            AppSettings = new Settings();
+            _trayAct = OpenInBrowser();
+
             //ClearLog();
             
             foreach (string s in nLog().Split('|', '|'))
@@ -110,20 +116,15 @@ namespace FTPbox
             fNewFtp = new NewFTP();
             fNewFtp.Tag = this;
             newDir = new fNewDir();
-            newDir.Tag = this;
-
-            int i = 0;
-            while (i < 5)
-            {
-                recentfiles.Add("Not available");
-                i++;
-            }
+            newDir.Tag = this;            
 
             StartUpWork();
             
             CheckForUpdate();
             
             Get_Language();
+
+            NetworkChange.NetworkAddressChanged += new NetworkAddressChangedEventHandler(OnNetworkChange);
             
             //WatchRemote.Start();
              
@@ -436,10 +437,12 @@ namespace FTPbox
             lLocPath.Text = lPath();
             tParent.Text = ftpParent();
 
-            if (OpenInBrowser())
+            if (_trayAct == TrayAction.OpenInBrowser)
                 rOpenInBrowser.Checked = true;
-            else
+            else if (_trayAct == TrayAction.CopyLink)
                 rCopy2Clipboard.Checked = true;
+            else
+                rOpenLocal.Checked = true;
         }
 
         #region variables
@@ -521,9 +524,15 @@ namespace FTPbox
             return bool.Parse(AppSettings.Get("Settings/ShowNots", "True"));
         }
 
-        bool OpenInBrowser()
+        TrayAction OpenInBrowser()
         {
-            return bool.Parse(AppSettings.Get("Settings/OpenInBrowser", "True"));
+            if (AppSettings.Get("Settings/OpenInBrowser", "True") == "True" || AppSettings.Get("Settings/OpenInBrowser", "OpenInBrowser") == "OpenInBrowser")
+                return TrayAction.OpenInBrowser;
+            else if (AppSettings.Get("Settings/OpenInBrowser", "True") == "False" || AppSettings.Get("Settings/OpenInBrowser", "OpenInBrowser") == "CopyLink")
+                return TrayAction.CopyLink;
+            else
+                return TrayAction.OpenLocalFile;
+            //return TrayAction. bool.Parse(AppSettings.Get("Settings/OpenInBrowser", "True"));
         }
 
         public string ftpParent()
@@ -1210,9 +1219,9 @@ namespace FTPbox
 
         private void rOpenInBrowser_CheckedChanged(object sender, EventArgs e)
         {
-            AppSettings.Put("Settings/OpenInBrowser", rOpenInBrowser.Checked.ToString());
-            //FTPbox.Properties.Settings.Default.openinbrowser = rOpenInBrowser.Checked;
-            //FTPbox.Properties.Settings.Default.Save();
+            _trayAct = TrayAction.OpenInBrowser;
+            if (rOpenInBrowser.Checked)
+                AppSettings.Put("Settings/OpenInBrowser", "OpenInBrowser");
         }
 
         private void tray_BalloonTipClicked(object sender, EventArgs e)
@@ -1220,7 +1229,7 @@ namespace FTPbox
             //string link = noSlashes(ftpHost()) + "/" + noSlashes(ftpParent()) + "/" + noSlashes(last5items[0]);
             if ((Control.MouseButtons & MouseButtons.Right) != MouseButtons.Right)
             {
-                if (OpenInBrowser())
+                if (_trayAct == TrayAction.OpenInBrowser)
                 {
                     if (link != null && link != "")
                     {
@@ -1231,15 +1240,26 @@ namespace FTPbox
                         catch { }
                     }
                 }
-                else
+                else if (_trayAct == TrayAction.CopyLink)
                 {
                     try
                     {
                         Clipboard.SetText(link);
                     }
                     catch { }
-                    
+
                     LinkCopied();
+                }
+                else
+                {
+                    try
+                    {
+                        Process.Start(locLink);
+                    }
+                    catch
+                    {
+                        //Gotta catch 'em all
+                    }
                 }
             }
         }
@@ -1399,7 +1419,7 @@ namespace FTPbox
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            Process.Start(@"http://ftpbox.org/contribute");
+            Process.Start(@"http://ftpbox.org/about");
         }
         #endregion
 
@@ -1417,7 +1437,15 @@ namespace FTPbox
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExitedFromTray = true;
-            Application.Exit();
+            try
+            {
+                Process p = Process.GetCurrentProcess();
+                p.Kill();
+            }
+            catch
+            {
+                Application.Exit();
+            }
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1435,15 +1463,18 @@ namespace FTPbox
 
         private void tray_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            this.Show();
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                Process.Start("explorer.exe", lPath()); 
+            /*this.Show();
             this.WindowState = FormWindowState.Normal;
-            this.BringToFront();
+            this.BringToFront();*/
         }
         #endregion
 
 
         private void Get_Link(string subpath, string name)
         {
+            Log.Write(l.Debug, "---------------\n Getting link for {0} in {1}", name, subpath);
             string newlink = noSlashes(ftpParent()) + @"/";
             
             if (!noSlashes(newlink).StartsWith("http://") && !noSlashes(newlink).StartsWith("https://"))
@@ -1452,12 +1483,12 @@ namespace FTPbox
             }
 
             while (name.StartsWith(@"/"))
-                name = name.Substring(1);
+                name = name.Substring(1);            
 
             string spath = subpath;
             if (spath == "/")
                 spath = "";
-            else if (spath.StartsWith("/"))
+            if (spath.StartsWith("/"))
                 spath = spath.Substring(1);
 
             if (spath != null && spath != "" && noSlashes(spath) != null && noSlashes(spath) != "")
@@ -1467,7 +1498,7 @@ namespace FTPbox
             newlink = newlink + name;
             link = newlink.Replace(" ", "%20");
             Log.Write(l.Debug, "-----------------> link: {0}", link);
-            Get_Recent(name);
+            Get_Recent(name);            
         }
 
         public void ClearLog()
@@ -1475,163 +1506,227 @@ namespace FTPbox
             AppSettings.Put("Log/nLog", "");
             AppSettings.Put("Log/rLog", "");
             AppSettings.Put("Log/lLog", "");
-            //FTPbox.Properties.Settings.Default.nLog = "";
-            //FTPbox.Properties.Settings.Default.lLog = "";
-            //FTPbox.Properties.Settings.Default.rLog = "";
         }
 
         #region check internet connection
         [DllImport("wininet.dll")]
         private extern static bool InternetGetConnectedState(out int Description, int ReservedValue);
 
-        public static bool InternetOn()
+        public void OnNetworkChange(object sender, EventArgs e)
         {
-            int Desc;
-            return InternetGetConnectedState(out Desc, 0);
+            lasttip = null;
+
+            try
+            {
+                if (NetworkInterface.GetIsNetworkAvailable())
+                {
+                    if (OfflineMode)
+                    {
+                        StartUpWork();
+                    }
+                    OfflineMode = false;
+                }
+                else
+                {
+                    if (!OfflineMode)
+                    {
+                        ftpc.Close();
+                        fswFiles.Dispose();
+                        fswFolders.Dispose();
+                    }
+                    OfflineMode = true;
+                    tray.Icon = FTPbox.Properties.Resources.offline1;
+                    tray.Text = languages.Get(lang() + "/tray/offline", "FTPbox - Offline");
+                }
+            }
+            catch { }
         }
+
         #endregion
 
         private void Get_Recent(string name)
         {
-            recentfiles[4] = recentfiles[3];
-            recentfiles[3] = recentfiles[2];
-            recentfiles[2] = recentfiles[1];
-            recentfiles[1] = recentfiles[0];
-            recentfiles[0] = name + @"|" + link;          
-
-            foreach (string s in recentfiles)
+            string compath = link.Substring(ftpParent().Length + 7).Replace("/", @"\");
+            string path = lPath() + compath;
+            locLink = path;
+            FileInfo f = new FileInfo(path);
+            Log.Write(l.Debug, "LastWriteTime is: {0} for {1} - {2}", f.LastWriteTime.ToString(), path, lPath());
+            if (recentFiles.inLastFive(name))
             {
-                string thename = s.Split('|', '|')[0];
-                int i = recentfiles.IndexOf(s);
-
-                recentFilesToolStripMenuItem.DropDownItems[i].Text = thename;
+                recentFiles.putDate(name, f.LastWriteTime);
             }
-        }
+            else
+            {
+                recentFiles.add(name, link, path, f.LastWriteTime);
+            }
+
+            for (int i=0; i<=4; i++)
+            {
+                if (trayMenu.InvokeRequired)
+                {
+                    trayMenu.Invoke(new MethodInvoker(delegate
+                    {
+                        recentFilesToolStripMenuItem.DropDownItems[i].Text = recentFiles.getName(i);
+                        recentFilesToolStripMenuItem.DropDownItems[i].ToolTipText = recentFiles.getDate(i);
+                    }));
+                }
+                else
+                {
+                    recentFilesToolStripMenuItem.DropDownItems[i].Text = recentFiles.getName(i);
+                    recentFilesToolStripMenuItem.DropDownItems[i].ToolTipText = recentFiles.getDate(i);
+                }
+            }
+        }       
 
         #region Recent item clicked
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (recentfiles[0] != "" && recentfiles[0] != null && recentfiles[0] != "Not available")
+            if (recentFiles.getName(0) != "Not available")
             {
-                if (OpenInBrowser())
+                if (_trayAct == TrayAction.OpenInBrowser)
                 {
                     try
                     {
-                        Process.Start(recentfiles[0].Split('|', '|')[1].Replace(@" ", @"%20"));
+                        Process.Start(recentFiles.getLink(0));
                     }
                     catch { }
 
                 }
-                else
+                else if (_trayAct == TrayAction.CopyLink)
                 {
                     try
                     {
-                        Clipboard.SetText(recentfiles[0].Split('|', '|')[1].Replace(@" ", @"%20"));
+                        Clipboard.SetText(recentFiles.getLink(0));
                         LinkCopied();
                     }
                     catch { }
-                }  
+                }
+                else
+                {
+
+                    Process.Start(recentFiles.getPath(0));
+                }
             }
         }
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            if (recentfiles[1] != "" && recentfiles[1] != null && recentfiles[1] != "Not available")
+            if (recentFiles.getName(1) != "Not available")
             {
-                if (OpenInBrowser())
+                if (_trayAct == TrayAction.OpenInBrowser)
                 {
                     try
                     {
-                        Process.Start(recentfiles[1].Split('|', '|')[1].Replace(@" ", @"%20"));
+                        Process.Start(recentFiles.getLink(1));
                     }
                     catch { }
 
                 }
-                else
+                else if (_trayAct == TrayAction.CopyLink)
                 {
                     try
                     {
-                        Clipboard.SetText(recentfiles[1].Split('|', '|')[1].Replace(@" ", @"%20"));
+                        Clipboard.SetText(recentFiles.getLink(1));
                         LinkCopied();
                     }
                     catch { }
-                } 
+                }
+                else
+                {
+
+                    Process.Start(recentFiles.getPath(1));
+                }
             }
         }
 
         private void toolStripMenuItem3_Click(object sender, EventArgs e)
         {
-            if (recentfiles[2] != "" && recentfiles[2] != null && recentfiles[2] != "Not available")
+            if (recentFiles.getName(2) != "Not available")
             {
-                if (OpenInBrowser())
+                if (_trayAct == TrayAction.OpenInBrowser)
                 {
                     try
                     {
-                        Process.Start(recentfiles[2].Split('|', '|')[1].Replace(@" ", @"%20"));
+                        Process.Start(recentFiles.getLink(2));
                     }
                     catch { }
 
                 }
-                else
+                else if (_trayAct == TrayAction.CopyLink)
                 {
                     try
                     {
-                        Clipboard.SetText(recentfiles[2].Split('|', '|')[1].Replace(@" ", @"%20"));
+                        Clipboard.SetText(recentFiles.getLink(2));
                         LinkCopied();
                     }
                     catch { }
-                }  
+                }
+                else
+                {
+
+                    Process.Start(recentFiles.getPath(2));
+                }
             }
         }
 
         private void toolStripMenuItem4_Click(object sender, EventArgs e)
         {
-            if (recentfiles[3] != "" && recentfiles[3] != null && recentfiles[3] != "Not available")
+            if (recentFiles.getName(3) != "Not available")
             {
-                if (OpenInBrowser())
+                if (_trayAct == TrayAction.OpenInBrowser)
                 {
                     try
                     {
-                        Process.Start(recentfiles[3].Split('|', '|')[1].Replace(@" ", @"%20"));
+                        Process.Start(recentFiles.getLink(3));
                     }
                     catch { }
 
                 }
-                else
+                else if (_trayAct == TrayAction.CopyLink)
                 {
                     try
                     {
-                        Clipboard.SetText(recentfiles[3].Split('|', '|')[1].Replace(@" ", @"%20"));
+                        Clipboard.SetText(recentFiles.getLink(3));
                         LinkCopied();
                     }
                     catch { }
-                } 
+                }
+                else
+                {
+
+                    Process.Start(recentFiles.getPath(3));
+                }
             }
         }
 
         private void toolStripMenuItem5_Click(object sender, EventArgs e)
         {
-            if (recentfiles[4] != "" && recentfiles[4] != null && recentfiles[4] != "Not available")
+            if (recentFiles.getName(4) != "Not available")
             {
-                if (OpenInBrowser())
+                if (_trayAct == TrayAction.OpenInBrowser)
                 {
                     try
                     {
-                        Process.Start(recentfiles[4].Split('|', '|')[1].Replace(@" ", @"%20"));
+                        Process.Start(recentFiles.getLink(4));
                     }
                     catch { }
-                    
+
                 }
-                else
+                else if (_trayAct == TrayAction.CopyLink)
                 {
                     try
                     {
-                        Clipboard.SetText(recentfiles[4].Split('|', '|')[1].Replace(@" ", @"%20"));
+                        Clipboard.SetText(recentFiles.getLink(4));
                         LinkCopied();
                     }
                     catch { }
-                } 
+                }
+                else
+                {
+
+                    Process.Start(recentFiles.getPath(4));
+                }
             }
         }
 
@@ -1930,7 +2025,7 @@ namespace FTPbox
                         if (!f.FullPath.Contains("webint"))
                         {
                             Log.Write(l.Info, "File: {0}", f.FullPath);
-                            fdDict.Add(f.FullPath, GetLWTof(f.ParentPath, f.Name));//f.Modified.ToUniversalTime().Add(timedif));
+                            fdDict.Add(f.FullPath, GetLWTof(f.ParentPath, f.Name));
                         }
                     }
                     else
@@ -1938,7 +2033,7 @@ namespace FTPbox
                         if (!f.FullPath.Contains("webint") && f.Name != ".ftpquota")
                         {
                             Log.Write(l.Info, "Drct: {0}", f.FullPath);
-                            fdDict.Add(f.FullPath + "/", f.Modified.ToUniversalTime().Add(timedif)); //GetLWTof(f.ParentPath, f.Name));
+                            fdDict.Add(f.FullPath + "/", f.Modified.ToUniversalTime().Add(timedif));
                         }
                     }                    
                 }
@@ -2699,6 +2794,7 @@ namespace FTPbox
 
                         if (RenamedList.ContainsKey(comPath))
                         {
+                            Log.Write(l.Debug, "Found in renamedList");
                             string nameOld = comPath;
                             string nameNew;
                             RenamedList.TryGetValue(comPath, out nameNew);
@@ -2706,7 +2802,6 @@ namespace FTPbox
                             if (ShowNots())
                                 tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("renamed", true), nameOld, nameNew), ToolTipIcon.Info);
                             Get_Link("", nameNew);
-
                             RemoveFromLog(nameOld);
                             UpdateTheLog(nameNew, DateTime.UtcNow);
 
@@ -2716,6 +2811,7 @@ namespace FTPbox
                         }
                         else
                         {
+                            Log.Write(l.Debug, "Not found in renamedList");
                             if (ShowNots())
                                 tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
 
@@ -2728,10 +2824,10 @@ namespace FTPbox
                             downloading = false;
                             DoneSyncing();
                         }
-                   }
+                    }
                    catch (Exception ex)
                    {
-                       Log.Write(l.Error, "[ERROR] -> " + ex.Message);
+                       Log.Write(l.Error, "[ERROR] ~-> " + ex.Message);
                        DoneSyncing();
                    }
                 }
@@ -2769,7 +2865,11 @@ namespace FTPbox
 
                             if (ShowNots())
                                 tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("renamed", true), nameOld, nameNew), ToolTipIcon.Info);
-                            Get_Link("", nameNew);
+                            string lname = nameNew;
+                            if (lname.StartsWith(rPath()))
+                                lname = lname.Substring(rPath().Length);
+
+                            Get_Link("", lname);
 
                             RemoveFromLog(nameOld);
                             UpdateTheLog(nameNew, DateTime.UtcNow);
@@ -2783,7 +2883,12 @@ namespace FTPbox
                             if (ShowNots() && lasttip != string.Format("File {0} was updated.", name))
                                 tray.ShowBalloonTip(50, "FTPbox", string.Format(Get_Message("updated", true), name), ToolTipIcon.Info);
                             lasttip = string.Format("File {0} was updated.", name);
-                            Get_Link("", cPath);
+                            
+                            string lname = cPath;
+                            if (lname.StartsWith(rPath()))
+                                lname = lname.Substring(rPath().Length);
+                            
+                            Get_Link("", lname);
 
                             UpdateTheLog(cPath, GetLWTof(FullRemPath, name));
 
@@ -3083,44 +3188,6 @@ namespace FTPbox
                 return true;
         }
 
-        private void CheckConnection_Tick(object sender, EventArgs e)
-        {
-            lasttip = null;
-            if (chkWebInt.Checked)
-            {
-                labViewInBrowser.Enabled = true;
-            }
-            else
-            {
-                labViewInBrowser.Enabled = false;
-            } 
-            
-            try
-            {
-                if (InternetOn())
-                {
-                    if (OfflineMode)
-                    {
-                        StartUpWork();
-                    }
-                    OfflineMode = false;
-                }
-                else
-                {
-                    if (!OfflineMode)
-                    {
-                        ftpc.Close();
-                        fswFiles.Dispose();
-                        fswFolders.Dispose();
-                    }
-                    OfflineMode = true;
-                    tray.Icon = FTPbox.Properties.Resources.offline1;
-                    tray.Text = languages.Get(lang() + "/tray/offline", "FTPbox - Offline");        
-                }
-            }
-            catch { }
-        }
-
         public void CheckLocal()
         {
             Log.Write(l.Info, "$$$$$$$$$$$$ Checkin Local $$$$$$$$$$$$");
@@ -3395,12 +3462,28 @@ namespace FTPbox
                     locallang = "Turkish";
                 else if (locallangtwoletter == "pt-BR")
                     locallang = "Brazilian Portuguese";
+                else if (locallangtwoletter == "fo")
+                    locallang = "Faroese";
+                else if (locallangtwoletter == "sv")
+                    locallang = "Swedish";
+                else if (locallangtwoletter == "sq")
+                    locallang = "Albanian";
+                else if (locallangtwoletter == "ro")
+                    locallang = "Romanian";
+                else if (locallangtwoletter == "ko")
+                    locallang = "Korean";
+                else if (locallangtwoletter == "ru")
+                    locallang = "Russian";
                 else
                     locallang = "English";
 
-                if (locallangtwoletter != "en" && (locallangtwoletter == "es" || locallangtwoletter == "de" || locallangtwoletter == "fr" || locallangtwoletter == "nl" || locallangtwoletter == "el" || locallangtwoletter == "it" || locallangtwoletter == "tr" || locallangtwoletter == "pt-BR"))
+                if (locallangtwoletter != "en" && (locallangtwoletter == "es" || locallangtwoletter == "de" || 
+                    locallangtwoletter == "fr" || locallangtwoletter == "nl" || locallangtwoletter == "el" || 
+                    locallangtwoletter == "it" || locallangtwoletter == "tr" || locallangtwoletter == "pt-BR" || 
+                    locallangtwoletter == "fo" || locallangtwoletter == "sq" || locallangtwoletter == "sv" ||
+                    locallangtwoletter == "ro" || locallangtwoletter == "ko" || locallangtwoletter == "ru"))
                 {
-                    string msg = string.Format("FTPbox detected that you use {0} as your computer language. Do you want to use {1} as the language of FTPbox as well?", locallang, locallang);
+                    string msg = string.Format("FTPbox detected that you use {0} as your computer language. Do you want to use {0} as the language of FTPbox as well?", locallang);
                     DialogResult x = MessageBox.Show(msg, "FTPbox", MessageBoxButtons.YesNo, MessageBoxIcon.Information);                    
 
                     if (x == DialogResult.Yes)
@@ -3453,6 +3536,7 @@ namespace FTPbox
             labLinkClicked.Text = languages.Get(lan + "/main_form/when_not_clicked", "When tray notification or recent file is clicked") + ":";
             rOpenInBrowser.Text = languages.Get(lan + "/main_form/open_in_browser", "Open link in default browser");
             rCopy2Clipboard.Text = languages.Get(lan + "/main_form/copy", "Copy link to clipboard");
+            rOpenLocal.Text = languages.Get(lan + "/main_form/open_local", "Open local file");
             //about tab
             tabAbout.Text = languages.Get(lan + "/main_form/about", "About");
             labCurVersion.Text = languages.Get(lan + "/main_form/current_version", "Current Version") + ":";
@@ -3492,6 +3576,18 @@ namespace FTPbox
                 cmbLang.SelectedIndex = 7;
             else if (lan == "pt-BR")
                 cmbLang.SelectedIndex = 8;
+            else if (lan == "fo")
+                cmbLang.SelectedIndex = 9;
+            else if (lan == "sv")
+                cmbLang.SelectedIndex = 10;
+            else if (lan == "sq")
+                cmbLang.SelectedIndex = 11;
+            else if (lan == "ro")
+                cmbLang.SelectedIndex = 12;
+            else if (lan == "ko")
+                cmbLang.SelectedIndex = 13;
+            else if (lan == "ru")
+                cmbLang.SelectedIndex = 14;
 
             AppSettings.Put("Settings/Language", lan);
         }
@@ -3541,13 +3637,14 @@ namespace FTPbox
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
+            Console.WriteLine(_trayAct);
+            /*
             foreach (FtpItem f in ftpc.GetDirList())
             {
                 if (f.Name == "index.html")
                     Log.Write(l.Warning, f.Modified.ToString());
                 Log.Write(l.Warning, "{0} {1} {2} {3}", f.Modified.Kind.ToString(), f.Modified.ToLocalTime(), ftpc.GetFileDateTime("index.html", false), ftpc.GetFileDateTime("index.html", true));
-            }
+            }*/
             //ftpc.CharacterEncoding = UTF8Encoding.UTF8;
             //ftpc.MakeDirectory(@"/folder/αβγδεζηθικλμνξοπρστυφχψω");
             //Extract_WebInt();
@@ -4386,6 +4483,7 @@ namespace FTPbox
             {
                 if (ShowNots())
                     tray.ShowBalloonTip(100, "FTPbox", get_webint_message("removing"), ToolTipIcon.Info);
+                labViewInBrowser.Enabled = false;
             }
 
             if (FTP())
@@ -4611,6 +4709,8 @@ namespace FTPbox
             if (ShowNots())
                 tray.ShowBalloonTip(50, "FTPbox", get_webint_message("updated"), ToolTipIcon.Info);
 
+            labViewInBrowser.Enabled = true;
+
             Directory.Delete(Application.StartupPath + @"\WebInterface", true);
             File.Delete(Application.StartupPath + @"\webint.zip");
             try
@@ -4679,9 +4779,15 @@ namespace FTPbox
                 Log.Write(l.Info, "Webint folder exists: {0}", ftpcbg.Exists(rpath).ToString());
 
                 if (ftpcbg.Exists(rpath))
+                {
                     chkWebInt.Checked = true;
+                    labViewInBrowser.Enabled = true;
+                }
                 else
+                {
                     chkWebInt.Checked = false;
+                    labViewInBrowser.Enabled = false;
+                }
             }
             else
             {
@@ -4693,6 +4799,7 @@ namespace FTPbox
                         hasit = true;
                 }
                 chkWebInt.Checked = hasit;
+                labViewInBrowser.Enabled = hasit;
             }
 
             changedfromcheck = false;
@@ -4778,6 +4885,55 @@ namespace FTPbox
                 return FileAction.Create;
             }
         }
+
+        private void CheckSettingsFilePath()
+        {
+            string p = Path.Combine(Application.StartupPath, "settings.xml");           
+            if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FTPbox")))
+            {
+                try
+                {
+                    Directory.CreateDirectory((Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FTPbox")));
+                }
+                catch
+                {
+                    Log.Write(l.Info, "Settings.xml already exists in AppData.");
+                }
+            }
+            string n = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox\settings.xml");
+            if (File.Exists(p))
+            {
+                try{
+                    File.Move(p, n);
+                }
+                catch
+                {
+                    Log.Write(l.Info, "Cannot move: Settings.xml already exists in AppData.");
+                }
+            }
+        }
+
+        public enum TrayAction
+        {
+            OpenInBrowser = 1,
+            CopyLink = 2,
+            OpenLocalFile =3
+        }
+
+        private void rCopy2Clipboard_CheckedChanged(object sender, EventArgs e)
+        {
+            _trayAct = TrayAction.CopyLink;
+            if (rCopy2Clipboard.Checked)
+                AppSettings.Put("Settings/OpenInBrowser", "CopyLink");
+        }
+
+        private void rOpenLocal_CheckedChanged(object sender, EventArgs e)
+        {
+            _trayAct = TrayAction.OpenLocalFile;
+            if (rOpenLocal.Checked)
+                AppSettings.Put("Settings/OpenInBrowser", "OpenLocalFile");
+        }
+
     }
     
 }
