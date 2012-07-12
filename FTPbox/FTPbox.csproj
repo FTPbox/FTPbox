@@ -37,13 +37,8 @@
     <ApplicationIcon>ftpboxnew.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DiffieHellman, Version=0.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Classes\DiffieHellman.dll</HintPath>
-    </Reference>
-    <Reference Include="Org.Mentalis.Security, Version=1.0.13.715, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Classes\Org.Mentalis.Security.dll</HintPath>
+    <Reference Include="Renci.SshNet">
+      <HintPath>.\Renci.SshNet.dll</HintPath>
     </Reference>
     <Reference Include="Starksoft.Net.Ftp">
       <HintPath>Classes\Starksoft.Net.Ftp.dll</HintPath>
@@ -61,18 +56,24 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Tamir.SharpSSH, Version=1.1.1.13, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Classes\Tamir.SharpSSH.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\aConsole.cs" />
+    <Compile Include="Classes\ClientItem.cs" />
+    <Compile Include="Classes\Console\aConsole.cs" />
     <Compile Include="Classes\AESEncryption.cs" />
-    <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Classes\Client.cs" />
+    <Compile Include="Classes\Queues\DeletedQueue.cs" />
+    <Compile Include="Classes\Queues\DeletedQueueItem.cs" />
+    <Compile Include="Classes\FileLog.cs" />
+    <Compile Include="Classes\FileLogItem.cs" />
+    <Compile Include="Classes\Queues\FileQueue.cs" />
+    <Compile Include="Classes\Queues\FileQueueItem.cs" />
+    <Compile Include="Classes\IgnoreList.cs" />
     <Compile Include="Classes\INIclass.cs" />
-    <Compile Include="Classes\Log.cs" />
-    <Compile Include="Classes\recent.cs" />
+    <Compile Include="Classes\Console\Log.cs" />
+    <Compile Include="Classes\Profile.cs" />
+    <Compile Include="Classes\RecentFileItem.cs" />
+    <Compile Include="Classes\RecentFiles.cs" />
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\Translations.cs" />
     <Compile Include="Classes\ZipLib\Checksums\Adler32.cs" />
@@ -116,23 +117,17 @@
     <Compile Include="Classes\ZipLib\Zip\ZipInputStream.cs" />
     <Compile Include="Classes\ZipLib\Zip\ZipNameTransform.cs" />
     <Compile Include="Classes\ZipLib\Zip\ZipOutputStream.cs" />
-    <Compile Include="Forms\fNewDir.cs">
+    <Compile Include="Forms\Account.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\fNewDir.designer.cs">
-      <DependentUpon>fNewDir.cs</DependentUpon>
+    <Compile Include="Forms\Account.Designer.cs">
+      <DependentUpon>Account.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmMain.cs">
+    <Compile Include="Forms\fMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmMain.Designer.cs">
-      <DependentUpon>frmMain.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\NewFTP.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\NewFTP.Designer.cs">
-      <DependentUpon>NewFTP.cs</DependentUpon>
+    <Compile Include="Forms\fMain.Designer.cs">
+      <DependentUpon>fMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\newversion.cs">
       <SubType>Form</SubType>
@@ -140,21 +135,35 @@
     <Compile Include="Forms\newversion.designer.cs">
       <DependentUpon>newversion.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Paths.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Paths.Designer.cs">
+      <DependentUpon>Paths.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\selective_sync.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\selective_sync.Designer.cs">
+      <DependentUpon>selective_sync.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Classes\WinApi.cs" />
-    <EmbeddedResource Include="Forms\fNewDir.resx">
-      <DependentUpon>fNewDir.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Account.resx">
+      <DependentUpon>Account.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmMain.resx">
-      <DependentUpon>frmMain.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\NewFTP.resx">
-      <DependentUpon>NewFTP.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\fMain.resx">
+      <DependentUpon>fMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\newversion.resx">
       <DependentUpon>newversion.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Paths.resx">
+      <DependentUpon>Paths.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\selective_sync.resx">
+      <DependentUpon>selective_sync.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

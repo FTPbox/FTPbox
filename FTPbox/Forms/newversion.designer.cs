@@ -42,15 +42,17 @@
             // 
             // labQuest
             // 
-            this.labQuest.AutoSize = true;
-            this.labQuest.Location = new System.Drawing.Point(34, 72);
+            this.labQuest.AccessibleDescription = "";
+            this.labQuest.Location = new System.Drawing.Point(8, 72);
             this.labQuest.Name = "labQuest";
-            this.labQuest.Size = new System.Drawing.Size(235, 13);
+            this.labQuest.Size = new System.Drawing.Size(276, 13);
             this.labQuest.TabIndex = 17;
             this.labQuest.Text = "Do you want to download the new version now?";
+            this.labQuest.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label5
             // 
+            this.label5.AccessibleDescription = "";
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(167, 50);
             this.label5.Name = "label5";
@@ -60,8 +62,9 @@
             // 
             // labNewVer
             // 
+            this.labNewVer.AccessibleDescription = "";
             this.labNewVer.AutoSize = true;
-            this.labNewVer.Location = new System.Drawing.Point(79, 50);
+            this.labNewVer.Location = new System.Drawing.Point(57, 50);
             this.labNewVer.Name = "labNewVer";
             this.labNewVer.Size = new System.Drawing.Size(70, 13);
             this.labNewVer.TabIndex = 15;
@@ -74,7 +77,7 @@
             this.bClose.Location = new System.Drawing.Point(190, 104);
             this.bClose.Name = "bClose";
             this.bClose.Size = new System.Drawing.Size(94, 23);
-            this.bClose.TabIndex = 14;
+            this.bClose.TabIndex = 2;
             this.bClose.Text = "Not this time";
             this.bClose.UseVisualStyleBackColor = true;
             this.bClose.Click += new System.EventHandler(this.bClose_Click);
@@ -85,7 +88,7 @@
             this.bLearnMore.Location = new System.Drawing.Point(100, 104);
             this.bLearnMore.Name = "bLearnMore";
             this.bLearnMore.Size = new System.Drawing.Size(84, 23);
-            this.bLearnMore.TabIndex = 13;
+            this.bLearnMore.TabIndex = 1;
             this.bLearnMore.Text = "Learn More";
             this.bLearnMore.UseVisualStyleBackColor = true;
             this.bLearnMore.Click += new System.EventHandler(this.bLearnMore_Click);
@@ -96,13 +99,14 @@
             this.bDownload.Location = new System.Drawing.Point(8, 104);
             this.bDownload.Name = "bDownload";
             this.bDownload.Size = new System.Drawing.Size(86, 23);
-            this.bDownload.TabIndex = 12;
+            this.bDownload.TabIndex = 0;
             this.bDownload.Text = "Update Now";
             this.bDownload.UseVisualStyleBackColor = true;
             this.bDownload.Click += new System.EventHandler(this.bDownload_Click);
             // 
             // label3
             // 
+            this.label3.AccessibleDescription = "";
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(167, 28);
             this.label3.Name = "label3";
@@ -112,8 +116,9 @@
             // 
             // labCurVer
             // 
+            this.labCurVer.AccessibleDescription = "";
             this.labCurVer.AutoSize = true;
-            this.labCurVer.Location = new System.Drawing.Point(79, 28);
+            this.labCurVer.Location = new System.Drawing.Point(57, 28);
             this.labCurVer.Name = "labCurVer";
             this.labCurVer.Size = new System.Drawing.Size(82, 13);
             this.labCurVer.TabIndex = 10;
@@ -121,16 +126,18 @@
             // 
             // labInfo
             // 
-            this.labInfo.AutoSize = true;
-            this.labInfo.Location = new System.Drawing.Point(47, 6);
+            this.labInfo.AccessibleDescription = "";
+            this.labInfo.Location = new System.Drawing.Point(8, 9);
             this.labInfo.Name = "labInfo";
-            this.labInfo.Size = new System.Drawing.Size(173, 13);
+            this.labInfo.Size = new System.Drawing.Size(276, 13);
             this.labInfo.TabIndex = 9;
             this.labInfo.Text = "New version of FTPbox is available";
+            this.labInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // newversion
             // 
             this.AcceptButton = this.bDownload;
+            this.AccessibleDescription = "";
             this.AccessibleName = "New Version";
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

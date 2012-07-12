@@ -11,35 +11,41 @@ namespace FTPbox.Classes
     public class Settings
     {
         XmlDocument xmlDocument = new XmlDocument();
+        //string documentPath = Application.StartupPath + "\\settings.xml"; /* REMOVE THIS */
         string documentPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox\settings.xml");
+        
+        public Settings()
+        {
+            if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox")))
+                Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox"));
 
-        public  Settings()
-        { 
-            try {xmlDocument.Load(documentPath);}
-            catch {xmlDocument.LoadXml("<settings></settings>");}
+            try { xmlDocument.Load(documentPath); }
+            catch { xmlDocument.LoadXml("<settings></settings>"); }
         }
 
         public int Get(string xPath, int defaultValue)
-        { 
-            return Convert.ToInt16(Get(xPath, Convert.ToString(defaultValue))); 
+        {
+            return Convert.ToInt16(Get(xPath, Convert.ToString(defaultValue)));
         }
 
         public void Put(string xPath, int value)
-        { 
-            Put(xPath, Convert.ToString(value)); 
+        {
+            Put(xPath, Convert.ToString(value));
         }
 
-        public string Get(string xPath,  string defaultValue)
-        { XmlNode xmlNode = xmlDocument.SelectSingleNode("settings/" + xPath );
-          if (xmlNode != null) {return xmlNode.InnerText;}
-          else { return defaultValue;}
+        public string Get(string xPath, string defaultValue)
+        {
+            XmlNode xmlNode = xmlDocument.SelectSingleNode("settings/" + xPath);
+            if (xmlNode != null) { return xmlNode.InnerText; }
+            else { return defaultValue; }
         }
 
-        public void Put(string xPath,  string value)
-        { XmlNode xmlNode = xmlDocument.SelectSingleNode("settings/" + xPath);
-          if (xmlNode == null) { xmlNode = createMissingNode("settings/" + xPath); }
-          xmlNode.InnerText = value;
-          xmlDocument.Save(documentPath);
+        public void Put(string xPath, string value)
+        {
+            XmlNode xmlNode = xmlDocument.SelectSingleNode("settings/" + xPath);
+            if (xmlNode == null) { xmlNode = createMissingNode("settings/" + xPath); }
+            xmlNode.InnerText = value;
+            xmlDocument.Save(documentPath);
         }
 
         private XmlNode createMissingNode(string xPath)

@@ -9,13 +9,13 @@ namespace FTPbox.Classes
 {
     public class Translations
     {
-        XmlDocument xmlDocument = new XmlDocument();
+        XmlDocument xmlDocument = new XmlDocument();       
         string documentPath = Application.StartupPath + "\\translations.xml";
 
         public Translations()
-        {
+        {            
             try { xmlDocument.Load(documentPath); }
-            catch (Exception ex) { Log.Write(l.Info, "?>" + ex.Message); xmlDocument.LoadXml("<translations></translations>"); }
+            catch (Exception ex) { Log.Write(l.Info, "?>" + ex.Message);  xmlDocument.LoadXml("<translations></translations>"); }
         }
 
         public int Get(string xPath, int defaultValue)
