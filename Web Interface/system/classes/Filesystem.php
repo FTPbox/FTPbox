@@ -42,15 +42,17 @@ class Filesystem {
 	public function read($absolutePath, $relativePath, $sortName='filename', $sortOrder=SORT_ASC) {
 		for($list = array(), $handle = opendir($absolutePath); (FALSE !== ($file = readdir($handle)));) {
 			if(($file != '.' && $file != '..' && $file != 'webint') && (file_exists($path = $absolutePath.DIRECTORY_SEPARATOR.$file))) {
-				$entry = array('filename' => $file, 'dirpath' => urlencode($relativePath.DIRECTORY_SEPARATOR.$file), 'permission' => substr(sprintf('%o', fileperms($path)), -4));
+				$entry = array('filename' => $file, 'permission' => substr(sprintf('%o', fileperms($path)), -4));
 				$entry['modtime'] = filemtime($path);
 				do if(!is_dir($path)) {
 					$entry['size'] = filesize($path);
 					$entry['mode'] = 'file';
+					$entry['dirpath'] = $relativePath.DIRECTORY_SEPARATOR.$file;
 					break;
 				} else {
 					$entry['size'] = '';
 					$entry['mode'] = 'folder';
+					$entry['dirpath'] = urlencode($relativePath.DIRECTORY_SEPARATOR.$file);
 					break;
 				} while (FALSE);
 				$list[] = $entry;

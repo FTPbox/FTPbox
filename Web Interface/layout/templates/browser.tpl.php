@@ -65,7 +65,7 @@
 	</div>
 	</div>
 	<div id="toolbox">
-		<?php echo $this->up; ?>
+		<?php echo $this->up; ?>		
 		<div id="toolbox_path">
 			<input id="toolbox_path_text" name="p" type="text" value="<?php echo $this->relativePath; ?>" />
 			<input id="toolbox_path_submit" type="submit" />

@@ -21,7 +21,7 @@ class Gui {
 	public function renderConfig($config, $status) {
 		$array['status'] = $status;
 		$array['locked'] = $config['locked'];
-		$array['locked_label'] = 'Protect the interface with a password';
+		$array['locked_label'] = 'Password-Protect the interface';
 		if(empty($config['root'])) {
 			$array['root'] = $this->filesystem->dirUp(getcwd());
 		} else {
@@ -45,7 +45,15 @@ class Gui {
 		foreach ($result as $file) {
 			$string .= '<div id="details-'.$file['filename'].'" class="row '.$file['mode'].'"><div class="details-checkbox">';
 			if($file['mode'] != 'up') $string .= '<input type="checkbox" id="cbox-details-'.$file['filename'].'" name="'.$this->encodeString($file['filename']).'" />';
-			$string .= '</div><div class="details-link"><a href="?p='.$file['dirpath'].'">'.$file['filename'].'</a></div><div class="details-permission">';
+			
+			if($file['mode'] == 'file') {
+				if (substr($file['dirpath'], 0, 1) == '/')
+					$string .= '</div><div class="details-link"><a href="..'.$file['dirpath'].'" target="_blank">'.$file['filename'].'</a></div><div class="details-permission">';
+				else
+					$string .= '</div><div class="details-link"><a href="../'.$file['dirpath'].'" target="_blank">'.$file['filename'].'</a></div><div class="details-permission">';				
+			}
+			else if ($file['mode'] == 'folder') $string .= '</div><div class="details-link"><a href="?p='.$file['dirpath'].'">'.$file['filename'].'</a></div><div class="details-permission">';
+			
 			if(isset($file['permission'])) $string .= $file['permission'];
 			$string .= '</div><div class="details-size">';
 			if(!empty($file['size'])) $string .= $this->formatfilesize($file['size']);

@@ -1,0 +1,351 @@
+@media screen and (max-width: 1024px) {
+
+	#page {
+		width: 100%;
+	}
+	
+	#head{
+		float:none;
+	}
+	
+	#head, #page form {
+		width: 98%;
+		margin-left: auto;
+	}
+	
+	#page form{
+		float: none;
+	}
+	
+	#toolbox, #browser_head, #browser {
+		width: 98%;
+		margin: 0 auto;
+	}
+	
+	#toolbox_path input[type="text"] {
+		width: 90%;
+	}
+	
+	#browser_head_link{
+		width: 50%;
+		border-right: none;
+	}
+	
+	.row{
+		width: 98%;
+	}
+	
+	#toolbox{
+		padding: 0;
+	}
+	
+	.details-link{
+		width: 40%;
+	}
+	
+	#login  {
+		margin-left: auto;
+		margin-right: auto;
+		width: 410px;
+		float: none;
+	}
+	
+	#login_01_01 {
+		
+	}
+	
+	#login_01_02 {
+		
+	}
+	
+	#toolbox_path_submit{
+		float: right;		
+	}
+	
+	#toolbox_path{
+		width: 60%;
+	}
+	
+	#browser_head_permission, .details-permission{
+		display: none;
+	}
+	
+	#browser_head_modtime, #browser_head_size{
+		float: right;
+		text-align: center;
+	}
+	
+	#browser_head_size{
+		border-left: 1px solid #BBB;
+		border-right: none;
+	}
+	
+	#browser_head_modtime{
+		border-left: 1px solid #BBB;
+		border-right: 1px solid white;
+	}
+	
+	#browser_head_modtime a{
+		margin: 0 auto;
+	}
+	
+	.details-modtime, .details-size{
+		float:right;
+		text-align: center;
+	}
+	
+	.details-modtime{
+		position: absolute; 
+		right: 70px;
+		
+		width: 118px;
+	}	
+	
+	#details-size{
+		width:60px;
+	}
+	
+	/* Config */
+	
+	#config{
+		margin-right: auto;
+		margin-left: auto;
+		width: 410px;
+		float: none;
+	}
+	
+	#head_settings{
+		margin-right: 10px;
+	}
+}
+
+@media screen and (max-width: 650px) {
+
+	/*
+	#page {
+		width: 98%;		
+	}
+	
+	#head {
+		width: 95%;
+	}
+	
+	#login  {
+		width: 95%;
+		margin: 10% 0px;
+	}
+	
+	#login_01_01 {
+		width: 100%;		
+	}
+	
+	#login_01_02 {
+		width: 70%;		
+	}
+	
+	#toolbox_buttons .button{
+		float: right;
+		position: relative;
+		margin: 0 4px;
+	}
+	
+	#toolbox_path{
+		position: absolute;
+		margin-left: 3px;
+		right: 3px;
+		float: none;
+	}
+	*/
+}
+
+@media screen and (max-width: 480px) {
+
+	#page {
+		width: 95%;		
+	}
+	
+	#head {
+		width: auto;
+		float: none;
+	}
+	
+	#head_logo{
+		margin: 0 auto;
+		width: 100%;		
+	} 
+	
+	#head_logo a{
+		margin: 0 auto;
+	}
+	
+	#head_settings{
+		display: none;
+	}
+	
+	#page form {
+		width: 100%;
+		margin: 0;
+		display: block;
+		margin-top: 40px;
+	}
+	
+	#login  {
+		width: auto;
+		margin-top: 10%;
+		margin-left: 0px;
+		margin-right: 0px;
+	}
+	
+	#login_01 {
+		float: none;
+		width: 90%;
+	}
+	
+	#login_01_01 {
+		width: auto;
+		margin: 0 5%;
+	}
+	
+	#login_01_02 {
+		width: 90%;		
+		margin: 10px 5%;
+	}
+	
+	#login_01_03{
+		margin: 0 45%;
+	}
+	
+	#browser_head, #browser_head_link{
+		width: 95%;
+	}
+	
+	#browser_head_link{
+		float: none;
+		border: none;
+	}
+	
+	#browser_head_permission, #browser_head_size, #browser_head_modtime,
+	.details-permission, .details-size, .details-modtime {
+		display: none;
+		width: 0;
+	}
+	
+	.details-link{
+		width: 80%;
+	}
+	
+	#toolbox{
+		height: 90px;
+		margin-left: 0;
+	}
+	
+	#toolbox, #browser_head{
+		width: 95%;
+		padding: 0;
+		margin-left: 2.5%;
+	}
+	
+	#toolbox_path, #toolbox_path input[type="text"] {
+		width: 85%;
+	}
+	
+	#toolbox_buttons_up {
+		/*float: none;*/
+		position: absolute;
+		margin-top: 50px;
+		left: 15px;
+	}
+	
+	#toolbox_buttons{
+		position: relative;
+		float: none;
+		right: 5px;
+	}
+	
+	#toolbox_buttons .button{
+		margin: 0 4px 0 0;
+	}
+	
+	#toolbox_path_submit{
+		float: right;
+	}
+	
+	#toolbox_path{
+		margin: 10px 3%;
+	}
+	
+	#browser {
+		width: 95%;
+		margin-left: 2.5%;
+	}
+	
+	.row {
+		width: 95%;
+	}
+	
+	/* Pop-Up "Select Files to Upload" window */	
+	
+	#fancybox-wrap {
+		width: 80% !important;
+		left: 10% !important;
+		padding: 0 !important;
+	}
+	
+	#uploader{
+		width: 100%;
+	}
+	
+	#fancybox-content{
+		width: 90% !important;
+		margin-left: 2.5%;
+	}
+	
+	/* Config Window */
+	
+	#head_settings{
+		position: fixed;
+		right: -50px;
+		display: inline;
+		margin-right: 0;
+	}
+	
+	#config{
+		width: 100%;
+		margin: 0;		
+	}
+	
+	#config_01_01{
+		margin-left: 10%;
+		margin-top: 15px;
+	}
+	
+	#config_01_02{
+		width: auto;
+		margin-top: 15px;
+	}
+	
+	#config_01_03, #config_01_04 {
+		width: 80%;		
+		margin-left: 10%;
+	}
+	
+	#config_01_04{
+		margin-top: 10px;
+	}
+	
+	#config_02_01, #config_02_04{
+		width: auto;
+		margin-left: 10%;
+		margin-top: 10px;
+	
+	}
+	#config_02_02{
+		width: 80%;	
+		margin-left: 10%;		
+	}	
+	
+	#config_02_03{
+		margin-top: 10px;
+		margin-left: 10%;
+	}
+}
