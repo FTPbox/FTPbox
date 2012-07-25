@@ -49,7 +49,10 @@ namespace FTPbox
                 KillTheProcess();
             }
             else
+            {
+                KillUnecessaryDLLs();
                 Application.Run(new fMain());
+            }
         }
 
         /// <summary>
@@ -95,6 +98,27 @@ namespace FTPbox
             catch
             {
                 Application.Exit();
+            }
+        }
+
+        /// <summary>
+        /// Remove any leftover DLLs from previous versions of FTPbox
+        /// </summary>
+        private static void KillUnecessaryDLLs()
+        {
+            string[] all = { "DiffieHellman.dll", "Org.Mentalis.Security.dll", "Tamir.SharpSSH.dll" };
+
+            foreach (string s in all)
+            {
+                if (File.Exists(Path.Combine(Application.StartupPath, s)))
+                    try
+                    {
+                        File.Delete(Path.Combine(Application.StartupPath, s));
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Write(l.Error, ex.Message);
+                    }
             }
         }
     }

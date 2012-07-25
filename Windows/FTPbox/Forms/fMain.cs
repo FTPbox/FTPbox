@@ -48,6 +48,7 @@ namespace FTPbox.Forms
 
         Thread rcThread;                                    //remote-check thread
         Thread wiThread;                                    //web interface thread
+        Thread wiuThread;                                   //Web interface update thread
 
         FtpClient ftpc;                                     //Our FTP client        
         SftpClient sftpc;                                   //And our SFTP client;
@@ -63,6 +64,7 @@ namespace FTPbox.Forms
         //Form instances
         Account fNewFtp;
         Paths newDir;
+        Translate ftranslate;
 
         //Links
         public string link = null;                          //The web link of the last-changed file
@@ -79,6 +81,7 @@ namespace FTPbox.Forms
         {
             rcThread = new Thread(SyncRemote);
             wiThread = new Thread(AddRemoveWebInt);
+            wiuThread = new Thread(UpdateWebIntThreadStart);
 
             //FTPbox.Properties.Settings.Default.ftpUsername = "";
             NetworkChange.NetworkAddressChanged += new NetworkAddressChangedEventHandler(OnNetworkChange);
@@ -93,7 +96,9 @@ namespace FTPbox.Forms
             fNewFtp = new Account();
             fNewFtp.Tag = this;
             newDir = new Paths();
-            newDir.Tag = this;            
+            newDir.Tag = this;
+            ftranslate = new Translate();
+            ftranslate.Tag = this;
 
             Get_Language();
             
@@ -1066,7 +1071,7 @@ namespace FTPbox.Forms
         private void FileChanged(object source, FileSystemEventArgs e)
         {
             string cpath = GetComPath(e.FullPath, true);
-            if (ItemGetsSynced(cpath))
+            if (ItemGetsSynced(cpath) && !FileIsUsed(e.FullPath))
             {
                 if (_busy)
                 {
@@ -1275,7 +1280,7 @@ namespace FTPbox.Forms
             {
                 cp = (cp.StartsWith("/")) ? cp.Substring(1) : cp;
                 //Log.Write(l.Debug, "without slash: {0}", cp);
-                if (!FTP() && cp.StartsWith(SftpHome))
+                if (!FTP() && cp.StartsWith(SftpHome) && SftpHome != "")
                     cp = cp.Substring(SftpHome.Length + 1);
                 //Log.Write(l.Debug, "without home: {0}", cp);
                 if (cp.StartsWith(rPath()))
@@ -2170,6 +2175,7 @@ namespace FTPbox.Forms
         {
             string name = _name(cpath);
             string path = Path.Combine(lPath(), cpath);
+
             locLink = path;
             FileInfo f = new FileInfo(path);
             Log.Write(l.Debug, "LastWriteTime is: {0} for {1} - {2}", f.LastWriteTime.ToString(), path, lPath());
@@ -2200,7 +2206,7 @@ namespace FTPbox.Forms
                         recentFilesToolStripMenuItem.DropDownItems[i].ToolTipText = recentFiles.getDate(i).ToString("dd MMM HH:mm:ss");
                 }
             }
-        }       
+        }
 
         #region translations
 
@@ -2462,7 +2468,7 @@ namespace FTPbox.Forms
 
         #endregion
 
-        #region Tray Stuff
+        #region Tray Controls' Event Handlers
 
         private void tray_MouseDoubleClick(object sender, MouseEventArgs e)
         {           
@@ -3004,6 +3010,59 @@ namespace FTPbox.Forms
             }
         }
 
+        private List<string> FoldersWithSpaces = new List<string>();
+        /// <summary>
+        /// Manually get the list of files and folders inside folders that contain spaces
+        /// </summary>
+        /// <param name="path">The folder in which to look</param>
+        private void FtpRecursiveListing(string path)
+        {
+            foreach (string f in FoldersWithSpaces)
+            {
+                ftpc.ChangeDirectoryMultiPath(f);
+                foreach (FtpItem fi in ftpc.GetDirListDeep("."))
+                {
+                    string cpath = GetComPath(fi.FullPath, false);
+                    allFilesAndFolders.Add(GetComPath(fi.FullPath, false));
+
+                    if (!ItemGetsSynced(cpath))
+                        continue;
+
+                    if (fi.ItemType == FtpItemType.File)
+                    {
+                        string lpath = System.IO.Path.Combine(lPath(), cpath.Replace("/", @"\"));
+                        Log.Write(l.Debug, "Found: {0} cpath is: {1} lpath: {2} type: {3}", fi.Name, cpath, lpath, fi.ItemType.ToString());
+                        if (File.Exists(lpath))
+                            CheckExistingFile(cpath, fi.Modified, lpath);
+                        else
+                        {
+                            fQueue.Add(cpath, lpath, TypeOfTransfer.Create);
+                        }
+                    }
+                    else if (fi.ItemType == FtpItemType.Directory)
+                    {
+                        string lpath = System.IO.Path.Combine(lPath(), cpath);
+
+                        if (!Directory.Exists(lpath) && ItemGetsSynced(cpath) && !dQueue.Contains(lpath))
+                        {
+                            Directory.CreateDirectory(lpath);
+                            fQueue.AddFolder(cpath);
+
+                            fLog.putFolder(cpath);
+                            PutFolderInLog(cpath);
+
+                            GetLink(cpath);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void FtpRecursiveFolderListing(string path)
+        {
+
+        }
+
         /// <summary>
         /// Gets the full (recursive) list of files and folders inside the given path
         /// </summary>
@@ -3196,53 +3255,60 @@ namespace FTPbox.Forms
         /// <param name="m">The MessageType that defines what kind of icon/text should be shown</param>
         public void SetTray(MessageType m)
         {
-            switch (m)
+            try
             {
-                case MessageType.AllSynced:
-                    tray.Icon = FTPbox.Properties.Resources.AS;
-                    tray.Text = _(MessageType.AllSynced);
-                    _lastTrayStatus = MessageType.AllSynced;
-                    break;
-                case MessageType.Syncing:
-                    tray.Icon = FTPbox.Properties.Resources.syncing;
-                    tray.Text = _(MessageType.Syncing);
-                    _lastTrayStatus = MessageType.Syncing;
-                    break;
-                case MessageType.Offline:
-                    tray.Icon = FTPbox.Properties.Resources.offline1;
-                    tray.Text = _(MessageType.Offline);
-                    _lastTrayStatus = MessageType.Offline;
-                    break;
-                case MessageType.Listing:
-                    tray.Icon = FTPbox.Properties.Resources.AS;
-                    tray.Text = (Profile.SyncingMethod == SyncMethod.Automatic) ? _(MessageType.AllSynced) : _(MessageType.Listing);
-                    _lastTrayStatus = MessageType.Listing;
-                    break;
-                case MessageType.Connecting:
-                    tray.Icon = FTPbox.Properties.Resources.syncing;
-                    tray.Text = _(MessageType.Connecting);
-                    _lastTrayStatus = MessageType.Connecting;
-                    break;
-                case MessageType.Disconnected:
-                    tray.Icon = FTPbox.Properties.Resources.syncing;
-                    tray.Text = _(MessageType.Disconnected);
-                    _lastTrayStatus = MessageType.Disconnected;
-                    break;        
-                case MessageType.Reconnecting:
-                    tray.Icon = FTPbox.Properties.Resources.syncing;
-                    tray.Text = _(MessageType.Reconnecting);
-                    _lastTrayStatus = MessageType.Reconnecting;
-                    break; 
-                case MessageType.Ready:
-                    tray.Icon = FTPbox.Properties.Resources.AS;
-                    tray.Text = _(MessageType.Ready);
-                    _lastTrayStatus = MessageType.Ready;
-                    break;
-                case MessageType.Nothing:
-                    tray.Icon = FTPbox.Properties.Resources.ftpboxnew;
-                    tray.Text = _(MessageType.Nothing);
-                    _lastTrayStatus = MessageType.Nothing;
-                    break;
+                switch (m)
+                {
+                    case MessageType.AllSynced:
+                        tray.Icon = FTPbox.Properties.Resources.AS;
+                        tray.Text = _(MessageType.AllSynced);
+                        _lastTrayStatus = MessageType.AllSynced;
+                        break;
+                    case MessageType.Syncing:
+                        tray.Icon = FTPbox.Properties.Resources.syncing;
+                        tray.Text = _(MessageType.Syncing);
+                        _lastTrayStatus = MessageType.Syncing;
+                        break;
+                    case MessageType.Offline:
+                        tray.Icon = FTPbox.Properties.Resources.offline1;
+                        tray.Text = _(MessageType.Offline);
+                        _lastTrayStatus = MessageType.Offline;
+                        break;
+                    case MessageType.Listing:
+                        tray.Icon = FTPbox.Properties.Resources.AS;
+                        tray.Text = (Profile.SyncingMethod == SyncMethod.Automatic) ? _(MessageType.AllSynced) : _(MessageType.Listing);
+                        _lastTrayStatus = MessageType.Listing;
+                        break;
+                    case MessageType.Connecting:
+                        tray.Icon = FTPbox.Properties.Resources.syncing;
+                        tray.Text = _(MessageType.Connecting);
+                        _lastTrayStatus = MessageType.Connecting;
+                        break;
+                    case MessageType.Disconnected:
+                        tray.Icon = FTPbox.Properties.Resources.syncing;
+                        tray.Text = _(MessageType.Disconnected);
+                        _lastTrayStatus = MessageType.Disconnected;
+                        break;
+                    case MessageType.Reconnecting:
+                        tray.Icon = FTPbox.Properties.Resources.syncing;
+                        tray.Text = _(MessageType.Reconnecting);
+                        _lastTrayStatus = MessageType.Reconnecting;
+                        break;
+                    case MessageType.Ready:
+                        tray.Icon = FTPbox.Properties.Resources.AS;
+                        tray.Text = _(MessageType.Ready);
+                        _lastTrayStatus = MessageType.Ready;
+                        break;
+                    case MessageType.Nothing:
+                        tray.Icon = FTPbox.Properties.Resources.ftpboxnew;
+                        tray.Text = _(MessageType.Nothing);
+                        _lastTrayStatus = MessageType.Nothing;
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(l.Error, "error setting tray: {0}", ex.Message);
             }
         }
 
@@ -3254,17 +3320,30 @@ namespace FTPbox.Forms
         /// <param name="name">Name of the file that is being downloaded/uploaded</param>
         public void SetTray(MessageType m, string name)
         {
-            _lastTrayStatus = MessageType.Syncing;
-            switch (m)
+            try
             {
-                case MessageType.Uploading:
-                    tray.Icon = FTPbox.Properties.Resources.syncing;
-                    tray.Text = string.Format(_(MessageType.Uploading), name);
-                    break;
-                case MessageType.Downloading:
-                    tray.Icon = FTPbox.Properties.Resources.syncing;
-                    tray.Text = string.Format(_(MessageType.Downloading), name);
-                    break;
+                _lastTrayStatus = MessageType.Syncing;
+
+                string msg = (m == MessageType.Uploading) ? string.Format(_(MessageType.Uploading), name) : string.Format(_(MessageType.Downloading), name);
+
+                if (msg.Length > 64)
+                    msg = msg.Substring(0, 54) + "..." + msg.Substring(msg.Length - 5);
+
+                switch (m)
+                {
+                    case MessageType.Uploading:
+                        tray.Icon = FTPbox.Properties.Resources.syncing;
+                        tray.Text = msg;
+                        break;
+                    case MessageType.Downloading:
+                        tray.Icon = FTPbox.Properties.Resources.syncing;
+                        tray.Text = msg;
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(l.Error, "error setting tray: {0}", ex.Message);
             }
         }
 
@@ -3409,6 +3488,8 @@ namespace FTPbox.Forms
             {
                 chkWebInt.Checked = true;
                 labViewInBrowser.Enabled = true;
+
+                CheckForWebIntUpdate();
             }
             else
             {
@@ -3562,14 +3643,14 @@ namespace FTPbox.Forms
             Log.Write(l.Debug, "Gon'check for web interface");
             try
             {
-                Syncing();
+                SetTray(MessageType.Syncing);
                 webintwb = new WebBrowser();
                 webintwb.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(webintwb_DocumentCompleted);
                 webintwb.Navigate("http://ftpbox.org/webintversion.txt");
             }
             catch
             {
-                DoneSyncing();
+                SetTray(MessageType.Ready);
                 //ListAllFiles();
             }
         }
@@ -3604,18 +3685,27 @@ namespace FTPbox.Forms
 
             if (currentversion != webintwb.Document.Body.InnerText)
             {
-                Syncing();
-                string data = @"|\webint\layout\css|\webint\layout\images\fancybox|\webint\layout\templates|\webint\system\classes|\webint\system\config|\webint\system\js|\webint\system\logs|\webint\system\savant\Savant3\resources|";
-                MakeWebIntFolders(data);
-                DeleteWebInt(true);
-                GetWebInt();
+                string msg = "A new version of the web interface is available, do you want to upgrade to it?";
+                if (MessageBox.Show(msg, "FTPbox - WebUI Update", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    wiuThread.Start();
+                }
             }
             else
             {
-                DoneSyncing();
+                SetTray(MessageType.AllSynced);
                 //ListAllFiles();
             }
             File.Delete(inipath);
+        }
+
+        private void UpdateWebIntThreadStart()
+        {
+            SetTray(MessageType.Syncing);
+            string data = @"|\webint\layout\css|\webint\layout\images\fancybox|\webint\layout\templates|\webint\system\classes|\webint\system\config|\webint\system\js|\webint\system\logs|\webint\system\savant\Savant3\resources|";
+            MakeWebIntFolders(data);
+            DeleteWebInt(true);
+            GetWebInt();
         }
 
         public void MakeWebIntFolders(string data)
@@ -4062,6 +4152,44 @@ namespace FTPbox.Forms
             Process.Start(Application.ExecutablePath);
 
             KillTheProcess();
+        }
+
+        private void bTranslate_Click(object sender, EventArgs e)
+        {
+            ftranslate.ShowDialog();
+        }
+
+        /// <summary>
+        /// Checks if a file is still being used (hasn't been completely transfered to the folder)
+        /// </summary>
+        /// <param name="path">The file to check</param>
+        /// <returns><c>True</c> if the file is being used, <c>False</c> if now</returns>
+        private bool FileIsUsed(string path)
+        {
+            FileStream stream = null;
+            
+            string name = null;
+
+            try
+            {
+                FileInfo fi = new FileInfo(path);
+                name = fi.Name;
+                stream = fi.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None);                
+            }
+            catch
+            {
+                if (name != null)
+                    Log.Write(l.Debug, "File {0} is locked: True", name);
+                return true;
+            }
+            finally
+            {
+                if (stream != null)
+                    stream.Close();
+            }
+            if (name != null)
+                Log.Write(l.Debug, "File {0} is locked: False", name);
+            return false;
         }
     }
 }

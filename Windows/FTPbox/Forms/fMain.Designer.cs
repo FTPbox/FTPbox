@@ -141,6 +141,7 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bTranslate = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.gLinks.SuspendLayout();
@@ -757,6 +758,7 @@
             // 
             // tabLanguage
             // 
+            this.tabLanguage.Controls.Add(this.bTranslate);
             this.tabLanguage.Controls.Add(this.listView1);
             this.tabLanguage.Location = new System.Drawing.Point(4, 22);
             this.tabLanguage.Name = "tabLanguage";
@@ -797,7 +799,7 @@
             listViewItem25});
             this.listView1.Location = new System.Drawing.Point(8, 16);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(447, 299);
+            this.listView1.Size = new System.Drawing.Size(447, 269);
             this.listView1.SmallImageList = this.imageList1;
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -1191,6 +1193,16 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // bTranslate
+            // 
+            this.bTranslate.Location = new System.Drawing.Point(380, 292);
+            this.bTranslate.Name = "bTranslate";
+            this.bTranslate.Size = new System.Drawing.Size(75, 23);
+            this.bTranslate.TabIndex = 2;
+            this.bTranslate.Text = "Translate";
+            this.bTranslate.UseVisualStyleBackColor = true;
+            this.bTranslate.Click += new System.EventHandler(this.bTranslate_Click);
+            // 
             // fMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1331,5 +1343,6 @@
         private System.Windows.Forms.TabPage tabLanguage;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.Button bTranslate;
     }
 }

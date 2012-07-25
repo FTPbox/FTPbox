@@ -147,6 +147,12 @@
     <Compile Include="Forms\selective_sync.Designer.cs">
       <DependentUpon>selective_sync.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Translate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Translate.Designer.cs">
+      <DependentUpon>Translate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\Account.resx">
@@ -164,6 +170,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\selective_sync.resx">
       <DependentUpon>selective_sync.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Translate.resx">
+      <DependentUpon>Translate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

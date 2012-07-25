@@ -19,8 +19,8 @@ namespace FTPboxLib
 {
 	public static class Profile
 	{
-        public static string DecryptionPassword = "removed";        //removed for security purposes
-        public static string DecryptionSalt = "removed";            //removed for security purposes
+        public static string DecryptionPassword = "removed";     	//removed for security purposes
+        public static string DecryptionSalt = "removed";     	//removed for security purposes
 
 		public static string Host
 		{
