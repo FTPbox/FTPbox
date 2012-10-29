@@ -19,8 +19,8 @@ namespace FTPboxLib
 {
 	public static class Profile
 	{
-        public static string DecryptionPassword = "removed";     	//removed for security purposes
-        public static string DecryptionSalt = "removed";     	//removed for security purposes
+        public static string DecryptionPassword = "removed";     //removed for security purposes
+        public static string DecryptionSalt = "removed";     //removed for security purposes
 
 		public static string Host
 		{
@@ -95,6 +95,12 @@ namespace FTPboxLib
         }
 
         public static int SyncFrequency
+        {
+            get;
+            set;
+        }
+
+        public static Starksoft.Net.Ftp.FtpSecurityProtocol SecurityProtocol
         {
             get;
             set;

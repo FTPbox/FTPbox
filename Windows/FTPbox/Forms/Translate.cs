@@ -77,7 +77,7 @@ namespace FTPbox.Forms
             get
             {
                 foreach (DataGridViewRow d in data.Rows)
-                    if (d.Cells[1].Value == null)
+                    if (d.Cells[1].Value == null || (string)d.Cells[1].Value == "")
                         return false;
 
                 return true;

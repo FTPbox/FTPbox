@@ -81,7 +81,7 @@ namespace FTPbox.Forms
             else if (ftpes)
                 Profile.FtpsInvokeMethod = FtpsMethod.Explicit;
             else
-                Profile.FtpsInvokeMethod = FtpsMethod.Implicit;
+                Profile.FtpsInvokeMethod = FtpsMethod.Implicit;            
 
             try
             {

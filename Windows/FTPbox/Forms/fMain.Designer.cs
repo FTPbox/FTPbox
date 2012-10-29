@@ -54,6 +54,9 @@
             System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem("Dansk (da)", 22);
             System.Windows.Forms.ListViewItem listViewItem24 = new System.Windows.Forms.ListViewItem("Polish (pl)", 23);
             System.Windows.Forms.ListViewItem listViewItem25 = new System.Windows.Forms.ListViewItem("Croatian (hr)", 24);
+            System.Windows.Forms.ListViewItem listViewItem26 = new System.Windows.Forms.ListViewItem("Portuguese (pt)", 26);
+            System.Windows.Forms.ListViewItem listViewItem27 = new System.Windows.Forms.ListViewItem("Galego (gl)", 25);
+            System.Windows.Forms.ListViewItem listViewItem28 = new System.Windows.Forms.ListViewItem("Slovak (sk)", 27);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(fMain));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
@@ -104,6 +107,7 @@
             this.labUpSpeed = new System.Windows.Forms.Label();
             this.labDownSpeed = new System.Windows.Forms.Label();
             this.tabLanguage = new System.Windows.Forms.TabPage();
+            this.bTranslate = new System.Windows.Forms.Button();
             this.listView1 = new System.Windows.Forms.ListView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tabAbout = new System.Windows.Forms.TabPage();
@@ -141,7 +145,6 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bTranslate = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.gLinks.SuspendLayout();
@@ -768,6 +771,16 @@
             this.tabLanguage.Text = "Language";
             this.tabLanguage.UseVisualStyleBackColor = true;
             // 
+            // bTranslate
+            // 
+            this.bTranslate.Location = new System.Drawing.Point(380, 292);
+            this.bTranslate.Name = "bTranslate";
+            this.bTranslate.Size = new System.Drawing.Size(75, 23);
+            this.bTranslate.TabIndex = 2;
+            this.bTranslate.Text = "Translate";
+            this.bTranslate.UseVisualStyleBackColor = true;
+            this.bTranslate.Click += new System.EventHandler(this.bTranslate_Click);
+            // 
             // listView1
             // 
             this.listView1.AutoArrange = false;
@@ -796,7 +809,10 @@
             listViewItem22,
             listViewItem23,
             listViewItem24,
-            listViewItem25});
+            listViewItem25,
+            listViewItem26,
+            listViewItem27,
+            listViewItem28});
             this.listView1.Location = new System.Drawing.Point(8, 16);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(447, 269);
@@ -835,6 +851,9 @@
             this.imageList1.Images.SetKeyName(22, "dk.png");
             this.imageList1.Images.SetKeyName(23, "pl.png");
             this.imageList1.Images.SetKeyName(24, "hr.png");
+            this.imageList1.Images.SetKeyName(25, "gl.png");
+            this.imageList1.Images.SetKeyName(26, "pt.png");
+            this.imageList1.Images.SetKeyName(27, "sk.png");
             // 
             // tabAbout
             // 
@@ -1192,16 +1211,6 @@
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-            // 
-            // bTranslate
-            // 
-            this.bTranslate.Location = new System.Drawing.Point(380, 292);
-            this.bTranslate.Name = "bTranslate";
-            this.bTranslate.Size = new System.Drawing.Size(75, 23);
-            this.bTranslate.TabIndex = 2;
-            this.bTranslate.Text = "Translate";
-            this.bTranslate.UseVisualStyleBackColor = true;
-            this.bTranslate.Click += new System.EventHandler(this.bTranslate_Click);
             // 
             // fMain
             // 

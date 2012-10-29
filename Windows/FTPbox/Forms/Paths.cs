@@ -149,6 +149,7 @@ namespace FTPbox.Forms
             client = new Client();
             if (Profile.Host == null || Profile.Password == null || Profile.Username == null)
             {
+                Log.Write(l.Debug, "Terminating.");
                 Process p = Process.GetCurrentProcess();
                 p.Kill();
             }
@@ -160,6 +161,7 @@ namespace FTPbox.Forms
                 catch
                 {
                     Log.Write(l.Debug, "Terminating...");
+
                     Process p = Process.GetCurrentProcess();
                     p.Kill();
                 }

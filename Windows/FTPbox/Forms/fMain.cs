@@ -31,6 +31,8 @@ using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Threading;
 using ICSharpCode.SharpZipLib.Zip;
+using Microsoft.Win32;
+using System.IO.Pipes;
 
 namespace FTPbox.Forms
 {
@@ -83,7 +85,6 @@ namespace FTPbox.Forms
             wiThread = new Thread(AddRemoveWebInt);
             wiuThread = new Thread(UpdateWebIntThreadStart);
 
-            //FTPbox.Properties.Settings.Default.ftpUsername = "";
             NetworkChange.NetworkAddressChanged += new NetworkAddressChangedEventHandler(OnNetworkChange);
             CheckForPreviousInstances();
 
@@ -125,16 +126,22 @@ namespace FTPbox.Forms
 
                 UpdateDetails();
 
+                AddContextMenu();
+                //AddFTPboxMenu();
+                RunServer();
+
                 SetTray(MessageType.Ready);
 
                 if (Profile.SyncingMethod == SyncMethod.Automatic && !_busy)
-                    StartRemoteSync();
+                    StartRemoteSync(".");
             }
             else
             {
                 OfflineMode = true;
                 SetTray(MessageType.Offline);
             }
+
+            Log.Write(l.Client, Process.GetCurrentProcess().ProcessName);
         }
 
         #region variables
@@ -258,6 +265,11 @@ namespace FTPbox.Forms
             return bool.Parse(AppSettings.Get("Account/FTPES", "True"));
         }
 
+        public string FtpsSecProtocol()
+        {
+            return AppSettings.Get("Account/FtpSecurityProtocol", "Default");
+        }
+
         public string HTTPPath()
         {
             return AppSettings.Get("Paths/AccountsPath", ftpHost());
@@ -304,14 +316,14 @@ namespace FTPbox.Forms
 
                 if (FTPS())
                 {
-                    if (FTPES())
+                    /*if (FTPES())
                         ftpc.SecurityProtocol = FtpSecurityProtocol.Tls1OrSsl3Explicit;
                     else
-                        ftpc.SecurityProtocol = FtpSecurityProtocol.Tls1OrSsl3Implicit;
-
+                        ftpc.SecurityProtocol = FtpSecurityProtocol.Tls1OrSsl3Implicit;*/
+                    ftpc.SecurityProtocol = Profile.SecurityProtocol;
                     ftpc.ValidateServerCertificate += new EventHandler<ValidateServerCertificateEventArgs>(ftp_ValidateServerCertificate);
                 }
-                Log.Write(l.Debug, "Connecting ftpc -> user: {0}", Profile.Username);
+                Log.Write(l.Debug, "Connecting ftpc -> user: {0} protocol: {1}", Profile.Username, Profile.SecurityProtocol.ToString());
                 ftpc.Open(Profile.Username, Profile.Password); //ftpUser(), ftpPass());
                 
                 Log.Write(l.Debug, "Connection opened");
@@ -381,7 +393,7 @@ namespace FTPbox.Forms
                 catch (Exception ex)
                 {
                     Log.Write(l.Info, "Will open New FTP form");
-                    Log.Write(l.Error, "Error: {0}", ex.Message);
+                    LogError(ex);
                     fNewFtp.ShowDialog();
                     Log.Write(l.Info, "Done");
 
@@ -400,9 +412,12 @@ namespace FTPbox.Forms
             string rpath = rPath();
             if (rpath.StartsWith(@"/") && rpath != @"/")
                 rpath = rpath.Substring(1);
-            
+
+            Log.Write(l.Debug, "rpath: {0} lPath: {1}", rpath, lPath());    
+
             if (rpath == "" || lPath() == "")
             {
+                Log.Write(l.Debug, "Case 1");
                 newDir.ShowDialog();
                 
                 //Application.Run();
@@ -410,18 +425,20 @@ namespace FTPbox.Forms
 
                 if (!gotpaths)
                 {
-                    Application.Exit();
+                    Log.Write(l.Debug, "shutting down");
+                    KillTheProcess();
                 }
             }
             else if ((rpath != "/" && !_exists(rpath)) || !Directory.Exists(lPath()))
             {
+                Log.Write(l.Debug, "Case 2");
                 newDir.ShowDialog();
 
                 this.Show();
 
                 if (!gotpaths)
                 {
-                    Application.Exit();
+                    KillTheProcess();
                 }
             }
             else
@@ -443,6 +460,7 @@ namespace FTPbox.Forms
             AppSettings.Put("Account/FTP", (Profile.Protocol != FtpProtocol.SFTP).ToString());
             AppSettings.Put("Account/FTPS", (Profile.Protocol == FtpProtocol.FTPS).ToString());
             AppSettings.Put("Account/FTPES", (Profile.FtpsInvokeMethod == FtpsMethod.Explicit).ToString());
+            AppSettings.Put("Account/FtpSecurityProtocol", Profile.SecurityProtocol.ToString());
 
             AppSettings.Put("Paths/rPath", Profile.RemotePath);
             AppSettings.Put("Paths/lPath", Profile.LocalPath);
@@ -530,7 +548,7 @@ namespace FTPbox.Forms
                 else
                     Log.Write(l.Info, "Changed current directory to {0}, home is: {1}", sftpc.WorkingDirectory, SftpHome);                                                
             }
-            catch (Exception e) { Log.Write(l.Debug, e.Message); }
+            catch (Exception e) { LogError(e); }
 
             SetWatchers();
         }
@@ -612,7 +630,8 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                Log.Write(l.Debug, "========> it's a folder, err: {0}", ex.Message);
+                Log.Write(l.Debug, "========> it's a folder");
+                LogError(ex);
             }
             return dt;
         }
@@ -635,7 +654,8 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                Log.Write(l.Debug, "========> it's a folder, err: {0}", ex.Message);
+                Log.Write(l.Debug, "========> it's a folder");
+                LogError(ex);
             }
 
             if (!FTP())
@@ -710,6 +730,8 @@ namespace FTPbox.Forms
                 }
                 Log.Write(l.Debug, "*** Removed from Log: {0}", cPath);
             }
+
+            Delete_Recent(cPath);
         }
 
         /// <summary>
@@ -855,7 +877,7 @@ namespace FTPbox.Forms
                     }
                     catch (Exception e)
                     {
-                        Log.Write(l.Error, e.Message);
+                        LogError(e);
                     }
                 }
             }
@@ -894,7 +916,11 @@ namespace FTPbox.Forms
             Profile.Protocol = (FTP()) ? (FTPS() ? FtpProtocol.FTPS : FtpProtocol.FTP) : FtpProtocol.SFTP;
             Profile.FtpsInvokeMethod = (FTP()) ? FtpsMethod.None : ((FTPES()) ? FtpsMethod.Explicit : FtpsMethod.Implicit);
 
-            Profile.SyncingMethod = syncMethod();
+            Profile.SecurityProtocol = (FTP()) ? FtpSecurityProtocol.None : ((FTPES()) ? FtpSecurityProtocol.Tls1OrSsl3Explicit : FtpSecurityProtocol.Tls1OrSsl3Implicit);
+
+            if (FtpsSecProtocol() != "Default")
+                Profile.SecurityProtocol = (FtpSecurityProtocol) Enum.Parse(typeof (FtpSecurityProtocol), FtpsSecProtocol());
+            
             Profile.SyncFrequency = syncFrequency();
         }
 
@@ -938,7 +964,7 @@ namespace FTPbox.Forms
             bool b = !(ignoreList.isIgnored(name)
                 || name.Contains("webint") || name.EndsWith(".") || name.EndsWith("..")                                                                                             //web interface, current and parent folders are ignored
                 || name.EndsWith("~") || name.StartsWith(".goutputstream") || aName.StartsWith("~")                                                                                 //temporary files are ignored
-                || aName == ".ftpquota" || aName == "error_log"                                                                                                                     //server files are ignored
+                || aName == ".ftpquota" || aName == "error_log" || aName.StartsWith(".bash")                                                                                        //server files are ignored
                 || aName.Contains('"') || aName.Contains("?") || aName.Contains("*") || aName.Contains(":") || aName.Contains("<") || aName.Contains(">") || aName.Contains("|")    //characters not allowed in windows file/folder names
                 );
 
@@ -975,6 +1001,14 @@ namespace FTPbox.Forms
             }
         }
 
+        private void _remove(string cpath)
+        {
+            if (FTP())
+                ftpc.DeleteFile(cpath);
+            else
+                sftpc.Delete(cpath);
+        }
+
         /// <summary>
         /// whether a path is in the LocalFolders list. Used to check if deleted items are folders or not.
         /// </summary>
@@ -1006,11 +1040,40 @@ namespace FTPbox.Forms
         }
 
         /// <summary>
+        /// Returns the file size of the file in the given bath, in both SFTP and FTP
+        /// </summary>
+        /// <param name="path">The path to the file</param>
+        /// <returns>The file's size</returns>
+        private long _size(string path)
+        {
+            return (FTP()) ? ftpc.GetFileSize(path) : sftpc.GetAttributes(path).Size;
+        }
+
+        /// <summary>
         /// returns the current working directory in both SFTP and FTP
         /// </summary>
         private string _currentDirectory
         {
             get { return (FTP()) ? ftpc.CurrentDirectory : sftpc.WorkingDirectory; }
+        }
+
+        private string _tempName(string cpath)
+        {
+            if (!cpath.Contains("/") && !cpath.Contains(@"\"))
+                return string.Format("~{0}", cpath);
+
+            string parent = cpath.Substring(0, cpath.LastIndexOf("/"));
+            string temp_name = string.Format("~{0}", _name(cpath));
+
+            return string.Format("{0}/{1}", parent, temp_name);
+        }
+
+        private string _tempLocal(string lpath)
+        {
+            string parent = lpath.Substring(0, lpath.LastIndexOf(@"\"));
+            string temp_name = _name(lpath);
+
+            return string.Format(@"{0}\~{1}", parent, temp_name);
         }
 
         private void ftp_ValidateServerCertificate(object sender, ValidateServerCertificateEventArgs e)
@@ -1084,7 +1147,8 @@ namespace FTPbox.Forms
 
                     if (e.ChangeType == WatcherChangeTypes.Changed)
                     {
-                        fQueue.Add(cpath, e.FullPath, TypeOfTransfer.Change);
+                        FileInfo fli = new FileInfo(e.FullPath);
+                        fQueue.Add(cpath, e.FullPath, fli.Length, TypeOfTransfer.Change);
                         SyncLocQueueFiles();
                     }
                     else
@@ -1171,25 +1235,13 @@ namespace FTPbox.Forms
         private void OnRenamed(object source, RenamedEventArgs e)
         {
             Log.Write(l.Debug, "Item {0} was renamed", e.OldName);
-            if (ItemGetsSynced(GetComPath(e.FullPath, true)))
+            if (ItemGetsSynced(GetComPath(e.FullPath, true)) && ItemGetsSynced(GetComPath(e.OldFullPath, true)))
             {
                 fswFolders.EnableRaisingEvents = false;
                 if (e.FullPath.StartsWith(lPath()))
                 {
                     if (FTP())
-                    {
-                        if (!ftpc.IsConnected)
-                        {
-                            try
-                            {
-                                ftpc.Reopen();
-                            }
-                            catch
-                            {
-                                Application.Exit();
-                            }
-                        }
-                    }
+                        CheckConnectionStatus();
 
                     Log.Write(l.Debug, "{0} File {1} ", e.ChangeType.ToString(), e.FullPath);
                     string oldName = GetComPath(e.OldFullPath, true);
@@ -1522,7 +1574,7 @@ namespace FTPbox.Forms
                 }
                 catch (Exception e)
                 {
-                    Log.Write(l.Error, "Exception m: {0}", e.Message);
+                    LogError(e);
                     Log.Write(l.Error, "FTP Client was disconnected, attempting to reconnect");
                     try
                     {                        
@@ -1546,8 +1598,8 @@ namespace FTPbox.Forms
                     }
                     catch (Exception ex)
                     {
-                        Log.Write(l.Info, "Exception MSG: {0}", ex.Message);
-                        Application.Exit();
+                        LogError(ex);
+                        KillTheProcess();
                     }
                 }
             }
@@ -1570,9 +1622,8 @@ namespace FTPbox.Forms
                 if (i.CommonPath.Contains("/"))
                 {
                     string cpath = i.CommonPath.Substring(0, i.CommonPath.LastIndexOf("/"));
-                    if (_exists(cpath))
+                    if (!_exists(cpath))
                     {
-                        
                         Log.Write(l.Debug, "Makin directory: {0} inside {1}", cpath, _currentDirectory);
                         try
                         {
@@ -1585,9 +1636,8 @@ namespace FTPbox.Forms
                         }
                         catch (Exception e)
                         {
-                            Log.Write(l.Debug, "Exc Msg: {0}", e.Message);
+                            LogError(e);
                         }
-
                     }
                 }
                 try
@@ -1595,15 +1645,35 @@ namespace FTPbox.Forms
                     SetTray(MessageType.Uploading, _name(i.CommonPath));
                     Log.Write(l.Debug, "Gonna put file {0} from queue, current path: {1}", i.CommonPath, _currentDirectory);
 
+                    /*
                     if (FTP())
                         if (_exists(i.CommonPath))
-                            ftpc.DeleteFile(i.CommonPath);
+                            ftpc.DeleteFile(i.CommonPath); */
 
+                    string temp = _tempName(i.CommonPath);
+
+                    //upload to a temp file...
                     if (FTP())
-                        ftpc.PutFile(i.LocalPath, i.CommonPath, FileAction.Create);
+                        ftpc.PutFile(i.LocalPath, temp, FileAction.Create);
                     else
                         using (var file = File.OpenRead(i.LocalPath))
-                            sftpc.UploadFile(file, i.CommonPath, true);
+                            sftpc.UploadFile(file, temp, true);
+
+                    //check if the file was fully transfered. If yes, replace the old file with the temp one...
+                    if (i.Size == _size(temp))
+                    {
+                        if (_exists(i.CommonPath))
+                            _remove(i.CommonPath);
+                        if (FTP())
+                            ftpc.Rename(temp, i.CommonPath);
+                        else
+                            sftpc.RenameFile(temp, i.CommonPath);
+                    }
+                    else
+                    {
+                        _remove(temp);
+                        continue;
+                    }
 
                     SetTray(MessageType.AllSynced);
 
@@ -1619,23 +1689,7 @@ namespace FTPbox.Forms
                 catch (Exception ex)
                 {
                     SetTray(MessageType.AllSynced);
-                    Log.Write(l.Debug, "lError: {0}", ex.Message);
-                    try
-                    {
-                        ftpc.Reopen();
-                    }
-                    catch
-                    {
-                        Application.Exit();
-                    }
-                    /*
-                    if (ftpc.Exists(i.CommonPath))
-                    {
-                        name = i.LocalPath;
-                        //c++;
-                        fQueue.Remove(i.CommonPath);
-                        UpdateTheLog(i.CommonPath, GetLWTof(i.CommonPath), File.GetLastWriteTime(i.LocalPath));	
-                    }*/
+                    LogError(ex);
                 }
             }
 
@@ -1694,13 +1748,39 @@ namespace FTPbox.Forms
                     {
                         SetTray(MessageType.Downloading, _name(i.CommonPath));
 
+                        string temp = _tempLocal(i.LocalPath);
+
+                        //download to a temp file
                         if (FTP())                    
-                            ftpc.GetFile(i.CommonPath, i.LocalPath, FileAction.Create);                                                    
+                            ftpc.GetFile(i.CommonPath, temp, FileAction.Create);                                                    
                         else
-                            using (FileStream f = new FileStream(i.LocalPath, FileMode.Create, FileAccess.ReadWrite))
+                            using (FileStream f = new FileStream(temp, FileMode.Create, FileAccess.ReadWrite))
                                 sftpc.DownloadFile(i.CommonPath, f);
                             //using (var file = File.OpenWrite(i.LocalPath))
                                // sftpc.DownloadFile(i.CommonPath, file);
+                        
+                        //verify it was downloaded succesfully
+                        FileInfo iFile = new FileInfo(temp);
+                        if (i.Size == iFile.Length)
+                        {
+                            if (File.Exists(i.LocalPath))
+                            {
+                                fswFiles.EnableRaisingEvents = false;
+                                fswFolders.EnableRaisingEvents = false;
+                                //File.Delete(i.LocalPath);   //TODO: move to recycle bin instead
+                                Log.Write(l.Debug, "Deleting {0}", i.LocalPath);
+                                Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(i.LocalPath, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                                fswFiles.EnableRaisingEvents = true;
+                                fswFolders.EnableRaisingEvents = true;
+                            }
+                            Log.Write(l.Debug, "Moving {0} to {1}", temp, i.LocalPath);
+                            File.Move(temp, i.LocalPath);                            
+                        }
+                        else
+                        {
+                            Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(temp, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                            continue;
+                        }
                         
                         Log.Write(l.Debug, "Done");
                         SetTray(MessageType.AllSynced);                        
@@ -1714,7 +1794,7 @@ namespace FTPbox.Forms
                     catch (FtpException ex)
                     {
                         SetTray(MessageType.AllSynced);
-                        Log.Write(l.Error, "rError: {0}", ex.Message);
+                        LogError(ex);
                         Log.Write(l.Debug, "current dir: {0}", _currentDirectory);
 
                         if (!_exists(i.CommonPath))
@@ -1734,7 +1814,7 @@ namespace FTPbox.Forms
                 }
                 catch
                 {
-                    Application.Exit();
+                    KillTheProcess();
                 }
                 fi = new List<FileQueueItem>(fQueue.List());
                 foreach (FileQueueItem i in fi)
@@ -1744,13 +1824,38 @@ namespace FTPbox.Forms
                         Log.Write(l.Debug, "Gonna retry to get remote file {0} from queue, local path: {1}", i.CommonPath, i.LocalPath);
                         try
                         {
-                            SetTray(MessageType.Downloading, _name(i.CommonPath));
+                            string temp = _tempLocal(i.LocalPath);
 
+                            //download to a temp file
                             if (FTP())
-                                ftpc.GetFile(i.CommonPath, i.LocalPath, FileAction.Create);
+                                ftpc.GetFile(i.CommonPath, temp, FileAction.Create);
                             else
-                                using (FileStream f = new FileStream(i.LocalPath, FileMode.Create, FileAccess.ReadWrite))
+                                using (FileStream f = new FileStream(temp, FileMode.Create, FileAccess.ReadWrite))
                                     sftpc.DownloadFile(i.CommonPath, f);
+                            //using (var file = File.OpenWrite(i.LocalPath))
+                            // sftpc.DownloadFile(i.CommonPath, file);
+
+                            //verify it was downloaded succesfully
+                            FileInfo iFile = new FileInfo(temp);
+                            if (i.Size == iFile.Length)
+                            {
+                                if (File.Exists(i.LocalPath))
+                                {
+                                    fswFiles.EnableRaisingEvents = false;
+                                    fswFolders.EnableRaisingEvents = false;
+                                    //File.Delete(i.LocalPath);   //TODO: move to recycle bin instead
+                                    Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(i.LocalPath, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                                    fswFiles.EnableRaisingEvents = true;
+                                    fswFolders.EnableRaisingEvents = true;
+                                }
+
+                                File.Move(temp, i.LocalPath);
+                            }
+                            else
+                            {
+                                Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(temp, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                                continue;
+                            }
 
                             Log.Write(l.Debug, "Done");
                             SetTray(MessageType.AllSynced);
@@ -1763,7 +1868,7 @@ namespace FTPbox.Forms
                         catch (FtpException ex)
                         {
                             SetTray(MessageType.AllSynced);
-                            Log.Write(l.Debug, "rError: {0}", ex.Message);
+                            LogError(ex);
                             Log.Write(l.Debug, "current dir: {0}", _currentDirectory);
 
                             if (!_exists(i.CommonPath))
@@ -1859,17 +1964,17 @@ namespace FTPbox.Forms
                         if (!fLog.Contains(cpath) || !ex)
                         {
                             //Log.Write(l.Debug, "ADDED! cpath: {0} contains: {1} local: {2} current: {3}", cpath, fLog.Contains(cpath), fLog.getLocal(cpath), fi.LastWriteTime.ToString());
-                            fQueue.Add(cpath, fi.FullName, TypeOfTransfer.Create);
+                            fQueue.Add(cpath, fi.FullName, fi.Length, TypeOfTransfer.Create);
                         }
                         else if (fLog.getLocal(cpath).ToString() != fi.LastWriteTime.ToString())
                         {
                             //Log.Write(l.Debug, "ADDED cpath: {0} contains: {1} local: {2} current: {3}", cpath, fLog.Contains(cpath), fLog.getLocal(cpath), fi.LastWriteTime.ToString());
-                            fQueue.Add(cpath, fi.FullName, TypeOfTransfer.Change);
+                            fQueue.Add(cpath, fi.FullName, fi.Length, TypeOfTransfer.Change);
                         }
                     }
                 }
                 else
-                    fQueue.Add(cpath, fi.FullName, TypeOfTransfer.Create);
+                    fQueue.Add(cpath, fi.FullName, fi.Length, TypeOfTransfer.Create);
             }
 
             SyncLocQueueFiles();
@@ -1892,7 +1997,8 @@ namespace FTPbox.Forms
                 string cparent = GetComPath(path, true);
                 Log.Write(l.Debug, "Syncing local folder (recursive): {0} cparent: {1}", path, cparent);
 
-                List<string> RemoteFilesList = new List<string>(FullRemoteList);
+                string cp = (path == lPath()) ? "." : cparent;
+                List<string> RemoteFilesList = new List<string>(FullRemoteListInside(cp));
 
                 bool cParentExists = (cparent.Equals("/") || cparent.Equals(@"\") || cparent.Equals("")) ? true : RemoteFilesList.Contains(cparent);
 
@@ -1943,17 +2049,17 @@ namespace FTPbox.Forms
                             if (!fLog.Contains(cpath) || !ex)
                             {
                                 //Log.Write(l.Debug, "ADDED! cpath: {0} contains: {1} local: {2} current: {3}", cpath, fLog.Contains(cpath), fLog.getLocal(cpath), fi.LastWriteTime.ToString());
-                                fQueue.Add(cpath, fi.FullName, TypeOfTransfer.Create);
+                                fQueue.Add(cpath, fi.FullName, fi.Length, TypeOfTransfer.Create);
                             }
                             else if (fLog.getLocal(cpath).ToString() != fi.LastWriteTime.ToString())
                             {
                                 //Log.Write(l.Debug, "ADDED cpath: {0} contains: {1} local: {2} current: {3}", cpath, fLog.Contains(cpath), fLog.getLocal(cpath), fi.LastWriteTime.ToString());
-                                fQueue.Add(cpath, fi.FullName, TypeOfTransfer.Change);
+                                fQueue.Add(cpath, fi.FullName, fi.Length, TypeOfTransfer.Change);
                             }
                         }
                     }
                     else
-                        fQueue.Add(cpath, fi.FullName, TypeOfTransfer.Create);
+                        fQueue.Add(cpath, fi.FullName, fi.Length, TypeOfTransfer.Create);
                 }
 
                 SetTray(MessageType.AllSynced);
@@ -1964,7 +2070,7 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                Log.Write(l.Error, "Exception: {0}", ex.Message);
+                LogError(ex);
                 if (FTP())
                     CheckConnectionStatus();
                 SyncInFolder(path, true);
@@ -2162,7 +2268,7 @@ namespace FTPbox.Forms
         {
             if (ShowNots())
             {
-                tray.ShowBalloonTip(30, "FTPbox", languages.Get(lang() + "/tray/link_copied", "Link copied to clipboard"), ToolTipIcon.Info);
+                tray.ShowBalloonTip(30, "FTPbox", _(MessageType.LinkCopied), ToolTipIcon.Info);
                 link = null;
             }
         }
@@ -2182,6 +2288,55 @@ namespace FTPbox.Forms
             
             recentFiles.Add(name, link, path, f.LastWriteTime);
 
+            Load_Recent();
+        }
+
+        /// <summary>
+        /// Removes the specified item from the recent list and from the items in the tray menu
+        /// Called when the item has been deleted.
+        /// </summary>
+        /// <param name="cpath">The common path to the item that will be removed</param>
+        private void Delete_Recent(string cpath)
+        {
+            try
+            {
+                List<RecentFileItem> oldRecentList = new List<RecentFileItem>(recentFiles.RecentList);                
+                foreach (RecentFileItem f in oldRecentList)
+                {
+                    if (f.Name == "Not available") continue;
+                    Console.WriteLine("checkin to delete recent, name: {0} path: {1} link: {2}", f.Name, f.Path, f.Link);
+                    if (GetComPath(f.Path, true) == cpath)
+                    {
+                        int ind = oldRecentList.IndexOf(f);
+
+                        recentFiles.RecentList[ind].Name = "Not available";
+
+                        for (int i = oldRecentList.Count - 1; i >= 0; i--)
+                        {
+                            if (oldRecentList[i].Name == "Not available")
+                                oldRecentList.RemoveAt(i);
+                        }
+                        recentFiles = new RecentFiles();
+
+                        for (int i = 0; i < oldRecentList.Count; i++)
+                        {
+                            recentFiles.Add(oldRecentList[i].Name, oldRecentList[i].Link, oldRecentList[i].Path, oldRecentList[i].LastWriteTime);
+                        }
+
+                        break;
+                    }
+                }
+
+                Load_Recent();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+        }
+
+        private void Load_Recent()
+        {
             for (int i = 0; i < 5; i++) // recentFiles.count(); i++)
             {
                 if (trayMenu.InvokeRequired)
@@ -2189,8 +2344,7 @@ namespace FTPbox.Forms
                     trayMenu.Invoke(new MethodInvoker(delegate
                     {
                         recentFilesToolStripMenuItem.DropDownItems[i].Text = (recentFiles.getName(i) == "Not available") ? _(MessageType.NotAvailable) : recentFiles.getName(i);
-                        if (recentFilesToolStripMenuItem.DropDownItems[i].Text != _(MessageType.NotAvailable))
-                            recentFilesToolStripMenuItem.DropDownItems[i].Enabled = true;
+                        recentFilesToolStripMenuItem.DropDownItems[i].Enabled = recentFilesToolStripMenuItem.DropDownItems[i].Text != _(MessageType.NotAvailable);
 
                         if (recentFiles.Count >= i)
                             recentFilesToolStripMenuItem.DropDownItems[i].ToolTipText = recentFiles.getDate(i).ToString("dd MMM HH:mm:ss");
@@ -2199,8 +2353,7 @@ namespace FTPbox.Forms
                 else
                 {
                     recentFilesToolStripMenuItem.DropDownItems[i].Text = (recentFiles.getName(i) == "Not available") ? _(MessageType.NotAvailable) : recentFiles.getName(i);
-                    if (recentFilesToolStripMenuItem.DropDownItems[i].Text != _(MessageType.NotAvailable))
-                        recentFilesToolStripMenuItem.DropDownItems[i].Enabled = true;
+                    recentFilesToolStripMenuItem.DropDownItems[i].Enabled = recentFilesToolStripMenuItem.DropDownItems[i].Text != _(MessageType.NotAvailable);
 
                     if (recentFiles.Count >= i)
                         recentFilesToolStripMenuItem.DropDownItems[i].ToolTipText = recentFiles.getDate(i).ToString("dd MMM HH:mm:ss");
@@ -2271,10 +2424,16 @@ namespace FTPbox.Forms
                     locallang = "Polish";
                 else if (locallangtwoletter == "hr")
                     locallang = "Croatian";
+                else if (locallangtwoletter == "Slovak")
+                    locallang = "sk";
+                else if (locallangtwoletter == "Portuguese")
+                    locallang = "pt";
+                else if (locallangtwoletter == "Galego")
+                    locallang = "gl";
                 else
                     locallang = "English";
 
-                List<string> alllang = new List<string>{ "es", "de", "fr", "nl", "el", "it", "tr", "pt-BR", "fo", "sv", "sq", "ro", "ko", "ru", "ja", "no", "hu", "vi", "zh_HANS", "zh_HANT", "lt", "da", "pl", "hr" };
+                List<string> alllang = new List<string>{ "es", "de", "fr", "nl", "el", "it", "tr", "pt-BR", "fo", "sv", "sq", "ro", "ko", "ru", "ja", "no", "hu", "vi", "zh_HANS", "zh_HANT", "lt", "da", "pl", "hr", "sk", "pt", "gl" };
 
                 if (alllang.Contains(locallangtwoletter))
                 {
@@ -2436,7 +2595,7 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                Log.Write(l.Error, "[Error] -> {0} -> {1}", ex.Message);
+                LogError(ex);
             }
         }
 
@@ -2462,7 +2621,7 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                Log.Write(l.Error, "[Error] -> {0} -> {1}", ex.Message);
+                LogError(ex);
             }
         }
 
@@ -2823,12 +2982,13 @@ namespace FTPbox.Forms
         /// <summary>
         /// Starts the thread that checks the remote files.
         /// </summary>
-        public void StartRemoteSync()
+        public void StartRemoteSync(string path)
         {
             if (loggedIn)
             {
+                if (Profile.SyncingMethod == SyncMethod.Automatic) SyncToolStripMenuItem.Enabled = false;
                 rcThread = new Thread(SyncRemote);
-                rcThread.Start();
+                rcThread.Start(path);
             }
         }
 
@@ -2841,9 +3001,10 @@ namespace FTPbox.Forms
         {
             if (loggedIn && !_busy)
             {
+                if (Profile.SyncingMethod == SyncMethod.Automatic) SyncToolStripMenuItem.Enabled = false;
                 Log.Write(l.Debug, "Starting remote sync...");
                 rcThread = new Thread(SyncRemote);
-                rcThread.Start();
+                rcThread.Start(".");
             }            
         }
 
@@ -2851,10 +3012,10 @@ namespace FTPbox.Forms
         /// <summary>
         /// Sync remote files to the local folder
         /// </summary>
-        public void SyncRemote()
+        public void SyncRemote(object path)
         {
             allFilesAndFolders = new List<string>();
-
+            
             fQueue.Busy = true;
 
             //Syncing();
@@ -2868,7 +3029,7 @@ namespace FTPbox.Forms
 
             if (FTP())
             {
-                foreach (FtpItem f in ftpc.GetDirListDeep("."))
+                foreach (FtpItem f in ftpc.GetDirListDeep((string)path))
                 {
                     string cpath = GetComPath(f.FullPath, false);
                     allFilesAndFolders.Add(GetComPath(f.FullPath, false));
@@ -2881,10 +3042,10 @@ namespace FTPbox.Forms
                         string lpath = System.IO.Path.Combine(lPath(), cpath.Replace("/", @"\"));
                         Log.Write(l.Debug, "Found: {0} cpath is: {1} lpath: {2} type: {3}", f.Name, cpath, lpath, f.ItemType.ToString());
                         if (File.Exists(lpath))
-                            CheckExistingFile(cpath, f.Modified, lpath);
+                            CheckExistingFile(cpath, f.Modified, lpath, f.Size);
                         else
                         {
-                            fQueue.Add(cpath, lpath, TypeOfTransfer.Create);
+                            fQueue.Add(cpath, lpath, f.Size, TypeOfTransfer.Create);
                         }
                     }
                     else if (f.ItemType == FtpItemType.Directory)
@@ -2906,7 +3067,7 @@ namespace FTPbox.Forms
             }
             else
             {
-                foreach (SftpFile f in sftpc.ListDirectory("."))
+                foreach (SftpFile f in sftpc.ListDirectory((string)path))
                 {
                     allFilesAndFolders.Add(GetComPath(f.FullName, false));
                     string cpath = GetComPath(f.FullName, false);
@@ -2937,10 +3098,10 @@ namespace FTPbox.Forms
                         string lpath = System.IO.Path.Combine(lPath(), cpath.Replace("/", @"\"));
                         Log.Write(l.Debug, "Found: {0} cpath is: {1} lpath: {2} type: {3}", f.Name, cpath, lpath, (f.IsRegularFile) ? "file" : "folder");
                         if (File.Exists(lpath))
-                            CheckExistingFile(cpath, f.LastWriteTime, lpath);
+                            CheckExistingFile(cpath, f.LastWriteTime, lpath, f.Attributes.Size);
                         else
                         {
-                            fQueue.Add(cpath, lpath, TypeOfTransfer.Create);
+                            fQueue.Add(cpath, lpath, f.Attributes.Size, TypeOfTransfer.Create);
                         }
                     }
                 }                        
@@ -2950,21 +3111,26 @@ namespace FTPbox.Forms
 
             SyncRemQueueFiles();
 
-            DirectoryInfo di = new DirectoryInfo(lPath());
+            string locpath = ((string)path == ".") ? lPath() : Path.Combine(lPath(), (string)path);
+
+            DirectoryInfo di = new DirectoryInfo(locpath);
             int count = 0;
             string lastname = null;
             bool lastIsFile = false;
+
             foreach (FileInfo f in di.GetFiles("*", SearchOption.AllDirectories))
             {
                 string cpath = GetComPath(f.FullName, true);
+                if (ParentFolderHasSpace(cpath) && Profile.Protocol != FtpProtocol.SFTP) continue;
+
                 if (!allFilesAndFolders.Contains(cpath) && fLog.Contains(cpath))
                 {
                     count++;
                     lastname = f.Name;
                     lastIsFile = PathIsFile(f.FullName);
                     Log.Write(l.Info, "Deleting local file: {0}", f.FullName);
-                    File.Delete(f.FullName);
-                    RemoveFromLog(cpath);
+                    Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(f.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin); //File.Delete(f.FullName);                    
+                    RemoveFromLog(cpath);                    
                 }
             }
 
@@ -2972,6 +3138,8 @@ namespace FTPbox.Forms
             {
                 //Log.Write(l.Debug, "Found local folder: {0}", d.FullName);
                 string cpath = GetComPath(d.FullName, true);
+                if (ParentFolderHasSpace(cpath) && Profile.Protocol != FtpProtocol.SFTP) continue;
+
                 if (!allFilesAndFolders.Contains(cpath) && fLog.Folders.Contains(cpath))
                 {
                     count++;
@@ -2980,7 +3148,8 @@ namespace FTPbox.Forms
                     Log.Write(l.Info, "Deleting local folder: {0}", d.FullName);
                     try
                     {
-                        Directory.Delete(d.FullName, true);
+                        Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(d.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);  
+                        //Directory.Delete(d.FullName, true);
                         RemoveFolderFromLog(cpath);
                     }
                     catch { }
@@ -3001,6 +3170,11 @@ namespace FTPbox.Forms
                 SyncInFolder(lPath(), true);
             if (dQueue.reCheck)
                 DeleteFromQueue();
+
+            arEvent.Set();
+
+            arEvent.WaitOne();
+            Log.Write(l.Debug, "Checking menu sync done!");
 
             if (Profile.SyncingMethod == SyncMethod.Automatic)
             {
@@ -3033,10 +3207,10 @@ namespace FTPbox.Forms
                         string lpath = System.IO.Path.Combine(lPath(), cpath.Replace("/", @"\"));
                         Log.Write(l.Debug, "Found: {0} cpath is: {1} lpath: {2} type: {3}", fi.Name, cpath, lpath, fi.ItemType.ToString());
                         if (File.Exists(lpath))
-                            CheckExistingFile(cpath, fi.Modified, lpath);
+                            CheckExistingFile(cpath, fi.Modified, lpath, fi.Size);
                         else
                         {
-                            fQueue.Add(cpath, lpath, TypeOfTransfer.Create);
+                            fQueue.Add(cpath, lpath, fi.Size, TypeOfTransfer.Create);
                         }
                     }
                     else if (fi.ItemType == FtpItemType.Directory)
@@ -3105,17 +3279,18 @@ namespace FTPbox.Forms
                     {
                         Log.Write(l.Debug, "Found: {0} cpath is: {1} lpath: {2} type: {3}", f.Name, cpath, lpath, (f.IsRegularFile) ? "file" : "folder");
                         if (File.Exists(lpath))
-                            CheckExistingFile(cpath, f.LastWriteTime, lpath);
+                            CheckExistingFile(cpath, f.LastWriteTime, lpath, f.Attributes.Size);
                         else
                         {
-                            fQueue.Add(cpath, lpath, TypeOfTransfer.Create);
+                            fQueue.Add(cpath, lpath, f.Attributes.Size, TypeOfTransfer.Create);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.Write("Error in recursive list: {0}", ex.Message);
+                Log.Write(l.Debug, "Error in recursive list");
+                LogError(ex);
             }
         }
 
@@ -3125,7 +3300,7 @@ namespace FTPbox.Forms
         /// <param name="cpath">the common path to the existing files</param>
         /// <param name="rLWT">the remote LastWriteTime of the file</param>
         /// <param name="lpath">the local path to the file</param>
-        private void CheckExistingFile(string cpath, DateTime rLWT, string lpath)
+        private void CheckExistingFile(string cpath, DateTime rLWT, string lpath, long size)
         {
             FileInfo fi = new FileInfo(lpath);
             DateTime lLWT = fi.LastWriteTime;
@@ -3151,7 +3326,7 @@ namespace FTPbox.Forms
                 if (rdif.TotalSeconds > ldif.TotalSeconds)
                 {
                     //MessageBox.Show("rdif.TotalSeconds > ldif.TotalSeconds" + Environment.NewLine + string.Format("{0} - {1}", rLWT.ToString(), rDTLog.ToString()) + Environment.NewLine + string.Format("{0} - {1}", lLWT.ToString(), lDTLog.ToString()));
-                    fQueue.Add(cpath, lpath, TypeOfTransfer.Change);
+                    fQueue.Add(cpath, lpath, size, TypeOfTransfer.Change);
                 }
                 else
                 {
@@ -3161,7 +3336,7 @@ namespace FTPbox.Forms
             }
             else if (rResult > 0 && rdif.TotalSeconds > 1)
             {
-                fQueue.Add(cpath, lpath, TypeOfTransfer.Change);
+                fQueue.Add(cpath, lpath, size, TypeOfTransfer.Change);
             }
             else if (lResult > 0 && ldif.TotalSeconds > 1)
             {
@@ -3308,7 +3483,7 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                Log.Write(l.Error, "error setting tray: {0}", ex.Message);
+                LogError(ex);
             }
         }
 
@@ -3343,7 +3518,7 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                Log.Write(l.Error, "error setting tray: {0}", ex.Message);
+                LogError(ex);
             }
         }
 
@@ -3364,25 +3539,31 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                Log.Write(l.Debug, "Error with version checking: {0}", ex.Message);
+                Log.Write(l.Debug, "Error with version checking");
+                LogError(ex);
             }
         }
 
         private void browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             try
-            {
+            {         
                 string version = br.Document.Body.InnerText;
-                Log.Write(l.Debug, "Current Version: {0} Installed Version: {1}", version, Application.ProductVersion);
-
-                if (version != Application.ProductVersion)
+                if (version.Length == 7)
                 {
-                    newversion nvform = new newversion(version);
-                    nvform.Tag = this;
-                    nvform.ShowDialog();
-                    this.Show();
-                    // show dialog box for  download now, learn more and remind me next time
+                    Log.Write(l.Debug, "Current Version: {0} Installed Version: {1}", version, Application.ProductVersion);
+
+                    if (version != Application.ProductVersion)
+                    {
+                        newversion nvform = new newversion(version);
+                        nvform.Tag = this;
+                        nvform.ShowDialog();
+                        this.Show();
+                        // show dialog box for  download now, learn more and remind me next time
+                    }
                 }
+                else
+                    Log.Write(l.Error, "Server down");
             }
             catch
             {
@@ -3395,7 +3576,7 @@ namespace FTPbox.Forms
         private void SyncToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (!_busy)
-                StartRemoteSync();
+                StartRemoteSync(".");            
             else
                 Log.Write(l.Debug, "How about you wait until the current synchronization finishes?");
         }
@@ -3451,6 +3632,37 @@ namespace FTPbox.Forms
                     else
                         FullRemoteRecursiveList(GetComPath(f.FullName, false));
             }
+        }
+
+        /// <summary>
+        /// Fills FullRemList with a fully recursive list of the items (both files and folders) inside the specified path
+        /// </summary>
+        /// <param name="path">The path to list</param>
+        /// <returns></returns>
+        private List<string> FullRemoteListInside(string path)
+        {
+            FullRemList = new List<String>();
+            if (FTP())
+            {
+                foreach (FtpItem f in ftpc.GetDirListDeep(path))
+                    if (ItemGetsSynced(GetComPath(f.FullPath, false)))
+                    {
+                        FullRemList.Add(GetComPath(f.FullPath, false));
+                    }
+            }
+            else
+            {
+                foreach (SftpFile s in sftpc.ListDirectory(path))
+                {
+                    if (ItemGetsSynced(GetComPath(s.FullName, false)))
+                        if (!s.IsDirectory)
+                            FullRemList.Add(GetComPath(s.FullName, false));
+                        else
+                            FullRemoteRecursiveList(GetComPath(s.FullName, false));
+                }
+            }
+
+            return FullRemList;
         }
 
         #endregion
@@ -3536,7 +3748,8 @@ namespace FTPbox.Forms
                 catch (Exception ex)
                 {
                     chkWebInt.Checked = false;
-                    Log.Write(l.Error, "Could not download web interface with error: {0}", ex.Message);
+                    Log.Write(l.Error, "Could not download web interface");
+                    LogError(ex);
                 }
             }
             else
@@ -3583,7 +3796,7 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                Log.Write(l.Error, "Error: {0}", ex.Message);
+                LogError(ex);
                 if (!FTP())
                 {
                     //check if this is ok <-----------------------------------------
@@ -3619,7 +3832,7 @@ namespace FTPbox.Forms
                 {
                     DeleteFolderSFTP("webint");
                 }
-                catch (Exception e) { Log.Write(l.Error, "Error:: {0}", e.Message); }
+                catch (Exception e) { LogError(e); }
             }
             if (labViewInBrowser.InvokeRequired)
                 labViewInBrowser.Invoke(new MethodInvoker(delegate
@@ -3656,47 +3869,57 @@ namespace FTPbox.Forms
         }
 
         public void webintwb_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-        {            
-            string lpath = Application.StartupPath;
-            if (FTP())
+        {
+            try
             {
-                string rpath = rPath();
-                if (rpath == "/")
-                    rpath = "/webint/version.ini";
-                else
-                    rpath = noSlashes(rpath) + "/webint/version.ini";
-                lpath = noSlashes(lpath) + @"\version.ini";
-                Log.Write(l.Debug, "rpath {0} lpath {1}", rpath, lpath);
-                ftpc.GetFile(rpath, lpath, FileAction.Create);
-                Log.Write(l.Debug, "7");
-            }
-            else
-            {
-                using (FileStream f = new FileStream(lpath, FileMode.Create, FileAccess.ReadWrite))
-                    sftpc.DownloadFile("webint/version.ini", f);
-
-                lpath = noSlashes(lpath) + @"\version.ini";
-            }
-
-            string inipath = lpath;
-            IniFile ini = new IniFile(inipath);
-            string currentversion = ini.ReadValue("Version", "latest");
-            Log.Write(l.Info, "currentversion is: {0} when newest is: {1}", currentversion, webintwb.Document.Body.InnerText);
-
-            if (currentversion != webintwb.Document.Body.InnerText)
-            {
-                string msg = "A new version of the web interface is available, do you want to upgrade to it?";
-                if (MessageBox.Show(msg, "FTPbox - WebUI Update", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
+                string lpath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox");      // Application.StartupPath;
+                if (FTP())
                 {
-                    wiuThread.Start();
+                    string rpath = rPath();
+                    if (rpath == "/")
+                        rpath = "/webint/version.ini";
+                    else
+                        rpath = noSlashes(rpath) + "/webint/version.ini";
+
+                    if (rpath.StartsWith("/"))
+                        rpath = rpath.Substring(1);
+
+                    lpath = noSlashes(lpath) + @"\version.ini";
+                    Log.Write(l.Debug, "rpath {0} lpath {1}", rpath, lpath);
+                    ftpc.GetFile(rpath, lpath, FileAction.Create);
                 }
+                else
+                {
+                    using (FileStream f = new FileStream(lpath, FileMode.Create, FileAccess.ReadWrite))
+                        sftpc.DownloadFile("webint/version.ini", f);
+
+                    lpath = noSlashes(lpath) + @"\version.ini";
+                }
+
+                string inipath = lpath;
+                IniFile ini = new IniFile(inipath);
+                string currentversion = ini.ReadValue("Version", "latest");
+                Log.Write(l.Info, "currentversion is: {0} when newest is: {1}", currentversion, webintwb.Document.Body.InnerText);
+
+                if (currentversion != webintwb.Document.Body.InnerText)
+                {
+                    string msg = "A new version of the web interface is available, do you want to upgrade to it?";
+                    if (MessageBox.Show(msg, "FTPbox - WebUI Update", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        wiuThread.Start();
+                    }
+                }
+                else
+                {
+                    SetTray(MessageType.AllSynced);
+                    //ListAllFiles();
+                }
+                File.Delete(inipath);
             }
-            else
+            catch (Exception ex)
             {
-                SetTray(MessageType.AllSynced);
-                //ListAllFiles();
+                LogError(ex);
             }
-            File.Delete(inipath);
         }
 
         private void UpdateWebIntThreadStart()
@@ -3963,13 +4186,13 @@ namespace FTPbox.Forms
         {
             string runKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
 
-            Microsoft.Win32.RegistryKey startupKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(runKey);
+            RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(runKey);
 
             if (enable)
             {
                 if (startupKey.GetValue("FTPbox") == null)
                 {
-                    startupKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(runKey, true);
+                    startupKey = Registry.LocalMachine.OpenSubKey(runKey, true);
                     startupKey.SetValue("FTPbox", Application.ExecutablePath.ToString());
                     startupKey.Close();
                 }
@@ -3977,7 +4200,7 @@ namespace FTPbox.Forms
             else
             {
                 // remove startup
-                startupKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(runKey, true);
+                startupKey = Registry.LocalMachine.OpenSubKey(runKey, true);
                 startupKey.DeleteValue("FTPbox", false);
                 startupKey.Close();
             }
@@ -3991,7 +4214,7 @@ namespace FTPbox.Forms
         {
             string runKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
 
-            Microsoft.Win32.RegistryKey startupKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(runKey);
+            Microsoft.Win32.RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(runKey);
 
             if (startupKey.GetValue("FTPbox") == null)
             {
@@ -4042,7 +4265,7 @@ namespace FTPbox.Forms
 
         private void cManually_CheckedChanged(object sender, EventArgs e)
         {
-            SyncToolStripMenuItem.Enabled = cManually.Checked;
+            SyncToolStripMenuItem.Enabled = cManually.Checked || !rcThread.IsAlive;
             Profile.SyncingMethod = (cManually.Checked) ? SyncMethod.Manual : SyncMethod.Automatic;            
             AppSettings.Put("Settings/SyncMethod", Profile.SyncingMethod.ToString());
 
@@ -4066,7 +4289,7 @@ namespace FTPbox.Forms
 
         private void cAuto_CheckedChanged(object sender, EventArgs e)
         {
-            SyncToolStripMenuItem.Enabled = !cAuto.Checked;
+            SyncToolStripMenuItem.Enabled = !cAuto.Checked || !rcThread.IsAlive;
             Profile.SyncingMethod = (!cAuto.Checked) ? SyncMethod.Manual : SyncMethod.Automatic;
             AppSettings.Put("Settings/SyncMethod", Profile.SyncingMethod.ToString());
 
@@ -4101,6 +4324,7 @@ namespace FTPbox.Forms
         /// </summary>
         public void KillTheProcess()
         {
+            RemoveFTPboxMenu();
             ExitedFromTray = true;
             Log.Write(l.Info, "Killing the process...");
 
@@ -4190,6 +4414,490 @@ namespace FTPbox.Forms
             if (name != null)
                 Log.Write(l.Debug, "File {0} is locked: False", name);
             return false;
+        }
+
+        #region context menus
+
+        private void AddContextMenu()
+        {
+            string reg_path = "Software\\Classes\\*\\Shell\\FTPbox";
+            RegistryKey key = Registry.CurrentUser;
+            key.CreateSubKey(reg_path);
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            string icon_path = string.Format("\"{0}\"", Path.Combine(Application.StartupPath, "ftpboxnew.ico"));
+            string applies_to = getAppliesTo(false);
+            string command;
+
+            //RegistryKey sub_key = key.OpenSubKey("MUIVerb", RegistryKeyPermissionCheck.ReadWriteSubTree);  
+
+            //Add the parent menu
+            key.SetValue("MUIVerb", "FTPbox");
+            key.SetValue("Icon", icon_path);
+            key.SetValue("SubCommands", "");
+
+            //The 'Copy link' child item
+            reg_path = "Software\\Classes\\*\\Shell\\FTPbox\\Shell\\Copy";
+            Registry.CurrentUser.CreateSubKey(reg_path);
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            key.SetValue("MUIVerb", "Copy HTTP link");
+            key.SetValue("AppliesTo", applies_to);
+            key.CreateSubKey("Command");
+            reg_path += "\\Command";
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            command = string.Format("\"{0}\" \"%1\" \"{1}\"", Application.ExecutablePath, "copy");
+            key.SetValue("", command);
+
+            //the 'Open in browser' child item
+            reg_path = "Software\\Classes\\*\\Shell\\FTPbox\\Shell\\Open";
+            Registry.CurrentUser.CreateSubKey(reg_path);
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            key.SetValue("MUIVerb", "Open file in browser");
+            key.SetValue("AppliesTo", applies_to);
+            key.CreateSubKey("Command");
+            reg_path += "\\Command";
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            command = string.Format("\"{0}\" \"%1\" \"{1}\"", Application.ExecutablePath, "open");
+            key.SetValue("", command);
+
+            //the 'Synchronize this file' child item
+            reg_path = "Software\\Classes\\*\\Shell\\FTPbox\\Shell\\Sync";
+            Registry.CurrentUser.CreateSubKey(reg_path);
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            key.SetValue("MUIVerb", "Synchronize this file");
+            key.SetValue("AppliesTo", applies_to);
+            key.CreateSubKey("Command");
+            reg_path += "\\Command";
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            command = string.Format("\"{0}\" \"%1\" \"{1}\"", Application.ExecutablePath, "sync");
+            key.SetValue("", command);
+
+            //the 'Move to FTPbox folder' child item
+            reg_path = "Software\\Classes\\*\\Shell\\FTPbox\\Shell\\Move";
+            Registry.CurrentUser.CreateSubKey(reg_path);
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            key.SetValue("MUIVerb", "Move to FTPbox folder");
+            key.SetValue("AppliesTo", getAppliesTo(true));
+            key.CreateSubKey("Command");
+            reg_path += "\\Command";
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            command = string.Format("\"{0}\" \"%1\" \"{1}\"", Application.ExecutablePath, "move");
+            key.SetValue("", command);
+
+            #region same keys for the Folder menus
+            reg_path = "Software\\Classes\\Directory\\Shell\\FTPbox";
+            key = Registry.CurrentUser;
+            key.CreateSubKey(reg_path);
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+
+            //Add the parent menu
+            key.SetValue("MUIVerb", "FTPbox");
+            key.SetValue("Icon", icon_path);
+            key.SetValue("SubCommands", "");
+
+            //The 'Copy link' child item
+            reg_path = "Software\\Classes\\Directory\\Shell\\FTPbox\\Shell\\Copy";
+            Registry.CurrentUser.CreateSubKey(reg_path);
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            key.SetValue("MUIVerb", "Copy HTTP link");
+            key.SetValue("AppliesTo", applies_to);
+            key.CreateSubKey("Command");
+            reg_path += "\\Command";
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            command = string.Format("\"{0}\" \"%1\" \"{1}\"", Application.ExecutablePath, "copy");
+            key.SetValue("", command);
+
+            //the 'Open in browser' child item
+            reg_path = "Software\\Classes\\Directory\\Shell\\FTPbox\\Shell\\Open";
+            Registry.CurrentUser.CreateSubKey(reg_path);
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            key.SetValue("MUIVerb", "Open folder in browser");
+            key.SetValue("AppliesTo", applies_to);
+            key.CreateSubKey("Command");
+            reg_path += "\\Command";
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            command = string.Format("\"{0}\" \"%1\" \"{1}\"", Application.ExecutablePath, "open");
+            key.SetValue("", command);
+
+            //the 'Synchronize this folder' child item
+            reg_path = "Software\\Classes\\Directory\\Shell\\FTPbox\\Shell\\Sync";
+            Registry.CurrentUser.CreateSubKey(reg_path);
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            key.SetValue("MUIVerb", "Synchronize this folder");
+            key.SetValue("AppliesTo", applies_to);
+            key.CreateSubKey("Command");
+            reg_path += "\\Command";
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            command = string.Format("\"{0}\" \"%1\" \"{1}\"", Application.ExecutablePath, "sync");
+            key.SetValue("", command);
+
+            //the 'Move to FTPbox folder' child item
+            reg_path = "Software\\Classes\\Directory\\Shell\\FTPbox\\Shell\\Move";
+            Registry.CurrentUser.CreateSubKey(reg_path);
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            key.SetValue("MUIVerb", "Move to FTPbox folder");
+            key.SetValue("AppliesTo", "NOT " + applies_to);
+            key.CreateSubKey("Command");
+            reg_path += "\\Command";
+            key = Registry.CurrentUser.OpenSubKey(reg_path, true);
+            command = string.Format("\"{0}\" \"%1\" \"{1}\"", Application.ExecutablePath, "move");
+            key.SetValue("", command);
+
+            #endregion
+
+            key.Close();
+        }
+
+        private void RemoveFTPboxMenu()
+        {            
+            RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Classes\\*\\Shell\\", true);            
+            key.DeleteSubKeyTree("FTPbox", false);
+            key.Close();
+
+            key = Registry.CurrentUser.OpenSubKey("Software\\Classes\\Directory\\Shell\\", true);
+            key.DeleteSubKeyTree("FTPbox", false);
+            key.Close();
+        }
+
+        /// <summary>
+        /// Gets the value of the AppliesTo String Value that will be put to registry and determine on which files' right-click menus each FTPbox menu item will show.
+        /// If the local path is inside a library folder, it has to check for another path (short_path), because System.ItemFolderPathDisplay will, for example, return 
+        /// Documents\FTPbox instead of C:\Users\Username\Documents\FTPbox
+        /// </summary>
+        /// <param name="isForMoveItem">If the AppliesTo value is for the Move-to-FTPbox item, it adds 'NOT' to make sure it shows anywhere but in the local syncing folder.</param>
+        /// <returns></returns>
+        private string getAppliesTo(bool isForMoveItem)
+        {
+            string path = lPath();
+            string applies_to = (isForMoveItem) ? string.Format("NOT System.ItemFolderPathDisplay:~< \"{0}\"", path) : string.Format("System.ItemFolderPathDisplay:~< \"{0}\"", path);
+            string short_path = null;
+            Environment.SpecialFolder[] Libraries = new[] { Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.MyMusic, Environment.SpecialFolder.MyPictures, Environment.SpecialFolder.MyVideos };
+            string userpath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\";
+
+            foreach (Environment.SpecialFolder s in Libraries)
+            {
+                if (path.StartsWith(Environment.GetFolderPath(s)))
+                    short_path = path.Substring(userpath.Length);
+            }
+
+            if (short_path == null) return applies_to;
+
+            applies_to += (isForMoveItem) ? string.Format(" AND NOT System.ItemFolderPathDisplay: \"*{0}*\"", short_path) : string.Format(" OR System.ItemFolderPathDisplay: \"*{0}*\"", short_path);
+
+            return applies_to;
+        }
+
+        private void RunServer()
+        {
+            Thread _tServer = new Thread(RunServerThread);
+            _tServer.SetApartmentState(ApartmentState.STA);
+            _tServer.Start();            
+        }
+
+        private void RunServerThread()
+        {
+            int i = 1;
+            Thread server;
+            Log.Write(l.Client, "Started the named-pipe server, waiting for clients (if any)");
+
+            server = new Thread(ServerThread);
+            server.SetApartmentState(ApartmentState.STA);
+            server.Start();
+
+            Thread.Sleep(250);
+
+            while (i > 0)
+            {
+                if (server != null)
+                {
+                    if (server.Join(250))
+                    {
+                        Log.Write(l.Client, "named-pipe server thread finished");
+                        server = null;
+                        i--;
+                    }
+                }
+            }
+            Log.Write(l.Client, "named-pipe server thread exiting...");
+
+            RunServer();
+        }
+
+        public void ServerThread()
+        {
+            NamedPipeServerStream pipeServer = new NamedPipeServerStream("FTPbox Server", PipeDirection.InOut, 5);
+            int threadID = Thread.CurrentThread.ManagedThreadId;
+
+            pipeServer.WaitForConnection();
+            
+            Log.Write(l.Client, "Client connected, id: {0}", threadID);
+
+            try
+            {
+                StreamString ss = new StreamString(pipeServer);
+
+                ss.WriteString("ftpbox");
+                string args = ss.ReadString();
+
+                ReadMessageSent fReader = new ReadMessageSent(ss, "All done!");
+
+                Log.Write(l.Client, "Reading file: \n {0} \non thread [{1}] as user {2}.", args, threadID, pipeServer.GetImpersonationUserName());
+
+                List<string> li = new List<string>();
+                li = ReadCombinedParameters(args);
+
+                CheckClientArgs(li.ToArray());
+
+                pipeServer.RunAsClient(fReader.Start);
+            }
+            catch (IOException e)
+            {
+                LogError(e);
+            }
+            pipeServer.Close();
+        }
+
+        private List<string> ReadCombinedParameters(string args)
+        {
+            List<string> r = new List<string>(args.Split('"'));
+            while(r.Contains(""))
+                r.Remove("");
+
+            return r;
+        }
+
+        private void CheckClientArgs(string[] args)
+        {
+            List<string> list = new List<string>(args);
+            string param = list[0];
+            list.RemoveAt(0);
+
+            switch (param)
+            {
+                case "copy":
+                    CopyArgLinks(list.ToArray());
+                    break;
+                case "sync":
+                    SyncArgItems(list.ToArray());
+                    break;
+                case "open":
+                    OpenArgItemsInBrowser(list.ToArray());
+                    break;
+                case "move":
+                    MoveArgItems(list.ToArray());
+                    break;
+            }
+        }
+
+        private DateTime dtLastContextAction = DateTime.Now;
+
+        private void CopyArgLinks(string[] args)
+        {
+            string c = null;
+            int i = 0;
+            foreach (string s in args)
+            {
+                if (!s.StartsWith(Profile.LocalPath))
+                {
+                    MessageBox.Show("You cannot use this for files that are not inside the FTPbox folder.", "FTPbox - Invalid file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    continue;
+                }
+
+                i++;
+                //if (File.Exists(s))
+                c += GetHttpLink(s);
+                if (i<args.Count())
+                    c += Environment.NewLine;
+            }
+
+            if (c == null) return;
+
+            try
+            {
+                if ((DateTime.Now - dtLastContextAction).TotalSeconds < 2)
+                    Clipboard.SetText(Clipboard.GetText() + Environment.NewLine + c);
+                else                    
+                    Clipboard.SetText(c);
+                //LinkCopied();
+            }
+            catch (Exception e)
+            {
+                LogError(e);
+            }
+            dtLastContextAction = DateTime.Now;
+        }
+
+        AutoResetEvent arEvent = new AutoResetEvent(false);
+        private void SyncArgItems(string[] args)
+        {
+            int valid_items = 0;
+            foreach (string s in args)
+            {
+                string cpath = GetComPath(s, true);
+
+                if (!s.StartsWith(Profile.LocalPath))
+                {
+                    MessageBox.Show("You cannot use this for files that are not inside the FTPbox folder.", "FTPbox - Invalid file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    continue;
+                }
+
+                if (PathIsFile(s) && File.Exists(s))
+                {
+                    //FileInfo fli = new FileInfo(s);
+                    FileQueueItem fi = new FileQueueItem(cpath, s, _size(cpath), TypeOfTransfer.Change);
+                    fQueue.MenuFiles.Add(fi);
+                    valid_items++;
+                }
+                else if (!PathIsFile(s) && Directory.Exists(s))
+                {
+                    fQueue.MenuFolders.Add(s);
+                    valid_items++;
+                }
+            }
+
+            if (valid_items == 0) return;
+
+            if (fQueue.Busy)
+            {
+                arEvent.WaitOne();
+            }
+
+            SetTray(MessageType.Syncing);
+            fQueue.Busy = true;
+            foreach (FileQueueItem fqi in fQueue.MenuFiles)
+            {
+                DateTime rDT = GetLWTof(fqi.CommonPath);
+                CheckExistingFile(fqi.CommonPath, rDT, fqi.LocalPath, fqi.Size);
+
+                SyncRemQueueFiles();
+            }
+            foreach (string dqi in fQueue.MenuFolders)
+                StartRemoteSync(GetComPath(dqi, true));
+            /*
+                foreach (string fi in Directory.GetFiles(dqi, "*", SearchOption.AllDirectories))
+                {
+                    string cpath = GetComPath(fi, true);
+                    DateTime rDT = GetLWTof(cpath);
+                    FileInfo iFile = new FileInfo(fi);
+                    CheckExistingFile(cpath, rDT, fi, iFile.Length);
+                }*/
+
+            SetTray(MessageType.AllSynced);
+            
+
+            arEvent.Set();
+        }
+
+        private void OpenArgItemsInBrowser(string[] args)
+        {
+            foreach (string s in args)
+            {
+                if (!s.StartsWith(Profile.LocalPath))
+                {
+                    MessageBox.Show("You cannot use this for files that are not inside the FTPbox folder.", "FTPbox - Invalid file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    continue;
+                }
+
+                string link = GetHttpLink(s);
+                try
+                {
+                    Process.Start(link);
+                }
+                catch (Exception e)
+                {
+                    LogError(e);
+                }
+            }
+            
+            dtLastContextAction = DateTime.Now;
+        }
+
+        private void MoveArgItems(string[] args)
+        {
+            foreach (string s in args)
+            {
+                if (!s.StartsWith(Profile.LocalPath))
+                {
+                    if (File.Exists(s))
+                    {
+                        FileInfo fi = new FileInfo(s);
+                        File.Copy(s, Path.Combine(Profile.LocalPath, fi.Name));
+                    }
+                    else if (Directory.Exists(s))
+                    {
+                        foreach (string dir in Directory.GetDirectories(s, "*", SearchOption.AllDirectories))
+                        {
+                            string name = dir.Substring(s.Length);
+                            Directory.CreateDirectory(Path.Combine(Profile.LocalPath, name));
+                        }
+                        foreach (string file in Directory.GetFiles(s, "*", SearchOption.AllDirectories))
+                        {
+                            string name = file.Substring(s.Length);
+                            File.Copy(file, Path.Combine(Profile.LocalPath, name));
+                        }
+                    }
+                }
+            }
+        }
+
+        private string GetHttpLink(string file)
+        {
+            string cpath = GetComPath(file, true);
+
+            string newlink = noSlashes(Profile.HttpPath) + @"/";
+
+            if (!noSlashes(newlink).StartsWith("http://") && !noSlashes(newlink).StartsWith("https://"))
+            {
+                newlink = @"http://" + newlink;
+            }
+
+            if (newlink.EndsWith("/"))
+                newlink = newlink.Substring(0, newlink.Length - 1);
+
+            if (cpath.StartsWith("/"))
+                cpath = cpath.Substring(1);
+
+            newlink = string.Format("{0}/{1}", newlink, cpath);
+            newlink = newlink.Replace(@" ", @"%20");
+
+            Log.Write(l.Debug, "_HTTP Link is: " + newlink);
+
+            return newlink;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// displays details of the thrown exception in the console
+        /// </summary>
+        /// <param name="error"></param>
+        public void LogError(Exception error)
+        {
+            Log.Write(l.Error, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            Log.Write(l.Error, "Message: {0}", error.Message);
+            Log.Write(l.Error, "--");
+            Log.Write(l.Error, "StackTrace: {0}", error.StackTrace);
+            Log.Write(l.Error, "--");
+            Log.Write(l.Error, "Source: {0}", error.Source);
+            Log.Write(l.Error, "--");
+            foreach (KeyValuePair<string, string> s in error.Data)
+                Log.Write(l.Error, "key: {0} value: {1}", s.Key, s.Value);
+            Log.Write(l.Error, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");            
+        }
+
+        /// <summary>
+        /// Checks if a file's parent folder contains spaces. If yes, the specified file should not be deleted locally. 
+        /// This is temprorary, until a fix for spaces is released.
+        /// </summary>
+        /// <param name="cpath">common path to file.</param>
+        /// <returns></returns>
+        private bool ParentFolderHasSpace(string cpath)
+        {
+            if (cpath.Length <= _name(cpath).Length)
+                return false;
+
+            cpath = cpath.Substring(0, cpath.Length - _name(cpath).Length);
+
+            return cpath.Contains(" ");
         }
     }
 }

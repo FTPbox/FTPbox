@@ -20,12 +20,14 @@ namespace FTPboxLib
 		private string cPath;
 		private string lPath;
 		private TypeOfTransfer tType;
+        private long size;
 		
-		public FileQueueItem (string cpath, string lpath, TypeOfTransfer type)
+		public FileQueueItem (string cpath, string lpath, long _size, TypeOfTransfer type)
 		{
 			cPath = cpath;
 			lPath = lpath;
-			tType = type;			
+            size = _size; 
+            tType = type;            
 		}
 		
 		public string CommonPath
@@ -45,6 +47,12 @@ namespace FTPboxLib
 			get {return tType; }
 			set {tType = value; }
 		}
+
+        public long Size
+        {
+            get { return size; }
+            set { size = value; }
+        }
 	}
 }
 

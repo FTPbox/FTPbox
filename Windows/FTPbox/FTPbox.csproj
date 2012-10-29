@@ -36,7 +36,9 @@
   <PropertyGroup>
     <ApplicationIcon>ftpboxnew.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Renci.SshNet">
       <HintPath>.\Renci.SshNet.dll</HintPath>
     </Reference>

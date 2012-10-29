@@ -36,6 +36,7 @@ namespace FTPboxLib
 		
 		public void Connect()
 		{
+            Console.WriteLine("Connecting client...");
 			if (FTP)
 			{	
 				ftpc = new FtpClient(Profile.Host, Profile.Port);
@@ -44,25 +45,64 @@ namespace FTPboxLib
 					case 0:
 						goto default;
 					case FtpsMethod.Explicit:
-						ftpc.SecurityProtocol = FtpSecurityProtocol.Tls1OrSsl3Explicit;
-						ftpc.ValidateServerCertificate += new EventHandler<ValidateServerCertificateEventArgs>(ftp_ValidateServerCertificate);
+                        Profile.SecurityProtocol = FtpSecurityProtocol.Tls1OrSsl3Explicit;
 						break;	
 					case FtpsMethod.Implicit:
-						ftpc.SecurityProtocol = FtpSecurityProtocol.Tls1OrSsl3Implicit;
-						ftpc.ValidateServerCertificate += new EventHandler<ValidateServerCertificateEventArgs>(ftp_ValidateServerCertificate);
+                        Profile.SecurityProtocol = FtpSecurityProtocol.Tls1OrSsl3Implicit;						
 						break;	
 					default:
+                        Profile.SecurityProtocol = FtpSecurityProtocol.None;
 						ftpc.SecurityProtocol = FtpSecurityProtocol.None;
 						break;	
 				}
-				
-				ftpc.Open(Profile.Username, Profile.Password);							
+
+                ftpc.SecurityProtocol = Profile.SecurityProtocol;
+                if (Profile.SecurityProtocol != FtpSecurityProtocol.None)
+                    ftpc.ValidateServerCertificate += new EventHandler<ValidateServerCertificateEventArgs>(ftp_ValidateServerCertificate);
+
+                try
+                {
+                    ftpc.Open(Profile.Username, Profile.Password);                     
+                }
+                catch(Exception ex)
+                {
+                    if (Profile.FtpsInvokeMethod == FtpsMethod.None)
+                        throw ex;
+                    bool connected = false;
+
+                    foreach (FtpSecurityProtocol p in Enum.GetValues(typeof(FtpSecurityProtocol)))
+                    {
+                        if ((Profile.FtpsInvokeMethod == FtpsMethod.Explicit && p.ToString().Contains("Explicit"))
+                            || (Profile.FtpsInvokeMethod == FtpsMethod.Implicit && p.ToString().Contains("Implicit")))
+                        {                            
+                            Console.WriteLine("Testing with {0}", p.ToString());
+                            
+                            try {
+                                ftpc.Close();
+                                ftpc.SecurityProtocol = p;
+                                ftpc.Open(Profile.Username, Profile.Password);                                
+                            }
+                            catch (Exception exe){
+                                Console.WriteLine("Exe: {0}", exe.Message);
+                                continue;
+                            }
+                            connected = true;
+                            Profile.SecurityProtocol = p;
+                            break;
+                        }
+                    }
+
+                    if (!connected)
+                        throw ex;
+                }
 			}
 			else 
 			{
 				sftpc = new SftpClient(Profile.Host, Profile.Port, Profile.Username, Profile.Password);
 				sftpc.Connect();					
 			}
+
+            Console.WriteLine("Client connected sucessfully");
 		}	
 		
 		public bool isConnected

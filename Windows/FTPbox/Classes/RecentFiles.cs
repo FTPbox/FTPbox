@@ -19,7 +19,7 @@ namespace FTPbox.Classes
 {
     public class RecentFiles
     {
-        List<RecentFileItem> RecentList = new System.Collections.Generic.List<RecentFileItem>();
+        public List<RecentFileItem> RecentList = new List<RecentFileItem>();
 
         public RecentFiles()
         {
@@ -107,7 +107,7 @@ namespace FTPbox.Classes
             get
             {
                 int i = 0;
-                for (int j = 0; j <= 5; j++)
+                for (int j = 0; j < 5; j++)
                     if (RecentList[j].Name != "Not available")
                         i++;
                 return i;

@@ -24,7 +24,7 @@ namespace FTPboxLib
 		
 		private List<FileQueueItem> fiList;
 		private List<string> diList;
-		
+
 		public FileQueue ()
 		{
 			fiList = new List<FileQueueItem>();
@@ -37,11 +37,11 @@ namespace FTPboxLib
 		/// <param name='cpath'>
 		/// the common path.
 		/// </param>
-		public void Add(string cpath, string local, TypeOfTransfer type)
+		public void Add(string cpath, string local, long size, TypeOfTransfer type)
 		{
             if (!Contains(cpath))
             {
-                fiList.Add(new FileQueueItem(cpath.Replace(@"\", "/"), local, type));
+                fiList.Add(new FileQueueItem(cpath.Replace(@"\", "/"), local, size, type));
                 counter++;
                 Console.WriteLine("Added to file queue: {0}", cpath);
             }
@@ -181,6 +181,15 @@ namespace FTPboxLib
 		{
 			return diList[diList.Count - 1];
 		}
+
+        /// <summary>
+        /// Files added for sync from the right-click context menus
+        /// </summary>
+        public List<FileQueueItem> MenuFiles = new List<FileQueueItem>();
+        /// <summary>
+        /// Folders added for sync from the right-click context menus
+        /// </summary>
+        public List<string> MenuFolders = new List<string>();
 	}
 	
 	/// <summary>

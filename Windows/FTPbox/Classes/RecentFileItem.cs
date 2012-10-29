@@ -17,7 +17,7 @@ using System.Text;
 
 namespace FTPbox.Classes
 {
-    class RecentFileItem
+    public class RecentFileItem
     {
         private string _name;
         private string _link;
