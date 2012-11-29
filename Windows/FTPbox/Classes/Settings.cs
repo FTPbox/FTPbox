@@ -19,21 +19,17 @@ namespace FTPbox
     {
         #region Variables
 
-        private static XmlDocument xmlDocument;
-    #if DEBUG       //on debug mode, build the portable version. (load settings from exe's folder       
-        private static string documentPath = Application.StartupPath + "\\settings.xml";
-    #else           //on release, build the full version. (load settings from appdata)
-        private static string documentPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox\settings.xml");
-    #endif
+        private static XmlDocument xmlDocument;    
+        private static string documentPath = Profile.AppdataFolder + @"\settings.xml";
 
         #endregion
 
         public static void Load()
         {
             xmlDocument = new XmlDocument();
-
-            if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox")))
-                Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox"));
+            Log.Write(l.Debug, "Settings file path: {0}", documentPath);
+            if (!Directory.Exists(Profile.AppdataFolder))
+                Directory.CreateDirectory(Profile.AppdataFolder);
 
             try { xmlDocument.Load(documentPath); }
             catch { xmlDocument.LoadXml("<settings></settings>"); }

@@ -2689,6 +2689,7 @@ namespace FTPbox.Forms
             addremovewebintpending = false;
         }
 
+        string webui_path = null;
         public void GetWebInt()
         {
             CheckForFiles();
@@ -2697,21 +2698,19 @@ namespace FTPbox.Forms
                 tray.ShowBalloonTip(100, "FTPbox", get_webint_message("downloading"), ToolTipIcon.Info);
 
             string dllink = "http://ftpbox.org/webint.zip";
-            string path = Common.noSlashes(Profile.LocalPath);
+            webui_path = Path.Combine(Profile.AppdataFolder, "webint.zip");
             //DeleteWebInt();
             WebClient wc = new WebClient();
             wc.DownloadFileCompleted += new AsyncCompletedEventHandler(WebIntDownloaded);
-            wc.DownloadFileAsync(new Uri(dllink), Application.StartupPath + @"\webint.zip");
+            wc.DownloadFileAsync(new Uri(dllink), webui_path);
         }
 
         private void WebIntDownloaded(object sender, AsyncCompletedEventArgs e)
         {
-            Log.Write(l.Debug, "path: {0} | lpath: {1}", Application.StartupPath, Application.StartupPath + @"\WebInterface");
-
             string data = @"|\webint\layout\css|\webint\layout\images\fancybox|\webint\layout\templates|\webint\system\classes|\webint\system\config|\webint\system\js|\webint\system\logs|\webint\system\savant\Savant3\resources|";
             MakeWebIntFolders(data);
 
-            unZip(Application.StartupPath + @"\webint.zip", Application.StartupPath + @"\WebInterface");
+            unZip(webui_path, Path.Combine(Profile.AppdataFolder, @"WebInterface"));
             Log.Write(l.Info, "unzipped");
             updatewebintpending = true;
             try
@@ -2722,7 +2721,7 @@ namespace FTPbox.Forms
             {
                 Common.LogError(ex);
                 if (Profile.Protocol != FtpProtocol.FTP)
-                {
+                {   
                     //check if this is ok <-----------------------------------------
                     LoginFTP();
                     UploadWebInt();
@@ -2785,9 +2784,7 @@ namespace FTPbox.Forms
         {
             try
             {
-                string lpath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox");      // Application.StartupPath;
-                
-                lpath = Common.noSlashes(lpath) + @"\version.ini";
+                string lpath = Path.Combine(Profile.AppdataFolder, @"version.ini");
                 Log.Write(l.Debug, "lpath: {0}", lpath);
 
                 Client.Download("webint/version.ini", lpath);
@@ -2834,7 +2831,7 @@ namespace FTPbox.Forms
             {
                 try
                 {
-                    string path = Application.StartupPath + @"\WebInterface" + s;
+                    string path = Profile.AppdataFolder + @"\WebInterface" + s;
                     Directory.CreateDirectory(path);
                     Log.Write(l.Info, "making folder: {0}", path);
                 }
@@ -2889,7 +2886,7 @@ namespace FTPbox.Forms
             Log.Write(l.Info, "Gonna upload webint");
 
             Syncing();
-            string path = Application.StartupPath + @"\WebInterface";
+            string path = Profile.AppdataFolder + @"\WebInterface";
 
             foreach (string d in Directory.GetDirectories(path, "*", SearchOption.AllDirectories))
             {
@@ -2944,11 +2941,11 @@ namespace FTPbox.Forms
             if (Settings.ShowNots)
                 tray.ShowBalloonTip(50, "FTPbox", get_webint_message("updated"), ToolTipIcon.Info);
 
-            Directory.Delete(Application.StartupPath + @"\WebInterface", true);
-            File.Delete(Application.StartupPath + @"\webint.zip");
+            Directory.Delete(Profile.AppdataFolder + @"\WebInterface", true);
+            File.Delete(Profile.AppdataFolder + @"\webint.zip");
             try
             {
-                Directory.Delete(Application.StartupPath + @"\webint", true);
+                Directory.Delete(Profile.AppdataFolder + @"\webint", true);
             }
             catch { }
 
@@ -2971,7 +2968,7 @@ namespace FTPbox.Forms
         /// </summary>
         public void CheckForFiles()
         {
-            string p = Application.StartupPath;
+            string p = Profile.AppdataFolder;
             if (File.Exists(p + @"\webint.zip"))
                 File.Delete(p + @"\webint.zip");
             if (Directory.Exists(p + @"\webint"))

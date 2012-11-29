@@ -20,7 +20,7 @@ namespace FTPboxLib
 	public static class Profile
 	{
         public static string DecryptionPassword = "removed";	//removed for security purposes
-        public static string DecryptionSalt = "removed";     	//removed for security purposes
+        public static string DecryptionSalt = "removed";		//removed for security purposes
 
 		public static string Host
 		{
@@ -104,6 +104,18 @@ namespace FTPboxLib
         {
             get;
             set;
+        }
+
+        public static string AppdataFolder
+        {
+            get
+            {
+                #if DEBUG       //on debug mode, build the portable version. (load settings from exe's folder 
+                    return System.Windows.Forms.Application.StartupPath;
+                #else           //on release, build the full version. (load settings from appdata)
+                    return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox");
+                #endif
+            }
         }
 
         public static bool IsDebugMode { get; set; }
