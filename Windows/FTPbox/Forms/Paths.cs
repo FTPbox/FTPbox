@@ -27,8 +27,6 @@ namespace FTPbox.Forms
 {
     public partial class Paths : Form
     {
-        Client client;
-
         public Paths()
         {
             InitializeComponent();
@@ -45,13 +43,10 @@ namespace FTPbox.Forms
 
             Profile.AddPaths(rp, tPath.Text, tParent.Text);
 
-            ((fMain)this.Tag).SaveProfile();
-            client.Disconnect();
+            Settings.SaveProfile();
 
             ((fMain)this.Tag).gotpaths = true;
-
-            ((fMain)this.Tag).LoginFTP();
-
+            
             this.Hide();
         }
 
@@ -110,8 +105,8 @@ namespace FTPbox.Forms
                     }
                 }
             }
-            
-            foreach (ClientItem c in client.List(path))
+
+            foreach (ClientItem c in Client.List(path))
             {
                 if (c.Type == ClientItemType.Folder)
                 {
@@ -144,28 +139,8 @@ namespace FTPbox.Forms
 
         private void Paths_Load(object sender, EventArgs e)
         {
-            Set_Language(((fMain)this.Tag).lang()); 
+            Set_Language(Settings.lang); 
             
-            client = new Client();
-            if (Profile.Host == null || Profile.Password == null || Profile.Username == null)
-            {
-                Log.Write(l.Debug, "Terminating.");
-                Process p = Process.GetCurrentProcess();
-                p.Kill();
-            }
-            else
-                try
-                {
-                    client.Connect();
-                }
-                catch
-                {
-                    Log.Write(l.Debug, "Terminating...");
-
-                    Process p = Process.GetCurrentProcess();
-                    p.Kill();
-                }
-
             tPath.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\FTPbox";
 
             treeView1.Nodes.Clear();
@@ -174,7 +149,7 @@ namespace FTPbox.Forms
             first.Text = "/";
             treeView1.Nodes.Add(first);
 
-            foreach (ClientItem c in client.List("."))
+            foreach (ClientItem c in Client.List("."))
             {
                 if (c.Type == ClientItemType.Folder)
                 {
@@ -198,13 +173,13 @@ namespace FTPbox.Forms
         /// <param name="lan"></param>
         private void Set_Language(string lan)
         {
-            this.Text = ((fMain)this.Tag).languages.Get(lan + "/paths/add_dir", "Add a new directory");
-            labSelect.Text = ((fMain)this.Tag).languages.Get(lan + "/paths/select_dir", "Select directory") + ":";
-            labFullPath.Text = ((fMain)this.Tag).languages.Get(lan + "/paths/full_path", "Full path") + ":";
-            labLocal.Text = ((fMain)this.Tag).languages.Get(lan + "/paths/local_folder", "Local folder") + ":";
-            labParent.Text = ((fMain)this.Tag).languages.Get(lan + "/main_form/account_full_path", "Account's full path") + ":";
-            bBrowse.Text = ((fMain)this.Tag).languages.Get(lan + "/paths/browse", "Browse");
-            bDone.Text = ((fMain)this.Tag).languages.Get(lan + "/new_account/done", "Done");
+            this.Text = Common.Languages.Get(lan + "/paths/add_dir", "Add a new directory");
+            labSelect.Text = Common.Languages.Get(lan + "/paths/select_dir", "Select directory") + ":";
+            labFullPath.Text = Common.Languages.Get(lan + "/paths/full_path", "Full path") + ":";
+            labLocal.Text = Common.Languages.Get(lan + "/paths/local_folder", "Local folder") + ":";
+            labParent.Text = Common.Languages.Get(lan + "/main_form/account_full_path", "Account's full path") + ":";
+            bBrowse.Text = Common.Languages.Get(lan + "/paths/browse", "Browse");
+            bDone.Text = Common.Languages.Get(lan + "/new_account/done", "Done");
         }
 
         /// <summary>

@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Windows.Forms;
+using FTPbox;
 
-namespace FTPbox.Classes
+namespace FTPboxLib
 {
     public class Translations
     {

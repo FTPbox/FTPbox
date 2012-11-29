@@ -3163,15 +3163,15 @@
     <main_form>
       <options>Opções</options>
       <general>Geral</general>
-      <host>Host</host>
+      <host>Servidor</host>
       <port>Porta</port>
-      <username>Nome de utilizador</username>
-      <password>Senha</password>
+      <username>Utilizador</username>
+      <password>Password</password>
       <mode>Protocolo</mode>
       <change>Modificar</change>
       <account>Conta</account>
       <application>Aplicação</application>
-      <start_on_startup>Ligar programa ao iniciar o sistema</start_on_startup>
+      <start_on_startup>Iniciar no arranque</start_on_startup>
       <show_nots>Mostrar notificações</show_nots>
       <details>Detalhes</details>
       <links>Endereços</links>
@@ -3182,7 +3182,7 @@
       <open_in_browser>Abrir endereço no browser predefinido</open_in_browser>
       <copy>Copiar endereço para o clipboard</copy>
       <about>Sobre</about>
-      <current_version>Versão currente</current_version>
+      <current_version>Versão actual</current_version>
       <team>A equipa</team>
       <website>Website oficial</website>
       <contact>Contacto</contact>
@@ -3196,6 +3196,19 @@
       <request_feature>Peça uma funcionalidade</request_feature>
       <donate>Faça uma doação</donate>
       <language>Idioma</language>
+      <open_local>Abrir ficheiro local</open_local>
+      <bandwidth>Largura de Banda</bandwidth>
+      <sync_freq>Frequência</sync_freq>
+      <sync_when>Sincronizar ficheiros remotos</sync_when>
+      <manually>manualmente</manually>
+      <auto>automaticamente cada</auto>
+      <seconds>segundos</seconds>
+      <speed_limits>Limites de velocidade</speed_limits>
+      <limit_download>Limite de velocidade de transferência</limit_download>
+      <limit_upload>Limite de velocidade de envio</limit_upload>
+      <no_limits>(indique 0 para não haver limite)</no_limits>
+      <selective>Sincronização selectiva</selective>
+      <selective_info>Desmarcar itens que não se deseja sincronizar</selective_info>
     </main_form>
     <new_account>
       <new_ftp>Nova conta FTP</new_ftp>
@@ -3217,7 +3230,7 @@
       <update_available>Actualização disponível</update_available>
       <new_v_available>Nova versão do FTPbox está disponível</new_v_available>
       <new_version>Nova versão</new_version>
-      <current_version>Versão currente</current_version>
+      <current_version>Versão actual</current_version>
       <wanna_download>Deseja realemente fazer a transferência da nova versão agora?</wanna_download>
       <download>Transferência</download>
       <learn_more>Leia mais</learn_more>
@@ -3230,13 +3243,280 @@
       <renamed>O nome do ficheiro {0} foi mudado para {1}</renamed>
       <deleted>Ficheiro {0} foi eliminado</deleted>
       <changed>Ficheiro {0} foi modificado</changed>
+      <FilesOrFoldersUpdated>{0} {1} foram actualizados</FilesOrFoldersUpdated>
+      <FilesOrFoldersCreated>{0} {1} foram criados</FilesOrFoldersCreated>
+      <FilesAndFoldersChanged>{0} {1} e {2} {3} foram actualizados</FilesAndFoldersChanged>
+      <ItemsDeleted>Foram apagados {0} itens.</ItemsDeleted>
+      <file>Ficheiro</file>
+      <files>Ficheiros</files>
       <folder>Pasta</folder>
+      <folders>Pastas</folders>
+      <connecting>A ligar...</connecting>
+      <reconnecting>A re-ligar...</reconnecting>
+      <listing>A listar...</listing>
+      <uploading>A enviar {0}</uploading>
+      <downloading>A transferir {0}</downloading>
+      <ready>Pronto</ready>
       <synced>FTPbox - Todos os ficheiros foram sincronizados</synced>
       <syncing>FTPbox - A sincronizar</syncing>
       <offline>FTPbox - Desligado</offline>
       <link_copied>Endereço copiado para o clipboard</link_copied>
+      <recent_files>Ficheiros Recentes</recent_files>
+      <not_available>Não Disponível</not_available>
+      <start_syncing>Iniciar Sincronização</start_syncing>
+      <exit>Sair</exit>
     </tray>
     <web_interface>
+      <web_int>Interface Web</web_int>
+      <downloading>A Interface Web será transferida</downloading>
+      <in_a_minute>Deve demorar cerca de um minuto.</in_a_minute>
+      <removing>A remover a Interface Web</removing>
+      <removed>Interface Web foi removida</removed>
+      <updating>A actualizar a interface web...</updating>
+      <updated>Interface web foi actualizada</updated>
+      <setup>Clique aqui para ver e configurar!</setup>
+      <use_webint>Usar a interface web</use_webint>
+      <view>(Ver no navegador)</view>
     </web_interface>
   </pt>
+  <th>
+    <main_form>
+      <options>ตัวเลือก</options>
+      <general>ทั่วไป</general>
+      <host>โฮสต์</host>
+      <port>พอร์ท</port>
+      <username>ชื่อผู้ใช้งาน</username>
+      <password>รหัสผ่าน</password>
+      <mode>โปรโตคอล</mode>
+      <change>เปลี่ยน</change>
+      <account>บัญชี</account>
+      <application>แอพพลิเคชั่น</application>
+      <start_on_startup>เริ่มทำงานพร้อมกับระบบ</start_on_startup>
+      <show_nots>แสดง การเตือน</show_nots>
+      <details>รายละเอียด</details>
+      <links>ลิงค์</links>
+      <remote_path>ที่ตั้งระยะไกล</remote_path>
+      <local_path>ที่บนเครื่อง</local_path>
+      <account_full_path>บัญ</account_full_path>
+      <when_not_clicked>เมื่อมีการ คลิก ที่กล่องแจ้งเตือน หรือ รายการไฟล์</when_not_clicked>
+      <open_in_browser>เปิด ลิงค์  ในโปรแกรมเว็บเบราเซอร์ เริ่มต้น</open_in_browser>
+      <copy>คัดลอก ลิงค์ ไปยัง คลิปบอร์ด</copy>
+      <about>เกี่ยวกับ</about>
+      <current_version>รุ่น ปัจจุบัน</current_version>
+      <team>ทีม</team>
+      <website>เว็บไซต์อย่างเป็นทางการ</website>
+      <contact>ติดต่อ</contact>
+      <coded_in>รหัส ภายใน</coded_in>
+      <notes>หมายเหตุ</notes>
+      <contribute>สนับสนุน</contribute>
+      <ftpbox_is_free>FTPbox เป็นโอเพนซอร์ส และ ไม่แสวงผลกำไร</ftpbox_is_free>
+      <contact_me>อย่ากังวลที่จะติดต่อหาเราในเรื่องต่างๆ</contact_me>
+      <copyright>ลิขสิทธิ์</copyright>
+      <report_bug>รายงานข้อผิดพลาด</report_bug>
+      <request_feature>ร้องขอ การทำงาน</request_feature>
+      <donate>บริจาค</donate>
+      <language>ภาษา</language>
+      <open_local> เปิดไฟล์ บนเครื่อง</open_local>
+      <bandwidth>แบนด์วิดธ์</bandwidth>
+      <sync_freq>ความถี่ในการ ซิงค์ ข้อมูล</sync_freq>
+      <sync_when>ประสานไฟล์ระยะไกล</sync_when>
+      <manually>ด้วยมือ</manually>
+      <auto>เชื่อมต่ออัตโนมัติ ทุกๆ</auto>
+      <seconds>วินาที</seconds>
+      <speed_limits>จำกัดความเร็ว</speed_limits>
+      <limit_download>จำกัดความเร็วในการ ดาวน์โหลด</limit_download>
+      <limit_upload>จำกัดความเร็วในการ อัพโหลด</limit_upload>
+      <no_limits>(ตั้งค่าเป็น 0 ในกรณี ไม่จำกัด)</no_limits>
+      <selective>เลือกการ ซิงค์</selective>
+      <selective_info>ยกเลิกการเลือก ในรายการที่คุณไม่ต้องการซิงค์</selective_info>
+    </main_form>
+    <new_account>
+      <new_ftp>บัญชี FTP ใหม่</new_ftp>
+      <login_details>ข้อมูลการเข้าระบบ FTP</login_details>
+      <encryption>เข้ารหัส</encryption>
+      <add>เพิ่ม</add>
+      <done>ทำ</done>
+    </new_account>
+    <paths>
+      <new_paths>เส้นทางใหม่</new_paths>
+      <add_dir>เพิ่มไดเรกทอรีใหม่</add_dir>
+      <select_dir>เลือกไดเรกทอรี่</select_dir>
+      <full_path>ที่ตั้งแบบเต็ม</full_path>
+      <local_folder>โฟลเดอร์บนเครื่อง</local_folder>
+      <browse>เรียกดู</browse>
+    </paths>
+    <new_version>
+      <new_ver>เวอร์ชั่นใหม่</new_ver>
+      <update_available>มีการอัปเดต</update_available>
+      <new_v_available>มีเวอร์ชั่นใหม่ สำหรับ FTPbox</new_v_available>
+      <new_version>เวอร์ชั่นใหม่</new_version>
+      <current_version>เวอร์ชั่นปัจจุบัน</current_version>
+      <wanna_download>คุณต้องการ ดาวน์โหลด เวอร์ชั่น ใหม่หรือไม่</wanna_download>
+      <download>อัปเดต ทันที</download>
+      <learn_more>ศึกษาเพิ่มเติม</learn_more>
+      <remind_me_next_time>ไม่ใช่ ตอนนี้</remind_me_next_time>
+    </new_version>
+    <tray>
+      <tray_and_nots>แถบแสดงผล _และ การแจ้งเตือน</tray_and_nots>
+      <updated>{0} ได้รับการปรับปรุง</updated>
+      <created>{0} ถูกสร้างขึ้น</created>
+      <renamed>{0} ได้เปลี่ยนชื่อเป็น {1}</renamed>
+      <deleted>{0} ถูกลบ</deleted>
+      <changed>{0} เปลี่ยนแปลงแล้ว</changed>
+      <FilesOrFoldersUpdated>{0} {1} ได้รับการปรับปรุง</FilesOrFoldersUpdated>
+      <FilesOrFoldersCreated>{0} {1} ได้ถูกสร้างขึ้น</FilesOrFoldersCreated>
+      <FilesAndFoldersChanged>{0} {1} และ {2} {3} ได้รับการปรับปรุง</FilesAndFoldersChanged>
+      <ItemsDeleted>{0} รายการที่ถูกลบ</ItemsDeleted>
+      <file>ไฟล์</file>
+      <files>ไฟล์</files>
+      <folder>โฟลเดอร์</folder>
+      <folders>โฟลเดอร์</folders>
+      <connecting>FTPbox - เชื่อมต่อ ...</connecting>
+      <reconnecting>FTPbox - เชื่อมต่อใหม่ ...</reconnecting>
+      <listing>FTPbox - แสดงรายการ ...</listing>
+      <uploading>FTPbox อัพโหลด {0}</uploading>
+      <downloading>FTPbox ดาวน์โหลด {0}</downloading>
+      <ready>FTPbox - พร้อม</ready>
+      <synced>FTPbox - ซิงค์ครบทุกไฟล์แล้ว</synced>
+      <syncing>FTPbox - ทำการซิงค์</syncing>
+      <offline>FTPbox - ออฟไลน์</offline>
+      <link_copied>คัดลอก ลิงค์ ไปยังคลิปบอร์ดแล้ว</link_copied>
+      <recent_files>ไฟล์ล่าสุด</recent_files>
+      <not_available>ไม่พร้อมใช้งาน</not_available>
+      <start_syncing>เริ่มการซิงค์</start_syncing>
+      <exit>ออก</exit>
+    </tray>
+    <web_interface>
+      <web_int>ส่วนการติดต่อผ่านเว็บ</web_int>
+      <downloading>ส่วนการติดต่อผ่านเว็บจะถูกดาวน์โหลด</downloading>
+      <in_a_minute>จะใช้เวลาสักครู่</in_a_minute>
+      <removing>นำส่วนการติดต่อผ่านเว็บออก</removing>
+      <removed>นำส่วนการติดต่อผ่านเว็บออกแล้ว</removed>
+      <updating>ปรับปรุงส่วนการติดต่อผ่านเว็บ</updating>
+      <updated>ส่วนการติดต่อผ่านเว็บได้รับการปรับปรุงแล้ว</updated>
+      <setup>คลิกที่นี่ เพื่อ ดู และ ตั้งค่า!</setup>
+      <use_webint>ใช้ส่วนการติดต่อผ่านเว็บ</use_webint>
+      <view>(ดูในเบราว์เซอร์)</view>
+    </web_interface>
+  </th>
+  <sl>
+    <main_form>
+      <options>Možnosti</options>
+      <general>Splošno</general>
+      <host>Gostitelj</host>
+      <port>Vrata</port>
+      <username>Uporabniško ime</username>
+      <password>Geslo</password>
+      <mode>Protokol</mode>
+      <change>Sprememba</change>
+      <account>Račun</account>
+      <application>Program</application>
+      <start_on_startup>Zaženi ob zagonu sistema</start_on_startup>
+      <show_nots>pokaži obvestila</show_nots>
+      <details>Podrobnosti</details>
+      <links>Povezave</links>
+      <remote_path>Oddaljena pot</remote_path>
+      <local_path>Lokalna pot</local_path>
+      <account_full_path>Polna pot računa</account_full_path>
+      <when_not_clicked>ko ste kliknili obvestilo pladnja ali nedavno datoteko</when_not_clicked>
+      <open_in_browser>odpri povezavo v privzetem brskalniku</open_in_browser>
+      <copy>kopiraj povezavo na odložišče</copy>
+      <about>Vizitka</about>
+      <current_version>Trenutna različica</current_version>
+      <team>Skupina</team>
+      <website>Uradno spletno mesto</website>
+      <contact>Stik</contact>
+      <coded_in>Vprogramirano</coded_in>
+      <notes>Opombe</notes>
+      <contribute>Prispevanje</contribute>
+      <ftpbox_is_free>FTPbox je brezplačen in odprtokoden</ftpbox_is_free>
+      <contact_me>Lahko me kontaktirate</contact_me>
+      <copyright>Avtorske pravice</copyright>
+      <report_bug>Sporoči napako</report_bug>
+      <request_feature>zahtevaj funkcijo</request_feature>
+      <donate>darujte</donate>
+      <language>Jezik</language>
+      <open_local>Odpri lokalno datoteko</open_local>
+      <bandwidth>Pasovna širina</bandwidth>
+      <sync_freq>Sinhroniziraj frekvenco</sync_freq>
+      <sync_when>Sinhroniziraj oddaljene datoteke</sync_when>
+      <manually>ročno</manually>
+      <auto>samodejno vsakih</auto>
+      <seconds>sekunde</seconds>
+      <speed_limits>Omejitve hitrosti</speed_limits>
+      <limit_download>Omeji hitrost prenosa iz strežnika</limit_download>
+      <limit_upload>Omeji hitrost prenosa na strežnik</limit_upload>
+      <no_limits>( nastavi 0 za brez omejitve )</no_limits>
+      <selective>Izbrano sinhroniziranje</selective>
+      <selective_info>Počisti elemente, ki jih ne želite sinhronizirati</selective_info>
+    </main_form>
+    <new_account>
+      <new_ftp>Nov FTP račun</new_ftp>
+      <login_details>Podrobnosti FTP povezave</login_details>
+      <encryption>Šifriranje</encryption>
+      <add>dodaj</add>
+      <done>dokončano</done>
+    </new_account>
+    <paths>
+      <new_paths>Nove poti</new_paths>
+      <add_dir>Dodaj nov imenik</add_dir>
+      <select_dir>izberi imenik</select_dir>
+      <full_path>polna pot</full_path>
+      <local_folder>lokalna mapa</local_folder>
+      <browse>prebrskaj</browse>
+    </paths>
+    <new_version>
+      <new_ver>Nova različica</new_ver>
+      <update_available>Posodobitev na voljo</update_available>
+      <new_v_available>Nova različica FTPbox-a je na voljo</new_v_available>
+      <new_version>Nova različica</new_version>
+      <current_version>Trenutna različica</current_version>
+      <wanna_download>Ali želite prenesti novo različico</wanna_download>
+      <download>Posodobi zdaj</download>
+      <learn_more>Več</learn_more>
+      <remind_me_next_time>Ne tokrat</remind_me_next_time>
+    </new_version>
+    <tray>
+      <tray_and_nots>Pladenj _in obvestilo</tray_and_nots>
+      <updated>{0} je pososobljeno.</updated>
+      <created>{0} je ustvareno.</created>
+      <renamed>{0} je preimenovano v {1}</renamed>
+      <deleted>{0} je izbrisano.</deleted>
+      <changed>{0} je spremenjeno.</changed>
+      <FilesOrFoldersUpdated>{0} {1} je bilo posodobljeno</FilesOrFoldersUpdated>
+      <FilesOrFoldersCreated>{0} {1} je bilo kreirano</FilesOrFoldersCreated>
+      <FilesAndFoldersChanged>{0} {1} in {2} {3} je bilo posodobljeno</FilesAndFoldersChanged>
+      <ItemsDeleted>{0} elementov je bilo izbrisanih.</ItemsDeleted>
+      <file>Datoteka</file>
+      <files>Datoteke</files>
+      <folder>Mapa</folder>
+      <folders>Mape</folders>
+      <connecting>FTPbox - Povezovanje...</connecting>
+      <reconnecting>FTPbox - Ponovno povezovanje...</reconnecting>
+      <listing>FTPbox - Poslušanje...</listing>
+      <uploading>FTPbox prenos na {0}</uploading>
+      <downloading>FTPbox prenos na {0}</downloading>
+      <ready>FTPbox - Pripravljen</ready>
+      <synced>FTPbox - Vse datoteke sinhronizirane</synced>
+      <syncing>FTPbox - Sinhroniziranje...</syncing>
+      <offline>FTPbox - Brez povezave</offline>
+      <link_copied>Povezava kopirana v odložišče</link_copied>
+      <recent_files>Nedavne datoteke</recent_files>
+      <not_available>Ni na voljo</not_available>
+      <start_syncing>Zaženi sinhronizacijo</start_syncing>
+      <exit>Izhod</exit>
+    </tray>
+    <web_interface>
+      <web_int>Spletni vmesnik</web_int>
+      <downloading>Spletni vmesnik bo prenešen.</downloading>
+      <in_a_minute>Vzelo vam bo minuto</in_a_minute>
+      <removing>Odstranjevanje spletnega vmesnika...</removing>
+      <removed>Spletni vmesnik je bil odstranjen</removed>
+      <updating>Posodabljam spletni vmesnik...</updating>
+      <updated>Spletni vmesnik je bil posodobljen.</updated>
+      <setup>Kliki tukaj za pregled in namestitev!</setup>
+      <use_webint>Uporabi spletni vmesnik</use_webint>
+      <view>(Ogled v brskalniku)</view>
+    </web_interface>
+  </sl>
 </translations>

@@ -22,13 +22,7 @@
         "Entry"
         {
         "MsmKey" = "8:_1D4797A48190E6864DB35738D31186C6"
-        "OwnerKey" = "8:_68D30D7C78C335A69FCE7AADA48096DB"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1D4797A48190E6864DB35738D31186C6"
-        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
+        "OwnerKey" = "8:_5A445567303F219300CC0BE1D0A84A2E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -40,7 +34,13 @@
         "Entry"
         {
         "MsmKey" = "8:_1D4797A48190E6864DB35738D31186C6"
-        "OwnerKey" = "8:_5A445567303F219300CC0BE1D0A84A2E"
+        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1D4797A48190E6864DB35738D31186C6"
+        "OwnerKey" = "8:_68D30D7C78C335A69FCE7AADA48096DB"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -76,13 +76,13 @@
         "Entry"
         {
         "MsmKey" = "8:_4A67E7947641BC1FCAB6B578067DD96A"
-        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
+        "OwnerKey" = "8:_68D30D7C78C335A69FCE7AADA48096DB"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_4A67E7947641BC1FCAB6B578067DD96A"
-        "OwnerKey" = "8:_68D30D7C78C335A69FCE7AADA48096DB"
+        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -112,7 +112,7 @@
         "Entry"
         {
         "MsmKey" = "8:_64E77597858A7FC0719CB0641B3F73A7"
-        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
+        "OwnerKey" = "8:_5A445567303F219300CC0BE1D0A84A2E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -124,7 +124,7 @@
         "Entry"
         {
         "MsmKey" = "8:_64E77597858A7FC0719CB0641B3F73A7"
-        "OwnerKey" = "8:_5A445567303F219300CC0BE1D0A84A2E"
+        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -184,67 +184,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A5BDDDAF0A5C1DDE259B33C500918545"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_79E027320435F9386BD88D1BCD24C2BC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_37FF5D5BE1E546889ED3C4072994652C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_E1BB147B74539B6EC84FF0EECD225F55"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B54FBE048F1B02E0E7DE5E69A5053C59"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_39E1976FFEADC315E2233CC2952AAE8E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_68D30D7C78C335A69FCE7AADA48096DB"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_5A445567303F219300CC0BE1D0A84A2E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4A67E7947641BC1FCAB6B578067DD96A"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_64E77597858A7FC0719CB0641B3F73A7"
+        "OwnerKey" = "8:_1D4797A48190E6864DB35738D31186C6"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -256,7 +196,67 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1D4797A48190E6864DB35738D31186C6"
+        "OwnerKey" = "8:_64E77597858A7FC0719CB0641B3F73A7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_4A67E7947641BC1FCAB6B578067DD96A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_5A445567303F219300CC0BE1D0A84A2E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_68D30D7C78C335A69FCE7AADA48096DB"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_39E1976FFEADC315E2233CC2952AAE8E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B54FBE048F1B02E0E7DE5E69A5053C59"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_E1BB147B74539B6EC84FF0EECD225F55"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_37FF5D5BE1E546889ED3C4072994652C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_79E027320435F9386BD88D1BCD24C2BC"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A5BDDDAF0A5C1DDE259B33C500918545"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -371,11 +371,6 @@
             "AssemblyAsmDisplayName" = "8:glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f"
                 "ScatterAssemblies"
                 {
-                    "_1D4797A48190E6864DB35738D31186C6"
-                    {
-                    "Name" = "8:glib-sharp.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:glib-sharp.dll"
             "TargetName" = "8:"
@@ -433,11 +428,6 @@
             "AssemblyAsmDisplayName" = "8:Starksoft.Net.Proxy, Version=1.0.131.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_39E1976FFEADC315E2233CC2952AAE8E"
-                    {
-                    "Name" = "8:Starksoft.Net.Proxy.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Starksoft.Net.Proxy.dll"
             "TargetName" = "8:"
@@ -464,11 +454,6 @@
             "AssemblyAsmDisplayName" = "8:pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f"
                 "ScatterAssemblies"
                 {
-                    "_4A67E7947641BC1FCAB6B578067DD96A"
-                    {
-                    "Name" = "8:pango-sharp.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:pango-sharp.dll"
             "TargetName" = "8:"
@@ -495,11 +480,6 @@
             "AssemblyAsmDisplayName" = "8:gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f"
                 "ScatterAssemblies"
                 {
-                    "_5A445567303F219300CC0BE1D0A84A2E"
-                    {
-                    "Name" = "8:gdk-sharp.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:gdk-sharp.dll"
             "TargetName" = "8:"
@@ -546,11 +526,6 @@
             "AssemblyAsmDisplayName" = "8:Mono.Cairo, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_64E77597858A7FC0719CB0641B3F73A7"
-                    {
-                    "Name" = "8:Mono.Cairo.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Mono.Cairo.dll"
             "TargetName" = "8:"
@@ -577,11 +552,6 @@
             "AssemblyAsmDisplayName" = "8:gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f"
                 "ScatterAssemblies"
                 {
-                    "_68D30D7C78C335A69FCE7AADA48096DB"
-                    {
-                    "Name" = "8:gtk-sharp.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:gtk-sharp.dll"
             "TargetName" = "8:"
@@ -670,11 +640,6 @@
             "AssemblyAsmDisplayName" = "8:Starksoft.Net.Ftp, Version=1.0.158.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_B54FBE048F1B02E0E7DE5E69A5053C59"
-                    {
-                    "Name" = "8:Starksoft.Net.Ftp.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Starksoft.Net.Ftp.dll"
             "TargetName" = "8:"
@@ -772,11 +737,6 @@
             "AssemblyAsmDisplayName" = "8:Renci.SshNet, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_E1BB147B74539B6EC84FF0EECD225F55"
-                    {
-                    "Name" = "8:Renci.SshNet.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Renci.SshNet.dll"
             "TargetName" = "8:"
@@ -803,11 +763,6 @@
             "AssemblyAsmDisplayName" = "8:atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f"
                 "ScatterAssemblies"
                 {
-                    "_E6F3ED0C441777EA9E55A805D9282413"
-                    {
-                    "Name" = "8:atk-sharp.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:atk-sharp.dll"
             "TargetName" = "8:"
@@ -905,15 +860,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FTPbox"
-        "ProductCode" = "8:{2248A934-ECF3-4436-9E96-20251420BAA2}"
-        "PackageCode" = "8:{629C4E81-F777-4D04-B7DC-7DE70FE2FFA9}"
+        "ProductCode" = "8:{569B36D6-D3D2-432A-BE6B-34DE586C764A}"
+        "PackageCode" = "8:{BB94C790-1CFE-4BE7-8B2F-96427FFDEBD6}"
         "UpgradeCode" = "8:{C3AC21D9-1CD1-40EC-A4F8-F482D3922829}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.2.2"
+        "ProductVersion" = "8:2.2.3"
         "Manufacturer" = "8:ftpbox.org"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:ftpbox.org"
@@ -1469,7 +1424,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_32B83AA4B64F4755AA03BE7917490E75"
             {
-            "SourcePath" = "8:..\\FTPbox\\obj\\x86\\Release\\FTPbox.exe"
+            "SourcePath" = "8:..\\FTPbox\\obj\\x86\\Debug\\FTPbox.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"

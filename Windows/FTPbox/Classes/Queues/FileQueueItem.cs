@@ -53,6 +53,14 @@ namespace FTPboxLib
             get { return size; }
             set { size = value; }
         }
+
+        public string PathToFile
+        {
+            get
+            {
+                return CommonPath.Substring(0, CommonPath.Length - Common._name(CommonPath).Length - 1);
+            }
+        }
 	}
 }
 

@@ -19,8 +19,8 @@ namespace FTPboxLib
 {
 	public static class Profile
 	{
-        public static string DecryptionPassword = "removed";     //removed for security purposes
-        public static string DecryptionSalt = "removed";     //removed for security purposes
+        public static string DecryptionPassword = "removed";	//removed for security purposes
+        public static string DecryptionSalt = "removed";     	//removed for security purposes
 
 		public static string Host
 		{
@@ -105,6 +105,9 @@ namespace FTPboxLib
             get;
             set;
         }
+
+        public static bool IsDebugMode { get; set; }
+        public static bool IsNoMenusMode { get; set; }
 		
 		public static void Load()
 		{
@@ -117,6 +120,7 @@ namespace FTPboxLib
 			Username = user;
 			Password = pass;
 			Port = port;
+
 			Console.WriteLine("Added to profile: {0} {1} ***** {2}", host, user, port);
 		}
 		

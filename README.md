@@ -28,6 +28,7 @@ Development
 
 - Syncing inside folders that contain spaces
 - Crash on return from sleep mode
+- uploading/updating the web interface when permissions are inefficient.
 
 Support
 --------------

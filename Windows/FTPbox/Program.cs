@@ -36,9 +36,10 @@ namespace FTPbox
             if (args.Length > 0 && args.Contains("-console"))
                 aConsole.Allocate();
 
-            bool debug = args.Contains("-debug");
+            FTPboxLib.Profile.IsDebugMode = args.Contains("-debug");
+            FTPboxLib.Profile.IsNoMenusMode = args.Contains("-nomenus");
 
-            Log.Init("Debug.html", l.Debug | l.Info | l.Warning | l.Error | l.Client, true, debug);
+            Log.Init("Debug.html", l.Debug | l.Info | l.Warning | l.Error | l.Client, true, FTPboxLib.Profile.IsDebugMode);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

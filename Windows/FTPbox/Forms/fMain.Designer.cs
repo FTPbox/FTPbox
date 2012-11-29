@@ -57,6 +57,8 @@
             System.Windows.Forms.ListViewItem listViewItem26 = new System.Windows.Forms.ListViewItem("Portuguese (pt)", 26);
             System.Windows.Forms.ListViewItem listViewItem27 = new System.Windows.Forms.ListViewItem("Galego (gl)", 25);
             System.Windows.Forms.ListViewItem listViewItem28 = new System.Windows.Forms.ListViewItem("Slovak (sk)", 27);
+            System.Windows.Forms.ListViewItem listViewItem29 = new System.Windows.Forms.ListViewItem("Thai (th)", 28);
+            System.Windows.Forms.ListViewItem listViewItem30 = new System.Windows.Forms.ListViewItem("Slovenian (sl)", 29);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(fMain));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
@@ -634,14 +636,14 @@
             // 
             this.nSyncFrequency.AccessibleName = "synchronization interval in seconds";
             this.nSyncFrequency.Location = new System.Drawing.Point(35, 94);
-            this.nSyncFrequency.Name = "nSyncFrequency";
-            this.nSyncFrequency.Size = new System.Drawing.Size(75, 20);
-            this.nSyncFrequency.TabIndex = 2;
-            this.nSyncFrequency.Value = new decimal(new int[] {
-            10,
+            this.nSyncFrequency.Maximum = new decimal(new int[] {
+            79228,
             0,
             0,
             0});
+            this.nSyncFrequency.Name = "nSyncFrequency";
+            this.nSyncFrequency.Size = new System.Drawing.Size(75, 20);
+            this.nSyncFrequency.TabIndex = 2;
             this.nSyncFrequency.ValueChanged += new System.EventHandler(this.nSyncFrequency_ValueChanged);
             // 
             // cAuto
@@ -812,7 +814,9 @@
             listViewItem25,
             listViewItem26,
             listViewItem27,
-            listViewItem28});
+            listViewItem28,
+            listViewItem29,
+            listViewItem30});
             this.listView1.Location = new System.Drawing.Point(8, 16);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(447, 269);
@@ -854,6 +858,8 @@
             this.imageList1.Images.SetKeyName(25, "gl.png");
             this.imageList1.Images.SetKeyName(26, "pt.png");
             this.imageList1.Images.SetKeyName(27, "sk.png");
+            this.imageList1.Images.SetKeyName(28, "th.png");
+            this.imageList1.Images.SetKeyName(29, "si.png");
             // 
             // tabAbout
             // 

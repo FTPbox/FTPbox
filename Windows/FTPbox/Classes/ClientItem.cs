@@ -22,12 +22,23 @@ namespace FTPboxLib
         string _name;
         string _fpath;
         ClientItemType _type;
+        DateTime _lwt;
+        long _size;
 
         public ClientItem(string name, string path, ClientItemType type)
         {
             _name = name;
             _fpath = path;
             _type = type;
+        }
+
+        public ClientItem(string name, string path, ClientItemType type, long size, DateTime lastWriteTime)
+        {
+            _name = name;
+            _fpath = path;
+            _type = type;
+            _size = size;
+            _lwt = lastWriteTime;
         }
 
         public string Name
@@ -46,6 +57,18 @@ namespace FTPboxLib
         {
             get { return _type; }
             set { _type = value; }
+        }
+
+        public long Size
+        {
+            get { return _size; }
+            set { _size = value; }
+        }
+
+        public DateTime LastWriteTime
+        {
+            get { return _lwt; }
+            set { _lwt = value; }
         }
     }
 

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using FTPboxLib;
 
 namespace FTPbox.Forms
 {
@@ -368,7 +369,7 @@ namespace FTPbox.Forms
 
             foreach (DataGridViewRow d in data.Rows)
             {
-                d.Cells[1].Value = ((fMain)this.Tag).languages.Get(lan + (string)d.Cells[2].Value, "");
+                d.Cells[1].Value = Common.Languages.Get(lan + (string)d.Cells[2].Value, "");
             }
             LanguageSettings.Loaded = true;
         }

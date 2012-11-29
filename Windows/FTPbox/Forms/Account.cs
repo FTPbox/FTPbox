@@ -28,9 +28,6 @@ namespace FTPbox.Forms
 {
     public partial class Account : Form
     {
-        
-        Client client;
-
         static string AppPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);      
 
         public Account()
@@ -87,11 +84,8 @@ namespace FTPbox.Forms
             {
                 ((fMain)this.Tag).SetTray(fMain.MessageType.Connecting);
 
-                client = new Client();
-                client.Connect();
-                Log.Write(l.Debug, "Connected: {0}", client.isConnected);
-
-                client.Disconnect();
+                Client.Connect();
+                Log.Write(l.Debug, "Connected: {0}", Client.isConnected);
 
                 Profile.AddAccount(tHost.Text, tUsername.Text, tPass.Text, Convert.ToInt32(nPort.Value));
 
@@ -111,7 +105,7 @@ namespace FTPbox.Forms
 
                 ((fMain)this.Tag).SetTray(fMain.MessageType.Ready);
 
-                ((fMain)this.Tag).SaveProfile();
+                Settings.SaveProfile();
                 //Paths fnewdir = new Paths();
                 //fnewdir.Tag = this.Tag;
                 this.Hide();
@@ -128,18 +122,18 @@ namespace FTPbox.Forms
                     + Environment.NewLine + " Error message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 if (ftporsftp)
-                   Log.Write(l.Debug, "Connected: {0}", client.isConnected);
+                    Log.Write(l.Debug, "Connected: {0}", Client.isConnected);
             }
 
             if (ftporsftp)
-                Log.Write(l.Debug, client.WorkingDirectory); 
+                Log.Write(l.Debug, Client.WorkingDirectory); 
         }            
 
         private void Account_Load(object sender, EventArgs e)
         {
             cEncryption.SelectedIndex = 0;
             cMode.SelectedIndex = 0;
-            Set_Language(((fMain)this.Tag).lang());
+            Set_Language(Settings.lang);
         }
 
         private void cMode_SelectedIndexChanged(object sender, EventArgs e)
@@ -164,15 +158,15 @@ namespace FTPbox.Forms
         private void Set_Language(string lan)
         {
             Log.Write(l.Info, "Setting lang: {0}", lan);
-            this.Text = "FTPbox | " + ((fMain)this.Tag).languages.Get(lan + "/new_account/new_ftp", "New FTP Account");
-            gDetails.Text = ((fMain)this.Tag).languages.Get(lan + "/new_account/login_details", "FTP login details");
-            labMode.Text = ((fMain)this.Tag).languages.Get(lan + "/main_form/mode", "Protocol") + ":";
-            labEncryption.Text = ((fMain)this.Tag).languages.Get(lan + "/new_account/encryption", "Encryption") + ":";
-            labHost.Text = ((fMain)this.Tag).languages.Get(lan + "/main_form/host", "Host") + ":";
-            labPort.Text = ((fMain)this.Tag).languages.Get(lan + "/main_form/port", "Port") + ":";
-            labUN.Text = ((fMain)this.Tag).languages.Get(lan + "/main_form/username", "Username") + ":";
-            labPass.Text = ((fMain)this.Tag).languages.Get(lan + "/main_form/password", "Password") + ":";
-            bDone.Text = ((fMain)this.Tag).languages.Get(lan + "/new_account/done", "Done");
+            this.Text = "FTPbox | " + Common.Languages.Get(lan + "/new_account/new_ftp", "New FTP Account");
+            gDetails.Text = Common.Languages.Get(lan + "/new_account/login_details", "FTP login details");
+            labMode.Text = Common.Languages.Get(lan + "/main_form/mode", "Protocol") + ":";
+            labEncryption.Text = Common.Languages.Get(lan + "/new_account/encryption", "Encryption") + ":";
+            labHost.Text = Common.Languages.Get(lan + "/main_form/host", "Host") + ":";
+            labPort.Text = Common.Languages.Get(lan + "/main_form/port", "Port") + ":";
+            labUN.Text = Common.Languages.Get(lan + "/main_form/username", "Username") + ":";
+            labPass.Text = Common.Languages.Get(lan + "/main_form/password", "Password") + ":";
+            bDone.Text = Common.Languages.Get(lan + "/new_account/done", "Done");
         }
 
         private void Account_FormClosing(object sender, FormClosingEventArgs e)

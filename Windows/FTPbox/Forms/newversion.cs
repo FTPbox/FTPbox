@@ -87,14 +87,14 @@ namespace FTPbox
             string qmark = "?";
             if (lan == "el") qmark = "";
             
-            this.Text = "FTPbox | " + ((fMain)this.Tag).languages.Get(lan + "/new_version/update_available", "Update Available");
-            labInfo.Text = ((fMain)this.Tag).languages.Get(lan + "/new_version/new_v_available", "New version of FTPbox is available");
-            labCurVer.Text = ((fMain)this.Tag).languages.Get(lan + "/new_version/current_version", "Current Version") + ":";
-            labNewVer.Text = ((fMain)this.Tag).languages.Get(lan + "/new_version/new_ver", "New Version") + ":";
-            labQuest.Text = ((fMain)this.Tag).languages.Get(lan + "/new_version/wanna_download", "Do you want to download the new version now") + qmark;
-            bDownload.Text = ((fMain)this.Tag).languages.Get(lan + "/new_version/download", "Update Now");
-            bLearnMore.Text = ((fMain)this.Tag).languages.Get(lan + "/new_version/learn_more", "Learn More");
-            bClose.Text = ((fMain)this.Tag).languages.Get(lan + "/new_version/remind_me_next_time", "Not this time");                 
+            this.Text = "FTPbox | " + Common.Languages.Get(lan + "/new_version/update_available", "Update Available");
+            labInfo.Text = Common.Languages.Get(lan + "/new_version/new_v_available", "New version of FTPbox is available");
+            labCurVer.Text = Common.Languages.Get(lan + "/new_version/current_version", "Current Version") + ":";
+            labNewVer.Text = Common.Languages.Get(lan + "/new_version/new_ver", "New Version") + ":";
+            labQuest.Text = Common.Languages.Get(lan + "/new_version/wanna_download", "Do you want to download the new version now") + qmark;
+            bDownload.Text = Common.Languages.Get(lan + "/new_version/download", "Update Now");
+            bLearnMore.Text = Common.Languages.Get(lan + "/new_version/learn_more", "Learn More");
+            bClose.Text = Common.Languages.Get(lan + "/new_version/remind_me_next_time", "Not this time");                 
         }
 
         /// <summary>

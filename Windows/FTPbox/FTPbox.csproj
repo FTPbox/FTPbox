@@ -11,7 +11,8 @@
     <RootNamespace>FTPbox</RootNamespace>
     <AssemblyName>FTPbox</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -50,6 +51,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -61,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\ClientItem.cs" />
+    <Compile Include="Classes\Common.cs" />
     <Compile Include="Classes\Console\aConsole.cs" />
     <Compile Include="Classes\AESEncryption.cs" />
     <Compile Include="Classes\Client.cs" />
