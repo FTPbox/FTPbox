@@ -2534,7 +2534,6 @@ namespace FTPbox.Forms
         #endregion
 
         #region Update System
-        WebBrowser br = new WebBrowser();
         /// <summary>
         /// checks for an update
         /// called on each start-up of FTPbox.
@@ -2543,8 +2542,10 @@ namespace FTPbox.Forms
         {
             try
             {
-                br.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(browser_DocumentCompleted);
-                br.Navigate(@"http://ftpbox.org/latestversion.txt");
+                WebClient wc = new WebClient();
+                string lfile = Path.Combine(Profile.AppdataFolder, "latestversion.txt");
+                wc.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadVersionFileComplete);
+                wc.DownloadFileAsync(new Uri(@"http://ftpbox.org/latestversion.txt"), lfile);
             }
             catch (Exception ex)
             {
@@ -2553,30 +2554,24 @@ namespace FTPbox.Forms
             }
         }
 
-        private void browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        private void DownloadVersionFileComplete(object sender, AsyncCompletedEventArgs e)
         {
-            try
-            {         
-                string version = br.Document.Body.InnerText;
-                if (version.Length == 7)
-                {
-                    Log.Write(l.Debug, "Current Version: {0} Installed Version: {1}", version, Application.ProductVersion);
+            string path = Path.Combine(Profile.AppdataFolder, "latestversion.txt");
+            if (!File.Exists(path)) return;
 
-                    if (version != Application.ProductVersion)
-                    {
-                        newversion nvform = new newversion(version);
-                        nvform.Tag = this;
-                        nvform.ShowDialog();
-                        this.Show();
-                        // show dialog box for  download now, learn more and remind me next time
-                    }
-                }
-                else
-                    Log.Write(l.Error, "Server down");
-            }
-            catch
+            string version = File.ReadAllText(path);
+            if (version.Length == 7)
             {
-                Log.Write(l.Error, "Server down");
+                Log.Write(l.Debug, "Current Version: {0} Installed Version: {1}", version, Application.ProductVersion);
+
+                if (version != Application.ProductVersion)
+                {
+                    newversion nvform = new newversion(version);
+                    nvform.Tag = this;
+                    nvform.ShowDialog();
+                    this.Show();
+                    // show dialog box for  download now, learn more and remind me next time
+                }
             }
         }
 

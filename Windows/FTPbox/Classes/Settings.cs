@@ -20,7 +20,7 @@ namespace FTPbox
         #region Variables
 
         private static XmlDocument xmlDocument;    
-        private static string documentPath = Profile.AppdataFolder + @"\settings.xml";
+        private static string documentPath = Path.Combine(Profile.AppdataFolder, @"settings.xml");
 
         #endregion
 
