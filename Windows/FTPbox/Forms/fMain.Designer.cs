@@ -59,6 +59,7 @@
             System.Windows.Forms.ListViewItem listViewItem28 = new System.Windows.Forms.ListViewItem("Slovak (sk)", 27);
             System.Windows.Forms.ListViewItem listViewItem29 = new System.Windows.Forms.ListViewItem("Thai (th)", 28);
             System.Windows.Forms.ListViewItem listViewItem30 = new System.Windows.Forms.ListViewItem("Slovenian (sl)", 29);
+            System.Windows.Forms.ListViewItem listViewItem31 = new System.Windows.Forms.ListViewItem("Czech (cs)", 30);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(fMain));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
@@ -93,6 +94,22 @@
             this.labLocPath = new System.Windows.Forms.Label();
             this.labRemPath = new System.Windows.Forms.Label();
             this.bChangeBox = new System.Windows.Forms.Button();
+            this.tabFilters = new System.Windows.Forms.TabPage();
+            this.gSelectiveSync = new System.Windows.Forms.GroupBox();
+            this.bRefresh = new System.Windows.Forms.Button();
+            this.lSelectiveSync = new System.Windows.Forms.TreeView();
+            this.labSelectFolders = new System.Windows.Forms.Label();
+            this.gFileFilters = new System.Windows.Forms.GroupBox();
+            this.labAlsoIgnore = new System.Windows.Forms.Label();
+            this.cIgnoreOldFiles = new System.Windows.Forms.CheckBox();
+            this.dtpLastModTime = new System.Windows.Forms.DateTimePicker();
+            this.tNewExt = new System.Windows.Forms.TextBox();
+            this.lIgnoredExtensions = new System.Windows.Forms.ListView();
+            this.labSelectExtensions = new System.Windows.Forms.Label();
+            this.bRemoveExt = new System.Windows.Forms.Button();
+            this.cIgnoreTempFiles = new System.Windows.Forms.CheckBox();
+            this.bAddExt = new System.Windows.Forms.Button();
+            this.cIgnoreDotfiles = new System.Windows.Forms.CheckBox();
             this.tabBandwidth = new System.Windows.Forms.TabPage();
             this.gSyncing = new System.Windows.Forms.GroupBox();
             this.labSeconds = new System.Windows.Forms.Label();
@@ -155,6 +172,9 @@
             this.tabAccount.SuspendLayout();
             this.gAccount.SuspendLayout();
             this.gDetails.SuspendLayout();
+            this.tabFilters.SuspendLayout();
+            this.gSelectiveSync.SuspendLayout();
+            this.gFileFilters.SuspendLayout();
             this.tabBandwidth.SuspendLayout();
             this.gSyncing.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nSyncFrequency)).BeginInit();
@@ -174,6 +194,7 @@
             this.tabControl1.AccessibleDescription = "";
             this.tabControl1.Controls.Add(this.tabGeneral);
             this.tabControl1.Controls.Add(this.tabAccount);
+            this.tabControl1.Controls.Add(this.tabFilters);
             this.tabControl1.Controls.Add(this.tabBandwidth);
             this.tabControl1.Controls.Add(this.tabLanguage);
             this.tabControl1.Controls.Add(this.tabAbout);
@@ -588,6 +609,185 @@
             this.bChangeBox.UseVisualStyleBackColor = true;
             this.bChangeBox.Click += new System.EventHandler(this.bChangeBox_Click);
             // 
+            // tabFilters
+            // 
+            this.tabFilters.Controls.Add(this.gSelectiveSync);
+            this.tabFilters.Controls.Add(this.gFileFilters);
+            this.tabFilters.Location = new System.Drawing.Point(4, 22);
+            this.tabFilters.Name = "tabFilters";
+            this.tabFilters.Padding = new System.Windows.Forms.Padding(3);
+            this.tabFilters.Size = new System.Drawing.Size(474, 331);
+            this.tabFilters.TabIndex = 5;
+            this.tabFilters.Text = "Filters";
+            this.tabFilters.UseVisualStyleBackColor = true;
+            // 
+            // gSelectiveSync
+            // 
+            this.gSelectiveSync.Controls.Add(this.bRefresh);
+            this.gSelectiveSync.Controls.Add(this.lSelectiveSync);
+            this.gSelectiveSync.Controls.Add(this.labSelectFolders);
+            this.gSelectiveSync.Location = new System.Drawing.Point(8, 6);
+            this.gSelectiveSync.Name = "gSelectiveSync";
+            this.gSelectiveSync.Size = new System.Drawing.Size(447, 174);
+            this.gSelectiveSync.TabIndex = 6;
+            this.gSelectiveSync.TabStop = false;
+            this.gSelectiveSync.Text = "Selective Sync";
+            // 
+            // bRefresh
+            // 
+            this.bRefresh.Location = new System.Drawing.Point(352, 19);
+            this.bRefresh.Name = "bRefresh";
+            this.bRefresh.Size = new System.Drawing.Size(89, 23);
+            this.bRefresh.TabIndex = 8;
+            this.bRefresh.Text = "Refresh";
+            this.bRefresh.UseVisualStyleBackColor = true;
+            this.bRefresh.Click += new System.EventHandler(this.bRefresh_Click);
+            // 
+            // lSelectiveSync
+            // 
+            this.lSelectiveSync.CheckBoxes = true;
+            this.lSelectiveSync.Location = new System.Drawing.Point(9, 48);
+            this.lSelectiveSync.Name = "lSelectiveSync";
+            this.lSelectiveSync.PathSeparator = "/";
+            this.lSelectiveSync.Size = new System.Drawing.Size(432, 120);
+            this.lSelectiveSync.TabIndex = 7;
+            this.lSelectiveSync.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.lSelectiveSync_AfterCheck);
+            this.lSelectiveSync.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.lSelectiveSync_AfterCollapse);
+            this.lSelectiveSync.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.lSelectiveSync_AfterExpand);
+            // 
+            // labSelectFolders
+            // 
+            this.labSelectFolders.AutoSize = true;
+            this.labSelectFolders.Location = new System.Drawing.Point(6, 29);
+            this.labSelectFolders.Name = "labSelectFolders";
+            this.labSelectFolders.Size = new System.Drawing.Size(208, 13);
+            this.labSelectFolders.TabIndex = 6;
+            this.labSelectFolders.Text = "Uncheck the items you don\'t want to sync:";
+            // 
+            // gFileFilters
+            // 
+            this.gFileFilters.Controls.Add(this.labAlsoIgnore);
+            this.gFileFilters.Controls.Add(this.cIgnoreOldFiles);
+            this.gFileFilters.Controls.Add(this.dtpLastModTime);
+            this.gFileFilters.Controls.Add(this.tNewExt);
+            this.gFileFilters.Controls.Add(this.lIgnoredExtensions);
+            this.gFileFilters.Controls.Add(this.labSelectExtensions);
+            this.gFileFilters.Controls.Add(this.bRemoveExt);
+            this.gFileFilters.Controls.Add(this.cIgnoreTempFiles);
+            this.gFileFilters.Controls.Add(this.bAddExt);
+            this.gFileFilters.Controls.Add(this.cIgnoreDotfiles);
+            this.gFileFilters.Location = new System.Drawing.Point(8, 186);
+            this.gFileFilters.Name = "gFileFilters";
+            this.gFileFilters.Size = new System.Drawing.Size(447, 137);
+            this.gFileFilters.TabIndex = 5;
+            this.gFileFilters.TabStop = false;
+            this.gFileFilters.Text = "File Filters";
+            // 
+            // labAlsoIgnore
+            // 
+            this.labAlsoIgnore.AutoSize = true;
+            this.labAlsoIgnore.Location = new System.Drawing.Point(226, 20);
+            this.labAlsoIgnore.Name = "labAlsoIgnore";
+            this.labAlsoIgnore.Size = new System.Drawing.Size(63, 13);
+            this.labAlsoIgnore.TabIndex = 10;
+            this.labAlsoIgnore.Text = "Also Ignore:";
+            // 
+            // cIgnoreOldFiles
+            // 
+            this.cIgnoreOldFiles.AutoSize = true;
+            this.cIgnoreOldFiles.Location = new System.Drawing.Point(229, 82);
+            this.cIgnoreOldFiles.Name = "cIgnoreOldFiles";
+            this.cIgnoreOldFiles.Size = new System.Drawing.Size(125, 17);
+            this.cIgnoreOldFiles.TabIndex = 9;
+            this.cIgnoreOldFiles.Text = "Files modified before:";
+            this.cIgnoreOldFiles.UseVisualStyleBackColor = true;
+            this.cIgnoreOldFiles.Visible = false;
+            this.cIgnoreOldFiles.CheckedChanged += new System.EventHandler(this.cIgnoreOldFiles_CheckedChanged);
+            // 
+            // dtpLastModTime
+            // 
+            this.dtpLastModTime.CustomFormat = "d MMMM yyyy - HH:mm";
+            this.dtpLastModTime.Enabled = false;
+            this.dtpLastModTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dtpLastModTime.Location = new System.Drawing.Point(248, 102);
+            this.dtpLastModTime.Name = "dtpLastModTime";
+            this.dtpLastModTime.Size = new System.Drawing.Size(181, 20);
+            this.dtpLastModTime.TabIndex = 8;
+            this.dtpLastModTime.Visible = false;
+            this.dtpLastModTime.ValueChanged += new System.EventHandler(this.dtpLastModTime_ValueChanged);
+            // 
+            // tNewExt
+            // 
+            this.tNewExt.Location = new System.Drawing.Point(125, 44);
+            this.tNewExt.Name = "tNewExt";
+            this.tNewExt.Size = new System.Drawing.Size(92, 20);
+            this.tNewExt.TabIndex = 7;
+            this.tNewExt.TextChanged += new System.EventHandler(this.tNewExt_TextChanged);
+            // 
+            // lIgnoredExtensions
+            // 
+            this.lIgnoredExtensions.Location = new System.Drawing.Point(9, 36);
+            this.lIgnoredExtensions.Name = "lIgnoredExtensions";
+            this.lIgnoredExtensions.ShowGroups = false;
+            this.lIgnoredExtensions.Size = new System.Drawing.Size(110, 95);
+            this.lIgnoredExtensions.TabIndex = 6;
+            this.lIgnoredExtensions.UseCompatibleStateImageBehavior = false;
+            this.lIgnoredExtensions.View = System.Windows.Forms.View.List;
+            this.lIgnoredExtensions.SelectedIndexChanged += new System.EventHandler(this.lIgnoredExtensions_SelectedIndexChanged);
+            // 
+            // labSelectExtensions
+            // 
+            this.labSelectExtensions.AutoSize = true;
+            this.labSelectExtensions.Location = new System.Drawing.Point(6, 20);
+            this.labSelectExtensions.Name = "labSelectExtensions";
+            this.labSelectExtensions.Size = new System.Drawing.Size(100, 13);
+            this.labSelectExtensions.TabIndex = 5;
+            this.labSelectExtensions.Text = "Ignored Extensions:";
+            // 
+            // bRemoveExt
+            // 
+            this.bRemoveExt.Enabled = false;
+            this.bRemoveExt.Location = new System.Drawing.Point(125, 99);
+            this.bRemoveExt.Name = "bRemoveExt";
+            this.bRemoveExt.Size = new System.Drawing.Size(92, 23);
+            this.bRemoveExt.TabIndex = 4;
+            this.bRemoveExt.Text = "Remove";
+            this.bRemoveExt.UseVisualStyleBackColor = true;
+            this.bRemoveExt.Click += new System.EventHandler(this.bRemoveExt_Click);
+            // 
+            // cIgnoreTempFiles
+            // 
+            this.cIgnoreTempFiles.AutoSize = true;
+            this.cIgnoreTempFiles.Location = new System.Drawing.Point(229, 36);
+            this.cIgnoreTempFiles.Name = "cIgnoreTempFiles";
+            this.cIgnoreTempFiles.Size = new System.Drawing.Size(97, 17);
+            this.cIgnoreTempFiles.TabIndex = 0;
+            this.cIgnoreTempFiles.Text = "Temporary files";
+            this.cIgnoreTempFiles.UseVisualStyleBackColor = true;
+            this.cIgnoreTempFiles.CheckedChanged += new System.EventHandler(this.cIgnoreTempFiles_CheckedChanged);
+            // 
+            // bAddExt
+            // 
+            this.bAddExt.Enabled = false;
+            this.bAddExt.Location = new System.Drawing.Point(125, 70);
+            this.bAddExt.Name = "bAddExt";
+            this.bAddExt.Size = new System.Drawing.Size(92, 23);
+            this.bAddExt.TabIndex = 3;
+            this.bAddExt.Text = "Add";
+            this.bAddExt.UseVisualStyleBackColor = true;
+            this.bAddExt.Click += new System.EventHandler(this.bAddExt_Click);
+            // 
+            // cIgnoreDotfiles
+            // 
+            this.cIgnoreDotfiles.AutoSize = true;
+            this.cIgnoreDotfiles.Location = new System.Drawing.Point(229, 59);
+            this.cIgnoreDotfiles.Name = "cIgnoreDotfiles";
+            this.cIgnoreDotfiles.Size = new System.Drawing.Size(61, 17);
+            this.cIgnoreDotfiles.TabIndex = 1;
+            this.cIgnoreDotfiles.Text = "Dotfiles";
+            this.cIgnoreDotfiles.UseVisualStyleBackColor = true;
+            this.cIgnoreDotfiles.CheckedChanged += new System.EventHandler(this.cIgnoreDotfiles_CheckedChanged);
+            // 
             // tabBandwidth
             // 
             this.tabBandwidth.Controls.Add(this.gSyncing);
@@ -816,7 +1016,8 @@
             listViewItem27,
             listViewItem28,
             listViewItem29,
-            listViewItem30});
+            listViewItem30,
+            listViewItem31});
             this.listView1.Location = new System.Drawing.Point(8, 16);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(447, 269);
@@ -860,6 +1061,7 @@
             this.imageList1.Images.SetKeyName(27, "sk.png");
             this.imageList1.Images.SetKeyName(28, "th.png");
             this.imageList1.Images.SetKeyName(29, "si.png");
+            this.imageList1.Images.SetKeyName(30, "cz.png");
             // 
             // tabAbout
             // 
@@ -1246,6 +1448,11 @@
             this.gAccount.PerformLayout();
             this.gDetails.ResumeLayout(false);
             this.gDetails.PerformLayout();
+            this.tabFilters.ResumeLayout(false);
+            this.gSelectiveSync.ResumeLayout(false);
+            this.gSelectiveSync.PerformLayout();
+            this.gFileFilters.ResumeLayout(false);
+            this.gFileFilters.PerformLayout();
             this.tabBandwidth.ResumeLayout(false);
             this.gSyncing.ResumeLayout(false);
             this.gSyncing.PerformLayout();
@@ -1359,5 +1566,21 @@
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.Button bTranslate;
+        private System.Windows.Forms.TabPage tabFilters;
+        private System.Windows.Forms.GroupBox gSelectiveSync;
+        private System.Windows.Forms.Label labSelectFolders;
+        private System.Windows.Forms.GroupBox gFileFilters;
+        private System.Windows.Forms.TextBox tNewExt;
+        private System.Windows.Forms.ListView lIgnoredExtensions;
+        private System.Windows.Forms.Label labSelectExtensions;
+        private System.Windows.Forms.Button bRemoveExt;
+        private System.Windows.Forms.CheckBox cIgnoreTempFiles;
+        private System.Windows.Forms.Button bAddExt;
+        private System.Windows.Forms.CheckBox cIgnoreDotfiles;
+        private System.Windows.Forms.Label labAlsoIgnore;
+        private System.Windows.Forms.CheckBox cIgnoreOldFiles;
+        private System.Windows.Forms.DateTimePicker dtpLastModTime;
+        private System.Windows.Forms.TreeView lSelectiveSync;
+        private System.Windows.Forms.Button bRefresh;
     }
 }

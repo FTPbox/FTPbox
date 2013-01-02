@@ -84,10 +84,10 @@ namespace FTPboxLib
 			{
 				sftpc = new SftpClient(Profile.Host, Profile.Port, Profile.Username, Profile.Password);
 				sftpc.Connect();
-
-                Profile.SftpHome = WorkingDirectory;
-                Profile.SftpHome = (Profile.SftpHome.StartsWith("/")) ? Profile.SftpHome.Substring(1) : Profile.SftpHome;
 			}
+
+            Profile.HomePath = WorkingDirectory;
+            Profile.HomePath = (Profile.HomePath.StartsWith("/")) ? Profile.HomePath.Substring(1) : Profile.HomePath;
 
             Console.WriteLine("Client connected sucessfully");
 
@@ -444,6 +444,14 @@ namespace FTPboxLib
             if (path.StartsWith("/"))
                 path = path.Substring(1);
             
+            string  cd = WorkingDirectory;
+            if (FTP && path.Contains(" "))
+            {
+                ftpc.ChangeDirectoryMultiPath(path);
+                path = ".";
+            }
+            if (FTP) ftpc.DataTransferMode = TransferMode.Passive;
+
             if (FTP)
                 foreach (FtpItem f in ftpc.GetDirList(path))
                 {
@@ -461,6 +469,9 @@ namespace FTPboxLib
                             break;
                     }
                     l.Add(new ClientItem(f.Name, f.FullPath, t));
+
+                    while (WorkingDirectory != cd)
+                        ftpc.ChangeDirectoryUp();
                 }
             else
                 foreach (SftpFile s in sftpc.ListDirectory(path))
@@ -494,6 +505,8 @@ namespace FTPboxLib
         /// <returns></returns>
         public static DateTime GetLWTof(string path)
         {
+            if (string.IsNullOrWhiteSpace(path)) return DateTime.MinValue;
+
             string p = path;
             if (p.StartsWith("/")) p = p.Substring(1);
 
@@ -508,7 +521,7 @@ namespace FTPboxLib
                 Common.LogError(ex);
             }
 
-            if (Profile.Protocol != FtpProtocol.FTP)
+            if (Profile.Protocol == FtpProtocol.SFTP)
                 Log.Write(l.Client, "Got LWT: {0} UTC: {1}", dt, sftpc.GetLastAccessTimeUtc(p));
 
             return dt;

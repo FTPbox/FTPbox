@@ -12,72 +12,93 @@
 
 using System;
 using System.Collections.Generic;
+using FTPbox;
 
 namespace FTPboxLib
 {
 	public class IgnoreList
 	{
-		private List<string> list;
-		private List<string> extList;
+        public List<string> FolderList;                             //list of folders to be ignored
+		public List<string> ExtensionList;                          //list of extensions to be ignored
+
+        public bool IgnoreDotFiles = false;                         //ignore dotfiles?
+        public bool IgnoreTempFiles = true;                         //ignore temporary files?
+
+        public bool IgnoreOldFiles = false;                         //ignore files modified before a certain datetime?
+        public DateTime LastModifiedMinimum = DateTime.MinValue;    //the minimum modification datetime
 		
+        /// <summary>
+        /// Initializes the ignore lists and loads them from the settings file
+        /// </summary>
 		public IgnoreList ()
 		{
-			list = new List<string>();
-			extList = new List<string>();
+            FolderList = new List<string>(Settings.ignoredFolders);
+			ExtensionList = new List<string>(Settings.ignoredExtensions);
+
+            IgnoreDotFiles = Settings.ignoreDotfiles;
+            IgnoreTempFiles = Settings.ignoreTempfiles;
 		}
+
+        /// <summary>
+        /// Should the given item be ignored during synchronization?
+        /// </summary>
+        /// <param name="path">The common path to the given item</param>
+        /// <returns>True if the path matches the ignore filters</returns>
+        public bool isIgnored(string path)
+        {
+            string name = Common._name(path);
+            string ext = name.Contains(".") ? name.Substring(name.LastIndexOf(".")+1) : null;
+            
+            if (!string.IsNullOrEmpty(ext)) Log.Write(l.Error, "Ext: {0}", ext);
+
+            return  
+                (IgnoreDotFiles && name.StartsWith(".")) ||                                                                 // are dotfiles ignored?
+                (IgnoreTempFiles && (name.EndsWith("~") || name.StartsWith(".goutputstream") || name.StartsWith("~"))) ||   //are temporary files ignored?
+                ((ExtensionList.Contains(ext) || ExtensionList.Contains("." + ext)) && ext != null) ||                                                             //is this extension ignored?
+                isInIgnoredFolders(path);                                                                                   //is the item in an ignored folder?
+        }
+
+        /// <summary>
+        /// Saves the current filter settings to the settings file
+        /// </summary>
+        public void Save()
+        {
+            Settings.ignoredFolders = FolderList;
+            Settings.ignoredExtensions = ExtensionList;
+            Settings.ignoreDotfiles = IgnoreDotFiles;
+            Settings.ignoreTempfiles = IgnoreTempFiles;
+        }
 		
-		/// <summary>
-		/// Add the specified folder name to the ignored list.
-		/// </summary>
-		/// <param name='name'>
-		/// Name.
-		/// </param>
-		public void Add(string name)
-		{
-			list.Add(name);	
-		}
-		
+        /// <summary>
+        /// Clears the ignore lists, restores IgnoreDotFiles and IgnoreTempFiles to their defaults
+        /// </summary>
 		public void Clear()
 		{
-			list.Clear();	
-			extList.Clear();
+			FolderList.Clear();	
+			ExtensionList.Clear();
+            IgnoreDotFiles = false;
+            IgnoreTempFiles = true;
+
+            Settings.ignoredFolders = null;
+            Settings.ignoredExtensions = null;
 		}
-		
-		public void ClearIgnoreList()
-		{
-			list.Clear();
-		}
-		
-		public void ClearExtensionList()
-		{
-			extList.Clear();	
-		}
-		
-		public void RemoveFolder(string name)
-		{
-			list.Remove(name);	
-		}	
-		
-		public void RemoveExtension(string ext)
-		{
-			extList.Remove(ext);	
-		}
-		
-		public bool isIgnored(string name)
-		{
-			return list.Contains(name);	
-		}
-		
-		public bool ExtensionGetsSynced (string ext)
-		{
-			return extList.Contains(ext);	
-		}
-	}
-	
-	public enum ignoreType
-	{
-		Folders,
-		FileExtensions
+
+        /// <summary>
+        /// Checks if the given path should be ignored 
+        /// (if one of its parent folders are in the list of ignored folders)
+        /// </summary>
+        /// <param name="path">The common path to the given item</param>
+        /// <returns></returns>
+        public bool isInIgnoredFolders(string path)
+        {
+            if (FolderList.Count <= 0) return false;
+            if (FolderList.Contains(path)) return true;
+
+            foreach (string f in FolderList)
+                if (path.StartsWith(f) && !string.IsNullOrWhiteSpace(f))
+                    return true;
+            return false;
+        }
 	}
 }
 

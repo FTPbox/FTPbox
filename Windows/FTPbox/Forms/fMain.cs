@@ -123,6 +123,8 @@ namespace FTPbox.Forms
 
                 SetTray(MessageType.Ready);
 
+                RefreshListing();
+
                 if (Profile.SyncingMethod == SyncMethod.Automatic && !_busy)
                     StartRemoteSync(".");
             }
@@ -155,8 +157,8 @@ namespace FTPbox.Forms
             }
             else
             {
-                Profile.SftpHome = Client.WorkingDirectory;
-                Profile.SftpHome = (Profile.SftpHome.StartsWith("/")) ? Profile.SftpHome.Substring(1) : Profile.SftpHome;
+                Profile.HomePath = Client.WorkingDirectory;
+                Profile.HomePath = (Profile.HomePath.StartsWith("/")) ? Profile.HomePath.Substring(1) : Profile.HomePath;
             }
 
             SetTray(MessageType.Ready);
@@ -289,6 +291,16 @@ namespace FTPbox.Forms
                 rOpenLocal.Checked = true;
 
             lVersion.Text = Application.ProductVersion.ToString().Substring(0, 5) + @" Beta";
+
+            //   Filters Tab    //
+
+            cIgnoreDotfiles.Checked = Common.IgnoreList.IgnoreDotFiles;
+            cIgnoreTempFiles.Checked = Common.IgnoreList.IgnoreTempFiles;
+            lIgnoredExtensions.Clear();
+            foreach (string s in Common.IgnoreList.ExtensionList) 
+                if (!string.IsNullOrWhiteSpace(s))  lIgnoredExtensions.Items.Add(new ListViewItem(s));
+
+            //  Bandwidth tab   //
 
             if (Profile.SyncingMethod == SyncMethod.Automatic)
                 cAuto.Checked = true;
@@ -630,18 +642,21 @@ namespace FTPbox.Forms
         /// <param name="e"></param>
         private void FolderChanged(object source, FileSystemEventArgs e)
         {
-            if (Common.PathIsFolder(e.FullPath) && e.ChangeType == WatcherChangeTypes.Created && !Client.Exists(Common.GetComPath(e.FullPath, true)))
+            string cpath = Common.GetComPath(e.FullPath, true);
+            if (!Common.ItemGetsSynced(cpath)) return;
+
+            if (Common.PathIsFolder(e.FullPath) && e.ChangeType == WatcherChangeTypes.Created && !Client.Exists(cpath))
             {
-                Client.MakeFolder(Common.GetComPath(e.FullPath, true));               
-                fQueue.AddFolder(Common.GetComPath(e.FullPath, true));
-                
-                fLog.putFolder(Common.GetComPath(e.FullPath, true));
-                PutFolderInLog(Common.GetComPath(e.FullPath, true));
+                Client.MakeFolder(cpath);
+                fQueue.AddFolder(cpath);
+
+                fLog.putFolder(cpath);
+                PutFolderInLog(cpath);
 
                 //if (fQueue.CountFolders() == 1)
                 //	ShowNotification(e.Name, ChangeAction.created, false);
 
-                GetLink(Common.GetComPath(e.FullPath, true));
+                GetLink(cpath);
                 if (_busy)
                 {
                     fQueue.reCheck = true;
@@ -1542,10 +1557,12 @@ namespace FTPbox.Forms
                     locallang = "Thai";
                 else if (locallangtwoletter == "sl")
                     locallang = "Slovenian";
+				else if (locallangtwoletter == "cs")
+                    locallang = "Czech";
                 else
                     locallang = "English";
 
-                List<string> alllang = new List<string>{ "es", "de", "fr", "nl", "el", "it", "tr", "pt-BR", "fo", "sv", "sq", "ro", "ko", "ru", "ja", "no", "hu", "vi", "zh_HANS", "zh_HANT", "lt", "da", "pl", "hr", "sk", "pt", "gl", "th", "sl" };
+                List<string> alllang = new List<string>{ "es", "de", "fr", "nl", "el", "it", "tr", "pt-BR", "fo", "sv", "sq", "ro", "ko", "ru", "ja", "no", "hu", "vi", "zh_HANS", "zh_HANT", "lt", "da", "pl", "hr", "sk", "pt", "gl", "th", "sl", "cs" };
 
                 if (alllang.Contains(locallangtwoletter))
                 {
@@ -1609,6 +1626,19 @@ namespace FTPbox.Forms
             rOpenInBrowser.Text = Common.Languages.Get(lan + "/main_form/open_in_browser", "Open link in default browser");
             rCopy2Clipboard.Text = Common.Languages.Get(lan + "/main_form/copy", "Copy link to clipboard");
             rOpenLocal.Text = Common.Languages.Get(lan + "/main_form/open_local", "Open the local file");
+            //filters
+            tabFilters.Text = Common.Languages.Get(lan + "/main_form/file_filters", "Filters");
+            gSelectiveSync.Text = Common.Languages.Get(lan + "/main_form/selective", "Selective Sync");
+            labSelectFolders.Text = Common.Languages.Get(lan + "/main_form/selective_info", "Uncheck the items you don't want to sync") + ":";
+            bRefresh.Text = Common.Languages.Get(lan + "/main_form/refresh", "Refresh");
+            gFileFilters.Text = Common.Languages.Get(lan + "/main_form/file_filters", "Filters");
+            labSelectExtensions.Text = Common.Languages.Get(lan + "/main_form/ignored_extensions", "Ignored Extensions") + ":";
+            bAddExt.Text = Common.Languages.Get(lan + "/new_account/add", "Add");
+            bRemoveExt.Text = Common.Languages.Get(lan + "/main_form/remove", "Remove");
+            labAlsoIgnore.Text = Common.Languages.Get(lan + "/main_form/also_ignore", "Also ignore") + ":";
+            cIgnoreDotfiles.Text = Common.Languages.Get(lan + "/main_form/dotfiles", "dotfiles");
+            cIgnoreTempFiles.Text = Common.Languages.Get(lan + "/main_form/temp_files", "Temporary Files");
+            cIgnoreOldFiles.Text = Common.Languages.Get(lan + "/main_form/old_files", "Files modified before") + ":";
             //bandwidth tab
             tabBandwidth.Text = Common.Languages.Get(lan + "/main_form/bandwidth", "Bandwidth");
             gSyncing.Text = Common.Languages.Get(lan + "/main_form/sync_freq", "Sync Frequency");
@@ -2139,7 +2169,7 @@ namespace FTPbox.Forms
 	            {
 		            Log.Write(l.Debug, "~~~~~~~~~> found directory: {0}", f.FullPath);
 		            string lpath = System.IO.Path.Combine(Profile.LocalPath, cpath);
-		            if (!Directory.Exists(lpath) && Common.ItemGetsSynced(cpath) && !dQueue.Contains(lpath))
+		            if (!Directory.Exists(lpath) && !dQueue.Contains(lpath))
 		            {
                         fswFiles.EnableRaisingEvents = false;
                         fswFolders.EnableRaisingEvents = false;
@@ -2182,6 +2212,7 @@ namespace FTPbox.Forms
             foreach (FileInfo f in di.GetFiles("*", SearchOption.AllDirectories))
             {
                 string cpath = Common.GetComPath(f.FullName, true);
+                if (!Common.ItemGetsSynced(cpath)) continue;
                 if (Common.ParentFolderHasSpace(cpath) && Profile.Protocol != FtpProtocol.SFTP) continue;
 
                 if (!allFilesAndFolders.Contains(cpath) && fLog.Contains(cpath))
@@ -2197,8 +2228,8 @@ namespace FTPbox.Forms
 
             foreach (DirectoryInfo d in di.GetDirectories("*", SearchOption.AllDirectories))
             {
-                //Log.Write(l.Debug, "Found local folder: {0}", d.FullName);
                 string cpath = Common.GetComPath(d.FullName, true);
+                if (!Common.ItemGetsSynced(cpath)) continue;
                 if (Common.ParentFolderHasSpace(cpath) && Profile.Protocol != FtpProtocol.SFTP) continue;
 
                 if (!allFilesAndFolders.Contains(cpath) && fLog.Folders.Contains(cpath))
@@ -2258,7 +2289,7 @@ namespace FTPbox.Forms
             FileInfo fi = new FileInfo(lpath);
             DateTime lLWT = fi.LastWriteTime;
 
-            if (Profile.Protocol == FtpProtocol.FTP)
+            if (Profile.Protocol != FtpProtocol.SFTP)
                 rLWT = Client.GetLWTof(cpath);
 
             DateTime lDTLog = fLog.getLocal(cpath);
@@ -2300,60 +2331,6 @@ namespace FTPbox.Forms
         }
 
         #endregion
-
-        /* FtpRecursiveListing
-        private List<string> FoldersWithSpaces = new List<string>();
-        /// <summary>
-        /// Manually get the list of files and folders inside folders that contain spaces
-        /// </summary>
-        /// <param name="path">The folder in which to look</param>
-        private void FtpRecursiveListing(string path)
-        {
-            foreach (string f in FoldersWithSpaces)
-            {
-                ftpc.ChangeDirectoryMultiPath(f);
-                foreach (FtpItem fi in ftpc.GetDirListDeep("."))
-                {
-                    string cpath = Common.GetComPath(fi.FullPath, false);
-                    allFilesAndFolders.Add(Common.GetComPath(fi.FullPath, false));
-
-                    if (!Common.ItemGetsSynced(cpath))
-                        continue;
-
-                    if (fi.ItemType == FtpItemType.File)
-                    {
-                        string lpath = System.IO.Path.Combine(Profile.LocalPath, cpath.Replace("/", @"\"));
-                        Log.Write(l.Debug, "Found: {0} cpath is: {1} lpath: {2} type: {3}", fi.Name, cpath, lpath, fi.ItemType.ToString());
-                        if (File.Exists(lpath))
-                            CheckExistingFile(cpath, fi.Modified, lpath, fi.Size);
-                        else
-                        {
-                            fQueue.Add(cpath, lpath, fi.Size, TypeOfTransfer.Create);
-                        }
-                    }
-                    else if (fi.ItemType == FtpItemType.Directory)
-                    {
-                        string lpath = System.IO.Path.Combine(Profile.LocalPath, cpath);
-
-                        if (!Directory.Exists(lpath) && Common.ItemGetsSynced(cpath) && !dQueue.Contains(lpath))
-                        {
-                            Directory.CreateDirectory(lpath);
-                            fQueue.AddFolder(cpath);
-
-                            fLog.putFolder(cpath);
-                            PutFolderInLog(cpath);
-
-                            GetLink(cpath);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void FtpRecursiveFolderListing(string path)
-        {
-
-        }*/
 
         #region Messages for notifications and tray text
 
@@ -3371,7 +3348,7 @@ namespace FTPbox.Forms
         }
 
         private void RemoveFTPboxMenu()
-        {            
+        {
             RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Classes\\*\\Shell\\", true);            
             key.DeleteSubKeyTree("FTPbox", false);
             key.Close();
@@ -3396,11 +3373,11 @@ namespace FTPbox.Forms
             Environment.SpecialFolder[] Libraries = new[] { Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.MyMusic, Environment.SpecialFolder.MyPictures, Environment.SpecialFolder.MyVideos };
             string userpath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\";
 
-            foreach (Environment.SpecialFolder s in Libraries)
-            {
-                if (path.StartsWith(Environment.GetFolderPath(s)))
-                    short_path = path.Substring(userpath.Length);
-            }
+            if (path.StartsWith(userpath))
+                foreach (Environment.SpecialFolder s in Libraries)            
+                    if (path.StartsWith(Environment.GetFolderPath(s)))
+                        if (s != Environment.SpecialFolder.UserProfile) //TODO: is this ok?
+                            short_path = path.Substring(userpath.Length);            
 
             if (short_path == null) return applies_to;
 
@@ -3661,6 +3638,287 @@ namespace FTPbox.Forms
                 }
             }
         }
+
+        #endregion
+
+        #region Filters
+
+        #region Form control handlers
+
+        private void cIgnoreTempFiles_CheckedChanged(object sender, EventArgs e)
+        {
+            Common.IgnoreList.IgnoreTempFiles = cIgnoreTempFiles.Checked;
+            Common.IgnoreList.Save();
+        }
+
+        private void cIgnoreDotfiles_CheckedChanged(object sender, EventArgs e)
+        {
+            Common.IgnoreList.IgnoreDotFiles = cIgnoreDotfiles.Checked;
+            Common.IgnoreList.Save();
+        }
+
+        private void bAddExt_Click(object sender, EventArgs e)
+        {
+            string newext = tNewExt.Text;
+            if (newext.StartsWith(".")) newext = newext.Substring(1);
+
+            if (!Common.IgnoreList.ExtensionList.Contains(newext))
+                Common.IgnoreList.ExtensionList.Add(newext);
+            Common.IgnoreList.Save();
+            
+            tNewExt.Text = string.Empty;
+            //refresh the list
+            lIgnoredExtensions.Clear();
+            foreach (string s in Common.IgnoreList.ExtensionList)
+                if (!string.IsNullOrWhiteSpace(s)) lIgnoredExtensions.Items.Add(new ListViewItem(s));
+        }
+
+        private void tNewExt_TextChanged(object sender, EventArgs e)
+        {
+            bAddExt.Enabled = !string.IsNullOrWhiteSpace(tNewExt.Text);
+
+            this.AcceptButton = (string.IsNullOrWhiteSpace(tNewExt.Text)) ? null : bAddExt;
+        }
+
+        private void bRemoveExt_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem li in lIgnoredExtensions.SelectedItems)
+                if (!string.IsNullOrWhiteSpace(li.Text))
+                    Common.IgnoreList.ExtensionList.Remove(li.Text);
+            Common.IgnoreList.Save();
+
+            //refresh the list
+            lIgnoredExtensions.Clear();
+            foreach (string s in Common.IgnoreList.ExtensionList)
+                if (!string.IsNullOrWhiteSpace(s)) lIgnoredExtensions.Items.Add(new ListViewItem(s));
+        }
+
+        private void lIgnoredExtensions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            bRemoveExt.Enabled = lIgnoredExtensions.SelectedItems.Count > 0;
+            this.AcceptButton = (lIgnoredExtensions.SelectedItems.Count > 0) ? bRemoveExt : null;
+        }
+
+        private void cIgnoreOldFiles_CheckedChanged(object sender, EventArgs e)
+        {            
+            dtpLastModTime.Enabled = cIgnoreOldFiles.Checked;
+            Common.IgnoreList.IgnoreOldFiles = cIgnoreOldFiles.Checked;
+            Common.IgnoreList.LastModifiedMinimum = (cIgnoreOldFiles.Checked) ? dtpLastModTime.Value : DateTime.MinValue;
+            Common.IgnoreList.Save();            
+        }
+
+        private void dtpLastModTime_ValueChanged(object sender, EventArgs e)
+        {
+            Common.IgnoreList.IgnoreOldFiles = cIgnoreOldFiles.Checked;
+            Common.IgnoreList.LastModifiedMinimum = (cIgnoreOldFiles.Checked) ? dtpLastModTime.Value : DateTime.MinValue;
+            Common.IgnoreList.Save();
+        }
+
+        private void lSelectiveSync_AfterExpand(object sender, TreeViewEventArgs e)
+        {
+            string path = e.Node.FullPath;
+
+            if (e.Node.Nodes.Count > 0)
+            {
+                int i = e.Node.Index;
+
+                foreach (TreeNode tn in e.Node.Nodes)
+                {
+                    try
+                    {
+                        lSelectiveSync.Nodes[i].Nodes.Remove(tn);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Write(l.Debug, ex.Message);
+                    }
+                }
+            }
+
+            Thread tExpandItem = new Thread(() =>
+            {
+                List<ClientItem> li = new List<ClientItem>();
+                try
+                {
+                    li = Client.List(path);
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex);
+                    return;
+                }
+
+                foreach (ClientItem d in li)
+                    if (d.Type == ClientItemType.Folder)
+                        this.Invoke(new MethodInvoker(delegate
+                        {
+                            TreeNode parent = new TreeNode(d.Name);
+                            e.Node.Nodes.Add(parent);
+                            parent.Nodes.Add(new TreeNode("!tempnode"));
+                        }));
+
+                foreach (ClientItem f in li)
+                    if (f.Type == ClientItemType.File)
+                        this.Invoke(new MethodInvoker(delegate
+                        {
+                            e.Node.Nodes.Add(new TreeNode(f.Name));
+                        }));
+
+                //EditNodeCheckboxes();
+                foreach (TreeNode tn in e.Node.Nodes)
+                    this.Invoke(new MethodInvoker(delegate
+                    {
+                        tn.Checked = !Common.IgnoreList.isInIgnoredFolders(tn.FullPath);
+                    }));
+            });
+            tExpandItem.Start();
+        }        
+
+        private void lSelectiveSync_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            if (checking_nodes || e.Node.Text == "!tempnode!") return;
+
+            string cpath = Common.GetComPath(e.Node.FullPath, false);
+            Log.Write(l.Debug, "{0} is ignored: {1} already in list: {2}", cpath, !e.Node.Checked, Common.IgnoreList.FolderList.Contains(cpath));
+
+            if (e.Node.Checked && Common.IgnoreList.FolderList.Contains(cpath))
+                Common.IgnoreList.FolderList.Remove(cpath);
+            else if (!e.Node.Checked && !Common.IgnoreList.FolderList.Contains(cpath))
+                Common.IgnoreList.FolderList.Add(cpath);
+            Common.IgnoreList.Save();
+            
+            checking_nodes = true;
+            CheckUncheckChildNodes(e.Node, e.Node.Checked);
+            
+            if (e.Node.Checked && e.Node.Parent != null)
+                if (!e.Node.Parent.Checked)
+                {
+                    e.Node.Parent.Checked = true;
+                    if (Common.IgnoreList.FolderList.Contains(e.Node.Parent.FullPath))
+                        Common.IgnoreList.FolderList.Remove(e.Node.Parent.FullPath);
+                    CheckSingleRoute(e.Node.Parent);
+                }
+            Common.IgnoreList.Save();
+            checking_nodes = false;
+        }
+
+        private void lSelectiveSync_AfterCollapse(object sender, TreeViewEventArgs e)
+        {
+            e.Node.Nodes.Clear();
+            e.Node.Nodes.Add(e.Node.Name);
+        }
+        
+        private void bRefresh_Click(object sender, EventArgs e)
+        {
+            RefreshListing();
+        }
+
+        #endregion 
+
+        #region Manage filter options
+
+        private void RefreshListing()
+        {
+            Thread tRefresh = new Thread(() =>
+            {
+                if (!Client.CheckConnectionStatus())
+                    RetryConnection();
+
+                List<ClientItem> li = new List<ClientItem>();
+                try
+                {
+                    li = Client.List(".");
+                }
+                catch(Exception ex)
+                {
+                    Common.LogError(ex);
+                    return;
+                }
+
+                this.Invoke(new MethodInvoker(delegate
+                {
+                    lSelectiveSync.Nodes.Clear();
+                }));
+
+                foreach (ClientItem d in li)
+                    if (d.Type == ClientItemType.Folder)
+                    {
+                        if (d.Name == "webint") continue;
+
+                        TreeNode parent = new TreeNode(d.Name);
+                        this.Invoke(new MethodInvoker(delegate
+                        {
+                            lSelectiveSync.Nodes.Add(parent);
+                            parent.Nodes.Add(new TreeNode("!tempnode!"));
+                        }));
+                        
+                    }
+                foreach (ClientItem f in li)
+                    if (f.Type == ClientItemType.File)
+                        this.Invoke(new MethodInvoker(delegate
+                        {
+                            lSelectiveSync.Nodes.Add(new TreeNode(f.Name));
+                        }));
+
+                this.Invoke(new MethodInvoker(delegate
+                {
+                    EditNodeCheckboxes();
+                }));
+            });
+            tRefresh.Start();
+        }
+
+        private void CheckSingleRoute(TreeNode tn)
+        {
+            if (tn.Checked && tn.Parent != null)
+                if (!tn.Parent.Checked)
+                {
+                    tn.Parent.Checked = true;
+                    if (Common.IgnoreList.FolderList.Contains(tn.Parent.FullPath))
+                        Common.IgnoreList.FolderList.Remove(tn.Parent.FullPath);
+                    CheckSingleRoute(tn.Parent);
+                }
+        }
+
+        private void EditNodeCheckboxes()
+        {
+            foreach (TreeNode t in lSelectiveSync.Nodes)
+            {
+                if (!Common.IgnoreList.isInIgnoredFolders(t.FullPath)) t.Checked = true;
+                if (t.Parent != null)
+                    if (!t.Parent.Checked) t.Checked = false;
+
+                foreach (TreeNode tn in t.Nodes)
+                    EditNodeCheckboxesRecursive(tn);
+            }
+        }
+
+        private void EditNodeCheckboxesRecursive(TreeNode t)
+        {
+            t.Checked = Common.IgnoreList.isInIgnoredFolders(t.FullPath);
+            if (t.Parent != null)
+                if (!t.Parent.Checked) t.Checked = false;
+
+            Log.Write(l.Debug, "Node {0} is checked {1}", t.FullPath, t.Checked);
+
+            foreach (TreeNode tn in t.Nodes)
+                EditNodeCheckboxesRecursive(tn);
+        }
+
+        private bool checking_nodes = false;
+        private void CheckUncheckChildNodes(TreeNode t, bool c)
+        {
+            t.Checked = c;
+            foreach (TreeNode tn in t.Nodes)
+                CheckUncheckChildNodes(tn, c);
+        }
+
+        private bool isParentNodeUnchecked(TreeNode t)
+        {
+            return !t.Parent.Checked;
+        }
+
+        #endregion
 
         #endregion
     }

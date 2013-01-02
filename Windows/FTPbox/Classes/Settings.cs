@@ -39,7 +39,7 @@ namespace FTPbox
 
         private static int Get(string xPath, int defaultValue)
         {
-            return Convert.ToInt16(Get(xPath, Convert.ToString(defaultValue)));
+            return Convert.ToInt32(Get(xPath, Convert.ToString(defaultValue)));
         }
 
         private static void Put(string xPath, int value)
@@ -425,6 +425,86 @@ namespace FTPbox
                     return TrayAction.CopyLink;
                 else
                     return TrayAction.OpenLocalFile;
+            }
+        }
+
+        public static bool ignoreDotfiles
+        {
+            get
+            {
+                return Get("IgnoreSettings/dotfiles", "False") == "True";
+            }
+            set
+            {
+                Put("IgnoreSettings/dotfiles", value.ToString());
+            }
+        }
+
+        public static bool ignoreTempfiles
+        {
+            get
+            {
+                return Get("IgnoreSettings/tempfiles", "True") == "True";
+            }
+            set
+            {
+                Put("IgnoreSettings/tempfiles", value.ToString());
+            }
+        }
+
+        public static List<string> ignoredFolders
+        {
+            get
+            {
+                string all = Get("IgnoreSettings/Folders", "");
+                return (all.Split('|').Count() > 0) ? new List<string>(all.Split('|')) : new List<string>();
+            }
+            set
+            {
+                if (value == null)
+                {
+                    Put("IgnoreSettings/Folders", "");
+                    return;
+                }
+                else if (value.Count == 0)
+                {
+                    Put("IgnoreSettings/Folders", "");
+                    return;
+                }
+
+                string all = string.Empty;
+                foreach (string f in value)
+                    if (!string.IsNullOrWhiteSpace(f))
+                        all += string.Format("{0}|", f);
+                Put("IgnoreSettings/Folders", all);
+            }
+        }
+
+        public static List<string> ignoredExtensions
+        {
+            get
+            {
+                string all = Get("IgnoreSettings/Extensions", "");
+                return (all.Split('|').Count() > 0) ? new List<string>(all.Split('|')) : new List<string>();
+            }
+            set
+            {
+                if (value == null)
+                {
+                    Put("IgnoreSettings/Extensions", "");
+                    return;
+                }
+                else if (value.Count == 0)
+                {
+                    Put("IgnoreSettings/Folders", "");
+                    return;
+                }
+
+                string all = string.Empty;
+                foreach (string f in value)
+                    if (!string.IsNullOrWhiteSpace(f)) 
+                        all += string.Format("{0}|", f);
+                Put("IgnoreSettings/Extensions", all);
             }
         }
 

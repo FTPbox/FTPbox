@@ -58,12 +58,12 @@ namespace FTPboxLib
             {
                 cp = (cp.StartsWith("/")) ? cp.Substring(1) : cp;
                 //Log.Write(l.Debug, "without slash: {0}", cp);
-                if (Profile.Protocol == FtpProtocol.SFTP && Profile.SftpHome != "")
+                if (Profile.Protocol == FtpProtocol.SFTP && Profile.HomePath != "")
                 {
-                    if (cp.StartsWith(Profile.SftpHome))
-                        cp = cp.Substring(Profile.SftpHome.Length + 1);
-                    if (cp.StartsWith("/" + Profile.SftpHome))
-                        cp = cp.Substring(Profile.SftpHome.Length + 2);
+                    if (cp.StartsWith(Profile.HomePath))
+                        cp = cp.Substring(Profile.HomePath.Length + 1);
+                    if (cp.StartsWith("/" + Profile.HomePath))
+                        cp = cp.Substring(Profile.HomePath.Length + 2);
                 } 
                 //Log.Write(l.Debug, "without home: {0}", cp);
                 if (cp.StartsWith(Profile.RemotePath))
@@ -216,7 +216,6 @@ namespace FTPboxLib
 
             bool b = !(IgnoreList.isIgnored(name)
                 || name.Contains("webint") || name.EndsWith(".") || name.EndsWith("..")                 //web interface, current and parent folders are ignored
-                || name.EndsWith("~") || name.StartsWith(".goutputstream") || aName.StartsWith("~")     //temporary files are ignored
                 || aName == ".ftpquota" || aName == "error_log" || aName.StartsWith(".bash")            //server files are ignored
                 || !IsAllowedFilename(aName)                                                            //checks characters not allowed in windows file/folder names
                 );

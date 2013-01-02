@@ -58,7 +58,10 @@ namespace FTPboxLib
         {
             get
             {
-                return CommonPath.Substring(0, CommonPath.Length - Common._name(CommonPath).Length - 1);
+                if (CommonPath.Length <= Common._name(CommonPath).Length + 1)
+                    return string.Empty;
+                else
+                    return CommonPath.Substring(0, CommonPath.Length - Common._name(CommonPath).Length - 1);
             }
         }
 	}
