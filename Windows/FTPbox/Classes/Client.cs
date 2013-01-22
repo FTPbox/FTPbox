@@ -720,7 +720,7 @@ namespace FTPboxLib
                 Log.Write(l.Info, "Client Compression Algorithm: {0}", sftpc.ConnectionInfo.CurrentClientCompressionAlgorithm);
                 Log.Write(l.Info, "Server Compression Algorithm: {0}", sftpc.ConnectionInfo.CurrentServerCompressionAlgorithm);
                 Log.Write(l.Info, "Client encryption: {0}", sftpc.ConnectionInfo.CurrentClientEncryption);
-                Log.Write(l.Info, "Server encryption: {1}", sftpc.ConnectionInfo.CurrentServerEncryption);
+                Log.Write(l.Info, "Server encryption: {0}", sftpc.ConnectionInfo.CurrentServerEncryption);
             }
             else
             {

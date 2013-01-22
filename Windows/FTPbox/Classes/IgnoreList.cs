@@ -49,7 +49,7 @@ namespace FTPboxLib
             string name = Common._name(path);
             string ext = name.Contains(".") ? name.Substring(name.LastIndexOf(".")+1) : null;
             
-            if (!string.IsNullOrEmpty(ext)) Log.Write(l.Error, "Ext: {0}", ext);
+            //if (!string.IsNullOrEmpty(ext)) Log.Write(l.Error, "Ext: {0}", ext);
 
             return  
                 (IgnoreDotFiles && name.StartsWith(".")) ||                                                                 // are dotfiles ignored?

@@ -1557,7 +1557,7 @@ namespace FTPbox.Forms
                     locallang = "Thai";
                 else if (locallangtwoletter == "sl")
                     locallang = "Slovenian";
-				else if (locallangtwoletter == "cs")
+                else if (locallangtwoletter == "cs")
                     locallang = "Czech";
                 else
                     locallang = "English";

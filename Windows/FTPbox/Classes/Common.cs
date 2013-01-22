@@ -160,10 +160,10 @@ namespace FTPboxLib
         public static string _tempName(string cpath)
         {
             if (!cpath.Contains("/") && !cpath.Contains(@"\"))
-                return string.Format("~{0}", cpath);
+                return string.Format("~ftpb_{0}", cpath);
 
             string parent = cpath.Substring(0, cpath.LastIndexOf("/"));
-            string temp_name = string.Format("~{0}", _name(cpath));
+            string temp_name = string.Format("~ftpb_{0}", _name(cpath));
 
             return string.Format("{0}/{1}", parent, temp_name);
         }
@@ -178,7 +178,7 @@ namespace FTPboxLib
             string parent = lpath.Substring(0, lpath.LastIndexOf(@"\"));
             string temp_name = _name(lpath);
 
-            return string.Format(@"{0}\~{1}", parent, temp_name);
+            return string.Format(@"{0}\~ftpb_{1}", parent, temp_name);
         }
 
         /// <summary>
@@ -218,6 +218,7 @@ namespace FTPboxLib
                 || name.Contains("webint") || name.EndsWith(".") || name.EndsWith("..")                 //web interface, current and parent folders are ignored
                 || aName == ".ftpquota" || aName == "error_log" || aName.StartsWith(".bash")            //server files are ignored
                 || !IsAllowedFilename(aName)                                                            //checks characters not allowed in windows file/folder names
+                || aName.StartsWith("~ftpb_")                                                           //FTPbox-generated temporary files are ignored
                 );
 
             if (!b)
