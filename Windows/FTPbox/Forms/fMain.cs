@@ -183,7 +183,7 @@ namespace FTPbox.Forms
         /// </summary>
         private void CheckAccount()
         {
-            if (Profile.Username == "" || Profile.Host == "" || Profile.Password == "")
+            if (!Profile.isAccountSet)
             {
                 Log.Write(l.Info, "Will open New FTP form.");
 
@@ -195,23 +195,31 @@ namespace FTPbox.Forms
             }
             else
             {
-                try
+                if (string.IsNullOrWhiteSpace(Profile.Password))
                 {
-                    LoginFTP();
-
-                    this.ShowInTaskbar = false;
-                    this.Hide();
-                    this.ShowInTaskbar = true;                    
-                }
-                catch (Exception ex)
-                {
-                    Log.Write(l.Info, "Will open New FTP form");
-                    Common.LogError(ex);
+                    Account.just_password = true;
                     fNewFtp.ShowDialog();
-                    Log.Write(l.Info, "Done");
 
                     this.Show();
                 }
+                else
+                    try
+                    {
+                        LoginFTP();
+
+                        this.ShowInTaskbar = false;
+                        this.Hide();
+                        this.ShowInTaskbar = true;                    
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Write(l.Info, "Will open New FTP form");
+                        Common.LogError(ex);
+                        fNewFtp.ShowDialog();
+                        Log.Write(l.Info, "Done");
+
+                        this.Show();
+                    }
             }
 
             loggedIn = true;
@@ -222,35 +230,14 @@ namespace FTPbox.Forms
         /// </summary>
         public void CheckPaths()
         {
-            string rpath = Profile.RemotePath;
-            if (rpath.StartsWith(@"/") && rpath != @"/")
-                rpath = rpath.Substring(1);
-
-            Log.Write(l.Debug, "rpath: {0} lPath: {1}", rpath, Profile.LocalPath);
-
-            if (rpath == "" || Profile.LocalPath == "")
+            if (!Profile.isPathsSet)
             {
-                Log.Write(l.Debug, "Case 1");
-                newDir.ShowDialog();
-                
-                //Application.Run();
+                newDir.ShowDialog();       
                 this.Show();
 
                 if (!gotpaths)
                 {
                     Log.Write(l.Debug, "shutting down");
-                    KillTheProcess();
-                }
-            }
-            else if ((rpath != "/" && !Client.Exists(rpath)) || !Directory.Exists(Profile.LocalPath))
-            {
-                Log.Write(l.Debug, "Case 2");
-                newDir.ShowDialog();
-
-                this.Show();
-
-                if (!gotpaths)
-                {
                     KillTheProcess();
                 }
             }
@@ -525,6 +512,7 @@ namespace FTPbox.Forms
         /// </summary>
         public void LoadProfile()
         {
+            Profile.AskForPassword = false;
             Profile.AddAccount(Settings.Host, Settings.User, Settings.Pass, Settings.Port);
             Profile.AddPaths(Settings.rPath, Settings.lPath, Settings.ftpParent);
             Profile.Protocol = (Settings.FTP) ? (Settings.FTPS ? FtpProtocol.FTPS : FtpProtocol.FTP) : FtpProtocol.SFTP;

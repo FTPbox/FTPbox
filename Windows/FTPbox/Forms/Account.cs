@@ -38,32 +38,9 @@ namespace FTPbox.Forms
         private void bDone_Click(object sender, EventArgs e)
         {
             Log.Write(l.Debug, AppPath);
-            bool ftporsftp;
-            bool ftps = false;
-            bool ftpes = true;
-
-            if (cMode.SelectedIndex == 0)
-            {
-                ftporsftp = true;
-                if (cEncryption.SelectedIndex != 0)
-                {
-                    ftps = true;
-                    if (cEncryption.SelectedIndex == 1)
-                    {
-                        Log.Write(l.Debug, "FTPS Explicit");
-                        ftpes = true;
-                    }
-                    else
-                    {
-                        Log.Write(l.Debug, "FTPS Implicit");
-                        ftpes = false;
-                    }
-                }
-            }
-            else
-            {
-                ftporsftp = false;
-            }
+            bool ftporsftp = cMode.SelectedIndex == 0;
+            bool ftps = cMode.SelectedIndex == 0 && cEncryption.SelectedIndex != 0;
+            bool ftpes = cEncryption.SelectedIndex == 1;
 
             Profile.AddAccount(tHost.Text, tUsername.Text, tPass.Text, Convert.ToInt32(nPort.Value));
             if (ftporsftp && ftps)
@@ -105,6 +82,8 @@ namespace FTPbox.Forms
 
                 ((fMain)this.Tag).SetTray(fMain.MessageType.Ready);
 
+                Profile.AskForPassword = cAskForPass.Checked;
+
                 Settings.SaveProfile();
                 //Paths fnewdir = new Paths();
                 //fnewdir.Tag = this.Tag;
@@ -127,13 +106,26 @@ namespace FTPbox.Forms
 
             if (ftporsftp)
                 Log.Write(l.Debug, Client.WorkingDirectory); 
-        }            
+        }
 
+        public static bool just_password = false;
         private void Account_Load(object sender, EventArgs e)
         {
+            cAskForPass.Checked = just_password;
             cEncryption.SelectedIndex = 0;
             cMode.SelectedIndex = 0;
             Set_Language(Settings.lang);
+
+            if (just_password && Profile.isAccountSet)
+            {
+                tHost.Text = Profile.Host;
+                tUsername.Text = Profile.Username;
+                nPort.Value = Profile.Port;
+                cEncryption.SelectedIndex = (Profile.Protocol != FtpProtocol.FTPS) ? 0 : (Profile.FtpsInvokeMethod == FtpsMethod.Explicit ? 1 : 2);
+                cMode.SelectedIndex = (Profile.Protocol != FtpProtocol.SFTP) ? 0 : 1;
+
+                this.ActiveControl = tPass;
+            }
         }
 
         private void cMode_SelectedIndexChanged(object sender, EventArgs e)
@@ -193,6 +185,11 @@ namespace FTPbox.Forms
             {
                 Application.Exit();
             }
+        }
+
+        private void cAskForPass_CheckedChanged(object sender, EventArgs e)
+        {
+            just_password = cAskForPass.Checked;
         }
     }
 }

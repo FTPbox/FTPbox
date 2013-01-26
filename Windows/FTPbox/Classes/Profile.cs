@@ -20,7 +20,7 @@ namespace FTPboxLib
 	public static class Profile
 	{
         public static string DecryptionPassword = "removed";    //removed for security purposes
-        public static string DecryptionSalt = "removed"	  		//removed for security purposes
+        public static string DecryptionSalt = "removed";     		//removed for security purposes
 
 		public static string Host
 		{
@@ -120,7 +120,31 @@ namespace FTPboxLib
 
         public static bool IsDebugMode { get; set; }
         public static bool IsNoMenusMode { get; set; }
-		
+
+        public static bool isAccountSet {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(Host) && !string.IsNullOrWhiteSpace(Username); // && !string.IsNullOrWhiteSpace(Password);
+            }
+        }
+
+        public static bool isPathsSet
+        {
+            get
+            {
+                string rpath = RemotePath;
+                if (rpath.StartsWith(@"/") && rpath != @"/")
+                    rpath = rpath.Substring(1);    
+        
+                if (string.IsNullOrWhiteSpace(rpath) || string.IsNullOrWhiteSpace(LocalPath)) return false;
+                if ((rpath != "/" && !Client.Exists(rpath)) || !System.IO.Directory.Exists(LocalPath)) return false;
+                
+                return true;
+            }
+        }
+
+        public static bool AskForPassword { get; set; }
+
 		public static void Load()
 		{
 			

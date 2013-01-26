@@ -43,6 +43,7 @@
             this.tPass = new System.Windows.Forms.TextBox();
             this.tUsername = new System.Windows.Forms.TextBox();
             this.gDetails = new System.Windows.Forms.GroupBox();
+            this.cAskForPass = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.nPort)).BeginInit();
             this.gDetails.SuspendLayout();
             this.SuspendLayout();
@@ -230,12 +231,24 @@
             this.gDetails.TabStop = false;
             this.gDetails.Text = "FTP Login Details";
             // 
+            // cAskForPass
+            // 
+            this.cAskForPass.AutoSize = true;
+            this.cAskForPass.Location = new System.Drawing.Point(12, 210);
+            this.cAskForPass.Name = "cAskForPass";
+            this.cAskForPass.Size = new System.Drawing.Size(142, 17);
+            this.cAskForPass.TabIndex = 27;
+            this.cAskForPass.Text = "Always ask for password";
+            this.cAskForPass.UseVisualStyleBackColor = true;
+            this.cAskForPass.CheckedChanged += new System.EventHandler(this.cAskForPass_CheckedChanged);
+            // 
             // Account
             // 
             this.AcceptButton = this.bDone;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(381, 241);
+            this.Controls.Add(this.cAskForPass);
             this.Controls.Add(this.bDone);
             this.Controls.Add(this.gDetails);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -250,6 +263,7 @@
             this.gDetails.ResumeLayout(false);
             this.gDetails.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -269,5 +283,6 @@
         private System.Windows.Forms.TextBox tPass;
         private System.Windows.Forms.TextBox tUsername;
         private System.Windows.Forms.GroupBox gDetails;
+        private System.Windows.Forms.CheckBox cAskForPass;
     }
 }

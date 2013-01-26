@@ -91,7 +91,8 @@ namespace FTPbox
             Log.Write(l.Debug, "Saving the profile");
             Put("Account/Host", Profile.Host);
             Put("Account/Username", Profile.Username);
-            Put("Account/Password", AESEncryption.Encrypt(Profile.Password, Profile.DecryptionPassword, Profile.DecryptionSalt, "SHA1", 2, "OFRna73m*aze01xY", 256));
+            if (!Profile.AskForPassword)
+                Put("Account/Password", AESEncryption.Encrypt(Profile.Password, Profile.DecryptionPassword, Profile.DecryptionSalt, "SHA1", 2, "OFRna73m*aze01xY", 256));
             Put("Account/Port", Profile.Port);
             Put("Account/FTP", (Profile.Protocol != FtpProtocol.SFTP).ToString());
             Put("Account/FTPS", (Profile.Protocol == FtpProtocol.FTPS).ToString());
