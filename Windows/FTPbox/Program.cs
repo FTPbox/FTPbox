@@ -38,8 +38,9 @@ namespace FTPbox
 
             FTPboxLib.Profile.IsDebugMode = args.Contains("-debug");
             FTPboxLib.Profile.IsNoMenusMode = args.Contains("-nomenus");
+            string debug_log_path = Path.Combine(FTPboxLib.Profile.AppdataFolder, "Debug.html");
 
-            Log.Init("Debug.html", l.Debug | l.Info | l.Warning | l.Error | l.Client, true, FTPboxLib.Profile.IsDebugMode);
+            Log.Init(debug_log_path, l.Debug | l.Info | l.Warning | l.Error | l.Client, true, FTPboxLib.Profile.IsDebugMode);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
