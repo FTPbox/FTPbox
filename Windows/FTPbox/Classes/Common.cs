@@ -24,9 +24,19 @@ namespace FTPboxLib
         public static List<string> localFolders = new List<string>();       //Used to store all the local folders at all times
         public static List<string> localFiles = new List<string>();         //Used to store all the local files at all times
         public static IgnoreList IgnoreList = new IgnoreList();	            //list of ignored folders
-        private static FileLog fLog = new FileLog();                        //the file log
+        public static FileLog FileLog = new FileLog();                      //the file log
 
         public static Translations Languages = new Translations();          //Used to grab the translations from the translations.xml file
+
+        public static string Encrypt(string password)
+        {
+            return Utilities.Encryption.AESEncryption.Encrypt(password, Profile.DecryptionPassword, Profile.DecryptionSalt, "SHA1", 2, "OFRna73m*aze01xY", 256);
+        }
+
+        public static string Decrypt(string hash)
+        {
+            return Utilities.Encryption.AESEncryption.Decrypt(hash, Profile.DecryptionPassword, Profile.DecryptionSalt, "SHA1", 2, "OFRna73m*aze01xY", 256);
+        }
 
         /// <summary>
         /// Gets the common path of both local and remote directories.
@@ -259,17 +269,12 @@ namespace FTPboxLib
         /// <param name="cPath">name to remove</param>
         public static void RemoveFromLog(string cPath)
         {
-            if (fLog.Contains(cPath))
+            if (FileLog.Contains(cPath))
             {
-                fLog.Remove(cPath);
-                Settings.ClearLog();
-
-                foreach (FileLogItem f in fLog.Files)
-                {
-                    Settings.SaveLog(f.CommonPath, f.Remote.ToString(), f.Local.ToString());
-                }
+                FileLog.Remove(cPath);
                 Log.Write(l.Debug, "*** Removed from Log: {0}", cPath);
             }
+            Settings.SaveProfile();
         }
 
         /// <summary>

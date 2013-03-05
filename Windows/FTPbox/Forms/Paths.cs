@@ -43,7 +43,7 @@ namespace FTPbox.Forms
 
             Profile.AddPaths(rp, tPath.Text, tParent.Text);
 
-            Settings.SaveProfile();
+            Settings.Save();
 
             ((fMain)this.Tag).gotpaths = true;
             
@@ -139,7 +139,7 @@ namespace FTPbox.Forms
 
         private void Paths_Load(object sender, EventArgs e)
         {
-            Set_Language(Settings.lang); 
+            Set_Language(Profile.Language); 
             
             tPath.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\FTPbox";
 

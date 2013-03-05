@@ -64,8 +64,6 @@ namespace FTPbox.Forms
                 Client.Connect();
                 Log.Write(l.Debug, "Connected: {0}", Client.isConnected);
 
-                Profile.AddAccount(tHost.Text, tUsername.Text, tPass.Text, Convert.ToInt32(nPort.Value));
-
                 if (ftporsftp && ftps)
                     Profile.Protocol = FtpProtocol.FTPS;
                 else if (ftporsftp)
@@ -84,7 +82,7 @@ namespace FTPbox.Forms
 
                 Profile.AskForPassword = cAskForPass.Checked;
 
-                Settings.SaveProfile();
+                //Settings.SaveProfile();     //not now?
                 //Paths fnewdir = new Paths();
                 //fnewdir.Tag = this.Tag;
                 this.Hide();
@@ -114,7 +112,7 @@ namespace FTPbox.Forms
             cAskForPass.Checked = just_password;
             cEncryption.SelectedIndex = 0;
             cMode.SelectedIndex = 0;
-            Set_Language(Settings.lang);
+            Set_Language(Profile.Language);
 
             if (just_password && Profile.isAccountSet)
             {

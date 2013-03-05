@@ -6,35 +6,246 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml;
 using System.Windows.Forms;
 using System.IO;
-using FTPboxLib;
-using Utilities.Encryption;
+using FTPbox;
 using FTPbox.Classes;
+using Newtonsoft.Json;
 
-namespace FTPbox
+namespace FTPboxLib
 {
-    public class Settings   //Used to get the application settings from the settings.xml file
+    public class Settings
     {
         #region Variables
 
-        private static XmlDocument xmlDocument;    
-        private static string documentPath = Path.Combine(Profile.AppdataFolder, @"settings.xml");
+        private static string confProfiles = Path.Combine(Profile.AppdataFolder, @"profiles.conf");
+        private static string confGeneral = Path.Combine(Profile.AppdataFolder, @"general.conf");
+        public static List<SettingsProfile> Profiles;
+        public static SettingsGeneral settingsGeneral;
 
         #endregion
 
         public static void Load()
         {
-            xmlDocument = new XmlDocument();
-            Log.Write(l.Debug, "Settings file path: {0}", documentPath);
-            if (!Directory.Exists(Profile.AppdataFolder))
-                Directory.CreateDirectory(Profile.AppdataFolder);
+            Log.Write(l.Debug, "Settings file path: {0}", confGeneral);
+            Log.Write(l.Debug, "Profiles file path: {0}", confProfiles);
 
-            try { xmlDocument.Load(documentPath); }
-            catch { xmlDocument.LoadXml("<settings></settings>"); }
+            if (!Directory.Exists(Profile.AppdataFolder)) Directory.CreateDirectory(Profile.AppdataFolder);
+
+            Profiles = new List<SettingsProfile>();
+            settingsGeneral = new SettingsGeneral();
+
+            Profiles.Add(new SettingsProfile());
+
+            if (File.Exists(xmlDocumentPath) && !File.Exists(confProfiles) && !File.Exists(confGeneral))
+            {
+                LoadXmlSettings();
+                Log.Write(l.Debug, "Loaded xml settings, should delete the xml file now...");
+                return;
+            }
+
+            if (!File.Exists(confGeneral)) return;
+
+            string config = File.ReadAllText(confGeneral);
+            if (!string.IsNullOrWhiteSpace(config))
+            {
+                settingsGeneral = (SettingsGeneral)JsonConvert.DeserializeObject(config, typeof(SettingsGeneral));
+                Clipboard.SetText(JsonConvert.SerializeObject(settingsGeneral, Newtonsoft.Json.Formatting.Indented));
+            }
+
+            if (!File.Exists(confProfiles)) return;
+
+            config = File.ReadAllText(confProfiles);
+            if (!string.IsNullOrWhiteSpace(config))            
+                Profiles= new List<SettingsProfile>((List<SettingsProfile>)JsonConvert.DeserializeObject(config, typeof(List<SettingsProfile>)));                
         }
 
+        /// <summary>
+        /// Saves Profiles & General settings to the config file
+        /// </summary>
+        public static void Save()
+        {
+            SaveGeneral();
+
+            SaveProfile();
+        }
+
+        /// <summary>
+        /// Save the general settings to the config file
+        /// </summary>
+        public static void SaveGeneral()
+        {
+            string config_gen = JsonConvert.SerializeObject(settingsGeneral, Newtonsoft.Json.Formatting.Indented);
+            
+            File.WriteAllText(confGeneral, config_gen);
+            //using (StreamWriter sw = new StreamWriter(confGeneral, false))
+                //sw.Write(config_gen);
+        }
+
+        /// <summary>
+        /// Puts data from Profile Class to the Profiles list
+        /// and then saves the Profiles list to the config file
+        /// </summary>
+        public static void SaveProfile()
+        {
+            SettingsProfile def = new SettingsProfile();
+            
+            def.Account.host = Profile.Host;
+            def.Account.username = Profile.Username;
+            if (!Profile.AskForPassword)
+                def.Account.password = Common.Encrypt(Profile.Password);
+            def.Account.port = Profile.Port;
+            def.Account.protocol = Profile.Protocol;
+            def.Account.ftpsMethod = Profile.FtpsInvokeMethod;
+            def.Account.FtpSecurityProtocol = Profile.SecurityProtocol;
+            def.Account.SyncFrequency = Profile.SyncFrequency;
+            def.Account.SyncMethod = Profile.SyncingMethod;
+            
+            def.Paths.remote = Profile.RemotePath;
+            def.Paths.local = Profile.LocalPath;
+            def.Paths.parent = Profile.HttpPath;
+
+            def.Log.items = Common.FileLog.Files.ToArray();
+            def.Log.folders = Common.FileLog.Folders.ToArray();
+
+            def.Ignored.folders = Common.IgnoreList.FolderList.ToArray();
+            def.Ignored.extensions = Common.IgnoreList.ExtensionList.ToArray();
+            def.Ignored.dotfiles = Common.IgnoreList.IgnoreDotFiles;
+            def.Ignored.tempfiles = Common.IgnoreList.IgnoreTempFiles;
+
+            if (settingsGeneral.DefaultProfile >= Profiles.Count)
+                Profiles.Add(def);
+            else 
+                Profiles[settingsGeneral.DefaultProfile] = def;
+
+            string config_prof = JsonConvert.SerializeObject(Profiles, Newtonsoft.Json.Formatting.Indented);
+            File.WriteAllText(confProfiles, config_prof);
+            
+            //using (StreamWriter sw = new StreamWriter(confProfiles, false))
+                //sw.Write(config_prof);
+        }
+
+        /// <summary>
+        /// Deletes the current (default) profile
+        /// </summary>
+        public static void RemoveProfile()
+        {
+            Profiles.RemoveAt(settingsGeneral.DefaultProfile);
+            settingsGeneral.DefaultProfile = 0;
+            Save();
+        }
+
+        /// <summary>
+        /// Returns the Profile that's currently set as default
+        /// </summary>
+        public static SettingsProfile DefaultProfile
+        {
+            get
+            {
+                if (Profiles.Count <= settingsGeneral.DefaultProfile)
+                    return new SettingsProfile();
+
+                return Profiles[settingsGeneral.DefaultProfile];
+            }
+            set
+            {
+                Profiles[settingsGeneral.DefaultProfile] = value;
+                SaveProfile();
+            }
+        }
+
+        /// <summary>
+        /// Change to another profile
+        /// </summary>
+        /// <param name="index">The index of the profile to change to</param>
+        public static void ChangeDefaultProfile(int index)
+        {
+            settingsGeneral.DefaultProfile = index;
+        }
+
+        #region Load profile from older config-file formatting (xml)
+
+        private static System.Xml.XmlDocument xmlDocument;
+        private static string xmlDocumentPath = Path.Combine(Profile.AppdataFolder, @"settings.xml");
+
+        /// <summary>
+        /// If an old settings file is found (settings.xml), load its contents and convert to json format
+        /// </summary>
+        public static void LoadXmlSettings()
+        {
+            xmlDocument = new System.Xml.XmlDocument();
+            try { xmlDocument.Load(xmlDocumentPath); }
+            catch { xmlDocument.LoadXml("<settings></settings>"); }
+
+            settingsGeneral.Language = Get("Settings/Language", "");
+            settingsGeneral.TrayAction = (TrayAction)Enum.Parse(typeof(TrayAction), Get("Settings/OpenInBrowser", TrayAction.OpenInBrowser.ToString()));
+            settingsGeneral.Notifications = Get("Settings/ShowNots", "True") == "True";
+            settingsGeneral.DownloadLimit = Get("Settings/DownLimit", 0);
+            settingsGeneral.UploadLimit = Get("Settings/DownLimit", 0);            
+
+            SettingsProfile def = new SettingsProfile();
+
+            def.Account.host = Get("Account/Host", "");
+            def.Account.username = Get("Account/Username", "");
+            def.Account.password = Get("Account/Password", "");
+            def.Account.port = Get("Account/Port", bool.Parse(Get("Account/FTP", "True")) ? 21 : 22);
+            def.Account.protocol = bool.Parse(Get("Account/FTP", "True")) ? (bool.Parse(Get("Account/FTPS", "True")) ? FtpProtocol.FTPS : FtpProtocol.FTP) : FtpProtocol.SFTP;            
+            def.Account.ftpsMethod = (def.Account.protocol == FtpProtocol.FTP) ? FtpsMethod.None : ((bool.Parse(Get("Account/FTPES", "True"))) ? FtpsMethod.Explicit : FtpsMethod.Implicit);
+            def.Account.FtpSecurityProtocol = Get("Account/FtpSecurityProtocol", "Default") == "Default" ? Starksoft.Net.Ftp.FtpSecurityProtocol.None : (Starksoft.Net.Ftp.FtpSecurityProtocol)Enum.Parse(typeof(Starksoft.Net.Ftp.FtpSecurityProtocol), Get("Account/FtpSecurityProtocol", "Default"));
+            def.Account.SyncFrequency = Get("Settings/SyncFrequency", 10);
+            def.Account.SyncMethod = Get("Settings/SyncMethod", SyncMethod.Automatic.ToString()) == "Automatic" ? SyncMethod.Automatic : SyncMethod.Manual;
+
+            def.Paths.remote = Get("Paths/rPath", "");
+            def.Paths.local = Get("Paths/lPath", "");
+            def.Paths.parent = Get("Paths/Parent", "");
+
+            def.Log.items = ConvertXmlLog;
+            def.Log.folders = Get("Log/folders", "").Split('|', '|');
+
+            def.Ignored.folders = Get("IgnoreSettings/Folders", "").Split('|', '|');
+            def.Ignored.extensions = Get("IgnoreSettings/Extensions", "").Split('|', '|');
+            def.Ignored.dotfiles = Get("IgnoreSettings/dotfiles", "False") == "True";
+            def.Ignored.tempfiles = Get("IgnoreSettings/tempfiles", "True") == "True";
+
+            Profiles.Clear();
+            Profiles.Add(def);
+            Profile.Load();
+            Common.FileLog = new FileLog();
+
+            Save();
+
+            try
+            {
+                xmlDocument = new System.Xml.XmlDocument();
+                File.Delete(xmlDocumentPath);
+            }
+            catch { }
+        }        
+
+        private static FileLogItem[] ConvertXmlLog
+        {
+            get
+            {
+                string[] nlog = Get("Log/nLog", "").Split('|', '|');
+                string[] rlog = Get("Log/rLog", "").Split('|', '|');
+                string[] llog = Get("Log/lLog", "").Split('|', '|');
+                List<FileLogItem> items = new List<FileLogItem>();
+                for (int i = 0; i < nlog.Length; i++)
+                {
+                    try
+                    {
+                        FileLogItem l = new FileLogItem(nlog[i], Convert.ToDateTime(rlog[i]), Convert.ToDateTime(llog[i]));
+                        items.Add(l);
+                    }
+                    catch (Exception ex)
+                    {
+                        Common.LogError(ex);
+                    }
+                }
+                return items.ToArray();
+            }
+        }
+        
         #region Private Actions
 
         private static int Get(string xPath, int defaultValue)
@@ -49,25 +260,25 @@ namespace FTPbox
 
         private static string Get(string xPath, string defaultValue)
         {
-            XmlNode xmlNode = xmlDocument.SelectSingleNode("settings/" + xPath);
+            System.Xml.XmlNode xmlNode = xmlDocument.SelectSingleNode("settings/" + xPath);
             if (xmlNode != null) { return xmlNode.InnerText; }
             else { return defaultValue; }
         }
 
         private static void Put(string xPath, string value)
         {
-            XmlNode xmlNode = xmlDocument.SelectSingleNode("settings/" + xPath);
+            System.Xml.XmlNode xmlNode = xmlDocument.SelectSingleNode("settings/" + xPath);
             if (xmlNode == null) { xmlNode = createMissingNode("settings/" + xPath); }
             xmlNode.InnerText = value;
-            xmlDocument.Save(documentPath);
+            xmlDocument.Save(xmlDocumentPath);
         }
 
-        private static XmlNode createMissingNode(string xPath)
+        private static System.Xml.XmlNode createMissingNode(string xPath)
         {
             string[] xPathSections = xPath.Split('/');
             string currentXPath = "";
-            XmlNode testNode = null;
-            XmlNode currentNode = xmlDocument.SelectSingleNode("settings");
+            System.Xml.XmlNode testNode = null;
+            System.Xml.XmlNode currentNode = xmlDocument.SelectSingleNode("settings");
             foreach (string xPathSection in xPathSections)
             {
                 currentXPath += xPathSection;
@@ -79,436 +290,93 @@ namespace FTPbox
             return currentNode;
         }
 
-#endregion
-
-        #region Public Actions
-
-        /// <summary>
-        /// Saves data from Profile Class to the XML file
-        /// </summary>
-        public static void SaveProfile()
-        {            
-            Log.Write(l.Debug, "Saving the profile");
-            Put("Account/Host", Profile.Host);
-            Put("Account/Username", Profile.Username);
-            if (!Profile.AskForPassword)
-                Put("Account/Password", AESEncryption.Encrypt(Profile.Password, Profile.DecryptionPassword, Profile.DecryptionSalt, "SHA1", 2, "OFRna73m*aze01xY", 256));
-            Put("Account/Port", Profile.Port);
-            Put("Account/FTP", (Profile.Protocol != FtpProtocol.SFTP).ToString());
-            Put("Account/FTPS", (Profile.Protocol == FtpProtocol.FTPS).ToString());
-            Put("Account/FTPES", (Profile.FtpsInvokeMethod == FtpsMethod.Explicit).ToString());
-            Put("Account/FtpSecurityProtocol", Profile.SecurityProtocol.ToString());
-
-            Put("Paths/rPath", Profile.RemotePath);
-            Put("Paths/lPath", Profile.LocalPath);
-            Put("Paths/Parent", Profile.HttpPath);
-            Log.Write(l.Debug, "Saved the profile successfully");
-        }
-
-        /// <summary>
-        /// Saves the given log to the XML settings file
-        /// </summary>
-        /// <param name="nLog">the list of names seperated with a |</param>
-        /// <param name="rLog">the list of remote datetimes seperated with a |</param>
-        /// <param name="lLog">the list of local datetimes seperated with a |</param>
-        public static void SaveLog(string nlog, string rlog, string llog)
-        {
-            Put("Log/nLog", nLog + nlog + "|");
-            Put("Log/rLog", rLog + rlog + "|");
-            Put("Log/lLog", lLog + llog + "|");
-        }
-
-        /// <summary>
-        /// Saves a folder in the XML settings file.
-        /// </summary>
-        /// <param name="f">The common-path to the folder.</param>
-        public static void SaveFolder(string f)
-        {
-            Put("Log/folders", foLog + f + "|");
-        }
-
-        /// <summary>
-        /// clears the account info from the XML file
-        /// </summary>
-        public static void ClearAccount()
-        {
-            Put("Account/Host", "");
-            Put("Account/Username", "");
-            Put("Account/Password", "");
-            Put("Paths/rPath", "");
-            Put("Paths/lPath", "");
-        }
-
-        /// <summary>
-        /// Clears the log
-        /// </summary>
-        public static void ClearLog()
-        {
-            Put("Log/nLog", "");
-            Put("Log/rLog", "");
-            Put("Log/lLog", "");
-        }
-
-        /// <summary>
-        /// clears the folders log
-        /// </summary>
-        public static void ClearFolders()
-        {
-            Put("Log/folders", "");
-        }
-
-        /// <summary>
-        /// Clears the paths from the xml
-        /// </summary>
-        public static void ClearPaths()
-        {
-            Put("Paths/rPath", "");
-            Put("Paths/lPath", "");
-        }
-
-        /// <summary>
-        /// Save the selected TrayAction to the XML settings file.
-        /// </summary>
-        public static void SaveTrayAction(TrayAction t)
-        {
-            Put("Settings/OpenInBrowser", t.ToString());
-        }
+        #endregion    
 
         #endregion
 
-        #region Public Methods
-
-        public static string Host
-        {
-            get {
-                string x = Get("Account/Host", "");
-                try
-                {
-                    return AESEncryption.Decrypt(x, Profile.DecryptionPassword, Profile.DecryptionSalt, "SHA1", 2, "OFRna73m*aze01xY", 256);
-                }
-                catch
-                {
-                    return x;
-                }
-            }
-        }
-
-        public static string User
+        public static string[] ProfileTitles
         {
             get
             {
-                string x = Get("Account/Username", "");
-                try
-                {
-                    return AESEncryption.Decrypt(x, Profile.DecryptionPassword, Profile.DecryptionSalt, "SHA1", 2, "OFRna73m*aze01xY", 256);
-                }
-                catch
-                {
-                    return x;
-                }
+                List<string> titles = new List<string>();
+                foreach (SettingsProfile p in Profiles)
+                    titles.Add(string.Format("{0}@{1}", p.Account.username, p.Account.host));
+                return titles.ToArray();
             }
         }
 
-        public static string Pass
+        public static void RemoveCurrentProfile()
         {
-            get {
-                string x = Get("Account/Password", "");
-                try
-                {
-                    return AESEncryption.Decrypt(x, Profile.DecryptionPassword, Profile.DecryptionSalt, "SHA1", 2, "OFRna73m*aze01xY", 256);
-                }
-                catch
-                {
-                    return x;
-                }
+            Profiles.RemoveAt(settingsGeneral.DefaultProfile);            
+            settingsGeneral.DefaultProfile = 0;
+            SaveGeneral();
+            if (Profiles.Count == 0)
+            {
+                File.Delete(confProfiles);
+                return;
             }
+            string config_prof = JsonConvert.SerializeObject(Profiles, Newtonsoft.Json.Formatting.Indented);
+            File.WriteAllText(confProfiles, config_prof);
         }
 
-        public static int Port
+        public class SettingsGeneral
         {
-            get{
-                int i = (FTP) ? 21 : 22;
-                return Get("Account/Port", i);
-            }
+            public SettingsGeneral() { }
+
+            public string Language = "";
+            public TrayAction TrayAction = TrayAction.OpenLocalFile;
+            public bool Notifications = true;
+
+            public int DownloadLimit = 0;
+            public int UploadLimit = 0;
+
+            public int DefaultProfile = 0;
         }
 
-        public static string rPath
+        public class SettingsProfile
         {
-            get {
-                return Get("Paths/rPath", "");
-            }
+            public SettingsProfile() { }
+
+            public Account Account;
+            public Paths Paths;
+            public SyncLog Log;
+            public Ignored Ignored;
         }
 
-        public static string lPath
+        public struct Account
         {
-            get {
-                return Get("Paths/lPath", "");
-            }
+            public string host { get; set; }
+            public string username { get; set; }
+            public string password { get; set; }
+            public int port { get; set; }
+            public FtpProtocol protocol { get; set; }
+            public FtpsMethod ftpsMethod { get; set; }
+            public Starksoft.Net.Ftp.FtpSecurityProtocol FtpSecurityProtocol { get; set; }
+            public SyncMethod SyncMethod { get; set; }
+            public int SyncFrequency { get; set; }  
         }
 
-        public static bool StartOnStartup
+        public struct Paths
         {
-            get {
-                return bool.Parse(Get("Settings/Startup", "True"));
-            }
-            set {
-                Put("Settings/Startup", value.ToString());
-            }
+            public string remote { get; set; }
+            public string local { get; set; }
+            public string parent { get; set; }
         }
 
-        /// <summary>
-        /// Show notifications?
-        /// </summary>
-        /// <returns></returns>
-        public static bool ShowNots
+        public struct SyncLog
         {
-            get
-            {
-                return bool.Parse(Get("Settings/ShowNots", "True"));
-            }
-            set
-            {
-                Put("Settings/ShowNots", value.ToString());
-            }
+            public FileLogItem[] items { get; set; }
+            public string[] folders { get; set; }
         }
 
-        public static string ftpParent
+        public struct Ignored
         {
-            get
-            {
-                return Get("Paths/Parent", Host);
-            }
-            set
-            {
-                Put("Paths/Parent", value);
-            }
+            public string[] folders { get; set; }
+            public string[] extensions { get; set; }
+            public bool dotfiles { get; set; }
+            public bool tempfiles { get; set; }
         }
-
-        public static string foLog
-        {
-            get
-            {
-                return Get("Log/folders", "");
-            }
-        }
-
-        public static string nLog
-        {
-            get
-            {
-                return Get("Log/nLog", "");
-            }
-        }
-
-        public static string rLog
-        {
-            get
-            {
-                return Get("Log/rLog", "");
-            }
-        }
-
-        public static string lLog
-        {
-            get
-            {
-                return Get("Log/lLog", "");
-            }
-        }
-
-        public static string lang
-        {
-            get
-            {
-                return Get("Settings/Language", "");
-            }
-            set
-            {
-                Put("Settings/Language", value);
-            }
-        }
-
-        public static bool FTP
-        {
-            get
-            {
-                return bool.Parse(Get("Account/FTP", "True"));
-            }
-        }
-
-        public static bool FTPS
-        {
-            get
-            {
-                return bool.Parse(Get("Account/FTPS", "False"));
-            }
-        }
-
-        public static bool FTPES
-        {
-            get
-            {
-                return bool.Parse(Get("Account/FTPES", "True"));
-            }
-        }
-
-        public static string FtpsSecProtocol
-        {
-            get
-            {
-                return Get("Account/FtpSecurityProtocol", "Default");
-            }
-        }
-
-        public static string HTTPPath
-        {
-            get
-            {
-                return Get("Paths/AccountsPath", Host);
-            }
-        }
-
-        public static int UpLimit
-        {
-            get
-            {
-                return Get("Settings/UpLimit", 0);
-            }
-            set
-            {
-                Put("Settings/UpLimit", value);
-            }
-        }
-
-        public static int DownLimit
-        {
-            get
-            {
-                return Get("Settings/DownLimit", 0);
-            }
-            set
-            {
-                Put("Settings/DownLimit", value);
-            }
-        }
-
-        public static SyncMethod syncMethod
-        {
-            get
-            {
-                return (Get("Settings/SyncMethod", SyncMethod.Automatic.ToString()) == SyncMethod.Automatic.ToString()) ? SyncMethod.Automatic : SyncMethod.Manual;
-            }
-            set
-            {
-                Put("Settings/SyncMethod", value.ToString());
-            }
-        }
-
-        public static int syncFrequency
-        {
-            get
-            {
-                return Get("Settings/SyncFrequency", 10);
-            }
-            set
-            {
-                Put("Settings/SyncFrequency", value);
-            }
-        }
-
-        public static TrayAction SettingsTrayAction
-        {
-            get
-            {
-                if (Get("Settings/OpenInBrowser", "True") == "True" || Get("Settings/OpenInBrowser", "OpenInBrowser") == "OpenInBrowser")
-                    return TrayAction.OpenInBrowser;
-                else if (Get("Settings/OpenInBrowser", "True") == "False" || Get("Settings/OpenInBrowser", "OpenInBrowser") == "CopyLink")
-                    return TrayAction.CopyLink;
-                else
-                    return TrayAction.OpenLocalFile;
-            }
-        }
-
-        public static bool ignoreDotfiles
-        {
-            get
-            {
-                return Get("IgnoreSettings/dotfiles", "False") == "True";
-            }
-            set
-            {
-                Put("IgnoreSettings/dotfiles", value.ToString());
-            }
-        }
-
-        public static bool ignoreTempfiles
-        {
-            get
-            {
-                return Get("IgnoreSettings/tempfiles", "True") == "True";
-            }
-            set
-            {
-                Put("IgnoreSettings/tempfiles", value.ToString());
-            }
-        }
-
-        public static List<string> ignoredFolders
-        {
-            get
-            {
-                string all = Get("IgnoreSettings/Folders", "");
-                return (all.Split('|').Count() > 0) ? new List<string>(all.Split('|')) : new List<string>();
-            }
-            set
-            {
-                if (value == null)
-                {
-                    Put("IgnoreSettings/Folders", "");
-                    return;
-                }
-                else if (value.Count == 0)
-                {
-                    Put("IgnoreSettings/Folders", "");
-                    return;
-                }
-
-                string all = string.Empty;
-                foreach (string f in value)
-                    if (!string.IsNullOrWhiteSpace(f))
-                        all += string.Format("{0}|", f);
-                Put("IgnoreSettings/Folders", all);
-            }
-        }
-
-        public static List<string> ignoredExtensions
-        {
-            get
-            {
-                string all = Get("IgnoreSettings/Extensions", "");
-                return (all.Split('|').Count() > 0) ? new List<string>(all.Split('|')) : new List<string>();
-            }
-            set
-            {
-                if (value == null)
-                {
-                    Put("IgnoreSettings/Extensions", "");
-                    return;
-                }
-                else if (value.Count == 0)
-                {
-                    Put("IgnoreSettings/Folders", "");
-                    return;
-                }
-
-                string all = string.Empty;
-                foreach (string f in value)
-                    if (!string.IsNullOrWhiteSpace(f)) 
-                        all += string.Format("{0}|", f);
-                Put("IgnoreSettings/Extensions", all);
-            }
-        }
-
-        #endregion
     }
+
+    
 }

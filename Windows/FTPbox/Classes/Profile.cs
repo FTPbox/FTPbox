@@ -20,7 +20,7 @@ namespace FTPboxLib
 	public static class Profile
 	{
         public static string DecryptionPassword = "removed";    //removed for security purposes
-        public static string DecryptionSalt = "removed";     		//removed for security purposes
+        public static string DecryptionSalt = "removed";        //removed for security purposes
 
 		public static string Host
 		{
@@ -132,6 +132,8 @@ namespace FTPboxLib
         {
             get
             {
+                if (RemotePath == null) return false;
+
                 string rpath = RemotePath;
                 if (rpath.StartsWith(@"/") && rpath != @"/")
                     rpath = rpath.Substring(1);    
@@ -143,11 +145,29 @@ namespace FTPboxLib
             }
         }
 
+        public static TrayAction TrayAction { get; set; }   //the tray action to be used for opening files
         public static bool AskForPassword { get; set; }
 
+        /// <summary>
+        /// Load the profile data from the settings file
+        /// </summary>
 		public static void Load()
 		{
-			
+            Profile.AskForPassword = false;
+            Profile.AddAccount(Settings.DefaultProfile.Account.host, Settings.DefaultProfile.Account.username, Common.Decrypt(Settings.DefaultProfile.Account.password), Settings.DefaultProfile.Account.port);
+            Profile.AddPaths(Settings.DefaultProfile.Paths.remote, Settings.DefaultProfile.Paths.local, Settings.DefaultProfile.Paths.parent);
+            Profile.Protocol = Settings.DefaultProfile.Account.protocol;
+            Profile.FtpsInvokeMethod = Settings.DefaultProfile.Account.ftpsMethod;
+
+            Profile.SecurityProtocol = Settings.DefaultProfile.Account.FtpSecurityProtocol;     // (Profile.Protocol == FtpProtocol.FTP) ? Starksoft.Net.Ftp.FtpSecurityProtocol.None : ((Settings.FTPES) ? Starksoft.Net.Ftp.FtpSecurityProtocol.Tls1OrSsl3Explicit : Starksoft.Net.Ftp.FtpSecurityProtocol.Tls1OrSsl3Implicit);
+
+            //if (Settings.FtpsSecProtocol != "Default")
+                //Profile.SecurityProtocol = (Starksoft.Net.Ftp.FtpSecurityProtocol)Enum.Parse(typeof(Starksoft.Net.Ftp.FtpSecurityProtocol), Settings.FtpsSecProtocol);
+
+            Profile.SyncingMethod = Settings.DefaultProfile.Account.SyncMethod;
+            Profile.SyncFrequency = Settings.DefaultProfile.Account.SyncFrequency;
+
+            Profile.TrayAction = Settings.settingsGeneral.TrayAction;
 		}
 		
 		public static void AddAccount(string host, string user, string pass, int port)

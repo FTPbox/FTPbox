@@ -14,6 +14,7 @@
       <application>Application</application>
       <start_on_startup>Start on system start-up</start_on_startup>
       <show_nots>show notifications</show_nots>
+      <profile>Profile</profile>
       <details>Details</details>
       <links>Links</links>
       <remote_path>Remote Path</remote_path>

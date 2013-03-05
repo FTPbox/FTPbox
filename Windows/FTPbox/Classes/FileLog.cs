@@ -32,6 +32,10 @@ namespace FTPboxLib
 			//remoteLog = new Dictionary<string, DateTime>();
 			fList = new List<FileLogItem>();
             dList = new List<string>();
+
+            if (Settings.DefaultProfile.Log.items != null) fList = new List<FileLogItem>(Settings.DefaultProfile.Log.items);
+            if (Settings.DefaultProfile.Log.folders != null) dList = new List<string>(Settings.DefaultProfile.Log.folders);
+
 			Console.WriteLine("Opened FileLog...");
 		}
 		
@@ -50,18 +54,8 @@ namespace FTPboxLib
 			
 			if (!found)
 				fList.Add(new FileLogItem(path, rem_lwt, loc_lwt));
-			/*
-			if (localLog.ContainsKey(path))
-			{
-				
-				localLog[path] = loc_lwt;
-				remoteLog[path] = rem_lwt;				
-			}
-			else{
-				localLog.Add(path, rem_lwt);
-				remoteLog.Add(path, rem_lwt);
-				names.Add(path);
-			}			*/
+
+            Settings.SaveProfile();
 		}
 		
 		public void putRemote(string path, DateTime rem)
@@ -185,12 +179,18 @@ namespace FTPboxLib
         {
             if (!dList.Contains(cpath))
                 dList.Add(cpath);
+            Settings.SaveProfile();
         }
 
+        /// <summary>
+        /// removes the specified folder from log
+        /// </summary>
+        /// <param name="cpath"></param>
         public void removeFolder(string cpath)
         {
             if (dList.Contains(cpath))
                 dList.Remove(cpath);
+            Settings.SaveProfile();
         }
 
         public List<string> Folders

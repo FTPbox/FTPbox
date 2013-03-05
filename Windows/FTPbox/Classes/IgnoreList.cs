@@ -32,11 +32,16 @@ namespace FTPboxLib
         /// </summary>
 		public IgnoreList ()
 		{
-            FolderList = new List<string>(Settings.ignoredFolders);
-			ExtensionList = new List<string>(Settings.ignoredExtensions);
+            FolderList = new List<string>();
+            ExtensionList = new List<string>();
 
-            IgnoreDotFiles = Settings.ignoreDotfiles;
-            IgnoreTempFiles = Settings.ignoreTempfiles;
+            if (Settings.DefaultProfile.Ignored.folders != null)
+                FolderList = new List<string>(Settings.DefaultProfile.Ignored.folders);
+            if (Settings.DefaultProfile.Ignored.extensions != null)
+                ExtensionList = new List<string>(Settings.DefaultProfile.Ignored.extensions);
+
+            IgnoreDotFiles = Settings.DefaultProfile.Ignored.dotfiles;
+            IgnoreTempFiles = Settings.DefaultProfile.Ignored.tempfiles;
 		}
 
         /// <summary>
@@ -63,10 +68,7 @@ namespace FTPboxLib
         /// </summary>
         public void Save()
         {
-            Settings.ignoredFolders = FolderList;
-            Settings.ignoredExtensions = ExtensionList;
-            Settings.ignoreDotfiles = IgnoreDotFiles;
-            Settings.ignoreTempfiles = IgnoreTempFiles;
+            Settings.SaveProfile();
         }
 		
         /// <summary>
@@ -79,8 +81,7 @@ namespace FTPboxLib
             IgnoreDotFiles = false;
             IgnoreTempFiles = true;
 
-            Settings.ignoredFolders = null;
-            Settings.ignoredExtensions = null;
+            Save();
 		}
 
         /// <summary>

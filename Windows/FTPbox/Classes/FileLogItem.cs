@@ -17,16 +17,12 @@ using System;
 namespace FTPboxLib
 {
 	public class FileLogItem
-	{
-		string cpath;
-		DateTime _rem;
-		DateTime _loc;
-		
+	{		
 		public FileLogItem(string name, DateTime Rem, DateTime Loc)
 		{
-			cpath = name;
-			_rem = Rem;
-			_loc = Loc;
+            CommonPath = name;
+            Remote = Rem;
+            Local = Loc;
 		}
 		
 		/// <summary>
@@ -35,11 +31,7 @@ namespace FTPboxLib
 		/// <value>
 		/// The common path.
 		/// </value>
-		public string CommonPath
-		{
-			get {return cpath; }
-			set {cpath = value; }
-		}
+        public string CommonPath { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the remote LastWriteTime for the log item.
@@ -47,11 +39,7 @@ namespace FTPboxLib
 		/// <value>
 		/// The remote.
 		/// </value>
-		public DateTime Remote
-		{
-			get {return _rem; }
-			set {_rem = value; }
-		}
+        public DateTime Remote { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the local LastWriteTime for the log item.
@@ -59,11 +47,7 @@ namespace FTPboxLib
 		/// <value>
 		/// The local.
 		/// </value>
-		public DateTime Local
-		{
-			get {return _loc; }
-			set {_loc = value; }
-		}
+        public DateTime Local { get; set; }
 			
 	}
 }
