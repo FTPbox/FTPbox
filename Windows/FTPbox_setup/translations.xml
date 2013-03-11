@@ -422,6 +422,14 @@
       <no_limits>( définir à 0 pour illimité )</no_limits>
       <selective>Synchronisation sélective</selective>
       <selective_info>Décochez les éléments que vous ne souhaitez pas synchroniser</selective_info>
+      <refresh>Rafraichir</refresh>
+      <file_filters>Tris Sync.</file_filters>
+      <ignored_extensions>Ignorés les extensions suivantes</ignored_extensions>
+      <remove>Retirer</remove>
+      <also_ignore>Ignorés seulement</also_ignore>
+      <dotfiles>Fichiers cachés ( ._ ),systèmes</dotfiles>
+      <temp_files>Fichiers temporaires</temp_files>
+      <old_files>Fichiers modifiés avant</old_files>
     </main_form>
     <new_account>
       <new_ftp>Nouveau compte FTP</new_ftp>
@@ -487,7 +495,7 @@
       <removed>L'interface web a été supprimée.</removed>
       <updating>la mise à jour de l'interface web...</updating>
       <updated>L'interface web a été mise à jour.</updated>
-      <setup>Cliquez ici pour voir et la configurer !</setup>
+      <setup>Cliquez ici pour voir et la configurer !</setup>
       <use_webint>Utiliser l'interface Web</use_webint>
       <view>(Voir dans le navigateur)</view>
     </web_interface>
@@ -991,6 +999,7 @@
       <application>Πρόγραμμα</application>
       <start_on_startup>Τρέξιμο της εφαρμογής μαζί με τα Windows</start_on_startup>
       <show_nots>Εμφάνιση ειδοποιήσεων</show_nots>
+      <profile>Προφίλ</profile>
       <details>Λεπτομέρειες</details>
       <links>Σύνδεσμοι</links>
       <remote_path>Διαδρομή στον Server</remote_path>
@@ -1644,6 +1653,7 @@
       <application>Программа</application>
       <start_on_startup>Запустить с запуском системы</start_on_startup>
       <show_nots>Показывать уведомления</show_nots>
+      <profile>Профиль</profile>
       <details>Детали</details>
       <links>Ссылки</links>
       <remote_path>Путь на сервере</remote_path>
@@ -1680,6 +1690,14 @@
       <no_limits>( 0 - нет лимита )</no_limits>
       <selective>Выборочная Синхронизация</selective>
       <selective_info>Снимите галочку с файлов которые вы не желаете синхронизировать</selective_info>
+      <refresh>Обновить</refresh>
+      <file_filters>Фильтры</file_filters>
+      <ignored_extensions>Игнорируемые расширениеn</ignored_extensions>
+      <remove>Удалить</remove>
+      <also_ignore>Тоже игнорировать</also_ignore>
+      <dotfiles>дотфаилы</dotfiles>
+      <temp_files>Временные файлы</temp_files>
+      <old_files>Файлы модифицированные до</old_files>
     </main_form>
     <new_account>
       <new_ftp>Добавить ФТП аккаунт</new_ftp>
@@ -3057,7 +3075,7 @@
   </sk>
 
   <gl>
-      <main_form>
+    <main_form>
       <options>OpciÃ³ns</options>
       <general>Xeral</general>
       <host>Servidor</host>
@@ -3176,6 +3194,7 @@
       <view>(Ver no navegador)</view>
     </web_interface>
   </gl>
+  
   <pt>
     <main_form>
       <options>Opções</options>
@@ -3226,6 +3245,14 @@
       <no_limits>(indique 0 para não haver limite)</no_limits>
       <selective>Sincronização selectiva</selective>
       <selective_info>Desmarcar itens que não se deseja sincronizar</selective_info>
+      <refresh>Actualizar</refresh>
+      <file_filters>Filtros</file_filters>
+      <ignored_extensions>Extensões Ignoradas</ignored_extensions>
+      <remove>Remover</remove>
+      <also_ignore>Ignorar também</also_ignore>
+      <dotfiles>Ficheiros dot</dotfiles>
+      <temp_files>Ficheiros temporários</temp_files>
+      <old_files>Ficheiros modificados antes de </old_files>
     </main_form>
     <new_account>
       <new_ftp>Nova conta FTP</new_ftp>
