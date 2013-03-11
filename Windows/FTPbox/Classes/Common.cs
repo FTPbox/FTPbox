@@ -12,30 +12,41 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+using System.Linq;
 using FTPbox;
 
 namespace FTPboxLib
 {
     public static class Common
     {
-        public static List<string> localFolders = new List<string>();       //Used to store all the local folders at all times
-        public static List<string> localFiles = new List<string>();         //Used to store all the local files at all times
+        #region Fields
+
+        public static List<string> LocalFolders = new List<string>();       //Used to store all the local folders at all times
+        public static List<string> LocalFiles = new List<string>();         //Used to store all the local files at all times
+        
         public static IgnoreList IgnoreList = new IgnoreList();	            //list of ignored folders
         public static FileLog FileLog = new FileLog();                      //the file log
-
         public static Translations Languages = new Translations();          //Used to grab the translations from the translations.xml file
 
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Encrypt the given password. Used to store passwords encrypted in the config file.
+        /// </summary>
         public static string Encrypt(string password)
         {
-            return Utilities.Encryption.AESEncryption.Encrypt(password, Profile.DecryptionPassword, Profile.DecryptionSalt, "SHA1", 2, "OFRna73m*aze01xY", 256);
+            return Utilities.Encryption.AESEncryption.Encrypt(password, Profile.DecryptionPassword, Profile.DecryptionSalt);
         }
 
-        public static string Decrypt(string hash)
+        /// <summary>
+        /// Decrypt the given encrypted password.
+        /// </summary>
+        public static string Decrypt(string encrypted)
         {
-            return Utilities.Encryption.AESEncryption.Decrypt(hash, Profile.DecryptionPassword, Profile.DecryptionSalt, "SHA1", 2, "OFRna73m*aze01xY", 256);
+            return Utilities.Encryption.AESEncryption.Decrypt(encrypted, Profile.DecryptionPassword, Profile.DecryptionSalt);
         }
 
         /// <summary>
@@ -53,11 +64,9 @@ namespace FTPboxLib
         public static string GetComPath(string s, bool fromLocal)
         {
             string cp = s;
-            //Log.Write(l.Debug, "Getting common path of : {0}", s);
 
             if (fromLocal)
             {
-
                 if (cp.StartsWith(Profile.LocalPath))
                 {
                     cp = cp.Substring(Profile.LocalPath.Length);
@@ -74,14 +83,11 @@ namespace FTPboxLib
                         cp = cp.Substring(Profile.HomePath.Length + 1);
                     if (cp.StartsWith("/" + Profile.HomePath))
                         cp = cp.Substring(Profile.HomePath.Length + 2);
-                } 
-                //Log.Write(l.Debug, "without home: {0}", cp);
+                }
                 if (cp.StartsWith(Profile.RemotePath))
                 {
                     cp = cp.Substring(Profile.RemotePath.Length);
-                    //cp = cp.Replace(@"/", @"\");
                 }
-                //Log.Write(l.Debug, "without remPath: {0}", cp);
             }
 
             if (cp.StartsWith("/") || cp.StartsWith(@"\"))
@@ -89,7 +95,7 @@ namespace FTPboxLib
             if (cp.StartsWith("./"))
                 cp = cp.Substring(2);
 
-            if (cp.Equals(null) || cp.Equals(" ") || cp.Equals(""))
+            if (string.IsNullOrWhiteSpace(cp))
                 cp = "/";
 
             return cp;
@@ -105,45 +111,12 @@ namespace FTPboxLib
             try
             {
                 FileAttributes attr = File.GetAttributes(p);
-                return !((attr & FileAttributes.Directory) == FileAttributes.Directory);
+                return (attr & FileAttributes.Directory) != FileAttributes.Directory;
             }
             catch
             {
-                return !localFolders.Contains(p);
+                return !LocalFolders.Contains(p);
             }
-        }
-
-        /// <summary>
-        /// Checks whether a path is a folder or file
-        /// </summary>
-        /// <returns>
-        /// True if the path is a folder
-        /// </returns>
-        /// <param name='p'>
-        /// the path to check
-        /// </param>
-        public static bool PathIsFolder(string p)
-        {
-            FileAttributes attr = File.GetAttributes(p);
-
-            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-                return true;
-            else
-                return false;
-        }
-
-        /// <summary>
-        /// whether a path is in the LocalFolders list. Used to check if deleted items are folders or not.
-        /// </summary>
-        /// <returns>
-        /// True if LocalFolders list contains 'path'
-        /// </returns>
-        /// <param name='path'>
-        /// If set to <c>true</c> path.
-        /// </param>
-        public static bool _isDir(string path)
-        {
-            return localFolders.Contains(path);
         }
 
         /// <summary>
@@ -163,7 +136,7 @@ namespace FTPboxLib
         }
 
         /// <summary>
-        /// Puts a ~ to the beginning of the filename in the given item's path
+        /// Puts ~ftpb_ to the beginning of the filename in the given item's path
         /// </summary>
         /// <param name="cpath">the given item's common path</param>
         /// <returns>Temporary path to item</returns>
@@ -179,16 +152,15 @@ namespace FTPboxLib
         }
 
         /// <summary>
-        /// Puts a ~ to the beginning of the filename in the given item's local path
+        /// Puts ~ftpb_ to the beginning of the filename in the given item's local path
         /// </summary>
         /// <param name="lpath">the given item's local path</param>
         /// <returns>Temporary local path to item</returns>
         public static string _tempLocal(string lpath)
         {
-            string parent = lpath.Substring(0, lpath.LastIndexOf(@"\"));
-            string temp_name = _name(lpath);
+            string parent = lpath.Substring(0, lpath.LastIndexOf(@"\"));            
 
-            return string.Format(@"{0}\~ftpb_{1}", parent, temp_name);
+            return string.Format(@"{0}\~ftpb_{1}", parent, _name(lpath));
         }
 
         /// <summary>
@@ -199,28 +171,22 @@ namespace FTPboxLib
         public static string noSlashes(string x)
         {
             string noslashes = x;
-            if (noslashes.StartsWith(@"\"))
-            {
-                noslashes = noslashes.Substring(1, noslashes.Length - 1);
-            }
-            if (noslashes.EndsWith(@"/") || noslashes.EndsWith(@"\"))
-            {
+            if (noslashes.StartsWith(@"\"))            
+                noslashes = noslashes.Substring(1, noslashes.Length - 1);            
+            if (noslashes.EndsWith(@"/") || noslashes.EndsWith(@"\"))            
                 noslashes = noslashes.Substring(0, noslashes.Length - 1);
-            }
+            
             return noslashes;
         }
 
         /// <summary>
         /// Whether the specified path should be synced. Used in selective sync and to avoid syncing the webUI folder, temp files and invalid file/folder-names.
         /// </summary>
-        /// <param name='cpath'>
-        /// path to check
-        /// </param>
         public static bool ItemGetsSynced(string name)
         {
             if (name.EndsWith("/"))
                 name = name.Substring(0, name.Length - 1);
-            string aName = (name.Contains("/")) ? name.Substring(name.LastIndexOf("/")) : name; //the actual name of the file in the given path. (removes the path from the beginning of the given string)
+            string aName = (name.Contains("/")) ? name.Substring(name.LastIndexOf("/")) : name;         //the actual name of the file in the given path. (removes the path from the beginning of the given string)
             if (aName.StartsWith("/"))
                 aName = aName.Substring(1);
 
@@ -230,9 +196,9 @@ namespace FTPboxLib
                 || !IsAllowedFilename(aName)                                                            //checks characters not allowed in windows file/folder names
                 || aName.StartsWith("~ftpb_")                                                           //FTPbox-generated temporary files are ignored
                 );
-
+            
             if (!b)
-                Log.Write(l.Debug, "Item {0} gets synced: {1}", name, b);
+                Log.Write(l.Debug, "Item {0} gets synced: No", name);
 
             return b;
         }       
@@ -240,59 +206,18 @@ namespace FTPboxLib
         /// <summary>
         /// Checks a filename for chars that wont work with most servers
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
         private static bool IsAllowedFilename(string name)
         {
-            foreach (char c in name.ToCharArray())
-            {
-                if (!IsAllowedChar(c))
-                    return false;
-            }
-
-            return true;
+            return name.ToCharArray().All(IsAllowedChar);
         }
 
         /// <summary>
         /// Checks if a char is allowed, based on the allowed chars for filenames
         /// </summary>
-        /// <param name="ch"></param>
-        /// <returns></returns>
         private static bool IsAllowedChar(char ch)
-        {            
-            return !(ch == '?' || ch == '"' || ch == '*' || ch == ':' || ch == '<' || ch == '>' || ch == '|');
-        }
-
-        /// <summary>
-        /// removes an item from the log
-        /// </summary>
-        /// <param name="cPath">name to remove</param>
-        public static void RemoveFromLog(string cPath)
         {
-            if (FileLog.Contains(cPath))
-            {
-                FileLog.Remove(cPath);
-                Log.Write(l.Debug, "*** Removed from Log: {0}", cPath);
-            }
-            Settings.SaveProfile();
-        }
-
-        /// <summary>
-        /// displays details of the thrown exception in the console
-        /// </summary>
-        /// <param name="error"></param>
-        public static void LogError(Exception error)
-        {
-            Log.Write(l.Error, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            Log.Write(l.Error, "Message: {0}", error.Message);
-            Log.Write(l.Error, "--");
-            Log.Write(l.Error, "StackTrace: {0}", error.StackTrace);
-            Log.Write(l.Error, "--");
-            Log.Write(l.Error, "Source: {0}", error.Source);
-            Log.Write(l.Error, "--");
-            foreach (KeyValuePair<string, string> s in error.Data)
-                Log.Write(l.Error, "key: {0} value: {1}", s.Key, s.Value);
-            Log.Write(l.Error, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            var forbidden = new char[] { '?', '"', '*', ':', '<', '>', '|' };
+            return !forbidden.Any(ch.Equals);
         }
 
         /// <summary>
@@ -319,11 +244,11 @@ namespace FTPboxLib
         /// </param>
         public static string GetHttpLink(string file)
         {
-            string cpath = Common.GetComPath(file, true);
+            string cpath = GetComPath(file, true);
 
-            string newlink = Common.noSlashes(Profile.HttpPath) + @"/";
+            string newlink = noSlashes(Profile.HttpPath) + @"/";
 
-            if (!Common.noSlashes(newlink).StartsWith("http://") && !Common.noSlashes(newlink).StartsWith("https://"))
+            if (!noSlashes(newlink).StartsWith("http://") && !noSlashes(newlink).StartsWith("https://"))
             {
                 newlink = @"http://" + newlink;
             }
@@ -352,12 +277,11 @@ namespace FTPboxLib
         public static bool FileIsUsed(string path)
         {
             FileStream stream = null;
-
             string name = null;
 
             try
             {
-                FileInfo fi = new FileInfo(path);
+                var fi = new FileInfo(path);
                 name = fi.Name;
                 stream = fi.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             }
@@ -372,9 +296,78 @@ namespace FTPboxLib
                 if (stream != null)
                     stream.Close();
             }
-            if (name != null)
+            if (!string.IsNullOrWhiteSpace(name))
                 Log.Write(l.Debug, "File {0} is locked: False", name);
             return false;
         }
+
+        /// <summary>
+        /// Get the HTTP link to a file
+        /// </summary>
+        /// <param name='cpath'>
+        /// The common path to the file/folder.
+        /// </param>
+        public static void GetLink(string cpath, ref string link)
+        {
+            Log.Write(l.Debug, "---------------\n Getting link for {0}", cpath);
+            string newlink = Common.noSlashes(Profile.HttpPath) + @"/";
+
+            if (!Common.noSlashes(newlink).StartsWith("http://") && !Common.noSlashes(newlink).StartsWith("https://"))
+            {
+                newlink = @"http://" + newlink;
+            }
+
+            if (newlink.EndsWith("/"))
+                newlink = newlink.Substring(0, newlink.Length - 1);
+
+            if (cpath.StartsWith("/"))
+                cpath = cpath.Substring(1);
+
+            newlink = string.Format("{0}/{1}", newlink, cpath);
+            newlink = newlink.Replace(@" ", @"%20");
+
+            link = newlink.Replace(" ", "%20");
+            Log.Write(l.Debug, "-----------------> link: {0}", link);
+            Get_Recent(cpath);
+
+            Log.Write(l.Debug, "**************");
+            Log.Write(l.Debug, "HTTP Link is: " + newlink);
+            Log.Write(l.Debug, "**************");
+        }
+
+        #endregion
+
+        #region Functions
+
+        /// <summary>
+        /// removes an item from the log
+        /// </summary>
+        /// <param name="cPath">name to remove</param>
+        public static void RemoveFromLog(string cPath)
+        {
+            if (FileLog.Contains(cPath))
+                FileLog.Remove(cPath);
+            Settings.SaveProfile();
+        }
+
+        /// <summary>
+        /// displays details of the thrown exception in the console
+        /// </summary>
+        /// <param name="error"></param>
+        public static void LogError(Exception error)
+        {
+            Log.Write(l.Error, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            Log.Write(l.Error, "Message: {0}", error.Message);
+            Log.Write(l.Error, "--");
+            Log.Write(l.Error, "StackTrace: {0}", error.StackTrace);
+            Log.Write(l.Error, "--");
+            Log.Write(l.Error, "Source: {0}", error.Source);
+            Log.Write(l.Error, "--");
+            foreach (KeyValuePair<string, string> s in error.Data)
+                Log.Write(l.Error, "key: {0} value: {1}", s.Key, s.Value);
+            Log.Write(l.Error, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
+
+        #endregion
     }
 }

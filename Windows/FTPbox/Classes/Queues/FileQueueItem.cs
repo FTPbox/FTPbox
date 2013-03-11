@@ -10,51 +10,27 @@
  * Used to store items in the Queue list. Saves the common path (cpath), local path (lpath) and type-of-transfer
  */
 
-using System;
-using System.IO;
-
 namespace FTPboxLib
 {
 	public class FileQueueItem
 	{
-		private string cPath;
-		private string lPath;
-		private TypeOfTransfer tType;
-        private long size;
-		
-		public FileQueueItem (string cpath, string lpath, long _size, TypeOfTransfer type)
+	    public FileQueueItem (string cpath, string lpath, long size, TypeOfTransfer type)
 		{
-			cPath = cpath;
-			lPath = lpath;
-            size = _size; 
-            tType = type;            
-		}
-		
-		public string CommonPath
-		{
-			get {return cPath; }
-			set {cPath = value; }
-		}
-		
-		public string LocalPath
-		{
-			get {return lPath; }
-			set {lPath = value; }
-		}
-		
-		public TypeOfTransfer TransferType
-		{
-			get {return tType; }
-			set {tType = value; }
+			CommonPath = cpath;
+			LocalPath = lpath;
+            Size = size; 
+            TransferType = type;            
 		}
 
-        public long Size
-        {
-            get { return size; }
-            set { size = value; }
-        }
+	    public string CommonPath { get; set; }
 
-        public string PathToFile
+	    public string LocalPath { get; set; }
+
+	    public TypeOfTransfer TransferType { get; set; }
+
+	    public long Size { get; set; }
+
+	    public string PathToFile
         {
             get
             {

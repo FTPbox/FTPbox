@@ -12,21 +12,25 @@
 
 using System;
 using System.Collections.Generic;
-using FTPbox;
+using System.Linq;
 
 namespace FTPboxLib
 {
 	public class IgnoreList
 	{
-        public List<string> FolderList;                             //list of folders to be ignored
-		public List<string> ExtensionList;                          //list of extensions to be ignored
+	    #region Public Fields
 
-        public bool IgnoreDotFiles = false;                         //ignore dotfiles?
-        public bool IgnoreTempFiles = true;                         //ignore temporary files?
+	    public List<string> FolderList;     //list of folders to be ignored
+	    public List<string> ExtensionList;  //list of extensions to be ignored
 
-        public bool IgnoreOldFiles = false;                         //ignore files modified before a certain datetime?
-        public DateTime LastModifiedMinimum = DateTime.MinValue;    //the minimum modification datetime
-		
+	    public bool IgnoreDotFiles = false; //ignore dotfiles?
+	    public bool IgnoreTempFiles = true; //ignore temporary files?
+
+	    public bool IgnoreOldFiles = false; //ignore files modified before a certain datetime?
+	    public DateTime LastModifiedMinimum = DateTime.MinValue; //the minimum modification datetime
+
+	    #endregion
+        
         /// <summary>
         /// Initializes the ignore lists and loads them from the settings file
         /// </summary>
@@ -35,33 +39,14 @@ namespace FTPboxLib
             FolderList = new List<string>();
             ExtensionList = new List<string>();
 
-            if (Settings.DefaultProfile.Ignored.folders != null)
-                FolderList = new List<string>(Settings.DefaultProfile.Ignored.folders);
-            if (Settings.DefaultProfile.Ignored.extensions != null)
-                ExtensionList = new List<string>(Settings.DefaultProfile.Ignored.extensions);
+            if (Settings.DefaultProfile.Ignored.Folders != null)
+                FolderList = new List<string>(Settings.DefaultProfile.Ignored.Folders);
+            if (Settings.DefaultProfile.Ignored.Extensions != null)
+                ExtensionList = new List<string>(Settings.DefaultProfile.Ignored.Extensions);
 
-            IgnoreDotFiles = Settings.DefaultProfile.Ignored.dotfiles;
-            IgnoreTempFiles = Settings.DefaultProfile.Ignored.tempfiles;
+            IgnoreDotFiles = Settings.DefaultProfile.Ignored.Dotfiles;
+            IgnoreTempFiles = Settings.DefaultProfile.Ignored.Tempfiles;
 		}
-
-        /// <summary>
-        /// Should the given item be ignored during synchronization?
-        /// </summary>
-        /// <param name="path">The common path to the given item</param>
-        /// <returns>True if the path matches the ignore filters</returns>
-        public bool isIgnored(string path)
-        {
-            string name = Common._name(path);
-            string ext = name.Contains(".") ? name.Substring(name.LastIndexOf(".")+1) : null;
-            
-            //if (!string.IsNullOrEmpty(ext)) Log.Write(l.Error, "Ext: {0}", ext);
-
-            return  
-                (IgnoreDotFiles && name.StartsWith(".")) ||                                                                 // are dotfiles ignored?
-                (IgnoreTempFiles && (name.EndsWith("~") || name.StartsWith(".goutputstream") || name.StartsWith("~"))) ||   //are temporary files ignored?
-                ((ExtensionList.Contains(ext) || ExtensionList.Contains("." + ext)) && ext != null) ||                                                             //is this extension ignored?
-                isInIgnoredFolders(path);                                                                                   //is the item in an ignored folder?
-        }
 
         /// <summary>
         /// Saves the current filter settings to the settings file
@@ -85,6 +70,23 @@ namespace FTPboxLib
 		}
 
         /// <summary>
+        /// Should the given item be ignored during synchronization?
+        /// </summary>
+        /// <param name="path">The common path to the given item</param>
+        /// <returns>True if the path matches the ignore filters</returns>
+        public bool isIgnored(string path)
+        {
+            string name = Common._name(path);
+            string ext = name.Contains(".") ? name.Substring(name.LastIndexOf(".") + 1) : null;
+
+            return
+                (IgnoreDotFiles && name.StartsWith(".")) ||                                                                 // are dotfiles ignored?
+                (IgnoreTempFiles && (name.EndsWith("~") || name.StartsWith(".goutputstream") || name.StartsWith("~"))) ||   //are temporary files ignored?
+                ((ExtensionList.Contains(ext) || ExtensionList.Contains("." + ext)) && ext != null) ||                      //is this extension ignored?
+                isInIgnoredFolders(path);                                                                                   //is the item in an ignored folder?
+        }
+
+        /// <summary>
         /// Checks if the given path should be ignored 
         /// (if one of its parent folders are in the list of ignored folders)
         /// </summary>
@@ -95,10 +97,7 @@ namespace FTPboxLib
             if (FolderList.Count <= 0) return false;
             if (FolderList.Contains(path)) return true;
 
-            foreach (string f in FolderList)
-                if (path.StartsWith(f) && !string.IsNullOrWhiteSpace(f))
-                    return true;
-            return false;
+            return FolderList.Any(f => path.StartsWith(f) && !string.IsNullOrWhiteSpace(f));
         }
 	}
 }

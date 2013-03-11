@@ -1,4 +1,3 @@
-#region About DeletedQueueItem.cs
 /* License
  * This file is part of FTPbox - Copyright (C) 2012 ftpbox.org
  * FTPbox is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published 
@@ -10,34 +9,20 @@
 /* DeletedQueueItem.cs
  * Used to store deleted items in the Deleted-Queue list. Saves the common and local paths.
  */
-#endregion
-
-using System;
 
 namespace FTPboxLib
 {
 	public class DeletedQueueItem
 	{
-		private string _LocalPath;
-		private string _CommonPath;
-		
-		public DeletedQueueItem (string lpath, string cpath)
+	    public DeletedQueueItem (string lpath, string cpath)
 		{
-			_LocalPath = lpath;
-			_CommonPath = cpath;
+			LocalPath = lpath;
+			CommonPath = cpath;
 		}
-		
-		public string LocalPath
-		{
-			get { return _LocalPath; }
-			set { _LocalPath = value; }
-		}
-		
-		public string CommonPath
-		{
-			get { return _CommonPath; }
-			set { _CommonPath = value; }
-		}
+
+	    public string LocalPath { get; set; }
+
+	    public string CommonPath { get; set; }
 	}
 }
 

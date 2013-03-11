@@ -16,81 +16,67 @@ using System.Collections.Generic;
 namespace FTPboxLib
 {
 	public class DeletedQueue
-	{		
-		private List<string> dList;
-		private bool _busy = false;
-		private bool _recheck = false;
-		private KeyValuePair<string, bool> _lastItem;	
-		private int _counter = 0;
-		
-		public DeletedQueue ()
+	{
+	    public DeletedQueue ()
 		{
-			dList = new List<string>();
+		    Counter = 0;
+		    reCheck = false;
+		    Busy = false;
+		    List = new List<string>();
 		}
-		
-		public void Add(string lpath)
+
+        #region Methods
+
+        public void Add(string lpath)
 		{
 			Console.WriteLine("Added to deleted queue: {0}", lpath);
-			if (!dList.Contains(lpath))
-				dList.Add(lpath);	
+			if (!List.Contains(lpath))
+				List.Add(lpath);	
 			else
 				Console.WriteLine("Already in the deleted queue: {0}", lpath);
 		}
 		
 		public void Remove (string path)
 		{
-			dList.Remove(path);
-		}
-		
-		public List<string> List
-		{
-			get { return dList; }
+			List.Remove(path);
 		}
 
-        public bool Contains(string path)
+        public void Clear()
         {
-            return dList.Contains(path);
+            List.Clear();
         }
-		
-		public bool Busy
+
+        #endregion
+
+        #region Properties
+
+        public List<string> List { get; private set ; }
+
+	    public bool Contains(string path)
+        {
+            return List.Contains(path);
+        }
+
+	    public bool Busy { get; set; }
+
+	    public bool reCheck { get; set; }
+
+	    public int Count
 		{
-			get { return _busy; }
-			set { _busy = value; }
+			get { return List.Count; }	
 		}
-		
-		public bool reCheck
-		{
-			get { return _recheck;  }	
-			set { _recheck = value; }
-		}
-		
-		public int Count
-		{
-			get { return dList.Count; }	
-		}
-		
-		public void Clear()
-		{
-			dList.Clear();	
-		}
-		
-		/// <summary>
-		/// Last item in the list.
-		/// </summary>
-		/// <value>
-		/// String is the item's name, bool determines if it's a file of folder.
-		/// </value>
-		public KeyValuePair<string, bool> LastItem
-		{
-			get	{ return _lastItem; }
-			set { _lastItem = value; }
-		}
-		
-		public int Counter
-		{
-			get { return _counter; }
-			set { _counter = value; }
-		}
-	}
+
+	    /// <summary>
+	    /// Last item in the list.
+	    /// </summary>
+	    /// <value>
+	    /// String is the item's name, bool determines if it's a file of folder.
+	    /// </value>
+	    public KeyValuePair<string, bool> LastItem { get; set; }
+
+	    public int Counter { get; set; }
+
+        #endregion
+    }
 }
 

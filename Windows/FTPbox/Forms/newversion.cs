@@ -11,15 +11,8 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
-using FTPbox.Forms;
 using FTPboxLib;
 using System.IO;
 
@@ -27,7 +20,7 @@ namespace FTPbox
 {
     public partial class newversion : Form
     {
-        string newvers;
+        readonly string newvers;
 
         public newversion(string newv)
         {
@@ -54,7 +47,7 @@ namespace FTPbox
                 while (!File.Exists(pathtoupdater))
                 {
                     DialogResult dr = MessageBox.Show("The file updater.exe is missing from the folder, please put it back there or reinstall before updating.", "FTPbox - Missing File", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                    if (dr == System.Windows.Forms.DialogResult.Cancel)
+                    if (dr == DialogResult.Cancel)
                         KillTheProcess();                        
                 }
 
@@ -74,12 +67,12 @@ namespace FTPbox
                 Process.Start("http://ftpbox.org/changelog/");
             }
             catch { }
-            this.Close();
+            Close();
         }
 
         private void bClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void Set_Language(string lan)
@@ -87,7 +80,7 @@ namespace FTPbox
             string qmark = "?";
             if (lan == "el") qmark = "";
             
-            this.Text = "FTPbox | " + Common.Languages.Get(lan + "/new_version/update_available", "Update Available");
+            Text = "FTPbox | " + Common.Languages.Get(lan + "/new_version/update_available", "Update Available");
             labInfo.Text = Common.Languages.Get(lan + "/new_version/new_v_available", "New version of FTPbox is available");
             labCurVer.Text = Common.Languages.Get(lan + "/new_version/current_version", "Current Version") + ":";
             labNewVer.Text = Common.Languages.Get(lan + "/new_version/new_ver", "New Version") + ":";

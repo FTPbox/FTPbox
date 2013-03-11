@@ -5,12 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Xml;
 using FTPbox;
-using FTPbox.Classes;
 using Newtonsoft.Json;
+using Starksoft.Net.Ftp;
+using Formatting = Newtonsoft.Json.Formatting;
 
 namespace FTPboxLib
 {
@@ -18,12 +19,15 @@ namespace FTPboxLib
     {
         #region Variables
 
-        private static string confProfiles = Path.Combine(Profile.AppdataFolder, @"profiles.conf");
-        private static string confGeneral = Path.Combine(Profile.AppdataFolder, @"general.conf");
+        private static readonly string confProfiles = Path.Combine(Profile.AppdataFolder, @"profiles.conf");
+        private static readonly string confGeneral = Path.Combine(Profile.AppdataFolder, @"general.conf");
+        
         public static List<SettingsProfile> Profiles;
         public static SettingsGeneral settingsGeneral;
 
         #endregion
+
+        #region Functions
 
         public static void Load()
         {
@@ -49,15 +53,17 @@ namespace FTPboxLib
             string config = File.ReadAllText(confGeneral);
             if (!string.IsNullOrWhiteSpace(config))
             {
-                settingsGeneral = (SettingsGeneral)JsonConvert.DeserializeObject(config, typeof(SettingsGeneral));
-                Clipboard.SetText(JsonConvert.SerializeObject(settingsGeneral, Newtonsoft.Json.Formatting.Indented));
+                settingsGeneral = (SettingsGeneral) JsonConvert.DeserializeObject(config, typeof (SettingsGeneral));
+                Clipboard.SetText(JsonConvert.SerializeObject(settingsGeneral, Formatting.Indented));
             }
 
             if (!File.Exists(confProfiles)) return;
 
             config = File.ReadAllText(confProfiles);
-            if (!string.IsNullOrWhiteSpace(config))            
-                Profiles= new List<SettingsProfile>((List<SettingsProfile>)JsonConvert.DeserializeObject(config, typeof(List<SettingsProfile>)));                
+            if (!string.IsNullOrWhiteSpace(config))
+                Profiles =
+                    new List<SettingsProfile>(
+                        (List<SettingsProfile>) JsonConvert.DeserializeObject(config, typeof (List<SettingsProfile>)));
         }
 
         /// <summary>
@@ -75,11 +81,9 @@ namespace FTPboxLib
         /// </summary>
         public static void SaveGeneral()
         {
-            string config_gen = JsonConvert.SerializeObject(settingsGeneral, Newtonsoft.Json.Formatting.Indented);
-            
+            string config_gen = JsonConvert.SerializeObject(settingsGeneral, Formatting.Indented);
+
             File.WriteAllText(confGeneral, config_gen);
-            //using (StreamWriter sw = new StreamWriter(confGeneral, false))
-                //sw.Write(config_gen);
         }
 
         /// <summary>
@@ -88,41 +92,47 @@ namespace FTPboxLib
         /// </summary>
         public static void SaveProfile()
         {
-            SettingsProfile def = new SettingsProfile();
-            
-            def.Account.host = Profile.Host;
-            def.Account.username = Profile.Username;
-            if (!Profile.AskForPassword)
-                def.Account.password = Common.Encrypt(Profile.Password);
-            def.Account.port = Profile.Port;
-            def.Account.protocol = Profile.Protocol;
-            def.Account.ftpsMethod = Profile.FtpsInvokeMethod;
-            def.Account.FtpSecurityProtocol = Profile.SecurityProtocol;
-            def.Account.SyncFrequency = Profile.SyncFrequency;
-            def.Account.SyncMethod = Profile.SyncingMethod;
-            
-            def.Paths.remote = Profile.RemotePath;
-            def.Paths.local = Profile.LocalPath;
-            def.Paths.parent = Profile.HttpPath;
-
-            def.Log.items = Common.FileLog.Files.ToArray();
-            def.Log.folders = Common.FileLog.Folders.ToArray();
-
-            def.Ignored.folders = Common.IgnoreList.FolderList.ToArray();
-            def.Ignored.extensions = Common.IgnoreList.ExtensionList.ToArray();
-            def.Ignored.dotfiles = Common.IgnoreList.IgnoreDotFiles;
-            def.Ignored.tempfiles = Common.IgnoreList.IgnoreTempFiles;
+            SettingsProfile def = new SettingsProfile
+                {
+                    Account =
+                        {
+                            Host = Profile.Host,
+                            Username = Profile.Username,
+                            Password = (!Profile.AskForPassword) ? Common.Encrypt(Profile.Password) : string.Empty,
+                            Port = Profile.Port,
+                            Protocol = Profile.Protocol,
+                            FtpsMethod = Profile.FtpsInvokeMethod,
+                            FtpSecurityProtocol = Profile.SecurityProtocol,
+                            SyncFrequency = Profile.SyncFrequency,
+                            SyncMethod = Profile.SyncingMethod
+                        },
+                    Paths =
+                        {
+                            Remote = Profile.RemotePath,
+                            Local = Profile.LocalPath,
+                            Parent = Profile.HttpPath
+                        },
+                    Log =
+                        {
+                            Items = Common.FileLog.Files.ToArray(),
+                            Folders = Common.FileLog.Folders.ToArray()
+                        },
+                    Ignored =
+                        {
+                            Folders = Common.IgnoreList.FolderList.ToArray(),
+                            Extensions = Common.IgnoreList.ExtensionList.ToArray(),
+                            Dotfiles = Common.IgnoreList.IgnoreDotFiles,
+                            Tempfiles = Common.IgnoreList.IgnoreTempFiles
+                        }
+                };
 
             if (settingsGeneral.DefaultProfile >= Profiles.Count)
                 Profiles.Add(def);
-            else 
+            else
                 Profiles[settingsGeneral.DefaultProfile] = def;
 
-            string config_prof = JsonConvert.SerializeObject(Profiles, Newtonsoft.Json.Formatting.Indented);
+            string config_prof = JsonConvert.SerializeObject(Profiles, Formatting.Indented);
             File.WriteAllText(confProfiles, config_prof);
-            
-            //using (StreamWriter sw = new StreamWriter(confProfiles, false))
-                //sw.Write(config_prof);
         }
 
         /// <summary>
@@ -134,6 +144,36 @@ namespace FTPboxLib
             settingsGeneral.DefaultProfile = 0;
             Save();
         }
+
+        /// <summary>
+        /// Change to another profile
+        /// </summary>
+        /// <param name="index">The index of the profile to change to</param>
+        public static void ChangeDefaultProfile(int index)
+        {
+            settingsGeneral.DefaultProfile = index;
+        }
+
+        /// <summary>
+        /// Deletes the profile that is currently set as default
+        /// </summary>
+        public static void RemoveCurrentProfile()
+        {
+            Profiles.RemoveAt(settingsGeneral.DefaultProfile);
+            settingsGeneral.DefaultProfile = 0;
+            SaveGeneral();
+            if (Profiles.Count == 0)
+            {
+                File.Delete(confProfiles);
+                return;
+            }
+            string config_prof = JsonConvert.SerializeObject(Profiles, Formatting.Indented);
+            File.WriteAllText(confProfiles, config_prof);
+        }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Returns the Profile that's currently set as default
@@ -152,60 +192,132 @@ namespace FTPboxLib
                 Profiles[settingsGeneral.DefaultProfile] = value;
                 SaveProfile();
             }
+        }        
+
+        public static string[] ProfileTitles
+        {
+            get { return Profiles.Select(p => string.Format("{0}@{1}", p.Account.Username, p.Account.Host)).ToArray(); }
         }
 
-        /// <summary>
-        /// Change to another profile
-        /// </summary>
-        /// <param name="index">The index of the profile to change to</param>
-        public static void ChangeDefaultProfile(int index)
+        #endregion
+
+        public class SettingsGeneral
         {
-            settingsGeneral.DefaultProfile = index;
+            public string Language = "";
+            public TrayAction TrayAction = TrayAction.OpenLocalFile;
+            public bool Notifications = true;
+
+            public int DownloadLimit = 0;
+            public int UploadLimit = 0;
+
+            public int DefaultProfile = 0;
+        }
+
+        public class SettingsProfile
+        {
+            public Account Account;
+            public Paths Paths;
+            public SyncLog Log;
+            public Ignored Ignored;
+        }
+
+        public struct Account
+        {
+            public string Host { get; set; }
+            public string Username { get; set; }
+            public string Password { get; set; }
+            public int Port { get; set; }
+            public FtpProtocol Protocol { get; set; }
+            public FtpsMethod FtpsMethod { get; set; }
+            public Starksoft.Net.Ftp.FtpSecurityProtocol FtpSecurityProtocol { get; set; }
+            public SyncMethod SyncMethod { get; set; }
+            public int SyncFrequency { get; set; }  
+        }
+
+        public struct Paths
+        {
+            public string Remote { get; set; }
+            public string Local { get; set; }
+            public string Parent { get; set; }
+        }
+
+        public struct SyncLog
+        {
+            public FileLogItem[] Items { get; set; }
+            public string[] Folders { get; set; }
+        }
+
+        public struct Ignored
+        {
+            public string[] Folders { get; set; }
+            public string[] Extensions { get; set; }
+            public bool Dotfiles { get; set; }
+            public bool Tempfiles { get; set; }
         }
 
         #region Load profile from older config-file formatting (xml)
 
-        private static System.Xml.XmlDocument xmlDocument;
-        private static string xmlDocumentPath = Path.Combine(Profile.AppdataFolder, @"settings.xml");
+        private static XmlDocument xmlDocument;
+        private static readonly string xmlDocumentPath = Path.Combine(Profile.AppdataFolder, @"settings.xml");
 
         /// <summary>
         /// If an old settings file is found (settings.xml), load its contents and convert to json format
         /// </summary>
         public static void LoadXmlSettings()
         {
-            xmlDocument = new System.Xml.XmlDocument();
-            try { xmlDocument.Load(xmlDocumentPath); }
-            catch { xmlDocument.LoadXml("<settings></settings>"); }
+            xmlDocument = new XmlDocument();
+            try
+            {
+                xmlDocument.Load(xmlDocumentPath);
+            }
+            catch
+            {
+                xmlDocument.LoadXml("<settings></settings>");
+            }
 
             settingsGeneral.Language = Get("Settings/Language", "");
-            settingsGeneral.TrayAction = (TrayAction)Enum.Parse(typeof(TrayAction), Get("Settings/OpenInBrowser", TrayAction.OpenInBrowser.ToString()));
+            settingsGeneral.TrayAction =
+                (TrayAction)
+                Enum.Parse(typeof(TrayAction), Get("Settings/OpenInBrowser", TrayAction.OpenInBrowser.ToString()));
             settingsGeneral.Notifications = Get("Settings/ShowNots", "True") == "True";
             settingsGeneral.DownloadLimit = Get("Settings/DownLimit", 0);
-            settingsGeneral.UploadLimit = Get("Settings/DownLimit", 0);            
+            settingsGeneral.UploadLimit = Get("Settings/DownLimit", 0);
 
-            SettingsProfile def = new SettingsProfile();
+            var def = new SettingsProfile();
 
-            def.Account.host = Get("Account/Host", "");
-            def.Account.username = Get("Account/Username", "");
-            def.Account.password = Get("Account/Password", "");
-            def.Account.port = Get("Account/Port", bool.Parse(Get("Account/FTP", "True")) ? 21 : 22);
-            def.Account.protocol = bool.Parse(Get("Account/FTP", "True")) ? (bool.Parse(Get("Account/FTPS", "True")) ? FtpProtocol.FTPS : FtpProtocol.FTP) : FtpProtocol.SFTP;            
-            def.Account.ftpsMethod = (def.Account.protocol == FtpProtocol.FTP) ? FtpsMethod.None : ((bool.Parse(Get("Account/FTPES", "True"))) ? FtpsMethod.Explicit : FtpsMethod.Implicit);
-            def.Account.FtpSecurityProtocol = Get("Account/FtpSecurityProtocol", "Default") == "Default" ? Starksoft.Net.Ftp.FtpSecurityProtocol.None : (Starksoft.Net.Ftp.FtpSecurityProtocol)Enum.Parse(typeof(Starksoft.Net.Ftp.FtpSecurityProtocol), Get("Account/FtpSecurityProtocol", "Default"));
+            def.Account.Host = Get("Account/Host", "");
+            def.Account.Username = Get("Account/Username", "");
+            def.Account.Password = Get("Account/Password", "");
+            def.Account.Port = Get("Account/Port", bool.Parse(Get("Account/FTP", "True")) ? 21 : 22);
+            def.Account.Protocol = bool.Parse(Get("Account/FTP", "True"))
+                                       ? (bool.Parse(Get("Account/FTPS", "True")) ? FtpProtocol.FTPS : FtpProtocol.FTP)
+                                       : FtpProtocol.SFTP;
+            def.Account.FtpsMethod = (def.Account.Protocol == FtpProtocol.FTP)
+                                         ? FtpsMethod.None
+                                         : ((bool.Parse(Get("Account/FTPES", "True")))
+                                                ? FtpsMethod.Explicit
+                                                : FtpsMethod.Implicit);
+            def.Account.FtpSecurityProtocol = Get("Account/FtpSecurityProtocol", "Default") == "Default"
+                                                  ? FtpSecurityProtocol.None
+                                                  : (FtpSecurityProtocol)
+                                                    Enum.Parse(typeof(FtpSecurityProtocol),
+                                                               Get("Account/FtpSecurityProtocol", "Default"));
             def.Account.SyncFrequency = Get("Settings/SyncFrequency", 10);
-            def.Account.SyncMethod = Get("Settings/SyncMethod", SyncMethod.Automatic.ToString()) == "Automatic" ? SyncMethod.Automatic : SyncMethod.Manual;
+            def.Account.SyncMethod = Get("Settings/SyncMethod", SyncMethod.Automatic.ToString()) == "Automatic"
+                                         ? SyncMethod.Automatic
+                                         : SyncMethod.Manual;
 
-            def.Paths.remote = Get("Paths/rPath", "");
-            def.Paths.local = Get("Paths/lPath", "");
-            def.Paths.parent = Get("Paths/Parent", "");
+            def.Paths.Remote = Get("Paths/rPath", "");
+            def.Paths.Local = Get("Paths/lPath", "");
+            def.Paths.Parent = Get("Paths/Parent", "");
 
-            def.Log.items = ConvertXmlLog;
-            def.Log.folders = Get("Log/folders", "").Split('|', '|');
+            def.Log.Items = ConvertXmlLog;
+            def.Log.Folders = Get("Log/folders", "").Split('|', '|');
 
-            def.Ignored.folders = Get("IgnoreSettings/Folders", "").Split('|', '|');
-            def.Ignored.extensions = Get("IgnoreSettings/Extensions", "").Split('|', '|');
-            def.Ignored.dotfiles = Get("IgnoreSettings/dotfiles", "False") == "True";
-            def.Ignored.tempfiles = Get("IgnoreSettings/tempfiles", "True") == "True";
+            def.Ignored.Folders = Get("IgnoreSettings/Folders", "").Split('|', '|');
+            def.Ignored.Extensions = Get("IgnoreSettings/Extensions", "").Split('|', '|');
+            def.Ignored.Dotfiles = Get("IgnoreSettings/dotfiles", "False") == "True";
+            def.Ignored.Tempfiles = Get("IgnoreSettings/tempfiles", "True") == "True";
 
             Profiles.Clear();
             Profiles.Add(def);
@@ -216,11 +328,13 @@ namespace FTPboxLib
 
             try
             {
-                xmlDocument = new System.Xml.XmlDocument();
+                xmlDocument = new XmlDocument();
                 File.Delete(xmlDocumentPath);
             }
-            catch { }
-        }        
+            catch
+            {
+            }
+        }
 
         private static FileLogItem[] ConvertXmlLog
         {
@@ -234,7 +348,8 @@ namespace FTPboxLib
                 {
                     try
                     {
-                        FileLogItem l = new FileLogItem(nlog[i], Convert.ToDateTime(rlog[i]), Convert.ToDateTime(llog[i]));
+                        FileLogItem l = new FileLogItem(nlog[i], Convert.ToDateTime(rlog[i]),
+                                                        Convert.ToDateTime(llog[i]));
                         items.Add(l);
                     }
                     catch (Exception ex)
@@ -245,7 +360,7 @@ namespace FTPboxLib
                 return items.ToArray();
             }
         }
-        
+
         #region Private Actions
 
         private static int Get(string xPath, int defaultValue)
@@ -253,129 +368,22 @@ namespace FTPboxLib
             return Convert.ToInt32(Get(xPath, Convert.ToString(defaultValue)));
         }
 
-        private static void Put(string xPath, int value)
-        {
-            Put(xPath, Convert.ToString(value));
-        }
-
         private static string Get(string xPath, string defaultValue)
         {
-            System.Xml.XmlNode xmlNode = xmlDocument.SelectSingleNode("settings/" + xPath);
-            if (xmlNode != null) { return xmlNode.InnerText; }
-            else { return defaultValue; }
-        }
-
-        private static void Put(string xPath, string value)
-        {
-            System.Xml.XmlNode xmlNode = xmlDocument.SelectSingleNode("settings/" + xPath);
-            if (xmlNode == null) { xmlNode = createMissingNode("settings/" + xPath); }
-            xmlNode.InnerText = value;
-            xmlDocument.Save(xmlDocumentPath);
-        }
-
-        private static System.Xml.XmlNode createMissingNode(string xPath)
-        {
-            string[] xPathSections = xPath.Split('/');
-            string currentXPath = "";
-            System.Xml.XmlNode testNode = null;
-            System.Xml.XmlNode currentNode = xmlDocument.SelectSingleNode("settings");
-            foreach (string xPathSection in xPathSections)
+            XmlNode xmlNode = xmlDocument.SelectSingleNode("settings/" + xPath);
+            if (xmlNode != null)
             {
-                currentXPath += xPathSection;
-                testNode = xmlDocument.SelectSingleNode(currentXPath);
-                if (testNode == null) { currentNode.InnerXml += "<" + xPathSection + "></" + xPathSection + ">"; }
-                currentNode = xmlDocument.SelectSingleNode(currentXPath);
-                currentXPath += "/";
+                return xmlNode.InnerText;
             }
-            return currentNode;
+            else
+            {
+                return defaultValue;
+            }
         }
-
-        #endregion    
 
         #endregion
 
-        public static string[] ProfileTitles
-        {
-            get
-            {
-                List<string> titles = new List<string>();
-                foreach (SettingsProfile p in Profiles)
-                    titles.Add(string.Format("{0}@{1}", p.Account.username, p.Account.host));
-                return titles.ToArray();
-            }
-        }
-
-        public static void RemoveCurrentProfile()
-        {
-            Profiles.RemoveAt(settingsGeneral.DefaultProfile);            
-            settingsGeneral.DefaultProfile = 0;
-            SaveGeneral();
-            if (Profiles.Count == 0)
-            {
-                File.Delete(confProfiles);
-                return;
-            }
-            string config_prof = JsonConvert.SerializeObject(Profiles, Newtonsoft.Json.Formatting.Indented);
-            File.WriteAllText(confProfiles, config_prof);
-        }
-
-        public class SettingsGeneral
-        {
-            public SettingsGeneral() { }
-
-            public string Language = "";
-            public TrayAction TrayAction = TrayAction.OpenLocalFile;
-            public bool Notifications = true;
-
-            public int DownloadLimit = 0;
-            public int UploadLimit = 0;
-
-            public int DefaultProfile = 0;
-        }
-
-        public class SettingsProfile
-        {
-            public SettingsProfile() { }
-
-            public Account Account;
-            public Paths Paths;
-            public SyncLog Log;
-            public Ignored Ignored;
-        }
-
-        public struct Account
-        {
-            public string host { get; set; }
-            public string username { get; set; }
-            public string password { get; set; }
-            public int port { get; set; }
-            public FtpProtocol protocol { get; set; }
-            public FtpsMethod ftpsMethod { get; set; }
-            public Starksoft.Net.Ftp.FtpSecurityProtocol FtpSecurityProtocol { get; set; }
-            public SyncMethod SyncMethod { get; set; }
-            public int SyncFrequency { get; set; }  
-        }
-
-        public struct Paths
-        {
-            public string remote { get; set; }
-            public string local { get; set; }
-            public string parent { get; set; }
-        }
-
-        public struct SyncLog
-        {
-            public FileLogItem[] items { get; set; }
-            public string[] folders { get; set; }
-        }
-
-        public struct Ignored
-        {
-            public string[] folders { get; set; }
-            public string[] extensions { get; set; }
-            public bool dotfiles { get; set; }
-            public bool tempfiles { get; set; }
-        }
+        #endregion
     }
 
     

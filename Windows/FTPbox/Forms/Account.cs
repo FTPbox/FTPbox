@@ -11,16 +11,7 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-
-using System.IO;
-using System.Xml;
 using FTPboxLib;
 using System.Diagnostics;
 
@@ -28,7 +19,7 @@ namespace FTPbox.Forms
 {
     public partial class Account : Form
     {
-        static string AppPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);      
+        static readonly string AppPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);      
 
         public Account()
         {
@@ -59,7 +50,7 @@ namespace FTPbox.Forms
 
             try
             {
-                ((fMain)this.Tag).SetTray(fMain.MessageType.Connecting);
+                ((fMain)Tag).SetTray(fMain.MessageType.Connecting);
 
                 Client.Connect();
                 Log.Write(l.Debug, "Connected: {0}", Client.isConnected);
@@ -78,22 +69,15 @@ namespace FTPbox.Forms
                 else
                     Profile.FtpsInvokeMethod = FtpsMethod.Implicit;
 
-                ((fMain)this.Tag).SetTray(fMain.MessageType.Ready);
+                ((fMain)Tag).SetTray(fMain.MessageType.Ready);
 
                 Profile.AskForPassword = cAskForPass.Checked;
 
-                //Settings.SaveProfile();     //not now?
-                //Paths fnewdir = new Paths();
-                //fnewdir.Tag = this.Tag;
-                this.Hide();
-                //fnewdir.ShowDialog();
-                
-                //this.Close();
-
+                Hide();
             }
             catch (Exception ex)
             {
-                ((fMain)this.Tag).SetTray(fMain.MessageType.Nothing);
+                ((fMain)Tag).SetTray(fMain.MessageType.Nothing);
 
                 MessageBox.Show("Could not connect to FTP server. Check your account details and try again."
                     + Environment.NewLine + " Error message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -122,7 +106,7 @@ namespace FTPbox.Forms
                 cEncryption.SelectedIndex = (Profile.Protocol != FtpProtocol.FTPS) ? 0 : (Profile.FtpsInvokeMethod == FtpsMethod.Explicit ? 1 : 2);
                 cMode.SelectedIndex = (Profile.Protocol != FtpProtocol.SFTP) ? 0 : 1;
 
-                this.ActiveControl = tPass;
+                ActiveControl = tPass;
             }
         }
 
@@ -148,7 +132,7 @@ namespace FTPbox.Forms
         private void Set_Language(string lan)
         {
             Log.Write(l.Info, "Setting lang: {0}", lan);
-            this.Text = "FTPbox | " + Common.Languages.Get(lan + "/new_account/new_ftp", "New FTP Account");
+            Text = "FTPbox | " + Common.Languages.Get(lan + "/new_account/new_ftp", "New FTP Account");
             gDetails.Text = Common.Languages.Get(lan + "/new_account/login_details", "FTP login details");
             labMode.Text = Common.Languages.Get(lan + "/main_form/mode", "Protocol") + ":";
             labEncryption.Text = Common.Languages.Get(lan + "/new_account/encryption", "Encryption") + ":";
@@ -172,7 +156,7 @@ namespace FTPbox.Forms
 
         public void KillTheProcess()
         {
-            ((fMain)this.Tag).ExitedFromTray = true;
+            ((fMain)Tag).ExitedFromTray = true;
             Log.Write(l.Info, "Killing the process...");
             try
             {

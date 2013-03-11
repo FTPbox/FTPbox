@@ -6,6 +6,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program. 
  * If not, see <http://www.gnu.org/licenses/>.
  */
+
 /* RecentFiles.cs
  * 'RecentFiles' is used to store the 5 most-recently changed files, in a list of 'RecentFileItem's
  */
@@ -13,7 +14,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using FTPbox;
 
 namespace FTPboxLib
@@ -59,6 +59,8 @@ namespace FTPboxLib
                 RecentList.Add(r);            
         }
 
+        #region Properties
+
         /// <summary>
         /// returns given file's name
         /// </summary>
@@ -66,7 +68,7 @@ namespace FTPboxLib
         /// <returns></returns>
         public string getName(int i)
         {
-            return (RecentList.Count > i) ? RecentList[RecentList.Count - i - 1].Name : "Not available";           
+            return (RecentList.Count > i) ? RecentList[RecentList.Count - i - 1].Name : "Not available";
         }
 
         /// <summary>
@@ -76,11 +78,11 @@ namespace FTPboxLib
         /// <returns></returns>
         public string getPath(int i)
         {
-            return (RecentList.Count > i) ? RecentList[RecentList.Count - i - 1].Path : null;            
+            return (RecentList.Count > i) ? RecentList[RecentList.Count - i - 1].Path : null;
         }
 
         /// <summary>
-        /// Returns http-link to fiven file
+        /// Returns http-link to given file
         /// </summary>
         /// <param name="i">file's index in list</param>
         /// <returns></returns>
@@ -122,19 +124,10 @@ namespace FTPboxLib
         /// <returns></returns>
         public bool inLastFive(string name)
         {
-            if (RecentList.Count < 5)
-                return false;
-            else
-            {
-                bool b = false;
-                for (int i = 0; i <= 4; i++)
-                {
-                    Log.Write(l.Debug, "Searching in last five : name {0} count {1} index {2}", name, RecentList.Count, RecentList.Count - i);
-                    if (RecentList[RecentList.Count - i].Name == name)
-                        b = true;
-                }
-                return b;
-            }
+            if (RecentList.Count < 5) return false;
+
+            var lastFive = RecentList.Skip(RecentList.Count - 4).Take(4);
+            return lastFive.Any(f => f.Name == name);
         }
 
         public bool Contains(string name)
@@ -142,22 +135,10 @@ namespace FTPboxLib
             if (RecentList.Count == 0)
                 return false;
 
-            bool c = false;            
-            foreach (RecentFileItem i in RecentList)
-            {
-                if (i.Name == name)
-                    c = true;
-            }
-
-            return c;
+            return RecentList.Any(i => i.Name == name);
         }
-    }
 
-    public enum TrayAction
-    {
-        OpenInBrowser = 1,
-        CopyLink = 2,
-        OpenLocalFile = 3
-    }
+        #endregion
 
+    }
 }

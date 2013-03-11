@@ -14,32 +14,34 @@ using System;
 using Starksoft.Net.Ftp;
 using Renci.SshNet;
 using Renci.SshNet.Sftp;
-using FTPboxLib;
 using System.Collections.Generic;
 using FTPbox;
 using System.IO;
-using System.Text;
 
 namespace FTPboxLib
 {
 	public static class Client
-	{        
+    {
+        #region Private Fields
+
         private static FtpClient ftpc;              //Our FTP client
         private static SftpClient sftpc;            //And our SFTP client
 
-        #region Actions
+        #endregion
+
+        #region Functions
 
         public static void Connect()
 		{
-            Console.WriteLine("Connecting client...");
+            Log.Write(l.Debug, "Connecting client...");
 			if (FTP)
 			{	
 				ftpc = new FtpClient(Profile.Host, Profile.Port);
 
-                if (Profile.Protocol == FtpProtocol.FTPS)
-                {
-                    ftpc.SecurityProtocol = Profile.SecurityProtocol;
-                    ftpc.ValidateServerCertificate += new EventHandler<ValidateServerCertificateEventArgs>(ftp_ValidateServerCertificate);
+			    if (Profile.Protocol == FtpProtocol.FTPS)
+			    {
+			        ftpc.SecurityProtocol = Profile.SecurityProtocol;
+			        ftpc.ValidateServerCertificate += (object sender, ValidateServerCertificateEventArgs e) => { e.IsCertificateValid = true; }; 
                 }
 
                 try
@@ -47,18 +49,18 @@ namespace FTPboxLib
                     ftpc.Open(Profile.Username, Profile.Password);
                     ftpc.CharacterEncoding = System.Text.Encoding.Default;
                 }
-                catch(Exception ex)
+                catch
                 {
                     if (Profile.FtpsInvokeMethod == FtpsMethod.None)
-                        throw ex;
+                        throw;
                     bool connected = false;
 
                     foreach (FtpSecurityProtocol p in Enum.GetValues(typeof(FtpSecurityProtocol)))
                     {
                         if ((Profile.FtpsInvokeMethod == FtpsMethod.Explicit && p.ToString().Contains("Explicit"))
                             || (Profile.FtpsInvokeMethod == FtpsMethod.Implicit && p.ToString().Contains("Implicit")))
-                        {                            
-                            Console.WriteLine("Testing with {0}", p.ToString());
+                        {
+                            Log.Write(l.Debug, "Testing with {0}", p.ToString());
                             
                             try {
                                 ftpc.Close();
@@ -66,7 +68,7 @@ namespace FTPboxLib
                                 ftpc.Open(Profile.Username, Profile.Password);                                
                             }
                             catch (Exception exe){
-                                Console.WriteLine("Exe: {0}", exe.Message);
+                                Log.Write(l.Debug, "Exe: {0}", exe.Message);
                                 continue;
                             }
                             connected = true;
@@ -77,7 +79,7 @@ namespace FTPboxLib
                     }
 
                     if (!connected)
-                        throw ex;
+                        throw;
                 }
 			}
 			else 
@@ -89,7 +91,7 @@ namespace FTPboxLib
             Profile.HomePath = WorkingDirectory;
             Profile.HomePath = (Profile.HomePath.StartsWith("/")) ? Profile.HomePath.Substring(1) : Profile.HomePath;
 
-            Console.WriteLine("Client connected sucessfully");
+            Log.Write(l.Debug, "Client connected sucessfully");
 
             if (Profile.IsDebugMode) 
                 LogServerInfo();
@@ -108,7 +110,7 @@ namespace FTPboxLib
             string temp = Common._tempName(i.CommonPath);
                         
             //upload to a temp file...
-            if (Profile.Protocol != FtpProtocol.SFTP)
+            if (FTP)
                 ftpc.PutFile(i.LocalPath, temp, FileAction.Create);
             else
                 using (var file = File.OpenRead(i.LocalPath))
@@ -117,7 +119,7 @@ namespace FTPboxLib
 
         public static void Upload(string localpath, string remotepath)
         {
-            if (Profile.Protocol != FtpProtocol.SFTP)
+            if (FTP)
                 ftpc.PutFile(localpath, remotepath, FileAction.Create);
             else
                 using (var file = File.OpenRead(localpath))
@@ -128,7 +130,7 @@ namespace FTPboxLib
         {
             string temp = Common._tempLocal(i.LocalPath);
 
-            if (Profile.Protocol != FtpProtocol.SFTP)
+            if (FTP)
             {                
                 if (i.PathToFile.Contains(" "))                     
                 {
@@ -142,22 +144,22 @@ namespace FTPboxLib
                     ftpc.GetFile(i.CommonPath, temp, FileAction.Create);
             }
             else
-                using (FileStream f = new FileStream(temp, FileMode.Create, FileAccess.ReadWrite))
+                using (var f = new FileStream(temp, FileMode.Create, FileAccess.ReadWrite))
                     sftpc.DownloadFile(i.CommonPath, f);
         }
 
         public static void Download(string cpath, string lpath)
         {
-            if (Profile.Protocol != FtpProtocol.SFTP)
+            if (FTP)
                 ftpc.GetFile(cpath, lpath, FileAction.Create);
             else
-                using (FileStream f = new FileStream(lpath, FileMode.Create, FileAccess.ReadWrite))
+                using (var f = new FileStream(lpath, FileMode.Create, FileAccess.ReadWrite))
                     sftpc.DownloadFile(cpath, f);
         }
 
         public static void Rename(string oldname, string newname)
         {
-            if (Profile.Protocol != FtpProtocol.SFTP)
+            if (FTP)
                 ftpc.Rename(oldname, newname);
             else
                 sftpc.RenameFile(oldname, newname);
@@ -165,15 +167,22 @@ namespace FTPboxLib
 
         public static void MakeFolder(string cpath)
         {
-            if (Profile.Protocol != FtpProtocol.SFTP)
-                ftpc.MakeDirectory(cpath);
-            else
-                sftpc.CreateDirectory(cpath);
+            try
+            {
+                if (FTP)
+                    ftpc.MakeDirectory(cpath);
+                else
+                    sftpc.CreateDirectory(cpath);
+            }
+            catch
+            {
+                if (!Exists(cpath)) throw;
+            }
         }
 
         public static void Remove(string cpath)
         {
-            if (Profile.Protocol != FtpProtocol.SFTP)
+            if (FTP)
                 ftpc.DeleteFile(cpath);
             else
                 sftpc.Delete(cpath);
@@ -181,7 +190,7 @@ namespace FTPboxLib
 
         public static void RemoveFolder(string path)
         {
-            if (Profile.Protocol != FtpProtocol.SFTP)
+            if (FTP)
                 DeleteFolderFTP(path);
             else
                 DeleteFolderSFTP(path);
@@ -191,7 +200,6 @@ namespace FTPboxLib
         /// Delete a remote folder and everything inside it (FTP)
         /// </summary>
         /// <param name="path">path to folder to delete</param>
-        /// <param name="RemFromLog">True to also remove deleted stuf from log, false to not.</param>
         private static void DeleteFolderFTP(string path)
         {
             CheckConnectionStatus();
@@ -222,6 +230,7 @@ namespace FTPboxLib
                 ftpc.DeleteDirectory(path);
                 Common.RemoveFromLog(Common.GetComPath(path, false));
             }
+
 
             Log.Write(l.Client, "Deleted: {0}", path);
             Log.Write(l.Client, "current folder is: {2}", WorkingDirectory);
@@ -261,7 +270,6 @@ namespace FTPboxLib
         /// Delete a remote folder and everything inside it (SFTP)
         /// </summary>
         /// <param name="path">path to folder to delete</param>
-        /// <param name="RemFromLog">True to also remove deleted stuf from log, false to not.</param>
         private static void DeleteFolderSFTP(string path)
         {
             if (_exists(path))
@@ -318,6 +326,46 @@ namespace FTPboxLib
             Common.RemoveFromLog(Common.GetComPath(path, false));
         }
 
+        public static void SetMaxDownloadSpeed(int value)
+        {
+            ftpc.MaxDownloadSpeed = value;
+        }
+
+        public static void SetMaxUploadSpeed(int value)
+        {
+            ftpc.MaxUploadSpeed = value;
+        }
+
+        /// <summary>
+        /// Displays some server info in the log/console
+        /// </summary>
+        public static void LogServerInfo()
+        {
+            Log.Write(l.Info, "//////////////////////////////////////////////////");
+            Log.Write(l.Info, "////////////////////Server Info///////////////////");
+            Log.Write(l.Info, "//////////////////////////////////////////////////");
+            if (Profile.Protocol == FtpProtocol.SFTP)
+            {
+                Log.Write(l.Info, "Protocol Version: {0}", sftpc.ProtocolVersion);
+                Log.Write(l.Info, "Client Compression Algorithm: {0}", sftpc.ConnectionInfo.CurrentClientCompressionAlgorithm);
+                Log.Write(l.Info, "Server Compression Algorithm: {0}", sftpc.ConnectionInfo.CurrentServerCompressionAlgorithm);
+                Log.Write(l.Info, "Client encryption: {0}", sftpc.ConnectionInfo.CurrentClientEncryption);
+                Log.Write(l.Info, "Server encryption: {0}", sftpc.ConnectionInfo.CurrentServerEncryption);
+            }
+            else
+            {
+                Log.Write(l.Info, "Transfer Mode: {0}", ftpc.DataTransferMode.ToString());
+                Log.Write(l.Info, "Transfer Type: {0}", ftpc.FileTransferType.ToString());
+                Log.Write(l.Info, "Compression Enabled: {0}", ftpc.IsCompressionEnabled);
+            }
+
+            Log.Write(l.Info, "//////////////////////////////////////////////////");
+        }
+
+        #endregion                
+
+        #region Properties
+
         /// <summary>
         /// Checks the connection status and tries to re-login if needed.
         /// </summary>
@@ -328,14 +376,11 @@ namespace FTPboxLib
             Log.Write(l.Client, "Checking FTP connection...");
             if (ftpc.IsLoggingOn) return true;
 
-            //System.Timers.Timer t = new System.Timers.Timer();		
             Log.Write(l.Client, "isConnected: {0}", ftpc.IsConnected);
             try
             {
-                //Log.Write(l.Client, ftpc.DataTransferMode.ToString());
                 ftpc.DataTransferMode = TransferMode.Passive;
-                //Log.Write(l.Client, ftpc.DataTransferMode.ToString());
-                FtpItemCollection s = ftpc.GetDirList();
+                var s = ftpc.GetDirList();
                 Log.Write(l.Client, "Client is connected!");
                 return true;
             }
@@ -347,39 +392,19 @@ namespace FTPboxLib
             }
         }
 
-        public static void SetMaxDownloadSpeed(int value)
-        {
-            ftpc.MaxDownloadSpeed = value;
-        }
-
-        public static void SetMaxUploadSpeed(int value)
-        {
-            ftpc.MaxUploadSpeed = value;
-        }
-
-        #endregion                
-
-        #region Properties
-
         public static bool isConnected
         {
             get
             {
-                if (FTP)
-                    return ftpc.IsConnected;
-                else
-                    return sftpc.IsConnected;
+                return (FTP) ? ftpc.IsConnected : sftpc.IsConnected;
             }
         }
 
         public static string WorkingDirectory
 		{
 			get 
-			{ 
-				if (FTP)
-					return ftpc.CurrentDirectory;
-				else
-					return sftpc.WorkingDirectory;
+			{
+				return (FTP) ? ftpc.CurrentDirectory : sftpc.WorkingDirectory;
 			}
 			set 
 			{
@@ -400,7 +425,7 @@ namespace FTPboxLib
         {
             try
             {
-                if (Profile.Protocol != FtpProtocol.SFTP)
+                if (FTP)
                 {
                     bool exists = false;
                     string p = (cpath.Contains("/")) ? cpath.Substring(0, cpath.LastIndexOf("/")) : ".";
@@ -410,8 +435,8 @@ namespace FTPboxLib
                             exists = true;
                     return exists;
                 }
-                else
-                    return sftpc.Exists(cpath);
+                
+                return sftpc.Exists(cpath);
             }
             catch
             {
@@ -426,7 +451,7 @@ namespace FTPboxLib
         /// <returns>The file's size</returns>
         public static long SizeOf(string path)
         {
-            return (Profile.Protocol != FtpProtocol.SFTP) ? ftpc.GetFileSize(path) : sftpc.GetAttributes(path).Size;
+            return (FTP) ? ftpc.GetFileSize(path) : sftpc.GetAttributes(path).Size;
         }        
 
         public static bool Exists(string path)
@@ -525,14 +550,36 @@ namespace FTPboxLib
                 Log.Write(l.Client, "Got LWT: {0} UTC: {1}", dt, sftpc.GetLastAccessTimeUtc(p));
 
             return dt;
+        }              
+
+        private static ClientItemType _ItemTypeOf(SftpFile f)
+        {
+            if (f.IsDirectory)
+                return ClientItemType.Folder;
+            if (f.IsRegularFile)
+                return ClientItemType.File;            
+            return ClientItemType.Other;
         }
+
+        private static ClientItemType _ItemTypeOf(FtpItemType f)
+        {
+            if (f == FtpItemType.File)
+                return ClientItemType.File;
+            if (f == FtpItemType.Directory)
+                return ClientItemType.Folder;
+            return ClientItemType.Other;
+        }
+
+	    #endregion
+
+        #region Listing
 
         public static List<ClientItem> ListRecursive(string path)
         {
             List<ClientItem> list = new List<ClientItem>();
             if (FTP)
                 foreach (FtpItem f in ftpc.GetDirListDeep(path))
-                {                   
+                {
                     if (Common.ParentFolderHasSpace(Common.GetComPath(f.FullPath, false)))
                     {
                         Log.Write(l.Client, "**** fp: {0} parent: {1} name_has_space: {2} parent_has_space: {3}", f.FullPath, f.ParentPath, Common._name(f.FullPath).Contains(" "), Common.GetComPath(f.ParentPath, false).Contains(" "));
@@ -540,7 +587,7 @@ namespace FTPboxLib
                             FtpRecursiveListInside(f, ref list);
                     }
                     else
-                        list.Add(new ClientItem(f.Name, f.FullPath, _ItemTypeOf(f.ItemType), f.Size, f.Modified)); 
+                        list.Add(new ClientItem(f.Name, f.FullPath, _ItemTypeOf(f.ItemType), f.Size, f.Modified));
                 }
             else
                 foreach (SftpFile f in sftpc.ListDirectory(path))
@@ -559,10 +606,10 @@ namespace FTPboxLib
         {
             if (f.ItemType != FtpItemType.Directory) return;
 
-            list.Add(new ClientItem(f.Name, f.FullPath, _ItemTypeOf(f.ItemType), f.Size, f.Modified));       
+            list.Add(new ClientItem(f.Name, f.FullPath, _ItemTypeOf(f.ItemType), f.Size, f.Modified));
 
             //TODO: get this shit working
-            #region not yet 
+            #region not yet
             /*
             string cd = WorkingDirectory;
 
@@ -581,7 +628,7 @@ namespace FTPboxLib
 
             while (WorkingDirectory != cd)
                 ftpc.ChangeDirectoryUp(); */
-            
+
             #endregion
         }
 
@@ -599,56 +646,6 @@ namespace FTPboxLib
 
         private static List<string> FullRemList;
         /// <summary>
-        /// Fills FullRemList with a fully recursive list of the remote server (both files and folders)
-        /// </summary>
-        private static List<string> FullRemoteList
-        {
-            get
-            {
-                FullRemList = new List<String>();
-                if (Profile.Protocol == FtpProtocol.FTP)
-                {
-                    foreach (FtpItem f in ftpc.GetDirListDeep("."))
-                        if (Common.ItemGetsSynced(Common.GetComPath(f.FullPath, false)))
-                        {
-                            FullRemList.Add(Common.GetComPath(f.FullPath, false));
-                        }
-                }
-                else
-                {
-                    foreach (SftpFile s in sftpc.ListDirectory("."))
-                    {                 
-                        if (Common.ItemGetsSynced(Common.GetComPath(s.FullName, false)))
-                            if (!s.IsDirectory)
-                                FullRemList.Add(Common.GetComPath(s.FullName, false));
-                            else
-                                FullRemoteRecursiveList(Common.GetComPath(s.FullName, false));
-                    }
-                }
-
-                return FullRemList;
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of files & folders inside the specified folder
-        /// </summary>
-        /// <param name="path">the folder to look into</param>
-        private static void FullRemoteRecursiveList(string path)
-        {
-            FullRemList.Add(Common.GetComPath(path, false));
-            Log.Write(l.Client, "Listing inside: {0}", path);
-            foreach (SftpFile f in sftpc.ListDirectory(path))
-            {
-                if (Common.ItemGetsSynced(Common.GetComPath(f.FullName, false)))
-                    if (!f.IsDirectory)
-                        FullRemList.Add(Common.GetComPath(f.FullName, false));
-                    else
-                        FullRemoteRecursiveList(Common.GetComPath(f.FullName, false));
-            }
-        }
-
-        /// <summary>
         /// Fills FullRemList with a fully recursive list of the items (both files and folders) inside the specified path
         /// </summary>
         /// <param name="path">The path to list</param>
@@ -656,7 +653,7 @@ namespace FTPboxLib
         public static List<string> FullRemoteListInside(string path)
         {
             FullRemList = new List<string>();
-            if (Profile.Protocol != FtpProtocol.SFTP)
+            if (FTP)
             {
                 foreach (FtpItem f in ftpc.GetDirListDeep(path))
                     if (Common.ItemGetsSynced(Common.GetComPath(f.FullPath, false)))
@@ -678,60 +675,25 @@ namespace FTPboxLib
 
             return FullRemList;
         }
-        
-        #endregion
-
-        private static void ftp_ValidateServerCertificate(object sender, ValidateServerCertificateEventArgs e)
-        {
-            e.IsCertificateValid = true;
-        }
-
-        private static ClientItemType _ItemTypeOf(SftpFile f)
-        {
-            if (f.IsDirectory)
-                return ClientItemType.Folder;
-            else if (f.IsRegularFile)
-                return ClientItemType.File;
-            else
-                return ClientItemType.Other;
-        }
-
-        private static ClientItemType _ItemTypeOf(FtpItemType f)
-        {
-            if (f == FtpItemType.File)
-                return ClientItemType.File;
-            else if (f == FtpItemType.Directory)
-                return ClientItemType.Folder;
-            else
-                return ClientItemType.Other;
-        }
 
         /// <summary>
-        /// Displays some server info in the log/console
+        /// Gets the list of files & folders inside the specified folder
         /// </summary>
-        public static void LogServerInfo()
+        /// <param name="path">the folder to look into</param>
+        private static void FullRemoteRecursiveList(string path)
         {
-            Log.Write(l.Info, "//////////////////////////////////////////////////");
-            Log.Write(l.Info, "////////////////////Server Info///////////////////");
-            Log.Write(l.Info, "//////////////////////////////////////////////////");
-            if (Profile.Protocol == FtpProtocol.SFTP)
+            FullRemList.Add(Common.GetComPath(path, false));
+            Log.Write(l.Client, "Listing inside: {0}", path);
+            foreach (SftpFile f in sftpc.ListDirectory(path))
             {
-                Log.Write(l.Info, "Protocol Version: {0}", sftpc.ProtocolVersion);
-                Log.Write(l.Info, "Client Compression Algorithm: {0}", sftpc.ConnectionInfo.CurrentClientCompressionAlgorithm);
-                Log.Write(l.Info, "Server Compression Algorithm: {0}", sftpc.ConnectionInfo.CurrentServerCompressionAlgorithm);
-                Log.Write(l.Info, "Client encryption: {0}", sftpc.ConnectionInfo.CurrentClientEncryption);
-                Log.Write(l.Info, "Server encryption: {0}", sftpc.ConnectionInfo.CurrentServerEncryption);
+                if (Common.ItemGetsSynced(Common.GetComPath(f.FullName, false)))
+                    if (!f.IsDirectory)
+                        FullRemList.Add(Common.GetComPath(f.FullName, false));
+                    else
+                        FullRemoteRecursiveList(Common.GetComPath(f.FullName, false));
             }
-            else
-            {
-                Log.Write(l.Info, "Transfer Mode: {0}", ftpc.DataTransferMode.ToString());
-                Log.Write(l.Info, "Transfer Type: {0}", ftpc.FileTransferType.ToString());
-                Log.Write(l.Info, "Compression Enabled: {0}", ftpc.IsCompressionEnabled);
-            }
-                        
-            Log.Write(l.Info, "//////////////////////////////////////////////////");
         }
 
+        #endregion
     }    
 }
-

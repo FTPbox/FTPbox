@@ -69,6 +69,7 @@
     <Compile Include="Classes\Console\aConsole.cs" />
     <Compile Include="Classes\AESEncryption.cs" />
     <Compile Include="Classes\Client.cs" />
+    <Compile Include="Classes\Enums.cs" />
     <Compile Include="Classes\Queues\DeletedQueue.cs" />
     <Compile Include="Classes\Queues\DeletedQueueItem.cs" />
     <Compile Include="Classes\FileLog.cs" />

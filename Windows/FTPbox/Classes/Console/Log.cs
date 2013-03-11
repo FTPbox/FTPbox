@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.IO;
-using System.Text;
 
 namespace FTPbox
 {

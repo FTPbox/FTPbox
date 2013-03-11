@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using FTPboxLib;
 
@@ -77,11 +73,7 @@ namespace FTPbox.Forms
         {
             get
             {
-                foreach (DataGridViewRow d in data.Rows)
-                    if (d.Cells[1].Value == null || (string)d.Cells[1].Value == "")
-                        return false;
-
-                return true;
+                return data.Rows.Cast<DataGridViewRow>().All(d => d.Cells[1].Value != null && (string) d.Cells[1].Value != "");
             }
         }
 
@@ -115,11 +107,15 @@ namespace FTPbox.Forms
 
                 text += string.Format("</{0}>", parent);
 
-                SaveFileDialog sf = new SaveFileDialog();
-                sf.Title = "Select a folder in which the file will be saved:";
-                sf.FileName = string.Format("{0}_({1})_Translation.txt", LanguageSettings.Language, LanguageSettings.ShortCode);
-                sf.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-                if (sf.ShowDialog() != System.Windows.Forms.DialogResult.Cancel)
+                var sf = new SaveFileDialog
+                    {
+                        Title = "Select a folder in which the file will be saved:",
+                        FileName =
+                            string.Format("{0}_({1})_Translation.txt", LanguageSettings.Language, LanguageSettings.ShortCode),
+                        Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
+                    };
+
+                if (sf.ShowDialog() != DialogResult.Cancel)
                 {
 
                     Console.WriteLine(sf.FileName);
@@ -139,8 +135,6 @@ namespace FTPbox.Forms
 
         private void LoadData()
         {
-            List<TranslationItem> list = new List<TranslationItem>();
-
             data.Rows.Add(115);
 
             data.Rows[0].Cells[0].Value = "Options";
@@ -393,7 +387,7 @@ namespace FTPbox.Forms
 
         private void bCancel_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            Hide();
         }
 
         private void bBrowse_Click(object sender, EventArgs e)
@@ -423,7 +417,7 @@ namespace FTPbox.Forms
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<string> l = new List<string>(Clipboard.GetText().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
+            var l = new List<string>(Clipboard.GetText().Split(new[] { Environment.NewLine }, StringSplitOptions.None));
             int i = data.SelectedCells[0].RowIndex;
 
             foreach (string s in l)
@@ -450,25 +444,14 @@ namespace FTPbox.Forms
 
     public class TranslationItem
     {
-        private string _name;
-        private string _text;
-
         public TranslationItem(string name, string text)
         {
-            _name = name;
-            _text = text;
+            Name = name;
+            Text = text;
         }
 
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+        public string Name { get; set; }
 
-        public string Text
-        {
-            get { return _text; }
-            set { _text = value; }
-        }
+        public string Text { get; set; }
     }
 }

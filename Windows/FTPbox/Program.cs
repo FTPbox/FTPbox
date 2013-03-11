@@ -73,13 +73,7 @@ namespace FTPbox
             {
                 string[] dlls = { "Starksoft.Net.Ftp.dll", "Starksoft.Net.Proxy.dll", "Renci.SshNet.dll"};
 
-                foreach (string s in dlls)
-                {
-                    if (!File.Exists(Path.Combine(Application.StartupPath, s)))
-                        return false;
-                }
-
-                return true;
+                return dlls.All(s => File.Exists(Path.Combine(Application.StartupPath, s)));
             }
         }
 
@@ -149,8 +143,8 @@ namespace FTPbox
                 RunClient(files.ToArray(), param);
                 return false;
             }
-            else
-                return true;
+            
+            return true;
         }
 
         private static void RunClient(string[] args, string param)
@@ -202,11 +196,7 @@ namespace FTPbox
             get
             {
                 Process[] processes = Process.GetProcesses();
-                foreach (Process p in processes)
-                    if (p.ProcessName == "FTPbox" && p.Id != Process.GetCurrentProcess().Id)
-                        return true;
-
-                return false;
+                return processes.Any(p => p.ProcessName == "FTPbox" && p.Id != Process.GetCurrentProcess().Id);
             }
         }
 

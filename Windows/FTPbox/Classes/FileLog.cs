@@ -11,192 +11,114 @@
  */
 
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.Linq;
+using FTPbox;
 
 namespace FTPboxLib
-{		
+{
 	public class FileLog
-	{		
-		//Dictionary<string, DateTime> localLog;
-		//Dictionary<string, DateTime> remoteLog;
-		//List<string> names;
-		
-		List<FileLogItem> fList;
-        List<string> dList;
-		
-		public FileLog ()
-		{			
-			//names = new List<string>();
-			//localLog = new Dictionary<string, DateTime>();
-			//remoteLog = new Dictionary<string, DateTime>();
-			fList = new List<FileLogItem>();
-            dList = new List<string>();
+	{
+	    public FileLog ()
+		{
+            Files = new List<FileLogItem>();
+            Folders = new List<string>();
 
-            if (Settings.DefaultProfile.Log.items != null) fList = new List<FileLogItem>(Settings.DefaultProfile.Log.items);
-            if (Settings.DefaultProfile.Log.folders != null) dList = new List<string>(Settings.DefaultProfile.Log.folders);
+            if (Settings.DefaultProfile.Log.Items != null) Files = new List<FileLogItem>(Settings.DefaultProfile.Log.Items);
+            if (Settings.DefaultProfile.Log.Folders != null) Folders = new List<string>(Settings.DefaultProfile.Log.Folders);
 
 			Console.WriteLine("Opened FileLog...");
 		}
-		
-		public void putFile(string path, DateTime rem_lwt, DateTime loc_lwt)
-		{
-			bool found = false;
-			foreach (FileLogItem fi in fList)
-			{
-				if (fi.CommonPath == path)
-				{
-					fi.Local = loc_lwt;
-					fi.Remote = rem_lwt;
-					found = true;
-				}
-			}
-			
-			if (!found)
-				fList.Add(new FileLogItem(path, rem_lwt, loc_lwt));
 
-            Settings.SaveProfile();
-		}
-		
-		public void putRemote(string path, DateTime rem)
-		{
-			//bool found = false;
-			foreach (FileLogItem fi in fList)
-			{
-				if (fi.CommonPath == path)
-				{
-					fi.Remote = rem;
-					//found = true;
-				}
-			}
-			
-			/*
-			if (localLog.ContainsKey(path))
-			{
-				remoteLog[path] = rem;
-			}
-			else{
-				remoteLog.Add(path, rem);
-				names.Add(path);
-			} */
-		}
-		
-		public void putLocal(string path, DateTime loc)
-		{
-			foreach (FileLogItem fi in fList)
-			{
-				if (fi.CommonPath == path)
-				{
-					fi.Local = loc;	
-				}
-			}
-			/*
-			if (localLog.ContainsKey(path))
-			{
-				localLog[path] = loc;
-			}
-			else{
-				localLog.Add(path, loc);
-				names.Add(path);
-			}*/
-		}
-		
-		public DateTime getLocal(string path)
-		{			
-			DateTime ret = DateTime.MinValue;
-			
-			foreach (FileLogItem fi in fList)
-				if (fi.CommonPath == path)
-					ret = fi.Local;
-			return ret;
-			
-			/*
-			if (names.Contains(path))
-				return localLog[path];
-			else
-				return DateTime.MinValue;*/
-		}	
-		
-		public DateTime getRemote(string path)
-		{
-			DateTime ret = DateTime.MinValue;
-			
-			foreach (FileLogItem fi in fList)
-				if (fi.CommonPath == path)
-					ret = fi.Remote;
-			return ret;
-			/*
-			if (names.Contains(path))
-				return remoteLog[path];
-			else
-				return DateTime.MinValue;*/
-		}
-		
-		public void clear(string path)
-		{
-			fList.Clear();
-			/*
-			names.Clear();
-			remoteLog.Clear();
-			localLog.Clear();*/
-			//clear log here
-		}
-		
-		public void Remove(string path)
-		{
-			List<FileLogItem> fl = new List<FileLogItem>(fList);
-			foreach (FileLogItem fi in fl)
-			{
-				if (fi.CommonPath == path)
-					fList.Remove(fi);
-			}
-			/*
-			if (names.Contains(path))
-			{
-				names.Remove(path);
-				localLog.Remove(path);
-				remoteLog.Remove(path);
-			}	*/		
-		}
-		
-		public List<FileLogItem> Files
-		{
-			get { return fList;	}
-		}	
-		
-		public bool Contains(string path)
-		{
-			bool ret = false;
-			foreach (FileLogItem fi in fList)
-				if (fi.CommonPath == path)
-					ret = true;
-			return ret;
-			
-			//return names.Contains(path);	
-		}
+	    #region Functions
 
-        public void putFolder(string cpath)
-        {
-            if (!dList.Contains(cpath))
-                dList.Add(cpath);
-            Settings.SaveProfile();
-        }
+	    public void putFile(string path, DateTime rem_lwt, DateTime loc_lwt)
+	    {
+            if (Contains(path)) Remove(path);
+            
+	        bool found = false;
+	        foreach (FileLogItem fi in Files.Where(fi => fi.CommonPath == path))
+	        {
+	            fi.Local = loc_lwt;
+	            fi.Remote = rem_lwt;
+	            found = true;
+	        }
 
-        /// <summary>
-        /// removes the specified folder from log
-        /// </summary>
-        /// <param name="cpath"></param>
-        public void removeFolder(string cpath)
-        {
-            if (dList.Contains(cpath))
-                dList.Remove(cpath);
-            Settings.SaveProfile();
-        }
+	        if (!found)
+	            Files.Add(new FileLogItem(path, rem_lwt, loc_lwt));
 
-        public List<string> Folders
-        {
-            get { return dList; }
-        }
+	        Settings.SaveProfile();
+	    }
+
+	    public void Remove(string path)
+	    {
+	        List<FileLogItem> fl = new List<FileLogItem>(Files);
+	        foreach (FileLogItem fi in fl.Where(fi => fi.CommonPath == path))
+	            Files.Remove(fi);
+
+	        Log.Write(l.Debug, "*** Removed from Log: {0}", path);
+	    }
+
+	    public void putFolder(string cpath)
+	    {
+	        if (!Folders.Contains(cpath))
+	            Folders.Add(cpath);
+	        Settings.SaveProfile();
+	    }
+
+	    /// <summary>
+	    /// removes the specified folder from log
+	    /// </summary>
+	    /// <param name="cpath"></param>
+	    public void removeFolder(string cpath)
+	    {
+	        if (Folders.Contains(cpath))
+	            Folders.Remove(cpath);
+	        Settings.SaveProfile();
+	    }
+
+	    public void Clear(string path)
+	    {
+	        Files.Clear();
+	    }
+
+	    #endregion
+
+	    #region Properties
+
+        public List<FileLogItem> Files { get; private set; }
+        public List<string> Folders { get; private set; }
+
+	    public DateTime getLocal(string path)
+	    {
+	        DateTime ret = DateTime.MinValue;
+
+	        foreach (FileLogItem fi in Files)
+	            if (fi.CommonPath == path)
+	                return fi.Local;
+	        return ret;
+	    }
+
+	    public DateTime getRemote(string path)
+	    {
+	        DateTime ret = DateTime.MinValue;
+
+	        foreach (FileLogItem fi in Files)
+	            if (fi.CommonPath == path)
+	                return fi.Remote;
+	        return ret;
+	    }
+
+	    public bool Contains(string path)
+	    {
+	        bool ret = false;
+	        foreach (FileLogItem fi in Files)
+	            if (fi.CommonPath == path)
+	                ret = true;
+	        return ret;
+	    }
+
+	    #endregion
+
 	}
 }
-

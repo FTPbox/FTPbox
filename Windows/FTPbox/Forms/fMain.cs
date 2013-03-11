@@ -13,10 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Net;
@@ -34,11 +31,7 @@ namespace FTPbox.Forms
     public partial class fMain : Form
     {
         public FileQueue fQueue = new FileQueue();			//file queue
-        public DeletedQueue dQueue = new DeletedQueue();	//Deleted items queue        
-
-        List<string> localFolders = new List<string>();     //Used to store all the local folders at all times
-        List<string> localFiles = new List<string>();       //Used to store all the local files at all times
-
+        public DeletedQueue dQueue = new DeletedQueue();	//Deleted items queue
         public RecentFiles recentFiles = new RecentFiles(); //List of the 5 most recently changed files
 
         Thread rcThread;                                    //remote-check thread
@@ -46,9 +39,7 @@ namespace FTPbox.Forms
         Thread wiuThread;                                   //Web interface update thread                  
 
         public bool loggedIn = false;                       //if the client has been connected
-        public bool gotpaths = false;                       //if the paths have been set or checked    
-
-        //FileLog Common.fLog = new FileLog();                       //the file log
+        public bool gotpaths = false;                       //if the paths have been set or checked
 
         //Form instances
         Account fNewFtp;
@@ -56,8 +47,8 @@ namespace FTPbox.Forms
         Translate ftranslate;
 
         //Links
-        public string link = null;                          //The web link of the last-changed file
-        public string locLink = null;                       //The local path to the last-changed file
+        public string link = string.Empty;                  //The web link of the last-changed file
+        public string locLink = string.Empty;               //The local path to the last-changed file
 
         private System.Threading.Timer tSync;               //Timer used to schedule syncing according to user's preferences
 
@@ -80,12 +71,9 @@ namespace FTPbox.Forms
             Profile.Load();
             LoadLocalFolders();
 
-            fNewFtp = new Account();
-            fNewFtp.Tag = this;
-            newDir = new Paths();
-            newDir.Tag = this;
-            ftranslate = new Translate();
-            ftranslate.Tag = this;
+            fNewFtp = new Account {Tag = this};
+            newDir = new Paths {Tag = this};
+            ftranslate = new Translate {Tag = this};
 
             Get_Language();
             
@@ -251,8 +239,7 @@ namespace FTPbox.Forms
         /// </summary>
         public void UpdateDetails()
         {
-            Log.Write(l.Debug, "Updating the form labels and shit");
-            //Settings.Load();
+            Log.Write(l.Debug, "Updating the form labels and shit");            
 
             WebIntExists();
 
@@ -279,7 +266,7 @@ namespace FTPbox.Forms
             cProfiles.Items.AddRange(Settings.ProfileTitles);
             cProfiles.SelectedIndex = Settings.settingsGeneral.DefaultProfile;
 
-            lVersion.Text = Application.ProductVersion.ToString().Substring(0, 5) + @" Beta";
+            lVersion.Text = Application.ProductVersion.Substring(0, 5) + @" Beta";
 
             //   Filters Tab    //
 
@@ -381,124 +368,55 @@ namespace FTPbox.Forms
         }
 
         /// <summary>
-        /// possible types of file change
-        /// </summary>
-        private enum ChangeAction
-        {
-            changed = 0,
-            created = 1,
-            deleted = 2,
-            renamed = 3,
-            updated = 4
-        }
-
-        #region Put/Remove items from the Log file
-
-        /// <summary>
-        /// Adds the given item to the log file
-        /// </summary>
-        /// <param name="cPath">the common path to the item</param>
-        /// <param name="rDTlog">the remote LastWriteTime of the item</param>
-        /// <param name="lDTlog">the local LastWriteTime of the item</param>
-        public void UpdateTheLog(string cPath, DateTime rDTlog, DateTime lDTlog)
-        {
-            string name = "";
-            name = cPath.Substring(cPath.LastIndexOf("/") + 1, cPath.Length - cPath.LastIndexOf("/") - 1);
-
-            RemoveFromLog(cPath);
-            Common.FileLog.putFile(cPath, rDTlog, lDTlog);
-            
-            Log.Write(l.Debug, "##########");
-            Log.Write(l.Debug, "FLP {0} + name: {1} + rDTlog: {2} + lDTlog: {3} + cPath: {4}", "", name, rDTlog.ToString(), lDTlog.ToString(), cPath);
-            Log.Write(l.Debug, "#########");
-        }
-
-        /// <summary>
-        /// removes an item from the log
-        /// </summary>
-        /// <param name="cPath">name to remove</param>
-        public void RemoveFromLog(string cPath)
-        {
-            Common.RemoveFromLog(cPath);
-            Delete_Recent(cPath);            
-        }        
-
-        /// <summary>
-        /// Loads the Log from the XML
-        /// </summary>
-        /*public void LoadLog()
-        {
-            List<string> Namelog = new List<string>(Settings.nLog.Split('|', '|'));
-            List<string> remoteDL = new List<string>(Settings.rLog.Split('|', '|'));
-            List<string> localDL = new List<string>(Settings.lLog.Split('|', '|'));
-
-            List<string> folderLog = new List<string>(Settings.foLog.Split('|', '|'));
-
-            if (Namelog.Count == 0)
-                return;
-
-            for (int i = 0; i < Namelog.Count; i++)
-            {
-                if (Namelog[i] != null && Namelog[i] != "")
-                {
-                    Log.Write(l.Debug, "Found in log: {0} in position {1} rDT: {2} lDT: {3}", Namelog[i], i, remoteDL[i], localDL[i]);
-                    try
-                    {
-                        Common.FileLog.putFile(Namelog[i], Convert.ToDateTime(remoteDL[i]), Convert.ToDateTime(localDL[i]));
-                    }
-                    catch (Exception e)
-                    {
-                        Common.LogError(e);
-                    }
-                }
-            }
-
-            if (Settings.foLog == "")
-            {
-                
-                //foreach (string s in localFolders)
-                //{
-                    //string cpath = Common.GetComPath(s, true);
-                    //PutFolderInLog(cpath);
-                    //Common.fLog.putFolder(cpath);
-                //}/
-            }
-            else
-            {
-                for (int i = 0; i < folderLog.Count; i++)
-                {
-                    if (folderLog[i] != null && folderLog[i] != "")
-                    {
-                        Log.Write(l.Debug, "Found in folders log: {0} in position {1}", folderLog[i], i);
-                        Common.FileLog.putFolder(folderLog[i]);
-                    }
-                }
-            }
-        }*/
-
-        #endregion
-
-        /// <summary>
         /// Loads the local folders.
         /// </summary>
         public void LoadLocalFolders()
         {
-            localFolders.Clear();
+            Common.LocalFolders.Clear();
             if (Directory.Exists(Profile.LocalPath))
             {
                 DirectoryInfo d = new DirectoryInfo(Profile.LocalPath);
-                foreach (DirectoryInfo di in d.GetDirectories("*", SearchOption.AllDirectories))
-                {
-                    //Log.Write(l.Info, "Found local folder: {0}", di.FullName);
-                    localFolders.Add(di.FullName);
-                }
+                foreach (DirectoryInfo di in d.GetDirectories("*", SearchOption.AllDirectories))               
+                    Common.LocalFolders.Add(di.FullName);                
 
-                foreach (FileInfo fi in d.GetFiles("*", SearchOption.AllDirectories))
-                {
-                    localFiles.Add(fi.FullName);
-                }
+                foreach (FileInfo fi in d.GetFiles("*", SearchOption.AllDirectories))                
+                    Common.LocalFiles.Add(fi.FullName);                
             }
-            Log.Write(l.Info, "Loaded {0} local directories and {1} files", localFolders.Count, localFiles.Count);
+            Log.Write(l.Info, "Loaded {0} local directories and {1} files", Common.LocalFolders.Count, Common.LocalFiles.Count);
+        }
+
+        /// <summary>
+        /// Returns true if any operation is currently running
+        /// </summary>
+        private bool _busy
+        {
+            get
+            {
+                return (rcThread.IsAlive || wiThread.IsAlive || dQueue.Busy || fQueue.Busy);
+            }
+        }
+
+        /// <summary>
+        /// Kills the current process. Called from the tray menu.
+        /// </summary>
+        public void KillTheProcess()
+        {
+            if (!Profile.IsNoMenusMode)
+                RemoveFTPboxMenu();
+
+            ExitedFromTray = true;
+            Log.Write(l.Info, "Killing the process...");
+
+            try
+            {
+                tray.Visible = false;
+                Process p = Process.GetCurrentProcess();
+                p.Kill();
+            }
+            catch
+            {
+                Application.Exit();
+            }
         }
 
         #region File/Folder Watchers and Event Handlers
@@ -548,29 +466,25 @@ namespace FTPbox.Forms
         private void FileChanged(object source, FileSystemEventArgs e)
         {
             string cpath = Common.GetComPath(e.FullPath, true);
-            if (Common.ItemGetsSynced(cpath) && !Common.FileIsUsed(e.FullPath))
-            {
-                if (_busy)
-                {
-                    fQueue.reCheck = true;
-                    Log.Write(l.Debug, "Will recheck, later");
-                }
-                else
-                {
-                    Log.Write(l.Debug, "File {0} was changed, type: {1}", e.Name, e.ChangeType.ToString());
+            if (!Common.ItemGetsSynced(cpath) || Common.FileIsUsed(e.FullPath)) return;
 
-                    if (e.ChangeType == WatcherChangeTypes.Changed)
-                    {
-                        FileInfo fli = new FileInfo(e.FullPath);
-                        fQueue.Add(cpath, e.FullPath, fli.Length, TypeOfTransfer.Change);
-                        SyncLocQueueFiles();
-                    }
-                    else
-                    {
-                        if (File.Exists(e.FullPath) || Directory.Exists(e.FullPath))
-                            SyncInFolder(Directory.GetParent(e.FullPath).FullName, true);
-                    }
+            if (_busy)
+            {
+                fQueue.reCheck = true;
+                Log.Write(l.Debug, "Will recheck, later");
+            }
+            else
+            {
+                Log.Write(l.Debug, "File {0} was changed, type: {1}", e.Name, e.ChangeType.ToString());
+
+                if (e.ChangeType == WatcherChangeTypes.Changed)
+                {
+                    FileInfo fli = new FileInfo(e.FullPath);
+                    fQueue.Add(cpath, e.FullPath, fli.Length, TypeOfTransfer.Change);
+                    SyncLocQueueFiles();
                 }
+                else if (File.Exists(e.FullPath) || Directory.Exists(e.FullPath))
+                    SyncInFolder(Directory.GetParent(e.FullPath).FullName, true);
             }
         }
 
@@ -584,7 +498,7 @@ namespace FTPbox.Forms
             string cpath = Common.GetComPath(e.FullPath, true);
             if (!Common.ItemGetsSynced(cpath)) return;
 
-            if (Common.PathIsFolder(e.FullPath) && e.ChangeType == WatcherChangeTypes.Created && !Client.Exists(cpath))
+            if (!Common.PathIsFile(e.FullPath) && e.ChangeType == WatcherChangeTypes.Created && !Client.Exists(cpath))
             {
                 Client.MakeFolder(cpath);
                 fQueue.AddFolder(cpath);
@@ -594,7 +508,7 @@ namespace FTPbox.Forms
                 //if (fQueue.CountFolders() == 1)
                 //	ShowNotification(e.Name, ChangeAction.created, false);
 
-                GetLink(cpath);
+                Common.GetLink(cpath, ref link);
                 if (_busy)
                 {
                     fQueue.reCheck = true;
@@ -603,20 +517,15 @@ namespace FTPbox.Forms
                 else
                     SyncInFolder(e.FullPath, true);
             }
-            if (!e.FullPath.EndsWith("~") && !e.Name.StartsWith(".goutputstream"))
+            if (e.FullPath.EndsWith("~") || e.Name.StartsWith(".goutputstream")) return;
+
+            if (_busy)
             {
-                if (_busy)
-                {
-                    fQueue.reCheck = true;
-                    Log.Write(l.Debug, "Will recheck, later");
-                    //wait a bit
-                    //Console.Write("Waiting...");
-                }
-                else
-                {
-                    SyncInFolder(Directory.GetParent(e.FullPath).FullName, true);
-                }
+                fQueue.reCheck = true;
+                Log.Write(l.Debug, "Will recheck, later");
             }
+            else            
+                SyncInFolder(Directory.GetParent(e.FullPath).FullName, true);            
         }
 
         /// <summary>
@@ -625,26 +534,19 @@ namespace FTPbox.Forms
         /// <param name="source"></param>
         /// <param name="e"></param>
         private void onDeleted(object source, FileSystemEventArgs e)
-        {            
-            if (Common.ItemGetsSynced(Common.GetComPath(e.FullPath, true)))
-            {                
-                dQueue.Add(e.FullPath);
-                if (!_busy)
-                    DeleteFromQueue();
-                else
-                    dQueue.reCheck = true;
-            }
+        {
+            if (!Common.ItemGetsSynced(Common.GetComPath(e.FullPath, true))) return;
+
+            dQueue.Add(e.FullPath);
+            if (!_busy)
+                DeleteFromQueue();
+            else
+                dQueue.reCheck = true;
         }
 
         /// <summary>
         /// Raised when file/folder is renamed
         /// </summary>
-        /// <param name='source'>
-        /// Source.
-        /// </param>
-        /// <param name='e'>
-        /// E.
-        /// </param>
         private void OnRenamed(object source, RenamedEventArgs e)
         {
             Log.Write(l.Debug, "Item {0} was renamed", e.OldName);
@@ -664,15 +566,17 @@ namespace FTPbox.Forms
                     Client.Rename(oldName, newName);
                     
                     ShowNotification(e.OldName, ChangeAction.renamed, e.Name);
-                    GetLink(Common.GetComPath(e.FullPath, true));
+                    Common.GetLink(Common.GetComPath(e.FullPath, true), ref link);
 
                     if (source == fswFiles)
                     {
                         string cpath = Common.GetComPath(newName, true);
-                        RemoveFromLog(Common.GetComPath(oldName, true));
-                        FileInfo f = new FileInfo(e.FullPath);
-                        UpdateTheLog(cpath, Client.GetLWTof(cpath), f.LastWriteTime);
-                        //Common.fLog.putFile(cpath, GetLWTof(cpath), f.LastWriteTime);
+                        Common.RemoveFromLog(Common.GetComPath(oldName, true));
+                        Delete_Recent(Common.GetComPath(oldName, true));
+
+                        var f = new FileInfo(e.FullPath);                        
+                        Common.FileLog.putFile(cpath, Client.GetLWTof(cpath), f.LastWriteTime);
+                        Delete_Recent(cpath);
                     }
                 }
                 fswFolders.EnableRaisingEvents = true;
@@ -684,48 +588,14 @@ namespace FTPbox.Forms
             }
         }
 
-        #endregion
-
-        /// <summary>
-        /// Get the HTTP link to a file
-        /// </summary>
-        /// <param name='cpath'>
-        /// The common path to the file/folder.
-        /// </param>
-        private void GetLink(string cpath)
-        {
-            Log.Write(l.Debug, "---------------\n Getting link for {0}", cpath);
-            string newlink = Common.noSlashes(Profile.HttpPath) + @"/";
-
-            if (!Common.noSlashes(newlink).StartsWith("http://") && !Common.noSlashes(newlink).StartsWith("https://"))
-            {
-                newlink = @"http://" + newlink;
-            }
-
-            if (newlink.EndsWith("/"))
-                newlink = newlink.Substring(0, newlink.Length - 1);
-
-            if (cpath.StartsWith("/"))
-                cpath = cpath.Substring(1);
-
-            newlink = string.Format("{0}/{1}", newlink, cpath);
-            newlink = newlink.Replace(@" ", @"%20");
-
-            link = newlink.Replace(" ", "%20");
-            Log.Write(l.Debug, "-----------------> link: {0}", link);
-            Get_Recent(cpath);
-
-            Log.Write(l.Debug, "**************");
-            Log.Write(l.Debug, "HTTP Link is: " + newlink);
-            Log.Write(l.Debug, "**************");
-        }
+        #endregion        
 
         #region Queue Operations
 
         int co = 0;
         private void SyncLocQueueFiles()
         {            
-            List<FileQueueItem> fi = new List<FileQueueItem>(fQueue.List());
+            List<FileQueueItem> fi = new List<FileQueueItem>(fQueue.List);
             string name = null;
 
             if (!Client.CheckConnectionStatus())
@@ -778,10 +648,11 @@ namespace FTPbox.Forms
 
                     name = i.LocalPath;
                     co++;
-                    fQueue.Remove(i.CommonPath);
-                    UpdateTheLog(i.CommonPath, Client.GetLWTof(i.CommonPath), File.GetLastWriteTime(i.LocalPath));
-                    
-                    GetLink(i.CommonPath);                    
+                    fQueue.Remove(i.CommonPath);                    
+                    Common.FileLog.putFile(i.CommonPath, Client.GetLWTof(i.CommonPath), File.GetLastWriteTime(i.LocalPath));
+                    Delete_Recent(i.CommonPath);
+
+                    Common.GetLink(i.CommonPath, ref link);                    
                 }
                 catch (Exception ex)
                 {
@@ -809,7 +680,7 @@ namespace FTPbox.Forms
             if (fQueue.CountFolders() > 0 && co > 0)
                 ShowNotification(co, fQueue.CountFolders());
             else if (fQueue.CountFolders() == 1 && co == 0)
-                ShowNotification(fQueue.LastFolder(), ChangeAction.created, false);
+                ShowNotification(fQueue.LastFolder, ChangeAction.created, false);
             else if (fQueue.CountFolders() > 0 && co == 0)
                 ShowNotification(fQueue.CountFolders(), false);
             else if (fQueue.CountFolders() == 0 && co == 1)
@@ -829,7 +700,7 @@ namespace FTPbox.Forms
         public void SyncRemQueueFiles()
         {
             int c = 0;
-            List<FileQueueItem> fi = new List<FileQueueItem>(fQueue.List());
+            List<FileQueueItem> fi = new List<FileQueueItem>(fQueue.List);
             string name = null;
             
             foreach (FileQueueItem i in fi)
@@ -877,8 +748,9 @@ namespace FTPbox.Forms
                         name = i.LocalPath;
                         c++;
                         fQueue.Remove(i.CommonPath);
-                        UpdateTheLog(i.CommonPath, Client.GetLWTof(i.CommonPath), File.GetLastWriteTime(i.LocalPath));
-                        GetLink(i.CommonPath);                       
+                        Common.FileLog.putFile(i.CommonPath, Client.GetLWTof(i.CommonPath), File.GetLastWriteTime(i.LocalPath));
+                        Delete_Recent(i.CommonPath);
+                        Common.GetLink(i.CommonPath, ref link);                       
                     }
                     catch (Exception ex)
                     {
@@ -905,7 +777,7 @@ namespace FTPbox.Forms
                 {
                     KillTheProcess();
                 }
-                fi = new List<FileQueueItem>(fQueue.List());
+                fi = new List<FileQueueItem>(fQueue.List);
                 foreach (FileQueueItem i in fi)
                 {
                     if (Common.ItemGetsSynced(i.CommonPath))
@@ -942,7 +814,8 @@ namespace FTPbox.Forms
                             name = i.LocalPath;
                             c++;
                             fQueue.Remove(i.CommonPath);
-                            UpdateTheLog(i.CommonPath, Client.GetLWTof(i.CommonPath), File.GetLastWriteTime(i.LocalPath));
+                            Common.FileLog.putFile(i.CommonPath, Client.GetLWTof(i.CommonPath), File.GetLastWriteTime(i.LocalPath));
+                            Delete_Recent(i.CommonPath);
                         }
                         catch (Exception ex)
                         {
@@ -973,7 +846,7 @@ namespace FTPbox.Forms
             if (fQueue.CountFolders() == 0 && c == 1)
                 ShowNotification(name, ChangeAction.changed, true);
             else if (fQueue.CountFolders() == 1 && c == 0)
-                ShowNotification(fQueue.LastFolder(), ChangeAction.created, false);
+                ShowNotification(fQueue.LastFolder, ChangeAction.created, false);
             else if (fQueue.CountFolders() > 0 && c > 0)
                 ShowNotification(c, fQueue.CountFolders());
             else if (fQueue.CountFolders() > 0 && c == 0)
@@ -985,70 +858,6 @@ namespace FTPbox.Forms
                 ShowNotification(name, ChangeAction.changed, true);
             else if (c > 1)
                 ShowNotification(c, true);	*/            
-        }
-
-        /// <summary>
-        /// Check the files inside the specified folder for changes and, if found, 
-        /// put the changed item in the file queue.
-        /// </summary>
-        /// <param name='path'>
-        /// the local path to search inside.
-        /// </param>
-        private void SyncInFolder(string path)
-        {
-            if (!Client.CheckConnectionStatus())
-                RetryConnection();
-
-            Syncing();
-            fQueue.Busy = true;
-            DirectoryInfo di = new DirectoryInfo(path);
-
-            string cparent = Common.GetComPath(path, true);
-
-            Log.Write(l.Debug, "Syncing local folder: {0} cparent: {1}", path, cparent);
-            bool cParentExists = (cparent.Equals("/") || cparent.Equals(@"\") || cparent.Equals("")) ? true : Client.Exists(cparent);
-
-            foreach (FileInfo fi in di.GetFiles())
-            {
-                string cpath = Common.GetComPath(fi.FullName, true);
-
-                if (!Common.ItemGetsSynced(cpath))
-                    continue;
-
-                if (cParentExists)
-                {
-                    Log.Write(l.Debug, "~~Cpath: {0} lLWT: {1} LogLWT: {2} in {3}", cpath, fi.LastWriteTime.ToString(), Common.FileLog.getLocal(cpath).ToString(), Client.WorkingDirectory);
-                    
-                    if (!fi.FullName.EndsWith("~") && !fi.Name.StartsWith(".goutputstream")) //&& !fQueue.Contains(cpath))
-                    {
-                        bool ex = false;
-                        try
-                        {
-                            ex = Client.Exists(cpath);
-                        }
-                        catch { }
-
-                        Log.Write(l.Debug, "Exists: {0} contains: {1}", ex, Common.FileLog.Contains(cpath));
-
-                        if (!Common.FileLog.Contains(cpath) || !ex)
-                        {
-                            //Log.Write(l.Debug, "ADDED! cpath: {0} contains: {1} local: {2} current: {3}", cpath, Common.fLog.Contains(cpath), Common.fLog.getLocal(cpath), fi.LastWriteTime.ToString());
-                            fQueue.Add(cpath, fi.FullName, fi.Length, TypeOfTransfer.Create);
-                        }
-                        else if (Common.FileLog.getLocal(cpath).ToString() != fi.LastWriteTime.ToString())
-                        {
-                            //Log.Write(l.Debug, "ADDED cpath: {0} contains: {1} local: {2} current: {3}", cpath, Common.fLog.Contains(cpath), Common.fLog.getLocal(cpath), fi.LastWriteTime.ToString());
-                            fQueue.Add(cpath, fi.FullName, fi.Length, TypeOfTransfer.Change);
-                        }
-                    }
-                }
-                else
-                    fQueue.Add(cpath, fi.FullName, fi.Length, TypeOfTransfer.Create);
-            }
-
-            SyncLocQueueFiles();
-            Log.Write(l.Debug, "---------------------");
-            DoneSyncing();
         }
 
         private void SyncInFolder(string path, bool recursive)
@@ -1069,7 +878,7 @@ namespace FTPbox.Forms
                 string cp = (path == Profile.LocalPath) ? "." : cparent;
                 List<string> RemoteFilesList = new List<string>(Client.FullRemoteListInside(cp));
 
-                bool cParentExists = (cparent.Equals("/") || cparent.Equals(@"\") || cparent.Equals("")) ? true : RemoteFilesList.Contains(cparent);
+                bool cParentExists = (cparent.Equals("/") || cparent.Equals(@"\") || cparent.Equals("")) || RemoteFilesList.Contains(cparent);
 
                 SetTray(MessageType.Listing);
 
@@ -1081,7 +890,7 @@ namespace FTPbox.Forms
                         Log.Write(l.Debug, "Making directory: {0}", cpath);
                         Client.MakeFolder(cpath);
 
-                        GetLink(cpath);
+                        Common.GetLink(cpath, ref link);
 
                         Common.FileLog.putFolder(cpath);
 
@@ -1163,32 +972,32 @@ namespace FTPbox.Forms
                 
                 List<string> alreadyChecked = new List<string>();
 
-                foreach (string s in localFiles)
+                foreach (string s in Common.LocalFiles)
                 {
                     if (alreadyChecked.Contains(s) || !Common.ItemGetsSynced(Common.GetComPath(s, true)))
                     {
                         dQueue.Remove(s);
                         continue;
                     }
-                    
-                    if (!File.Exists(s))
-                    {
-                        try
-                        {
-                            Log.Write(l.Debug, "File {0} was deleted, cpath: {1}", s, Common.GetComPath(s, true));
-                            Client.Remove(Common.GetComPath(s, true));
-                        }
-                        catch { }
 
-                        dQueue.LastItem = new KeyValuePair<string, bool>(Common._name(s), true);
-                        dQueue.Counter++;
-                        RemoveFromLog(Common.GetComPath(s, true));
-                        dQueue.Remove(s);
-                        alreadyChecked.Add(s);
+                    if (File.Exists(s)) continue;
+
+                    try
+                    {
+                        Log.Write(l.Debug, "File {0} was deleted, cpath: {1}", s, Common.GetComPath(s, true));
+                        Client.Remove(Common.GetComPath(s, true));
                     }
+                    catch { }
+
+                    dQueue.LastItem = new KeyValuePair<string, bool>(Common._name(s), true);
+                    dQueue.Counter++;
+                    Common.RemoveFromLog(Common.GetComPath(s, true));
+                    Delete_Recent(Common.GetComPath(s, true));
+                    dQueue.Remove(s);
+                    alreadyChecked.Add(s);
                 }
 
-                foreach (string s in localFolders)
+                foreach (string s in Common.LocalFolders)
                 {
                     if (alreadyChecked.Contains(s) || !Common.ItemGetsSynced(Common.GetComPath(s, true)))
                     {
@@ -1210,8 +1019,8 @@ namespace FTPbox.Forms
                 }
 
                 foreach (string s in alreadyChecked)
-                    if (localFiles.Contains(s))
-                        localFiles.Remove(s);
+                    if (Common.LocalFiles.Contains(s))
+                        Common.LocalFiles.Remove(s);
 
                 if (dQueue.Count <= 0)
                     dQueue.reCheck = false;
@@ -1245,7 +1054,6 @@ namespace FTPbox.Forms
             if (Settings.settingsGeneral.Notifications)
             {
                 name = Common._name(name);
-
                 string b = string.Format(Get_Message(ca, file), name);
 
                 tray.ShowBalloonTip(100, "FTPbox", b, ToolTipIcon.Info);
@@ -1264,9 +1072,7 @@ namespace FTPbox.Forms
             {
                 name = Common._name(name);
                 newname = Common._name(newname);
-
-                string body = string.Format(Get_Message(ChangeAction.renamed, true), name, newname);
-
+                
                 string b = string.Format(Get_Message(ChangeAction.renamed, true), name, newname);
                 tray.ShowBalloonTip(100, "FTPbox", b, ToolTipIcon.Info);
             }
@@ -1315,14 +1121,11 @@ namespace FTPbox.Forms
         /// <param name="c">ChangeAction, should be ChangeAction.deleted</param>
         private void ShowNotification(int n, ChangeAction c)
         {
-            if (c == ChangeAction.deleted && Settings.settingsGeneral.Notifications)
-            {
-                string body = string.Format(_(MessageType.ItemsDeleted), n);
-                tray.ShowBalloonTip(100, "FTPbox", body, ToolTipIcon.Info);
-            }
+            if (c != ChangeAction.deleted || !Settings.settingsGeneral.Notifications) return;
+            
+            string body = string.Format(_(MessageType.ItemsDeleted), n);
+            tray.ShowBalloonTip(100, "FTPbox", body, ToolTipIcon.Info);
         }
-
-        #endregion
 
         /// <summary>
         /// Show (?) the appropriate message when a link is copied
@@ -1332,27 +1135,13 @@ namespace FTPbox.Forms
             if (Settings.settingsGeneral.Notifications)
             {
                 tray.ShowBalloonTip(30, "FTPbox", _(MessageType.LinkCopied), ToolTipIcon.Info);
-                link = null;
+                link = string.Empty;
             }
         }
+        
+        #endregion
 
-        /// <summary>
-        /// Get the list of recent files and update the tray menu
-        /// </summary>
-        /// <param name="cpath"></param>
-        private void Get_Recent(string cpath)
-        {
-            string name = Common._name(cpath);
-            string path = Path.Combine(Profile.LocalPath, cpath);
-
-            locLink = path;
-            FileInfo f = new FileInfo(path);
-            Log.Write(l.Debug, "LastWriteTime is: {0} for {1} - {2}", f.LastWriteTime.ToString(), path, Profile.LocalPath);
-            
-            recentFiles.Add(name, link, path, f.LastWriteTime);
-
-            Load_Recent();
-        }
+        #region Recent Files
 
         /// <summary>
         /// Removes the specified item from the recent list and from the items in the tray menu
@@ -1363,7 +1152,7 @@ namespace FTPbox.Forms
         {
             try
             {
-                List<RecentFileItem> oldRecentList = new List<RecentFileItem>(recentFiles.RecentList);                
+                List<RecentFileItem> oldRecentList = new List<RecentFileItem>(recentFiles.RecentList);
                 foreach (RecentFileItem f in oldRecentList)
                 {
                     if (f.Name == "Not available") continue;
@@ -1383,7 +1172,8 @@ namespace FTPbox.Forms
 
                         for (int i = 0; i < oldRecentList.Count; i++)
                         {
-                            recentFiles.Add(oldRecentList[i].Name, oldRecentList[i].Link, oldRecentList[i].Path, oldRecentList[i].LastWriteTime);
+                            recentFiles.Add(oldRecentList[i].Name, oldRecentList[i].Link, oldRecentList[i].Path,
+                                            oldRecentList[i].LastWriteTime);
                         }
 
                         break;
@@ -1398,6 +1188,9 @@ namespace FTPbox.Forms
             }
         }
 
+        /// <summary>
+        /// Load the recent items in the tray menu
+        /// </summary>
         private void Load_Recent()
         {
             for (int i = 0; i < 5; i++) // recentFiles.count(); i++)
@@ -1405,13 +1198,13 @@ namespace FTPbox.Forms
                 if (trayMenu.InvokeRequired)
                 {
                     trayMenu.Invoke(new MethodInvoker(delegate
-                    {
-                        recentFilesToolStripMenuItem.DropDownItems[i].Text = (recentFiles.getName(i) == "Not available") ? _(MessageType.NotAvailable) : recentFiles.getName(i);
-                        recentFilesToolStripMenuItem.DropDownItems[i].Enabled = recentFilesToolStripMenuItem.DropDownItems[i].Text != _(MessageType.NotAvailable);
+                        {
+                            recentFilesToolStripMenuItem.DropDownItems[i].Text = (recentFiles.getName(i) == "Not available") ? _(MessageType.NotAvailable) : recentFiles.getName(i);
+                            recentFilesToolStripMenuItem.DropDownItems[i].Enabled = recentFilesToolStripMenuItem.DropDownItems[i].Text != _(MessageType.NotAvailable);
 
-                        if (recentFiles.Count >= i)
-                            recentFilesToolStripMenuItem.DropDownItems[i].ToolTipText = recentFiles.getDate(i).ToString("dd MMM HH:mm:ss");
-                    }));
+                            if (recentFiles.Count >= i)
+                                recentFilesToolStripMenuItem.DropDownItems[i].ToolTipText = recentFiles.getDate(i).ToString("dd MMM HH:mm:ss");
+                        }));
                 }
                 else
                 {
@@ -1424,6 +1217,8 @@ namespace FTPbox.Forms
             }
         }
 
+        #endregion
+        
         #region translations
 
         /// <summary>
@@ -1434,99 +1229,57 @@ namespace FTPbox.Forms
         {
             string curlan = Settings.settingsGeneral.Language;
 
-            if (curlan == "" || curlan == null)
+            if (string.IsNullOrEmpty(curlan))
             {
-                string locallangtwoletter = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-                string locallang;
+                string locallangtwoletter = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;                
 
-                if (locallangtwoletter == "es")
-                    locallang = "Spanish";
-                else if (locallangtwoletter == "de")
-                    locallang = "German";
-                else if (locallangtwoletter == "fr")
-                    locallang = "French";
-                else if (locallangtwoletter == "nl")
-                    locallang = "Dutch";
-                else if (locallangtwoletter == "el")
-                    locallang = "Greek";
-                else if (locallangtwoletter == "it")
-                    locallang = "Italian";
-                else if (locallangtwoletter == "tr")
-                    locallang = "Turkish";
-                else if (locallangtwoletter == "pt-BR")
-                    locallang = "Brazilian Portuguese";
-                else if (locallangtwoletter == "fo")
-                    locallang = "Faroese";
-                else if (locallangtwoletter == "sv")
-                    locallang = "Swedish";
-                else if (locallangtwoletter == "sq")
-                    locallang = "Albanian";
-                else if (locallangtwoletter == "ro")
-                    locallang = "Romanian";
-                else if (locallangtwoletter == "ko")
-                    locallang = "Korean";
-                else if (locallangtwoletter == "ru")
-                    locallang = "Russian";
-                else if (locallangtwoletter == "vi")
-                    locallang = "Vietnamese";
-                else if (locallangtwoletter == "ja")
-                    locallang = "Japanese";
-                else if (locallangtwoletter == "hu")
-                    locallang = "Hungarian";
-                else if (locallangtwoletter == "no")
-                    locallang = "Norwegian";
-                else if (locallangtwoletter == "zh_HANS")
-                    locallang = "Simplified Chinese";
-                else if (locallangtwoletter == "zh_HANT")
-                    locallang = "Traditional Chinese";
-                else if (locallangtwoletter == "lt")
-                    locallang = "Lithuanian";
-                else if (locallangtwoletter == "da")
-                    locallang = "Dansk";
-                else if (locallangtwoletter == "pl")
-                    locallang = "Polish";
-                else if (locallangtwoletter == "hr")
-                    locallang = "Croatian";
-                else if (locallangtwoletter == "sk")
-                    locallang = "Slovak";
-                else if (locallangtwoletter == "pt")
-                    locallang = "Portuguese";
-                else if (locallangtwoletter == "gl")
-                    locallang = "Galego";
-                else if (locallangtwoletter == "th")
-                    locallang = "Thai";
-                else if (locallangtwoletter == "sl")
-                    locallang = "Slovenian";
-                else if (locallangtwoletter == "cs")
-                    locallang = "Czech";
-                else
-                    locallang = "English";
-
-                List<string> alllang = new List<string>{ "es", "de", "fr", "nl", "el", "it", "tr", "pt-BR", "fo", "sv", "sq", "ro", "ko", "ru", "ja", "no", "hu", "vi", "zh_HANS", "zh_HANT", "lt", "da", "pl", "hr", "sk", "pt", "gl", "th", "sl", "cs" };
-
-                if (alllang.Contains(locallangtwoletter))
+                var langList = new Dictionary<string, string>()
                 {
-                    string msg = string.Format("FTPbox detected that you use {0} as your computer language. Do you want to use {0} as the language of FTPbox as well?", locallang);
+                    {"en", "English"},
+                    {"es", "Spanish"},
+                    {"de", "German"},
+                    {"fr", "French"},
+                    {"nl", "Dutch"},
+                    {"el", "Greek"},
+                    {"it", "Italian"},
+                    {"tr", "Turkish"},
+                    {"pt-BR", "Brazilian Portuguese"},
+                    {"fo", "Faroese"},
+                    {"sv", "Swedish"},
+                    {"sq", "Albanian"},
+                    {"ro", "Romanian"},
+                    {"ko", "Korean"},
+                    {"ru", "Russian"},
+                    {"ja", "Japanese"},
+                    {"no", "Norwegian"},
+                    {"hu", "Hungarian"},
+                    {"vi", "Vietnamese"},
+                    {"zh_HANS", "Simplified Chinese"},
+                    {"zh_HANT", "Traditional Chinese"},
+                    {"lt", "Lithuanian"},
+                    {"da", "Dansk"},
+                    {"pl", "Polish"},
+                    {"hr", "Croatian"},
+                    {"sk", "Slovak"},
+                    {"pt", "Portuguese"},
+                    {"gl", "Galego"},
+                    {"th", "Thai"},
+                    {"sl", "Slovenian"},
+                    {"cs", "Czech"},
+                };
+
+                if (langList.ContainsKey(locallangtwoletter))
+                {
+                    string msg = string.Format("FTPbox detected that you use {0} as your computer language. Do you want to use {0} as the language of FTPbox as well?", langList[locallangtwoletter]);
                     DialogResult x = MessageBox.Show(msg, "FTPbox", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
-                    if (x == DialogResult.Yes)
-                    {
-                        Set_Language(locallangtwoletter);
-                    }
-                    else
-                    {
-                        Set_Language("en");
-                    }
+                    Set_Language(x == DialogResult.Yes ? locallangtwoletter : "en");
                 }
-                else
-                {
-                    Set_Language("en");
-                }
+                else                
+                    Set_Language("en");                
             }
             else
-            {
                 Set_Language(curlan);
-            }
 
         }
 
@@ -1632,9 +1385,6 @@ namespace FTPbox.Forms
                     foreach (ToolStripItem t in recentFilesToolStripMenuItem.DropDownItems)
                         if (!t.Enabled)
                             t.Text = _(MessageType.NotAvailable);
-                    /*
-                    bool e = !recentFilesToolStripMenuItem.DropDownItems[i].Enabled;
-                    recentFilesToolStripMenuItem.DropDownItems[i].Text = (e) ? _(MessageType.NotAvailable) : recentFiles.getName(i); */
                 }
             }
 
@@ -1652,22 +1402,20 @@ namespace FTPbox.Forms
             {
                 return fileorfolder + " " + _(MessageType.ItemCreated);
             }
-            else if (ca == ChangeAction.deleted)
+            if (ca == ChangeAction.deleted)
             {
                 return fileorfolder + " " + _(MessageType.ItemDeleted);
             }
-            else if (ca == ChangeAction.renamed)
+            if (ca == ChangeAction.renamed)
             {
                 return _(MessageType.ItemRenamed);
             }
-            else if (ca == ChangeAction.changed)
+            if (ca == ChangeAction.changed)
             {
                 return fileorfolder + " " + _(MessageType.ItemChanged);
             }
-            else //if "updated"
-            {
-                return fileorfolder + " " + _(MessageType.ItemUpdated);
-            }
+
+            return fileorfolder + " " + _(MessageType.ItemUpdated);
         }           
 
         private void cmbLang_SelectedIndexChanged(object sender, EventArgs e)
@@ -1710,298 +1458,10 @@ namespace FTPbox.Forms
             }
         }
 
-        #endregion
-
-        #region Tray Controls' Event Handlers
-
-        private void tray_MouseDoubleClick(object sender, MouseEventArgs e)
-        {           
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
-                Process.Start("explorer.exe", Profile.LocalPath); 
-        }
-
-        public bool ExitedFromTray = false;
-        private void fMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (!ExitedFromTray && e.CloseReason != CloseReason.WindowsShutDown)
-            {
-                e.Cancel = true;
-                this.Hide();
-            }
-        }
-        
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            KillTheProcess();
-        }
-
-        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Show();
-            this.WindowState = FormWindowState.Normal;
-            this.BringToFront();
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Show();
-            tabControl1.SelectedTab = tabAbout;
-        }       
-
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            int ind = 0;
-            if (Profile.TrayAction == TrayAction.OpenInBrowser)
-            {
-                try
-                {
-                    Process.Start(recentFiles.getLink(ind));
-                }
-                catch { }
-
-            }
-            else if (Profile.TrayAction == TrayAction.CopyLink)
-            {
-                try
-                {
-                    Clipboard.SetText(recentFiles.getLink(ind));
-                    LinkCopied();
-                }
-                catch { }
-            }
-            else
-            {
-                Log.Write(l.Debug, "Opening local file: {0}", recentFiles.getPath(ind));
-                Process.Start(recentFiles.getPath(ind));
-            }
-        }
-
-        private void toolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            int ind = 1;
-            if (Profile.TrayAction == TrayAction.OpenInBrowser)
-            {
-                try
-                {
-                    Process.Start(recentFiles.getLink(ind));
-                }
-                catch { }
-
-            }
-            else if (Profile.TrayAction == TrayAction.CopyLink)
-            {
-                try
-                {
-                    Clipboard.SetText(recentFiles.getLink(ind));
-                    LinkCopied();
-                }
-                catch { }
-            }
-            else
-            {
-                Log.Write(l.Debug, "Opening local file: {0}", recentFiles.getPath(ind));
-                Process.Start(recentFiles.getPath(ind));
-            }
-        }
-
-        private void toolStripMenuItem3_Click(object sender, EventArgs e)
-        {
-            int ind = 2;
-            if (Profile.TrayAction == TrayAction.OpenInBrowser)
-            {
-                try
-                {
-                    Process.Start(recentFiles.getLink(ind));
-                }
-                catch { }
-
-            }
-            else if (Profile.TrayAction == TrayAction.CopyLink)
-            {
-                try
-                {
-                    Clipboard.SetText(recentFiles.getLink(ind));
-                    LinkCopied();
-                }
-                catch { }
-            }
-            else
-            {
-                Log.Write(l.Debug, "Opening local file: {0}", recentFiles.getPath(ind));
-                Process.Start(recentFiles.getPath(ind));
-            }
-        }
-
-        private void toolStripMenuItem4_Click(object sender, EventArgs e)
-        {
-            int ind = 3;
-            if (Profile.TrayAction == TrayAction.OpenInBrowser)
-            {
-                try
-                {
-                    Process.Start(recentFiles.getLink(ind));
-                }
-                catch { }
-
-            }
-            else if (Profile.TrayAction == TrayAction.CopyLink)
-            {
-                try
-                {
-                    Clipboard.SetText(recentFiles.getLink(ind));
-                    LinkCopied();
-                }
-                catch { }
-            }
-            else
-            {
-                Log.Write(l.Debug, "Opening local file: {0}", recentFiles.getPath(ind));
-                Process.Start(recentFiles.getPath(ind));
-            }
-        }
-
-        private void toolStripMenuItem5_Click(object sender, EventArgs e)
-        {
-            int ind = 4;
-            if (Profile.TrayAction == TrayAction.OpenInBrowser)
-            {
-                try
-                {
-                    Process.Start(recentFiles.getLink(ind));
-                }
-                catch { }
-
-            }
-            else if (Profile.TrayAction == TrayAction.CopyLink)
-            {
-                try
-                {
-                    Clipboard.SetText(recentFiles.getLink(ind));
-                    LinkCopied();
-                }
-                catch { }
-            }
-            else
-            {
-                Log.Write(l.Debug, "Opening local file: {0}", recentFiles.getPath(ind));
-                Process.Start(recentFiles.getPath(ind));
-            }
-        }        
-
-        private void tray_BalloonTipClicked(object sender, EventArgs e)
-        {
-            if (LinkHasWebint())
-                Process.Start(link);
-            else
-            {
-                if ((Control.MouseButtons & MouseButtons.Right) != MouseButtons.Right)
-                {
-                    if (Profile.TrayAction == TrayAction.OpenInBrowser)
-                    {
-                        if (link != null && link != "")
-                        {
-                            try
-                            {
-                                Process.Start(link);
-                            }
-                            catch
-                            {
-                                //Gotta catch 'em all 
-                            }
-                        }
-                    }
-                    else if (Profile.TrayAction == TrayAction.CopyLink)
-                    {
-                        if (link != null && link != "")
-                        {
-                            try
-                            {
-                                Clipboard.SetText(link);
-                            }
-                            catch
-                            {
-                                //Gotta catch 'em all 
-                            }
-
-                            LinkCopied();
-                        }
-                    }
-                    else
-                    {
-                        if (locLink != null && locLink != "")
-                        {
-                            try
-                            {
-                                Process.Start(locLink);
-                            }
-                            catch
-                            {
-                                //Gotta catch 'em all
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Checks if the link is a link to the WebUI or not. 
-        /// If it is, the app should open the link in browser regardless of the chosen options.
-        /// </summary>
-        /// <returns></returns>
-        private bool LinkHasWebint()
-        {
-            if (link == null)
-                return false;
-
-            if (link.EndsWith("webint"))
-                return true;
-            
-            return false;
-        }
-
         #endregion        
 
-        #region Form Controls
-        private void rOpenInBrowser_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rOpenInBrowser.Checked)
-            {
-                Profile.TrayAction = TrayAction.OpenInBrowser;
-                Settings.settingsGeneral.TrayAction = TrayAction.OpenInBrowser;
-                Settings.SaveGeneral();
-            }
-        }
-
-        private void rCopy2Clipboard_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rCopy2Clipboard.Checked)
-            {
-                Profile.TrayAction = TrayAction.CopyLink;
-                Settings.settingsGeneral.TrayAction = TrayAction.CopyLink;
-                Settings.SaveGeneral();
-            }
-        }
-
-        private void rOpenLocal_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rOpenLocal.Checked)
-            {
-                Profile.TrayAction = TrayAction.OpenLocalFile;
-                Settings.settingsGeneral.TrayAction = TrayAction.OpenLocalFile;
-                Settings.SaveGeneral();
-            }
-        }
-
-        private void tParent_TextChanged(object sender, EventArgs e)
-        {        
-            Profile.HttpPath = tParent.Text;
-            Settings.SaveProfile();
-        }
-
-        #endregion
-
         #region check internet connection
+
         private bool OfflineMode = false;
         [DllImport("wininet.dll")]        
         private extern static bool InternetGetConnectedState(out int Description, int ReservedValue);
@@ -2054,12 +1514,11 @@ namespace FTPbox.Forms
         /// </summary>
         public void StartRemoteSync(string path)
         {
-            if (loggedIn)
-            {
-                if (Profile.SyncingMethod == SyncMethod.Automatic) SyncToolStripMenuItem.Enabled = false;
-                rcThread = new Thread(SyncRemote);
-                rcThread.Start(path);
-            }
+            if (!loggedIn) return;
+
+            if (Profile.SyncingMethod == SyncMethod.Automatic) SyncToolStripMenuItem.Enabled = false;
+            rcThread = new Thread(SyncRemote);
+            rcThread.Start(path);
         }
 
         /// <summary>
@@ -2108,7 +1567,7 @@ namespace FTPbox.Forms
 	            if (f.Type == ClientItemType.Folder)
 	            {
 		            Log.Write(l.Debug, "~~~~~~~~~> found directory: {0}", f.FullPath);
-		            string lpath = System.IO.Path.Combine(Profile.LocalPath, cpath);
+		            string lpath = Path.Combine(Profile.LocalPath, cpath);
 		            if (!Directory.Exists(lpath) && !dQueue.Contains(lpath))
 		            {
                         fswFiles.EnableRaisingEvents = false;
@@ -2121,12 +1580,12 @@ namespace FTPbox.Forms
 
 			            Common.FileLog.putFolder(cpath);
 
-			            GetLink(cpath);
+                        Common.GetLink(cpath, ref link);
 		            }
 	            }
 	            else if (f.Type == ClientItemType.File)
 	            {
-		            string lpath = System.IO.Path.Combine(Profile.LocalPath, cpath.Replace("/", @"\"));
+		            string lpath = Path.Combine(Profile.LocalPath, cpath.Replace("/", @"\"));
 		            Log.Write(l.Debug, "Found: {0} cpath is: {1} lpath: {2} type: {3}", f.Name, cpath, lpath, f.Type.ToString());
 		            if (File.Exists(lpath))
 			            CheckExistingFile(cpath, f.LastWriteTime, lpath, f.Size);
@@ -2161,7 +1620,8 @@ namespace FTPbox.Forms
                     lastIsFile = Common.PathIsFile(f.FullName);
                     Log.Write(l.Info, "Deleting local file: {0}", f.FullName);
                     Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(f.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin); //File.Delete(f.FullName);                    
-                    RemoveFromLog(cpath);                    
+                    Common.RemoveFromLog(cpath);
+                    Delete_Recent(cpath);
                 }
             }
 
@@ -2223,6 +1683,7 @@ namespace FTPbox.Forms
         /// <param name="cpath">the common path to the existing files</param>
         /// <param name="rLWT">the remote LastWriteTime of the file</param>
         /// <param name="lpath">the local path to the file</param>
+        /// <param name="size">the size of the file</param>
         private void CheckExistingFile(string cpath, DateTime rLWT, string lpath, long size)
         {
             FileInfo fi = new FileInfo(lpath);
@@ -2246,16 +1707,10 @@ namespace FTPbox.Forms
 
             if (rResult > 0 && lResult > 0 && rdif.TotalSeconds > 1 && ldif.TotalSeconds > 1)
             {
-                if (rdif.TotalSeconds > ldif.TotalSeconds)
-                {
-                    //MessageBox.Show("rdif.TotalSeconds > ldif.TotalSeconds" + Environment.NewLine + string.Format("{0} - {1}", rLWT.ToString(), rDTLog.ToString()) + Environment.NewLine + string.Format("{0} - {1}", lLWT.ToString(), lDTLog.ToString()));
-                    fQueue.Add(cpath, lpath, size, TypeOfTransfer.Change);
-                }
+                if (rdif.TotalSeconds > ldif.TotalSeconds)                                    
+                    fQueue.Add(cpath, lpath, size, TypeOfTransfer.Change);                
                 else
-                {
-                    //MessageBox.Show("rdif.TotalSeconds < ldif.TotalSeconds" + Environment.NewLine + string.Format("{0} - {1}", rLWT.ToString(), rDTLog.ToString()) + Environment.NewLine + string.Format("{0} - {1}", lLWT.ToString(), lDTLog.ToString()));
-                    fQueue.reCheck = true;
-                }
+                    fQueue.reCheck = true;                
             }
             else if (rResult > 0 && rdif.TotalSeconds > 1)
             {
@@ -2272,15 +1727,6 @@ namespace FTPbox.Forms
         #endregion
 
         #region Messages for notifications and tray text
-
-        /// <summary>
-        /// All types of messages that are shown to the user       
-        /// </summary>
-        public enum MessageType
-        {
-            ItemChanged, ItemCreated, ItemDeleted, ItemRenamed, ItemUpdated, FilesAndFoldersChanged, FilesOrFoldersUpdated, FilesOrFoldersCreated, ItemsDeleted, File, Files, Folder, Folders, LinkCopied, 
-            Connecting, Disconnected, Reconnecting, Listing, Uploading, Downloading, Syncing, AllSynced, Offline, Ready, Nothing, NotAvailable
-        }
 
         /// <summary>
         /// get translated text related to the given message type.
@@ -2360,47 +1806,47 @@ namespace FTPbox.Forms
                 switch (m)
                 {
                     case MessageType.AllSynced:
-                        tray.Icon = FTPbox.Properties.Resources.AS;
+                        tray.Icon = Properties.Resources.AS;
                         tray.Text = _(MessageType.AllSynced);
                         _lastTrayStatus = MessageType.AllSynced;
                         break;
                     case MessageType.Syncing:
-                        tray.Icon = FTPbox.Properties.Resources.syncing;
+                        tray.Icon = Properties.Resources.syncing;
                         tray.Text = _(MessageType.Syncing);
                         _lastTrayStatus = MessageType.Syncing;
                         break;
                     case MessageType.Offline:
-                        tray.Icon = FTPbox.Properties.Resources.offline1;
+                        tray.Icon = Properties.Resources.offline1;
                         tray.Text = _(MessageType.Offline);
                         _lastTrayStatus = MessageType.Offline;
                         break;
                     case MessageType.Listing:
-                        tray.Icon = FTPbox.Properties.Resources.AS;
+                        tray.Icon = Properties.Resources.AS;
                         tray.Text = (Profile.SyncingMethod == SyncMethod.Automatic) ? _(MessageType.AllSynced) : _(MessageType.Listing);
                         _lastTrayStatus = MessageType.Listing;
                         break;
                     case MessageType.Connecting:
-                        tray.Icon = FTPbox.Properties.Resources.syncing;
+                        tray.Icon = Properties.Resources.syncing;
                         tray.Text = _(MessageType.Connecting);
                         _lastTrayStatus = MessageType.Connecting;
                         break;
                     case MessageType.Disconnected:
-                        tray.Icon = FTPbox.Properties.Resources.syncing;
+                        tray.Icon = Properties.Resources.syncing;
                         tray.Text = _(MessageType.Disconnected);
                         _lastTrayStatus = MessageType.Disconnected;
                         break;
                     case MessageType.Reconnecting:
-                        tray.Icon = FTPbox.Properties.Resources.syncing;
+                        tray.Icon = Properties.Resources.syncing;
                         tray.Text = _(MessageType.Reconnecting);
                         _lastTrayStatus = MessageType.Reconnecting;
                         break;
                     case MessageType.Ready:
-                        tray.Icon = FTPbox.Properties.Resources.AS;
+                        tray.Icon = Properties.Resources.AS;
                         tray.Text = _(MessageType.Ready);
                         _lastTrayStatus = MessageType.Ready;
                         break;
                     case MessageType.Nothing:
-                        tray.Icon = FTPbox.Properties.Resources.ftpboxnew;
+                        tray.Icon = Properties.Resources.ftpboxnew;
                         tray.Text = _(MessageType.Nothing);
                         _lastTrayStatus = MessageType.Nothing;
                         break;
@@ -2432,11 +1878,11 @@ namespace FTPbox.Forms
                 switch (m)
                 {
                     case MessageType.Uploading:
-                        tray.Icon = FTPbox.Properties.Resources.syncing;
+                        tray.Icon = Properties.Resources.syncing;
                         tray.Text = msg;
                         break;
                     case MessageType.Downloading:
-                        tray.Icon = FTPbox.Properties.Resources.syncing;
+                        tray.Icon = Properties.Resources.syncing;
                         tray.Text = msg;
                         break;
                 }
@@ -2450,6 +1896,7 @@ namespace FTPbox.Forms
         #endregion
 
         #region Update System
+
         /// <summary>
         /// checks for an update
         /// called on each start-up of FTPbox.
@@ -2480,37 +1927,17 @@ namespace FTPbox.Forms
             {
                 Log.Write(l.Debug, "Current Version: {0} Installed Version: {1}", version, Application.ProductVersion);
 
-                if (version != Application.ProductVersion)
-                {
-                    newversion nvform = new newversion(version);
-                    nvform.Tag = this;
-                    nvform.ShowDialog();
-                    this.Show();
-                    // show dialog box for  download now, learn more and remind me next time
-                }
+                if (version == Application.ProductVersion) return;
+
+                // show dialog box for  download now, learn more and remind me next time
+                newversion nvform = new newversion(version);
+                nvform.Tag = this;
+                nvform.ShowDialog();
+                this.Show();                
             }
         }
 
         #endregion
-
-        private void SyncToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!_busy)
-                StartRemoteSync(".");            
-            else
-                Log.Write(l.Debug, "How about you wait until the current synchronization finishes?");
-        }
-
-        /// <summary>
-        /// Returns true if any operation is currently running
-        /// </summary>
-        private bool _busy
-        {
-            get
-            {
-                return (rcThread.IsAlive || wiThread.IsAlive || dQueue.Busy || fQueue.Busy);
-            }
-        }
 
         #region WebUI
 
@@ -2551,15 +1978,15 @@ namespace FTPbox.Forms
             if (not == "downloading")
                 return Common.Languages.Get(Profile.Language + "/web_interface/downloading", "The Web Interface will be downloaded.")
                     + Environment.NewLine + Common.Languages.Get(Profile.Language + "/web_interface/in_a_minute", "This will take a minute.");
-            else if (not == "removing")
+            if (not == "removing")
                 return Common.Languages.Get(Profile.Language + "/web_interface/removing", "Removing the Web Interface...");
-            else if (not == "updated")
+            if (not == "updated")
                 return Common.Languages.Get(Profile.Language + "/web_interface/updated", "Web Interface has been updated.")
-                    + Environment.NewLine + Common.Languages.Get(Profile.Language + "/web_interface/setup", "Click here to view and set it up!");
-            else if (not == "updating")
+                       + Environment.NewLine + Common.Languages.Get(Profile.Language + "/web_interface/setup", "Click here to view and set it up!");
+            if (not == "updating")
                 return Common.Languages.Get(Profile.Language + "/web_interface/updating", "Updating the web interface...");
-            else // if (not == "removed")
-                return Common.Languages.Get(Profile.Language + "/web_interface/removed", "Web interface has been removed.");
+            
+            return Common.Languages.Get(Profile.Language + "/web_interface/removed", "Web interface has been removed.");
         }
 
         public void AddRemoveWebInt()
@@ -2604,7 +2031,7 @@ namespace FTPbox.Forms
         public void GetWebInt()
         {
             CheckForFiles();
-            link = null;
+            link = string.Empty;
             if (Settings.settingsGeneral.Notifications)
                 tray.ShowBalloonTip(100, "FTPbox", get_webint_message("downloading"), ToolTipIcon.Info);
 
@@ -2708,7 +2135,7 @@ namespace FTPbox.Forms
                 if (currentversion != webintwb.Document.Body.InnerText)
                 {
                     string msg = "A new version of the web interface is available, do you want to upgrade to it?";
-                    if (MessageBox.Show(msg, "FTPbox - WebUI Update", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
+                    if (MessageBox.Show(msg, "FTPbox - WebUI Update", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
                     {
                         wiuThread.Start();
                     }
@@ -2924,35 +2351,6 @@ namespace FTPbox.Forms
 
         #endregion
 
-        #region about tab
-
-        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start(@"http://ftpbox.org/about");
-        }
-
-        private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start(@"http://ftpbox.org");
-        }
-
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start(@"https://sourceforge.net/tracker/?group_id=538656&atid=2187305");
-        }
-
-        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start(@"https://sourceforge.net/tracker/?group_id=538656&atid=2187308");
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            Process.Start(@"http://ftpbox.org/contribute");
-        }
-
-        #endregion
-
         #region Start on Windows Start-Up
 
         private void chkStartUp_CheckedChanged(object sender, EventArgs e)
@@ -2979,7 +2377,7 @@ namespace FTPbox.Forms
                 if (startupKey.GetValue("FTPbox") == null)
                 {
                     startupKey = Registry.CurrentUser.OpenSubKey(runKey, true);
-                    startupKey.SetValue("FTPbox", Application.ExecutablePath.ToString());
+                    startupKey.SetValue("FTPbox", Application.ExecutablePath);
                     startupKey.Close();
                 }
             }
@@ -3000,16 +2398,9 @@ namespace FTPbox.Forms
         {
             string runKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
 
-            Microsoft.Win32.RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(runKey);
+            RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(runKey);
 
-            if (startupKey.GetValue("FTPbox") == null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return startupKey.GetValue("FTPbox") != null;
         }
         
         #endregion
@@ -3025,121 +2416,8 @@ namespace FTPbox.Forms
         {
             return Settings.settingsGeneral.DownloadLimit > 0;
         }
-
-        private void nDownLimit_ValueChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                Settings.settingsGeneral.DownloadLimit = Convert.ToInt32(nDownLimit.Value);                
-                Client.SetMaxDownloadSpeed(Convert.ToInt32(nDownLimit.Value));
-                Settings.SaveGeneral();
-            }
-            catch { }
-        }
-
-        private void nUpLimit_ValueChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                Settings.settingsGeneral.UploadLimit = Convert.ToInt32(nUpLimit.Value);
-                Client.SetMaxUploadSpeed(Convert.ToInt32(nUpLimit.Value));
-                Settings.SaveGeneral();
-            }
-            catch { }
-        }
-        #endregion
-
-        #region Sync Frequency
-
-        private void cManually_CheckedChanged(object sender, EventArgs e)
-        {
-            SyncToolStripMenuItem.Enabled = cManually.Checked || !rcThread.IsAlive;
-            Profile.SyncingMethod = (cManually.Checked) ? SyncMethod.Manual : SyncMethod.Automatic;
-            Settings.SaveProfile();
-
-            if (Profile.SyncingMethod == SyncMethod.Automatic)
-            {
-                Profile.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
-                nSyncFrequency.Enabled = true;
-            }
-            else
-            {
-                nSyncFrequency.Enabled = false;
-                try{
-                    tSync.Dispose();
-                }
-                catch
-                {
-                    //gotta catch em all
-                }
-            }
-        }
-
-        private void cAuto_CheckedChanged(object sender, EventArgs e)
-        {
-            SyncToolStripMenuItem.Enabled = !cAuto.Checked || !rcThread.IsAlive;
-            Profile.SyncingMethod = (!cAuto.Checked) ? SyncMethod.Manual : SyncMethod.Automatic;
-            Settings.SaveProfile();
-
-            if (Profile.SyncingMethod == SyncMethod.Automatic)
-            {
-                Profile.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
-                nSyncFrequency.Enabled = true;
-            }
-            else
-            {
-                nSyncFrequency.Enabled = false;
-                try
-                {
-                    tSync.Dispose();
-                }
-                catch {
-                    //gotta catch em all
-                }
-            }
-        }
-
-        private void nSyncFrequency_ValueChanged(object sender, EventArgs e)
-        {
-            Profile.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
-            Settings.SaveProfile();
-        }
-
+        
         #endregion        
-
-        /// <summary>
-        /// Kills the current process. Called from the tray menu.
-        /// </summary>
-        public void KillTheProcess()
-        {
-            if (!Profile.IsNoMenusMode)
-                RemoveFTPboxMenu();
-
-            ExitedFromTray = true;
-            Log.Write(l.Info, "Killing the process...");
-
-            try
-            {
-                tray.Visible = false;
-                Process p = Process.GetCurrentProcess();
-                p.Kill();
-            }
-            catch
-            {
-                Application.Exit();
-            }
-        }
-
-        private void chkShowNots_CheckedChanged(object sender, EventArgs e)
-        {            
-            Settings.settingsGeneral.Notifications = chkShowNots.Checked;
-            Settings.SaveGeneral();
-        }
-
-        private void bTranslate_Click(object sender, EventArgs e)
-        {
-            ftranslate.ShowDialog();
-        }
 
         #region context menus
 
@@ -3326,10 +2604,9 @@ namespace FTPbox.Forms
         private void RunServerThread()
         {
             int i = 1;
-            Thread server;
             Log.Write(l.Client, "Started the named-pipe server, waiting for clients (if any)");
 
-            server = new Thread(ServerThread);
+            Thread server = new Thread(ServerThread);
             server.SetApartmentState(ApartmentState.STA);
             server.Start();
 
@@ -3509,14 +2786,6 @@ namespace FTPbox.Forms
             }
             foreach (string dqi in fQueue.MenuFolders)
                 StartRemoteSync(Common.GetComPath(dqi, true));
-            /*
-                foreach (string fi in Directory.GetFiles(dqi, "*", SearchOption.AllDirectories))
-                {
-                    string cpath = Common.GetComPath(fi, true);
-                    DateTime rDT = GetLWTof(cpath);
-                    FileInfo iFile = new FileInfo(fi);
-                    CheckExistingFile(cpath, rDT, fi, iFile.Length);
-                }*/
 
             SetTray(MessageType.AllSynced);
             
@@ -3588,7 +2857,192 @@ namespace FTPbox.Forms
 
         #region Filters
 
-        #region Form control handlers
+        private void RefreshListing()
+        {
+            Thread tRefresh = new Thread(() =>
+            {
+                if (!Client.CheckConnectionStatus())
+                    RetryConnection();
+
+                List<ClientItem> li = new List<ClientItem>();
+                try
+                {
+                    li = Client.List(".");
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex);
+                    return;
+                }
+
+                this.Invoke(new MethodInvoker(delegate
+                {
+                    lSelectiveSync.Nodes.Clear();
+                }));
+
+                foreach (ClientItem d in li)
+                    if (d.Type == ClientItemType.Folder)
+                    {
+                        if (d.Name == "webint") continue;
+
+                        TreeNode parent = new TreeNode(d.Name);
+                        this.Invoke(new MethodInvoker(delegate
+                        {
+                            lSelectiveSync.Nodes.Add(parent);
+                            parent.Nodes.Add(new TreeNode("!tempnode!"));
+                        }));
+
+                    }
+                foreach (ClientItem f in li)
+                    if (f.Type == ClientItemType.File)
+                        this.Invoke(new MethodInvoker(delegate
+                        {
+                            lSelectiveSync.Nodes.Add(new TreeNode(f.Name));
+                        }));
+
+                this.Invoke(new MethodInvoker(EditNodeCheckboxes));
+            });
+            tRefresh.Start();
+        }
+
+        private void CheckSingleRoute(TreeNode tn)
+        {
+            if (tn.Checked && tn.Parent != null)
+                if (!tn.Parent.Checked)
+                {
+                    tn.Parent.Checked = true;
+                    if (Common.IgnoreList.FolderList.Contains(tn.Parent.FullPath))
+                        Common.IgnoreList.FolderList.Remove(tn.Parent.FullPath);
+                    CheckSingleRoute(tn.Parent);
+                }
+        }
+
+        private void EditNodeCheckboxes()
+        {
+            foreach (TreeNode t in lSelectiveSync.Nodes)
+            {
+                if (!Common.IgnoreList.isInIgnoredFolders(t.FullPath)) t.Checked = true;
+                if (t.Parent != null)
+                    if (!t.Parent.Checked) t.Checked = false;
+
+                foreach (TreeNode tn in t.Nodes)
+                    EditNodeCheckboxesRecursive(tn);
+            }
+        }
+
+        private void EditNodeCheckboxesRecursive(TreeNode t)
+        {
+            t.Checked = Common.IgnoreList.isInIgnoredFolders(t.FullPath);
+            if (t.Parent != null)
+                if (!t.Parent.Checked) t.Checked = false;
+
+            Log.Write(l.Debug, "Node {0} is checked {1}", t.FullPath, t.Checked);
+
+            foreach (TreeNode tn in t.Nodes)
+                EditNodeCheckboxesRecursive(tn);
+        }
+
+        private bool checking_nodes = false;
+        private void CheckUncheckChildNodes(TreeNode t, bool c)
+        {
+            t.Checked = c;
+            foreach (TreeNode tn in t.Nodes)
+                CheckUncheckChildNodes(tn, c);
+        }
+        #endregion
+
+        #region General Tab - Event Handlers
+
+        private void rOpenInBrowser_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rOpenInBrowser.Checked)
+            {
+                Profile.TrayAction = TrayAction.OpenInBrowser;
+                Settings.settingsGeneral.TrayAction = TrayAction.OpenInBrowser;
+                Settings.SaveGeneral();
+            }
+        }
+
+        private void rCopy2Clipboard_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rCopy2Clipboard.Checked)
+            {
+                Profile.TrayAction = TrayAction.CopyLink;
+                Settings.settingsGeneral.TrayAction = TrayAction.CopyLink;
+                Settings.SaveGeneral();
+            }
+        }
+
+        private void rOpenLocal_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rOpenLocal.Checked)
+            {
+                Profile.TrayAction = TrayAction.OpenLocalFile;
+                Settings.settingsGeneral.TrayAction = TrayAction.OpenLocalFile;
+                Settings.SaveGeneral();
+            }
+        }
+
+        private void tParent_TextChanged(object sender, EventArgs e)
+        {
+            Profile.HttpPath = tParent.Text;
+            Settings.SaveProfile();
+        }
+
+        private void chkShowNots_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.settingsGeneral.Notifications = chkShowNots.Checked;
+            Settings.SaveGeneral();
+        }
+        #endregion
+
+        #region Account Tab - Event Handlers
+
+        private void bRemoveAccount_Click(object sender, EventArgs e)
+        {
+            string msg = string.Format("Are you sure you want to delete profile: {0}?",
+                   Settings.ProfileTitles[Settings.settingsGeneral.DefaultProfile]);
+            if (MessageBox.Show(msg, "Confirm Account Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                Settings.RemoveCurrentProfile();
+
+                //  Restart
+                Process.Start(Application.ExecutablePath);
+                KillTheProcess();
+            }
+        }        
+
+        private void bAddAccount_Click(object sender, EventArgs e)
+        {
+            Settings.settingsGeneral.DefaultProfile = Settings.settingsGeneral.DefaultProfile + 1;
+            Settings.SaveGeneral();
+
+            //  Restart
+            Process.Start(Application.ExecutablePath);
+            KillTheProcess();
+        }
+
+        private void cProfiles_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cProfiles.SelectedIndex == Settings.settingsGeneral.DefaultProfile) return;
+
+            string msg = string.Format("Switch to {0} ?", Settings.ProfileTitles[cProfiles.SelectedIndex]);
+            if (MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                Settings.settingsGeneral.DefaultProfile = cProfiles.SelectedIndex;
+                Settings.SaveGeneral();
+
+                //  Restart
+                Process.Start(Application.ExecutablePath);
+                KillTheProcess();
+            }
+            else
+                cProfiles.SelectedIndex = Settings.settingsGeneral.DefaultProfile;
+        }
+
+        #endregion
+
+        #region Filters Tab - Event Handlers
 
         private void cIgnoreTempFiles_CheckedChanged(object sender, EventArgs e)
         {
@@ -3610,7 +3064,7 @@ namespace FTPbox.Forms
             if (!Common.IgnoreList.ExtensionList.Contains(newext))
                 Common.IgnoreList.ExtensionList.Add(newext);
             Common.IgnoreList.Save();
-            
+
             tNewExt.Text = string.Empty;
             //refresh the list
             lIgnoredExtensions.Clear();
@@ -3645,11 +3099,11 @@ namespace FTPbox.Forms
         }
 
         private void cIgnoreOldFiles_CheckedChanged(object sender, EventArgs e)
-        {            
+        {
             dtpLastModTime.Enabled = cIgnoreOldFiles.Checked;
             Common.IgnoreList.IgnoreOldFiles = cIgnoreOldFiles.Checked;
             Common.IgnoreList.LastModifiedMinimum = (cIgnoreOldFiles.Checked) ? dtpLastModTime.Value : DateTime.MinValue;
-            Common.IgnoreList.Save();            
+            Common.IgnoreList.Save();
         }
 
         private void dtpLastModTime_ValueChanged(object sender, EventArgs e)
@@ -3717,7 +3171,7 @@ namespace FTPbox.Forms
                     }));
             });
             tExpandItem.Start();
-        }        
+        }
 
         private void lSelectiveSync_AfterCheck(object sender, TreeViewEventArgs e)
         {
@@ -3731,10 +3185,10 @@ namespace FTPbox.Forms
             else if (!e.Node.Checked && !Common.IgnoreList.FolderList.Contains(cpath))
                 Common.IgnoreList.FolderList.Add(cpath);
             Common.IgnoreList.Save();
-            
+
             checking_nodes = true;
             CheckUncheckChildNodes(e.Node, e.Node.Checked);
-            
+
             if (e.Node.Checked && e.Node.Parent != null)
                 if (!e.Node.Parent.Checked)
                 {
@@ -3752,7 +3206,7 @@ namespace FTPbox.Forms
             e.Node.Nodes.Clear();
             e.Node.Nodes.Add(e.Node.Name);
         }
-        
+
         private void bRefresh_Click(object sender, EventArgs e)
         {
             RefreshListing();
@@ -3760,153 +3214,354 @@ namespace FTPbox.Forms
 
         #endregion 
 
-        #region Manage filter options
+        #region Bandwidth Tab - Event Handlers
 
-        private void RefreshListing()
+        private void cManually_CheckedChanged(object sender, EventArgs e)
         {
-            Thread tRefresh = new Thread(() =>
-            {
-                if (!Client.CheckConnectionStatus())
-                    RetryConnection();
+            SyncToolStripMenuItem.Enabled = cManually.Checked || !rcThread.IsAlive;
+            Profile.SyncingMethod = (cManually.Checked) ? SyncMethod.Manual : SyncMethod.Automatic;
+            Settings.SaveProfile();
 
-                List<ClientItem> li = new List<ClientItem>();
+            if (Profile.SyncingMethod == SyncMethod.Automatic)
+            {
+                Profile.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
+                nSyncFrequency.Enabled = true;
+            }
+            else
+            {
+                nSyncFrequency.Enabled = false;
                 try
                 {
-                    li = Client.List(".");
+                    tSync.Dispose();
                 }
-                catch(Exception ex)
+                catch
                 {
-                    Common.LogError(ex);
-                    return;
+                    //gotta catch em all
                 }
-
-                this.Invoke(new MethodInvoker(delegate
-                {
-                    lSelectiveSync.Nodes.Clear();
-                }));
-
-                foreach (ClientItem d in li)
-                    if (d.Type == ClientItemType.Folder)
-                    {
-                        if (d.Name == "webint") continue;
-
-                        TreeNode parent = new TreeNode(d.Name);
-                        this.Invoke(new MethodInvoker(delegate
-                        {
-                            lSelectiveSync.Nodes.Add(parent);
-                            parent.Nodes.Add(new TreeNode("!tempnode!"));
-                        }));
-                        
-                    }
-                foreach (ClientItem f in li)
-                    if (f.Type == ClientItemType.File)
-                        this.Invoke(new MethodInvoker(delegate
-                        {
-                            lSelectiveSync.Nodes.Add(new TreeNode(f.Name));
-                        }));
-
-                this.Invoke(new MethodInvoker(delegate
-                {
-                    EditNodeCheckboxes();
-                }));
-            });
-            tRefresh.Start();
-        }
-
-        private void CheckSingleRoute(TreeNode tn)
-        {
-            if (tn.Checked && tn.Parent != null)
-                if (!tn.Parent.Checked)
-                {
-                    tn.Parent.Checked = true;
-                    if (Common.IgnoreList.FolderList.Contains(tn.Parent.FullPath))
-                        Common.IgnoreList.FolderList.Remove(tn.Parent.FullPath);
-                    CheckSingleRoute(tn.Parent);
-                }
-        }
-
-        private void EditNodeCheckboxes()
-        {
-            foreach (TreeNode t in lSelectiveSync.Nodes)
-            {
-                if (!Common.IgnoreList.isInIgnoredFolders(t.FullPath)) t.Checked = true;
-                if (t.Parent != null)
-                    if (!t.Parent.Checked) t.Checked = false;
-
-                foreach (TreeNode tn in t.Nodes)
-                    EditNodeCheckboxesRecursive(tn);
             }
         }
 
-        private void EditNodeCheckboxesRecursive(TreeNode t)
+        private void cAuto_CheckedChanged(object sender, EventArgs e)
         {
-            t.Checked = Common.IgnoreList.isInIgnoredFolders(t.FullPath);
-            if (t.Parent != null)
-                if (!t.Parent.Checked) t.Checked = false;
+            SyncToolStripMenuItem.Enabled = !cAuto.Checked || !rcThread.IsAlive;
+            Profile.SyncingMethod = (!cAuto.Checked) ? SyncMethod.Manual : SyncMethod.Automatic;
+            Settings.SaveProfile();
 
-            Log.Write(l.Debug, "Node {0} is checked {1}", t.FullPath, t.Checked);
-
-            foreach (TreeNode tn in t.Nodes)
-                EditNodeCheckboxesRecursive(tn);
+            if (Profile.SyncingMethod == SyncMethod.Automatic)
+            {
+                Profile.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
+                nSyncFrequency.Enabled = true;
+            }
+            else
+            {
+                nSyncFrequency.Enabled = false;
+                try
+                {
+                    tSync.Dispose();
+                }
+                catch
+                {
+                    //gotta catch em all
+                }
+            }
         }
 
-        private bool checking_nodes = false;
-        private void CheckUncheckChildNodes(TreeNode t, bool c)
+        private void nSyncFrequency_ValueChanged(object sender, EventArgs e)
         {
-            t.Checked = c;
-            foreach (TreeNode tn in t.Nodes)
-                CheckUncheckChildNodes(tn, c);
+            Profile.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
+            Settings.SaveProfile();
         }
 
-        private bool isParentNodeUnchecked(TreeNode t)
+        private void nDownLimit_ValueChanged(object sender, EventArgs e)
         {
-            return !t.Parent.Checked;
+            try
+            {
+                Settings.settingsGeneral.DownloadLimit = Convert.ToInt32(nDownLimit.Value);
+                Client.SetMaxDownloadSpeed(Convert.ToInt32(nDownLimit.Value));
+                Settings.SaveGeneral();
+            }
+            catch { }
+        }
+
+        private void nUpLimit_ValueChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Settings.settingsGeneral.UploadLimit = Convert.ToInt32(nUpLimit.Value);
+                Client.SetMaxUploadSpeed(Convert.ToInt32(nUpLimit.Value));
+                Settings.SaveGeneral();
+            }
+            catch { }
         }
 
         #endregion
 
+        #region About Tab - Event Handlers
+
+        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(@"http://ftpbox.org/about");
+        }
+
+        private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(@"http://ftpbox.org");
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(@"https://sourceforge.net/tracker/?group_id=538656&atid=2187305");
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(@"https://sourceforge.net/tracker/?group_id=538656&atid=2187308");
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            Process.Start(@"http://ftpbox.org/about");
+        }
+
         #endregion
 
-        private void bRemoveAccount_Click(object sender, EventArgs e)
+        #region Tray Menu - Event Handlers
+
+        private void tray_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            string msg = string.Format("Are you sure you want to delete profile: {0}?",
-                   Settings.ProfileTitles[Settings.settingsGeneral.DefaultProfile]);
-            if (MessageBox.Show(msg, "Confirm Account Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+            if (e.Button == MouseButtons.Left)
+                Process.Start("explorer.exe", Profile.LocalPath);
+        }
+
+        private void SyncToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!_busy)
+                StartRemoteSync(".");
+            else
+                Log.Write(l.Debug, "How about you wait until the current synchronization finishes?");
+        }
+
+        public bool ExitedFromTray = false;
+        private void fMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!ExitedFromTray && e.CloseReason != CloseReason.WindowsShutDown)
             {
-                Settings.RemoveCurrentProfile();
-
-                //  Restart
-                Process.Start(Application.ExecutablePath);
-                KillTheProcess();
+                e.Cancel = true;
+                this.Hide();
             }
-        }        
+        }
 
-        private void bAddAccount_Click(object sender, EventArgs e)
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Settings.settingsGeneral.DefaultProfile = Settings.settingsGeneral.DefaultProfile + 1;
-            Settings.SaveGeneral();
-
-            //  Restart
-            Process.Start(Application.ExecutablePath);
             KillTheProcess();
         }
 
-        private void cProfiles_SelectedIndexChanged(object sender, EventArgs e)
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (cProfiles.SelectedIndex == Settings.settingsGeneral.DefaultProfile) return;
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            this.BringToFront();
+        }
 
-            string msg = string.Format("Switch to {0} ?", Settings.ProfileTitles[cProfiles.SelectedIndex]);
-            if (MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Show();
+            tabControl1.SelectedTab = tabAbout;
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            int ind = 0;
+            if (Profile.TrayAction == TrayAction.OpenInBrowser)
             {
-                Settings.settingsGeneral.DefaultProfile = cProfiles.SelectedIndex;
-                Settings.SaveGeneral();
+                try
+                {
+                    Process.Start(recentFiles.getLink(ind));
+                }
+                catch { }
 
-                //  Restart
-                Process.Start(Application.ExecutablePath);
-                KillTheProcess();
+            }
+            else if (Profile.TrayAction == TrayAction.CopyLink)
+            {
+                try
+                {
+                    Clipboard.SetText(recentFiles.getLink(ind));
+                    LinkCopied();
+                }
+                catch { }
             }
             else
-                cProfiles.SelectedIndex = Settings.settingsGeneral.DefaultProfile;
+            {
+                Log.Write(l.Debug, "Opening local file: {0}", recentFiles.getPath(ind));
+                Process.Start(recentFiles.getPath(ind));
+            }
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            int ind = 1;
+            if (Profile.TrayAction == TrayAction.OpenInBrowser)
+            {
+                try
+                {
+                    Process.Start(recentFiles.getLink(ind));
+                }
+                catch { }
+
+            }
+            else if (Profile.TrayAction == TrayAction.CopyLink)
+            {
+                try
+                {
+                    Clipboard.SetText(recentFiles.getLink(ind));
+                    LinkCopied();
+                }
+                catch { }
+            }
+            else
+            {
+                Log.Write(l.Debug, "Opening local file: {0}", recentFiles.getPath(ind));
+                Process.Start(recentFiles.getPath(ind));
+            }
+        }
+
+        private void toolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            int ind = 2;
+            if (Profile.TrayAction == TrayAction.OpenInBrowser)
+            {
+                try
+                {
+                    Process.Start(recentFiles.getLink(ind));
+                }
+                catch { }
+
+            }
+            else if (Profile.TrayAction == TrayAction.CopyLink)
+            {
+                try
+                {
+                    Clipboard.SetText(recentFiles.getLink(ind));
+                    LinkCopied();
+                }
+                catch { }
+            }
+            else
+            {
+                Log.Write(l.Debug, "Opening local file: {0}", recentFiles.getPath(ind));
+                Process.Start(recentFiles.getPath(ind));
+            }
+        }
+
+        private void toolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+            int ind = 3;
+            if (Profile.TrayAction == TrayAction.OpenInBrowser)
+            {
+                try
+                {
+                    Process.Start(recentFiles.getLink(ind));
+                }
+                catch { }
+
+            }
+            else if (Profile.TrayAction == TrayAction.CopyLink)
+            {
+                try
+                {
+                    Clipboard.SetText(recentFiles.getLink(ind));
+                    LinkCopied();
+                }
+                catch { }
+            }
+            else
+            {
+                Log.Write(l.Debug, "Opening local file: {0}", recentFiles.getPath(ind));
+                Process.Start(recentFiles.getPath(ind));
+            }
+        }
+
+        private void toolStripMenuItem5_Click(object sender, EventArgs e)
+        {
+            int ind = 4;
+            if (Profile.TrayAction == TrayAction.OpenInBrowser)
+            {
+                try
+                {
+                    Process.Start(recentFiles.getLink(ind));
+                }
+                catch { }
+
+            }
+            else if (Profile.TrayAction == TrayAction.CopyLink)
+            {
+                try
+                {
+                    Clipboard.SetText(recentFiles.getLink(ind));
+                    LinkCopied();
+                }
+                catch { }
+            }
+            else
+            {
+                Log.Write(l.Debug, "Opening local file: {0}", recentFiles.getPath(ind));
+                Process.Start(recentFiles.getPath(ind));
+            }
+        }
+
+        private void tray_BalloonTipClicked(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(link)) return;
+
+            if (link.EndsWith("webint"))
+                Process.Start(link);
+            else
+            {
+                if ((MouseButtons & MouseButtons.Right) != MouseButtons.Right)
+                {
+                    if (Profile.TrayAction == TrayAction.OpenInBrowser)
+                    {
+                        try
+                        {
+                            Process.Start(link);
+                        }
+                        catch
+                        {
+                            //Gotta catch 'em all 
+                        }
+                    }
+                    else if (Profile.TrayAction == TrayAction.CopyLink)
+                    {
+                        try
+                        {
+                            Clipboard.SetText(link);
+                        }
+                        catch
+                        {
+                            //Gotta catch 'em all 
+                        }
+                        LinkCopied();
+                    }
+                    else
+                    {
+                        try
+                        {
+                            Process.Start(locLink);
+                        }
+                        catch
+                        {
+                            //Gotta catch 'em all
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion                
+
+        private void bTranslate_Click(object sender, EventArgs e)
+        {
+            ftranslate.ShowDialog();
         }
     }
 }

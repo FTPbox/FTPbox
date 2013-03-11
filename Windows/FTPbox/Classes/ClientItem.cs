@@ -5,77 +5,39 @@
  * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program. 
  * If not, see <http://www.gnu.org/licenses/>.
- */
+*/
+
 /* ClientItem.cs
  * Represents an item (file, folder etc) that is found on the server. Used by the client class.
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace FTPboxLib
 {
     public class ClientItem
     {
-        string _name;
-        string _fpath;
-        ClientItemType _type;
-        DateTime _lwt;
-        long _size;
-
-        public ClientItem(string name, string path, ClientItemType type)
+        public ClientItem(string name, string path, ClientItemType type, long size = 0x0, DateTime lastWriteTime = default(DateTime))
         {
-            _name = name;
-            _fpath = path;
-            _type = type;
+            Name = name;
+            FullPath = path;
+            Type = type;
+            Size = size;
+            LastWriteTime = lastWriteTime;
         }
 
-        public ClientItem(string name, string path, ClientItemType type, long size, DateTime lastWriteTime)
-        {
-            _name = name;
-            _fpath = path;
-            _type = type;
-            _size = size;
-            _lwt = lastWriteTime;
-        }
+        #region Properties
 
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+        public string Name { get; set; }
 
-        public string FullPath
-        {
-            get { return _fpath; }
-            set { _fpath = value; }
-        }
+        public string FullPath { get; set; }
 
-        public ClientItemType Type
-        {
-            get { return _type; }
-            set { _type = value; }
-        }
+        public ClientItemType Type { get; set; }
 
-        public long Size
-        {
-            get { return _size; }
-            set { _size = value; }
-        }
+        public long Size { get; set; }
 
-        public DateTime LastWriteTime
-        {
-            get { return _lwt; }
-            set { _lwt = value; }
-        }
-    }
+        public DateTime LastWriteTime { get; set; }
 
-    public enum ClientItemType
-    {
-        File,
-        Folder,
-        Other
+        #endregion
     }
 }

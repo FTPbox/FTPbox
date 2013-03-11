@@ -18,11 +18,11 @@ namespace FTPboxLib
 {
 	public class FileLogItem
 	{		
-		public FileLogItem(string name, DateTime Rem, DateTime Loc)
+		public FileLogItem(string name, DateTime rem, DateTime loc)
 		{
             CommonPath = name;
-            Remote = Rem;
-            Local = Loc;
+            Remote = rem;
+            Local = loc;
 		}
 		
 		/// <summary>

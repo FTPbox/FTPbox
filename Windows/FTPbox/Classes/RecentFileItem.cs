@@ -11,54 +11,25 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace FTPboxLib
 {
     public class RecentFileItem
     {
-        private string _name;
-        private string _link;
-        private string _path;
-        private DateTime _lwt;
-
-        public RecentFileItem()
-        {
-
-        }
-
         public void Add(string name, string link, string path, DateTime lwt)
         {
-            _name = name;
-            _link = link;
-            _path = path;
-            _lwt = lwt;
+            Name = name;
+            Link = link;
+            Path = path;
+            LastWriteTime = lwt;
         }
 
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+        public string Name { get; set; }
 
-        public string Link
-        {
-            get { return _link; }
-            set { _link = value; }
-        }
+        public string Link { get; set; }
 
-        public string Path
-        {
-            get { return _path; }
-            set { _path = value; }
-        }
+        public string Path { get; set; }
 
-        public DateTime LastWriteTime
-        {
-            get { return _lwt; }
-            set { _lwt = value; }
-        }
+        public DateTime LastWriteTime { get; set; }
     }
 }

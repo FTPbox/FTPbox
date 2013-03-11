@@ -12,37 +12,44 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace FTPboxLib
 {
 	public class FileQueue
 	{
-		private bool isBusy = false;	
-		private bool recheck = false;
-		private int counter = 0;
-		
-		private List<FileQueueItem> fiList;
-		private List<string> diList;
+        #region Fields
+
+        /// <summary>
+        /// Files added for sync from the right-click context menus
+        /// </summary>
+        public List<FileQueueItem> MenuFiles = new List<FileQueueItem>();
+        /// <summary>
+        /// Folders added for sync from the right-click context menus
+        /// </summary>
+        public List<string> MenuFolders = new List<string>();
+
+        #endregion
 
 		public FileQueue ()
 		{
-			fiList = new List<FileQueueItem>();
-			diList = new List<string>();
+		    Counter = 0;
+		    reCheck = false;
+		    Busy = false;
+		    List = new List<FileQueueItem>();
+            FolderList = new List<string>();
 		}
-		
-		/// <summary>
+
+        #region Functions
+
+        /// <summary>
 		/// Add the specified common path to the queue.
 		/// </summary>
-		/// <param name='cpath'>
-		/// the common path.
-		/// </param>
 		public void Add(string cpath, string local, long size, TypeOfTransfer type)
 		{
             if (!Contains(cpath))
             {
-                fiList.Add(new FileQueueItem(cpath.Replace(@"\", "/"), local, size, type));
-                counter++;
+                List.Add(new FileQueueItem(cpath.Replace(@"\", "/"), local, size, type));
+                Counter++;
                 Console.WriteLine("Added to file queue: {0}", cpath);
             }
             else
@@ -51,14 +58,14 @@ namespace FTPboxLib
 		
 		public void Add(FileQueueItem f)
 		{
-			counter++;
-			fiList.Add(f);
+			Counter++;
+			List.Add(f);
 			Console.WriteLine("added to file queue: {0}", f.CommonPath);
 		}
 		
 		public void AddFolder(string cpath)
 		{
-			diList.Add(cpath);	
+            FolderList.Add(cpath);	
 			Console.WriteLine("Added to folders queue: {0} (item #{1})", cpath, CountFolders());
 		}
 		
@@ -70,12 +77,12 @@ namespace FTPboxLib
 		/// </param>
 		public void Remove(string cpath)
 		{
-			List<FileQueueItem> fl = new List<FileQueueItem>(fiList);
+			List<FileQueueItem> fl = new List<FileQueueItem>(List);
 			foreach (FileQueueItem f in fl)
 			{
-				if (f.CommonPath == cpath && fiList.Contains(f))
+				if (f.CommonPath == cpath && List.Contains(f))
 				{
-					fiList.Remove(f);
+					List.Remove(f);
 					Console.WriteLine("Removed from file queue: {0}", cpath);
 				}
 			}						
@@ -86,130 +93,96 @@ namespace FTPboxLib
 		/// </summary>
 		public void RemoveLast()
 		{	
-			if (fiList.Count >= 1)
+			if (List.Count >= 1)
 			{
-				Console.WriteLine("Removed last file from queue: {0}", fiList[0].CommonPath);
-				fiList.RemoveAt(0);
-				
+				Console.WriteLine("Removed last file from queue: {0}", List[0].CommonPath);
+				List.RemoveAt(0);				
 			}
 		}
-		
-		public bool Contains(string cpath)
-		{
-			bool hasit = false;
-			foreach (FileQueueItem f in fiList)
-				if (f.CommonPath == cpath)
-					hasit = true;
-			return hasit;
-		}
-		
-		/// <summary>
+
+        public void Clear()
+        {
+            List.Clear();
+        }
+
+        /// <summary>
+        /// Clears the counter.
+        /// </summary>
+        public void ClearCounter()
+        {
+            Console.WriteLine("Clearing the counter");
+            Counter = 0;
+            FolderList.Clear();
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
 		/// Returns the queue list (strings)
 		/// </summary>
-		public List<FileQueueItem> List()
-		{						
-			return fiList;	
-		}
-		
-		/// <summary>
-		/// Gets or sets a value indicating whether <see cref="FTPboxLib.FileQueue"/> is busy.
-		/// </summary>
-		/// <value>
-		/// <c>true</c> if busy; otherwise, <c>false</c>.
-		/// </value>
-		public bool Busy
-		{
-			get { return isBusy; }	
-			set {isBusy = value; }
-		}
-		
-		public bool reCheck
-		{
-			get { return recheck; }	
-			set {recheck = value; }
-		}
-		
-		/// <summary>
+		public List<FileQueueItem> List { get; private set; }
+
+        /// <summary>
+        /// Returns the queue list (strings) of folders
+        /// </summary>
+        private List<string> FolderList { get; set; } 
+
+	    /// <summary>
+	    /// Gets or sets a value indicating whether <see cref="FTPboxLib.FileQueue"/> is busy.
+	    /// </summary>
+	    /// <value>
+	    /// <c>true</c> if busy; otherwise, <c>false</c>.
+	    /// </value>
+	    public bool Busy { get; set; }
+
+        public bool reCheck { get; set; }
+
+        /// <summary>
+        /// Gets or sets the counter.
+        /// </summary>
+        /// <value>
+        /// The queue-file counter.
+        /// </value>
+        public int Counter { get; set; }
+
+	    /// <summary>
 		/// Returns number of items in the queue.
 		/// </summary>
 		public int Count()
 		{
-			return fiList.Count;	
+			return List.Count;	
 		}
 		
 		public int CountFolders()
 		{
-			return diList.Count;	
+            return FolderList.Count;	
 		}
-		
-		/// <summary>
-		/// Gets or sets the counter.
-		/// </summary>
-		/// <value>
-		/// The queue-file counter.
-		/// </value>
-		public int Counter
-		{
-			get { return counter; 	}
-			set	{ counter = value; 	}
-		}
-		
-		/// <summary>
+
+	    /// <summary>
 		/// Whether the queue contains more files.
 		/// </summary>
 		public bool hasMore()
 		{
-			return (fiList.Count > 0);
-		}		
-		
-		public void Clear()
-		{
-			fiList.Clear();	
-		}
-		
-		/// <summary>
-		/// Clears the counter.
-		/// </summary>
-		public void ClearCounter()
-		{
-			Console.WriteLine("Clearing the counter");
-			counter = 0;
-			diList.Clear();
-		}	
-		
-		public string LastFolder()
-		{
-			return diList[diList.Count - 1];
+			return (List.Count > 0);
 		}
 
-        /// <summary>
-        /// Files added for sync from the right-click context menus
-        /// </summary>
-        public List<FileQueueItem> MenuFiles = new List<FileQueueItem>();
-        /// <summary>
-        /// Folders added for sync from the right-click context menus
-        /// </summary>
-        public List<string> MenuFolders = new List<string>();
-	}
-	
-	/// <summary>
-	/// Transfer type, can be: Create, Delete, Rename, Change
-	/// </summary>
-	public enum TypeOfTransfer
-	{
-		Create,
-		Delete,
-		Rename,
-		Change
-	}
+        public string LastFolder
+        {
+            get { return FolderList[FolderList.Count - 1]; }
+        }
 
-    /// <summary>
-    /// Direction of transfer.
-    /// </summary>
-    public enum Direction
-    {
-        RemoteToLocal,
-        LocalToRemote
+        public bool Contains(string cpath)
+        {
+            bool hasit = false;
+            foreach (FileQueueItem f in List)
+                if (f.CommonPath == cpath)
+                    hasit = true;
+            return hasit;
+        }
+
+        #endregion        
     }
 }
 

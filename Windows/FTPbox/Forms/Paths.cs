@@ -11,15 +11,7 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.IO;
-using System.Xml;
 using FTPboxLib;
 using System.Diagnostics;
 
@@ -45,9 +37,9 @@ namespace FTPbox.Forms
 
             Settings.Save();
 
-            ((fMain)this.Tag).gotpaths = true;
+            ((fMain)Tag).gotpaths = true;
             
-            this.Hide();
+            Hide();
         }
 
         private void bBrowse_Click(object sender, EventArgs e)
@@ -63,7 +55,7 @@ namespace FTPbox.Forms
         /// <param name="e"></param>
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            string path = "/" + e.Node.FullPath.ToString().Replace('\\', '/');
+            string path = "/" + e.Node.FullPath.Replace('\\', '/');
             if (path.EndsWith(".."))
             {
                 path = path.Substring(0, path.Length - 2);
@@ -87,7 +79,7 @@ namespace FTPbox.Forms
         /// <param name="e"></param>
         private void treeView1_AfterExpand(object sender, TreeViewEventArgs e)
         {
-            string path = "/" + e.Node.FullPath.ToString().Replace('\\', '/');
+            string path = "/" + e.Node.FullPath.Replace('\\', '/');
 
             if (e.Node.Nodes.Count > 0)
             {
@@ -110,12 +102,10 @@ namespace FTPbox.Forms
             {
                 if (c.Type == ClientItemType.Folder)
                 {
-                    TreeNode ParentNode = new TreeNode();
-                    ParentNode.Text = c.Name;
+                    TreeNode ParentNode = new TreeNode {Text = c.Name};
                     e.Node.Nodes.Add(ParentNode);
 
-                    TreeNode ChildNode = new TreeNode();
-                    ChildNode.Text = c.Name;
+                    TreeNode ChildNode = new TreeNode {Text = c.Name};
                     ParentNode.Nodes.Add(ChildNode);
                 }
             }
@@ -127,8 +117,6 @@ namespace FTPbox.Forms
             Log.Write(l.Debug, i.ToString());
 
             Log.Write(l.Debug, e.Node.FullPath);
-
-            int ind = treeView1.Nodes.IndexOf(e.Node);
 
             while (i != 0)
             {
@@ -145,20 +133,17 @@ namespace FTPbox.Forms
 
             treeView1.Nodes.Clear();
 
-            TreeNode first = new TreeNode();
-            first.Text = "/";
+            TreeNode first = new TreeNode {Text = "/"};
             treeView1.Nodes.Add(first);
 
             foreach (ClientItem c in Client.List("."))
             {
                 if (c.Type == ClientItemType.Folder)
                 {
-                    TreeNode ParentNode = new TreeNode();
-                    ParentNode.Text = c.Name;
+                    TreeNode ParentNode = new TreeNode {Text = c.Name};
                     treeView1.Nodes.Add(ParentNode);
 
-                    TreeNode ChildNode = new TreeNode();
-                    ChildNode.Text = c.Name;
+                    TreeNode ChildNode = new TreeNode {Text = c.Name};
                     ParentNode.Nodes.Add(ChildNode);
                 }
             }
@@ -173,7 +158,7 @@ namespace FTPbox.Forms
         /// <param name="lan"></param>
         private void Set_Language(string lan)
         {
-            this.Text = Common.Languages.Get(lan + "/paths/add_dir", "Add a new directory");
+            Text = Common.Languages.Get(lan + "/paths/add_dir", "Add a new directory");
             labSelect.Text = Common.Languages.Get(lan + "/paths/select_dir", "Select directory") + ":";
             labFullPath.Text = Common.Languages.Get(lan + "/paths/full_path", "Full path") + ":";
             labLocal.Text = Common.Languages.Get(lan + "/paths/local_folder", "Local folder") + ":";
@@ -189,10 +174,7 @@ namespace FTPbox.Forms
         /// <param name="e"></param>
         private void tPath_TextChanged(object sender, EventArgs e)
         {
-            if (tPath.Text == "")
-                bDone.Enabled = false;
-            else
-                bDone.Enabled = true;
+            bDone.Enabled = !string.IsNullOrWhiteSpace(tPath.Text);
         }
 
         private void Paths_FormClosing(object sender, FormClosingEventArgs e)
@@ -200,7 +182,7 @@ namespace FTPbox.Forms
             if (e.CloseReason == CloseReason.UserClosing || e.CloseReason == CloseReason.WindowsShutDown || e.CloseReason == CloseReason.TaskManagerClosing)
             {
                 Log.Write(l.Info, "Killing the process.....");
-                //System.Threading.Thread.Sleep(1000);
+                
                 Process p = Process.GetCurrentProcess();
                 p.Kill();
             }
