@@ -301,40 +301,6 @@ namespace FTPboxLib
             return false;
         }
 
-        /// <summary>
-        /// Get the HTTP link to a file
-        /// </summary>
-        /// <param name='cpath'>
-        /// The common path to the file/folder.
-        /// </param>
-        public static void GetLink(string cpath, ref string link)
-        {
-            Log.Write(l.Debug, "---------------\n Getting link for {0}", cpath);
-            string newlink = Common.noSlashes(Profile.HttpPath) + @"/";
-
-            if (!Common.noSlashes(newlink).StartsWith("http://") && !Common.noSlashes(newlink).StartsWith("https://"))
-            {
-                newlink = @"http://" + newlink;
-            }
-
-            if (newlink.EndsWith("/"))
-                newlink = newlink.Substring(0, newlink.Length - 1);
-
-            if (cpath.StartsWith("/"))
-                cpath = cpath.Substring(1);
-
-            newlink = string.Format("{0}/{1}", newlink, cpath);
-            newlink = newlink.Replace(@" ", @"%20");
-
-            link = newlink.Replace(" ", "%20");
-            Log.Write(l.Debug, "-----------------> link: {0}", link);
-            Get_Recent(cpath);
-
-            Log.Write(l.Debug, "**************");
-            Log.Write(l.Debug, "HTTP Link is: " + newlink);
-            Log.Write(l.Debug, "**************");
-        }
-
         #endregion
 
         #region Functions

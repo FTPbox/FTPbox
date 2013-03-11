@@ -39,6 +39,9 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>.\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>.\Newtonsoft.Json.dll</HintPath>
@@ -84,47 +87,6 @@
     <Compile Include="Classes\RecentFiles.cs" />
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\Translations.cs" />
-    <Compile Include="Classes\ZipLib\Checksums\Adler32.cs" />
-    <Compile Include="Classes\ZipLib\Checksums\CRC32.cs" />
-    <Compile Include="Classes\ZipLib\Checksums\IChecksum.cs" />
-    <Compile Include="Classes\ZipLib\Checksums\StrangeCRC.cs" />
-    <Compile Include="Classes\ZipLib\Core\FileSystemScanner.cs" />
-    <Compile Include="Classes\ZipLib\Core\INameTransform.cs" />
-    <Compile Include="Classes\ZipLib\Core\IScanFilter.cs" />
-    <Compile Include="Classes\ZipLib\Core\NameFilter.cs" />
-    <Compile Include="Classes\ZipLib\Core\PathFilter.cs" />
-    <Compile Include="Classes\ZipLib\Core\StreamUtils.cs" />
-    <Compile Include="Classes\ZipLib\Core\WindowsPathUtils.cs" />
-    <Compile Include="Classes\ZipLib\Encryption\PkzipClassic.cs" />
-    <Compile Include="Classes\ZipLib\Encryption\ZipAESStream.cs" />
-    <Compile Include="Classes\ZipLib\Encryption\ZipAESTransform.cs" />
-    <Compile Include="Classes\ZipLib\SharpZipBaseException.cs" />
-    <Compile Include="Classes\ZipLib\Zip\Compression\Deflater.cs" />
-    <Compile Include="Classes\ZipLib\Zip\Compression\DeflaterConstants.cs" />
-    <Compile Include="Classes\ZipLib\Zip\Compression\DeflaterEngine.cs" />
-    <Compile Include="Classes\ZipLib\Zip\Compression\DeflaterHuffman.cs" />
-    <Compile Include="Classes\ZipLib\Zip\Compression\DeflaterPending.cs" />
-    <Compile Include="Classes\ZipLib\Zip\Compression\Inflater.cs" />
-    <Compile Include="Classes\ZipLib\Zip\Compression\InflaterDynHeader.cs" />
-    <Compile Include="Classes\ZipLib\Zip\Compression\InflaterHuffmanTree.cs" />
-    <Compile Include="Classes\ZipLib\Zip\Compression\PendingBuffer.cs" />
-    <Compile Include="Classes\ZipLib\Zip\Compression\Streams\DeflaterOutputStream.cs" />
-    <Compile Include="Classes\ZipLib\Zip\Compression\Streams\InflaterInputStream.cs" />
-    <Compile Include="Classes\ZipLib\Zip\Compression\Streams\OutputWindow.cs" />
-    <Compile Include="Classes\ZipLib\Zip\Compression\Streams\StreamManipulator.cs" />
-    <Compile Include="Classes\ZipLib\Zip\FastZip.cs" />
-    <Compile Include="Classes\ZipLib\Zip\IEntryFactory.cs" />
-    <Compile Include="Classes\ZipLib\Zip\WindowsNameTransform.cs" />
-    <Compile Include="Classes\ZipLib\Zip\ZipConstants.cs" />
-    <Compile Include="Classes\ZipLib\Zip\ZipEntry.cs" />
-    <Compile Include="Classes\ZipLib\Zip\ZipEntryFactory.cs" />
-    <Compile Include="Classes\ZipLib\Zip\ZipException.cs" />
-    <Compile Include="Classes\ZipLib\Zip\ZipExtraData.cs" />
-    <Compile Include="Classes\ZipLib\Zip\ZipFile.cs" />
-    <Compile Include="Classes\ZipLib\Zip\ZipHelperStream.cs" />
-    <Compile Include="Classes\ZipLib\Zip\ZipInputStream.cs" />
-    <Compile Include="Classes\ZipLib\Zip\ZipNameTransform.cs" />
-    <Compile Include="Classes\ZipLib\Zip\ZipOutputStream.cs" />
     <Compile Include="Forms\Account.cs">
       <SubType>Form</SubType>
     </Compile>

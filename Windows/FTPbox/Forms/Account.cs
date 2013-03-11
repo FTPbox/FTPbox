@@ -50,7 +50,7 @@ namespace FTPbox.Forms
 
             try
             {
-                ((fMain)Tag).SetTray(fMain.MessageType.Connecting);
+                ((fMain)Tag).SetTray(MessageType.Connecting);
 
                 Client.Connect();
                 Log.Write(l.Debug, "Connected: {0}", Client.isConnected);
@@ -69,7 +69,7 @@ namespace FTPbox.Forms
                 else
                     Profile.FtpsInvokeMethod = FtpsMethod.Implicit;
 
-                ((fMain)Tag).SetTray(fMain.MessageType.Ready);
+                ((fMain)Tag).SetTray(MessageType.Ready);
 
                 Profile.AskForPassword = cAskForPass.Checked;
 
@@ -77,7 +77,7 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                ((fMain)Tag).SetTray(fMain.MessageType.Nothing);
+                ((fMain)Tag).SetTray(MessageType.Nothing);
 
                 MessageBox.Show("Could not connect to FTP server. Check your account details and try again."
                     + Environment.NewLine + " Error message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);

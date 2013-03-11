@@ -22,9 +22,9 @@ using FTPboxLib;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Threading;
-using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Win32;
 using System.IO.Pipes;
+using Ionic.Zip;
 
 namespace FTPbox.Forms
 {
@@ -419,6 +419,12 @@ namespace FTPbox.Forms
             }
         }
 
+        private void UpdateLink(string cpath)
+        {
+            link = Common.GetHttpLink(cpath);
+            Get_Recent(cpath);
+        }
+
         #region File/Folder Watchers and Event Handlers
 
         /// <summary>
@@ -505,10 +511,7 @@ namespace FTPbox.Forms
 
                 Common.FileLog.putFolder(cpath);
 
-                //if (fQueue.CountFolders() == 1)
-                //	ShowNotification(e.Name, ChangeAction.created, false);
-
-                Common.GetLink(cpath, ref link);
+                UpdateLink(cpath);
                 if (_busy)
                 {
                     fQueue.reCheck = true;
@@ -566,7 +569,7 @@ namespace FTPbox.Forms
                     Client.Rename(oldName, newName);
                     
                     ShowNotification(e.OldName, ChangeAction.renamed, e.Name);
-                    Common.GetLink(Common.GetComPath(e.FullPath, true), ref link);
+                    UpdateLink(Common.GetComPath(e.FullPath, true));
 
                     if (source == fswFiles)
                     {
@@ -652,7 +655,7 @@ namespace FTPbox.Forms
                     Common.FileLog.putFile(i.CommonPath, Client.GetLWTof(i.CommonPath), File.GetLastWriteTime(i.LocalPath));
                     Delete_Recent(i.CommonPath);
 
-                    Common.GetLink(i.CommonPath, ref link);                    
+                    UpdateLink(i.CommonPath);                    
                 }
                 catch (Exception ex)
                 {
@@ -750,7 +753,7 @@ namespace FTPbox.Forms
                         fQueue.Remove(i.CommonPath);
                         Common.FileLog.putFile(i.CommonPath, Client.GetLWTof(i.CommonPath), File.GetLastWriteTime(i.LocalPath));
                         Delete_Recent(i.CommonPath);
-                        Common.GetLink(i.CommonPath, ref link);                       
+                        UpdateLink(i.CommonPath);                       
                     }
                     catch (Exception ex)
                     {
@@ -890,7 +893,7 @@ namespace FTPbox.Forms
                         Log.Write(l.Debug, "Making directory: {0}", cpath);
                         Client.MakeFolder(cpath);
 
-                        Common.GetLink(cpath, ref link);
+                        UpdateLink(cpath);
 
                         Common.FileLog.putFolder(cpath);
 
@@ -1142,6 +1145,23 @@ namespace FTPbox.Forms
         #endregion
 
         #region Recent Files
+
+        /// <summary>
+        /// Get the list of recent files and update the tray menu
+        /// </summary>
+        /// <param name="cpath"></param>
+        private void Get_Recent(string cpath)
+        {
+            string name = Common._name(cpath);
+            locLink = Path.Combine(Profile.LocalPath, cpath);
+
+            FileInfo f = new FileInfo(locLink);
+            Log.Write(l.Debug, "LastWriteTime is: {0} for {1} - {2}", f.LastWriteTime.ToString(), locLink, Profile.LocalPath);
+
+            recentFiles.Add(name, link, locLink, f.LastWriteTime);
+
+            Load_Recent();
+        }
 
         /// <summary>
         /// Removes the specified item from the recent list and from the items in the tray menu
@@ -1580,7 +1600,7 @@ namespace FTPbox.Forms
 
 			            Common.FileLog.putFolder(cpath);
 
-                        Common.GetLink(cpath, ref link);
+                        UpdateLink(cpath);
 		            }
 	            }
 	            else if (f.Type == ClientItemType.File)
@@ -1948,27 +1968,17 @@ namespace FTPbox.Forms
         public void WebIntExists()
         {
             string rpath = Profile.RemotePath;
-            if (rpath != "/")
-                rpath = Common.noSlashes(rpath) + "/webint";
-            else
-                rpath = "webint";
+            rpath = rpath != "/" ? Common.noSlashes(rpath) + "/webint" : "webint";
 
             Log.Write(l.Info, "Searching webint folder in path: {0} ({1}) : {2}", Profile.RemotePath, rpath, changedfromcheck.ToString());
 
             Log.Write(l.Info, "Webint folder exists: {0}", Client.Exists(rpath));
 
-            if (Client.Exists(rpath))
-            {
-                chkWebInt.Checked = true;
-                labViewInBrowser.Enabled = true;
-
+            bool e = Client.Exists(rpath);
+            chkWebInt.Checked = e;
+            labViewInBrowser.Enabled = e;
+            if (e)
                 CheckForWebIntUpdate();
-            }
-            else
-            {
-                chkWebInt.Checked = false;
-                labViewInBrowser.Enabled = false;
-            }
 
             changedfromcheck = false;
         }
@@ -2045,11 +2055,11 @@ namespace FTPbox.Forms
 
         private void WebIntDownloaded(object sender, AsyncCompletedEventArgs e)
         {
-            string data = @"|\webint\layout\css|\webint\layout\images\fancybox|\webint\layout\templates|\webint\system\classes|\webint\system\config|\webint\system\js|\webint\system\logs|\webint\system\savant\Savant3\resources|";
-            MakeWebIntFolders(data);
-
-            unZip(webui_path, Path.Combine(Profile.AppdataFolder, @"WebInterface"));
-            Log.Write(l.Info, "unzipped");
+            using (ZipFile zip = ZipFile.Read(webui_path))            
+                foreach (ZipEntry en in zip)
+                    en.Extract(Path.Combine(Profile.AppdataFolder, "WebInterface"), ExtractExistingFileAction.OverwriteSilently);                            
+            
+            Log.Write(l.Info, "WebUI unzipped");
             updatewebintpending = true;
             try
             {
@@ -2058,14 +2068,13 @@ namespace FTPbox.Forms
             catch (Exception ex)
             {
                 Common.LogError(ex);
-                if (Profile.Protocol != FtpProtocol.FTP)
+                if (Profile.Protocol == FtpProtocol.SFTP)
                 {   
                     //check if this is ok <-----------------------------------------
                     LoginFTP();
                     UploadWebInt();
                 }
             }
-            //File.Delete(Application.StartupPath + @"\webint.zip");
         }
 
         public void DeleteWebInt(bool updating)
@@ -2107,6 +2116,7 @@ namespace FTPbox.Forms
             try
             {
                 SetTray(MessageType.Syncing);
+                
                 webintwb = new WebBrowser();
                 webintwb.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(webintwb_DocumentCompleted);
                 webintwb.Navigate("http://ftpbox.org/webintversion.txt");
@@ -2114,7 +2124,6 @@ namespace FTPbox.Forms
             catch
             {
                 SetTray(MessageType.Ready);
-                //ListAllFiles();
             }
         }
 
@@ -2124,7 +2133,7 @@ namespace FTPbox.Forms
             {
                 string lpath = Path.Combine(Profile.AppdataFolder, @"version.ini");
                 Log.Write(l.Debug, "lpath: {0}", lpath);
-
+                
                 Client.Download("webint/version.ini", lpath);
 
                 string inipath = lpath;
@@ -2135,16 +2144,12 @@ namespace FTPbox.Forms
                 if (currentversion != webintwb.Document.Body.InnerText)
                 {
                     string msg = "A new version of the web interface is available, do you want to upgrade to it?";
-                    if (MessageBox.Show(msg, "FTPbox - WebUI Update", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
-                    {
-                        wiuThread.Start();
-                    }
+                    if (MessageBox.Show(msg, "FTPbox - WebUI Update", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)                   
+                        wiuThread.Start();                    
                 }
                 else
-                {
                     SetTray(MessageType.AllSynced);
-                    //ListAllFiles();
-                }
+
                 File.Delete(inipath);
             }
             catch (Exception ex)
@@ -2156,69 +2161,10 @@ namespace FTPbox.Forms
         private void UpdateWebIntThreadStart()
         {
             SetTray(MessageType.Syncing);
-            string data = @"|\webint\layout\css|\webint\layout\images\fancybox|\webint\layout\templates|\webint\system\classes|\webint\system\config|\webint\system\js|\webint\system\logs|\webint\system\savant\Savant3\resources|";
-            MakeWebIntFolders(data);
             DeleteWebInt(true);
             GetWebInt();
         }
-
-        public void MakeWebIntFolders(string data)
-        {
-            List<string> all = new List<string>(data.Split('|', '|'));
-            foreach (string s in all)
-            {
-                try
-                {
-                    string path = Profile.AppdataFolder + @"\WebInterface" + s;
-                    Directory.CreateDirectory(path);
-                    Log.Write(l.Info, "making folder: {0}", path);
-                }
-                catch { }
-            }
-        }
-
-        static void unZip(string fi, string dir)
-        {
-            using (ZipInputStream s = new ZipInputStream(File.OpenRead(fi)))
-            {
-                ZipEntry theEntry;
-                while ((theEntry = s.GetNextEntry()) != null)
-                {
-                    Log.Write(l.Debug, theEntry.Name);
-
-                    string directoryName = Path.GetDirectoryName(theEntry.Name);
-                    string fileName = Path.GetFileName(theEntry.Name);
-
-                    if (directoryName.Length > 0) { Directory.CreateDirectory(directoryName); }
-
-                    if (!Directory.Exists(dir)) { Directory.CreateDirectory(dir); }
-
-                    if (fileName != String.Empty)
-                    {
-                        //Log.Write("dir: " + dir);
-                        //Log.Write("filename " + fileName);
-                        using (FileStream streamWriter = File.Create(String.Format(@"{0}\{1}", dir, theEntry.Name)))
-                        {
-                            int size = 2048;
-                            byte[] data = new byte[2048];
-                            while (true)
-                            {
-                                size = s.Read(data, 0, data.Length);
-                                if (size > 0)
-                                {
-                                    streamWriter.Write(data, 0, size);
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
+        
         public void UploadWebInt()
         {
             Log.Write(l.Info, "Gonna upload webint");
@@ -2266,7 +2212,6 @@ namespace FTPbox.Forms
                 link = link + "webint";
             else
                 link = link + "/webint";
-            //open link in browser
 
             if (labViewInBrowser.InvokeRequired)
                 labViewInBrowser.Invoke(new MethodInvoker(delegate
