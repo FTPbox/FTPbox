@@ -15,6 +15,7 @@ FTPbox is a free, open-source application that allows you to synchronize your fi
 - Selective Sync
 - Manual or Automatic synchronizing
 - Bandwidth control
+- Multiple Profiles
 - Offline Mode
 
 Development
@@ -23,7 +24,6 @@ Development
 ### To-Do (Main Features)
 
 - One-way syncing
-- Support multiple accounts
 - Versioning
 
 ### Known Issues
