@@ -715,7 +715,6 @@ namespace FTPbox.Forms
                         fQueue.Remove(i.CommonPath);
                         continue;
                     }
-
                     Log.Write(l.Debug, "Gonna get remote file {0} from queue, local path: {1}", i.CommonPath, i.LocalPath);
                     try
                     {
@@ -725,26 +724,25 @@ namespace FTPbox.Forms
                         
                         //verify it was downloaded succesfully
                         FileInfo iFile = new FileInfo(Common._tempLocal(i.LocalPath));
-                        if (i.Size == iFile.Length)
-                        {
-                            if (File.Exists(i.LocalPath))
+
+                        if (i.Size != iFile.Length)
+                            if (Client.SizeOf(i.CommonPath) != iFile.Length)
                             {
-                                fswFiles.EnableRaisingEvents = false;
-                                fswFolders.EnableRaisingEvents = false;
-                                Log.Write(l.Debug, "Deleting {0}", i.LocalPath);
-                                Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(i.LocalPath, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-                                fswFiles.EnableRaisingEvents = true;
-                                fswFolders.EnableRaisingEvents = true;
+                                Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(Common._tempLocal(i.LocalPath), Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                                continue;
                             }
-                            Log.Write(l.Debug, "Moving {0} to {1}", Common._tempLocal(i.LocalPath), i.LocalPath);
-                            File.Move(Common._tempLocal(i.LocalPath), i.LocalPath);                            
-                        }
-                        else
+
+                        if (File.Exists(i.LocalPath))
                         {
-                            Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(Common._tempLocal(i.LocalPath), Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-                            continue;
+                            fswFiles.EnableRaisingEvents = false;
+                            fswFolders.EnableRaisingEvents = false;
+                            Log.Write(l.Debug, "Deleting {0}", i.LocalPath);
+                            Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(i.LocalPath, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                            fswFiles.EnableRaisingEvents = true;
+                            fswFolders.EnableRaisingEvents = true;
                         }
-                        
+                        Log.Write(l.Debug, "Moving {0} to {1}", Common._tempLocal(i.LocalPath), i.LocalPath);
+                        File.Move(Common._tempLocal(i.LocalPath), i.LocalPath);                                                    
                         Log.Write(l.Debug, "Done");
                         SetTray(MessageType.AllSynced);                        
 
@@ -1943,7 +1941,9 @@ namespace FTPbox.Forms
             if (!File.Exists(path)) return;
 
             string version = File.ReadAllText(path);
-            if (version.Length == 7)
+
+            //  Check that the downloaded file has the correct version format, using regex.
+            if (System.Text.RegularExpressions.Regex.IsMatch(version, @"[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"))
             {
                 Log.Write(l.Debug, "Current Version: {0} Installed Version: {1}", version, Application.ProductVersion);
 
@@ -2134,23 +2134,29 @@ namespace FTPbox.Forms
                 string lpath = Path.Combine(Profile.AppdataFolder, @"version.ini");
                 Log.Write(l.Debug, "lpath: {0}", lpath);
                 
-                Client.Download("webint/version.ini", lpath);
+                Client.DownloadAsync("webint/version.ini", lpath);
+                Client.DownloadComplete += (o, args) =>
+                    {
+                        string inipath = lpath;
+                        Classes.IniFile ini = new Classes.IniFile(inipath);
+                        string currentversion = ini.ReadValue("Version", "latest");
+                        Log.Write(l.Info, "currentversion is: {0} when newest is: {1}", currentversion,
+                                  webintwb.Document.Body.InnerText);
 
-                string inipath = lpath;
-                Classes.IniFile ini = new Classes.IniFile(inipath);
-                string currentversion = ini.ReadValue("Version", "latest");
-                Log.Write(l.Info, "currentversion is: {0} when newest is: {1}", currentversion, webintwb.Document.Body.InnerText);
+                        if (currentversion != webintwb.Document.Body.InnerText)
+                        {
+                            string msg =
+                                "A new version of the web interface is available, do you want to upgrade to it?";
+                            if (
+                                MessageBox.Show(msg, "FTPbox - WebUI Update", MessageBoxButtons.YesNo,
+                                                MessageBoxIcon.Information) == DialogResult.Yes)
+                                wiuThread.Start();
+                        }
+                        else
+                            SetTray(MessageType.AllSynced);
 
-                if (currentversion != webintwb.Document.Body.InnerText)
-                {
-                    string msg = "A new version of the web interface is available, do you want to upgrade to it?";
-                    if (MessageBox.Show(msg, "FTPbox - WebUI Update", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)                   
-                        wiuThread.Start();                    
-                }
-                else
-                    SetTray(MessageType.AllSynced);
-
-                File.Delete(inipath);
+                        File.Delete(inipath);
+                    };
             }
             catch (Exception ex)
             {

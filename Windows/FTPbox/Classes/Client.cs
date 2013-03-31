@@ -11,6 +11,8 @@
  */
 
 using System;
+using System.Linq;
+using System.Threading;
 using Starksoft.Net.Ftp;
 using Renci.SshNet;
 using Renci.SshNet.Sftp;
@@ -28,6 +30,8 @@ namespace FTPboxLib
         private static SftpClient sftpc;            //And our SFTP client
 
         #endregion
+
+	    public static event EventHandler DownloadComplete;
 
         #region Functions
 
@@ -157,7 +161,19 @@ namespace FTPboxLib
                     sftpc.DownloadFile(cpath, f);
         }
 
-        public static void Rename(string oldname, string newname)
+	    public static void DownloadAsync(string cpath, string lpath)
+	    {
+            if (FTP)
+            {
+                ftpc.GetFileAsyncCompleted += (sender, args) => DownloadComplete.Invoke(sender, args);
+                ftpc.GetFileAsync(cpath, lpath, FileAction.Create);
+            }
+            else
+                using (var f = new FileStream(lpath, FileMode.Create, FileAccess.ReadWrite))
+                    sftpc.BeginDownloadFile(cpath, f, ar => DownloadComplete.Invoke(sftpc, EventArgs.Empty), state: null);	        
+	    }
+
+	    public static void Rename(string oldname, string newname)
         {
             if (FTP)
                 ftpc.Rename(oldname, newname);
@@ -379,10 +395,14 @@ namespace FTPboxLib
             Log.Write(l.Client, "isConnected: {0}", ftpc.IsConnected);
             try
             {
-                ftpc.DataTransferMode = TransferMode.Passive;
-                var s = ftpc.GetDirList();
-                Log.Write(l.Client, "Client is connected!");
-                return true;
+                //ftpc.DataTransferMode = TransferMode.Passive;
+                return new[]
+                    {
+                        FtpResponseCode.ClosingDataConnection,
+                        FtpResponseCode.ConnectionClosedSoTransferAborted,
+                        FtpResponseCode.NotLoggedIn,
+                        FtpResponseCode.CannotOpenDataConnection
+                    }.Any(f => ftpc.LastResponse.Code.Equals(f));                             
             }
             catch (Exception e)
             {
@@ -557,7 +577,7 @@ namespace FTPboxLib
             if (f.IsDirectory)
                 return ClientItemType.Folder;
             if (f.IsRegularFile)
-                return ClientItemType.File;            
+                return ClientItemType.File;
             return ClientItemType.Other;
         }
 

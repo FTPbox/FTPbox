@@ -52,10 +52,7 @@ namespace FTPboxLib
 
             string config = File.ReadAllText(confGeneral);
             if (!string.IsNullOrWhiteSpace(config))
-            {
-                settingsGeneral = (SettingsGeneral) JsonConvert.DeserializeObject(config, typeof (SettingsGeneral));
-                Clipboard.SetText(JsonConvert.SerializeObject(settingsGeneral, Formatting.Indented));
-            }
+                settingsGeneral = (SettingsGeneral)JsonConvert.DeserializeObject(config, typeof(SettingsGeneral));
 
             if (!File.Exists(confProfiles)) return;
 

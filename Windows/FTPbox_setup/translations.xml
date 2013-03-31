@@ -265,6 +265,7 @@
       <application>Programa</application>
       <start_on_startup>Iniciar al arranque del sistema</start_on_startup>
       <show_nots>Mostrar notificaciones</show_nots>
+      <profile>Perfil</profile>
       <details>Detalles</details>
       <links>Vinculos</links>
       <remote_path>Carpeta remota</remote_path>
@@ -301,6 +302,14 @@
       <no_limits>(0 significa sin límite)</no_limits>
       <selective>Sincronización selectiva</selective>
       <selective_info>deselecciona los archivos que no deseas sincronizar</selective_info>
+      <refresh>Refrescar</refresh>
+      <file_filters>Filtros</file_filters>
+      <ignored_extensions>Extensiones de archivo ignoradas</ignored_extensions>
+      <remove>Remover</remove>
+      <also_ignore>Ignorar también</also_ignore>
+      <dotfiles>Archivos que comienzen con un punto</dotfiles>
+      <temp_files>Archivos temporales</temp_files>
+      <old_files>Archivos modificados antes de</old_files>
     </main_form>
     <new_account>
       <new_ftp>Nueva cuenta FTP</new_ftp>
