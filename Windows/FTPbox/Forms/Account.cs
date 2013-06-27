@@ -1,5 +1,5 @@
 ﻿/* License
- * This file is part of FTPbox - Copyright (C) 2012 ftpbox.org
+ * This file is part of FTPbox - Copyright (C) 2012-2013 ftpbox.org
  * FTPbox is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published 
  * by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed 
  * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -13,7 +13,6 @@
 using System;
 using System.Windows.Forms;
 using FTPboxLib;
-using System.Diagnostics;
 
 namespace FTPbox.Forms
 {
@@ -46,48 +45,22 @@ namespace FTPbox.Forms
             else if (ftpes)
                 Profile.FtpsInvokeMethod = FtpsMethod.Explicit;
             else
-                Profile.FtpsInvokeMethod = FtpsMethod.Implicit;            
-
+                Profile.FtpsInvokeMethod = FtpsMethod.Implicit;
+            
             try
             {
-                ((fMain)Tag).SetTray(MessageType.Connecting);
-
                 Client.Connect();
                 Log.Write(l.Debug, "Connected: {0}", Client.isConnected);
-
-                if (ftporsftp && ftps)
-                    Profile.Protocol = FtpProtocol.FTPS;
-                else if (ftporsftp)
-                    Profile.Protocol = FtpProtocol.FTP;
-                else
-                    Profile.Protocol = FtpProtocol.SFTP;
-
-                if (!ftps)
-                    Profile.FtpsInvokeMethod = FtpsMethod.None;
-                else if (ftpes)
-                    Profile.FtpsInvokeMethod = FtpsMethod.Explicit;
-                else
-                    Profile.FtpsInvokeMethod = FtpsMethod.Implicit;
-
-                ((fMain)Tag).SetTray(MessageType.Ready);
 
                 Profile.AskForPassword = cAskForPass.Checked;
 
                 Hide();
             }
             catch (Exception ex)
-            {
-                ((fMain)Tag).SetTray(MessageType.Nothing);
-
+            {                
                 MessageBox.Show("Could not connect to FTP server. Check your account details and try again."
                     + Environment.NewLine + " Error message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                if (ftporsftp)
-                    Log.Write(l.Debug, "Connected: {0}", Client.isConnected);
             }
-
-            if (ftporsftp)
-                Log.Write(l.Debug, Client.WorkingDirectory); 
         }
 
         public static bool just_password = false;
@@ -147,25 +120,8 @@ namespace FTPbox.Forms
         {
             if (e.CloseReason == CloseReason.UserClosing || e.CloseReason == CloseReason.WindowsShutDown || e.CloseReason == CloseReason.TaskManagerClosing)
             {
-                Log.Write(l.Info, "Killing the process.....");
-                //System.Threading.Thread.Sleep(1000);
-                Process p = Process.GetCurrentProcess();
-                p.Kill();
-            }
-        }
-
-        public void KillTheProcess()
-        {
-            ((fMain)Tag).ExitedFromTray = true;
-            Log.Write(l.Info, "Killing the process...");
-            try
-            {
-                Process p = Process.GetCurrentProcess();
-                p.Kill();
-            }
-            catch
-            {
-                Application.Exit();
+                ((fMain)Tag).ExitedFromTray = true;
+                ((fMain)Tag).KillTheProcess();
             }
         }
 

@@ -1,5 +1,5 @@
 ﻿/* License
- * This file is part of FTPbox - Copyright (C) 2012 ftpbox.org
+ * This file is part of FTPbox - Copyright (C) 2012-2013 ftpbox.org
  * FTPbox is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published 
  * by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed 
  * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -29,13 +29,14 @@ namespace FTPbox.Forms
             if (!System.IO.Directory.Exists(tPath.Text))
                 System.IO.Directory.CreateDirectory(tPath.Text);
 
-            string rp = tFullDir.Text;
-			if (rp.StartsWith("/") && rp != "/")
-				rp = rp.Substring(1);
+            var rp = string.Format("{0}/{1}", Profile.HomePath, tFullDir.Text.RemoveSlashes());
+			if (rp.StartsWith("//")) rp = rp.Substring(1);
 
             Profile.AddPaths(rp, tPath.Text, tParent.Text);
 
             Settings.Save();
+
+            Client.WorkingDirectory = Profile.RemotePath;
 
             ((fMain)Tag).gotpaths = true;
             
@@ -98,7 +99,7 @@ namespace FTPbox.Forms
                 }
             }
 
-            foreach (ClientItem c in Client.List(path))
+            foreach (var c in Client.List(path))
             {
                 if (c.Type == ClientItemType.Folder)
                 {
@@ -133,23 +134,22 @@ namespace FTPbox.Forms
 
             treeView1.Nodes.Clear();
 
-            TreeNode first = new TreeNode {Text = "/"};
+            var first = new TreeNode {Text = "/"};
             treeView1.Nodes.Add(first);
 
-            foreach (ClientItem c in Client.List("."))
+            foreach (var c in Client.List("."))
             {
                 if (c.Type == ClientItemType.Folder)
                 {
-                    TreeNode ParentNode = new TreeNode {Text = c.Name};
+                    var ParentNode = new TreeNode {Text = c.Name};
                     treeView1.Nodes.Add(ParentNode);
 
-                    TreeNode ChildNode = new TreeNode {Text = c.Name};
+                    var ChildNode = new TreeNode {Text = c.Name};
                     ParentNode.Nodes.Add(ChildNode);
                 }
             }
 
-            tParent.Text = Profile.Host;
-            Log.Write(l.Debug, "Host: {0}", Profile.Host);
+            tParent.Text = Profile.Host;            
         }
 
         /// <summary>
@@ -181,10 +181,8 @@ namespace FTPbox.Forms
         {
             if (e.CloseReason == CloseReason.UserClosing || e.CloseReason == CloseReason.WindowsShutDown || e.CloseReason == CloseReason.TaskManagerClosing)
             {
-                Log.Write(l.Info, "Killing the process.....");
-                
-                Process p = Process.GetCurrentProcess();
-                p.Kill();
+                Log.Write(l.Info, "Killing the process.....");                
+                Process.GetCurrentProcess().Kill();                
             }
         }
     }

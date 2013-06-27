@@ -21,6 +21,7 @@ using System.Text;
 using System.IO.Pipes;
 using System.Threading;
 using Microsoft.Win32;
+using FTPboxLib;
 
 namespace FTPbox
 {
@@ -36,33 +37,36 @@ namespace FTPbox
             if (args.Length > 0 && args.Contains("-console"))
                 aConsole.Allocate();
 
-            FTPboxLib.Profile.IsDebugMode = args.Contains("-debug");
-            FTPboxLib.Profile.IsNoMenusMode = args.Contains("-nomenus");
-            string debug_log_path = Path.Combine(FTPboxLib.Profile.AppdataFolder, "Debug.html");
+            Profile.IsDebugMode = args.Contains("-debug");
+            Profile.IsNoMenusMode = args.Contains("-nomenus");
+            string debug_log_path = Path.Combine(Profile.AppdataFolder, "Debug.html");
 
-            Log.Init(debug_log_path, l.Debug | l.Info | l.Warning | l.Error | l.Client, true, FTPboxLib.Profile.IsDebugMode);
+            Log.Init(debug_log_path, l.Debug | l.Info | l.Warning | l.Error | l.Client, true, Profile.IsDebugMode);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             if (!DLLsExist)
             {
-                MessageBox.Show("The reuired DLL files to run this program are missing. Please make sure all the needed files are in the installation folder and then run the application. If you cannot find these files, just reinstall FTPbox.", "FTPbox - Missing Resources", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                KillTheProcess();
+                MessageBox.Show("The required DLL files to run this program are missing. Please make sure all the needed files are in the installation folder and then run the application. If you cannot find these files, just reinstall FTPbox.", "FTPbox - Missing Resources", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Process.GetCurrentProcess().Kill();
             }
             else if (!IniExists)
             {
                 MessageBox.Show("The file appinfo.ini is missing from the installation folder. If you removed it, please put it back and restart the program. Otherwise, just reinstall FTPbox.", "FTPbox - Missing File", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                KillTheProcess();
+                Process.GetCurrentProcess().Kill();
             }
             else
             {
                 if (CheckArgs(args))
                 {
                     KillUnecessaryDLLs();
+                    CheckForPreviousInstances();
                     Application.Run(new fMain());
                 }
             }
         }
+
+        #region Check file dependencies
 
         /// <summary>
         /// returns true if all the required .dll files exist in the startup folder
@@ -71,8 +75,8 @@ namespace FTPbox
         {
             get
             {
-                string[] dlls = { "Starksoft.Net.Ftp.dll", "Starksoft.Net.Proxy.dll", "Renci.SshNet.dll",
-                                    "Ionic.Zip.Reduced.dll", "Newtonsoft.Json.dll"};
+                string[] dlls = { "FTPboxLib.dll", "Starksoft.Net.Ftp.dll", "Starksoft.Net.Proxy.dll", 
+                                    "Renci.SshNet.dll", "Ionic.Zip.Reduced.dll", "Newtonsoft.Json.dll"};
 
                 return dlls.All(s => File.Exists(Path.Combine(Application.StartupPath, s)));
             }
@@ -86,22 +90,6 @@ namespace FTPbox
             get
             {
                 return File.Exists(Path.Combine(Application.StartupPath, "appinfo.ini"));
-            }
-        }
-
-        /// <summary>
-        /// Kills the current process. Called from the tray menu.
-        /// </summary>
-        private static void KillTheProcess()
-        {
-            try
-            {
-                Process p = Process.GetCurrentProcess();
-                p.Kill();
-            }
-            catch
-            {
-                Application.Exit();
             }
         }
 
@@ -126,10 +114,17 @@ namespace FTPbox
             }
         }
 
+        #endregion
+
+        /// <summary>
+        /// Any file paths in the arguement list?
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         private static bool CheckArgs(string[] args)
         {
             string param = null;
-            List<string> files = new List<string>();
+            var files = new List<string>();
             
             foreach (string s in args)
             {
@@ -148,13 +143,20 @@ namespace FTPbox
             return true;
         }
 
+        #region Named-Pipe Client
+
+        /// <summary>
+        /// Connect to our named-pipe server, send arguements and close current process
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="param"></param>
         private static void RunClient(string[] args, string param)
         {
             if (!isServerRunning)
             {
                 MessageBox.Show("FTPbox must be running to use the context menus!", "FTPbox", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 RemoveFTPboxMenu();
-                KillTheProcess();
+                Process.GetCurrentProcess().Kill();
             }
             
             NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", "FTPbox Server", PipeDirection.InOut, PipeOptions.None, System.Security.Principal.TokenImpersonationLevel.Impersonation);
@@ -182,10 +184,9 @@ namespace FTPbox
         private static string CombineParameters(string[] args, string param)
         {
             string r = param + "\"";
+
             foreach (string s in args)
-            {
                 r += string.Format("{0}\"", s);
-            }
 
             r = r.Substring(0, r.Length - 1);
 
@@ -196,11 +197,16 @@ namespace FTPbox
         {
             get
             {
-                Process[] processes = Process.GetProcesses();
+                var processes = Process.GetProcesses();
                 return processes.Any(p => p.ProcessName == "FTPbox" && p.Id != Process.GetCurrentProcess().Id);
             }
         }
 
+        #endregion
+
+        /// <summary>
+        /// Remove the FTPbox context menu (delete the registry files). 
+        /// </summary>
         private static void RemoveFTPboxMenu()
         {
             RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Classes\\*\\Shell\\", true);
@@ -212,6 +218,31 @@ namespace FTPbox
             key.Close();
         }
 
+        /// <summary>
+        /// Kill if instances of FTPbox are already running
+        /// </summary>
+        private static void CheckForPreviousInstances()
+        {
+            try
+            {
+                var procname = Process.GetCurrentProcess().ProcessName;
+                var allprocesses = Process.GetProcessesByName(procname);
+
+                if (allprocesses.Length > 0)
+                    foreach (Process p in allprocesses)
+                        if (p.Id != Process.GetCurrentProcess().Id)
+                        {
+                            p.WaitForExit(3000);
+                            if (!p.HasExited)
+                            {
+                                MessageBox.Show("Another instance of FTPbox is already running.", "FTPbox",
+                                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                Process.GetCurrentProcess().Kill();
+                            }
+                        }
+            }
+            catch { }
+        }
     }
 
     public class StreamString

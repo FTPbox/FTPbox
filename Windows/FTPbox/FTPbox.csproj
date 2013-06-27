@@ -39,6 +39,9 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Reference Include="FTPboxLib">
+      <HintPath>.\FTPboxLib.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>.\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
@@ -50,10 +53,10 @@
       <HintPath>.\Renci.SshNet.dll</HintPath>
     </Reference>
     <Reference Include="Starksoft.Net.Ftp">
-      <HintPath>Classes\Starksoft.Net.Ftp.dll</HintPath>
+      <HintPath>.\Starksoft.Net.Ftp.dll</HintPath>
     </Reference>
     <Reference Include="Starksoft.Net.Proxy">
-      <HintPath>Classes\Starksoft.Net.Proxy.dll</HintPath>
+      <HintPath>.\Starksoft.Net.Proxy.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -67,26 +70,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\ClientItem.cs" />
-    <Compile Include="Classes\Common.cs" />
-    <Compile Include="Classes\Console\aConsole.cs" />
-    <Compile Include="Classes\AESEncryption.cs" />
-    <Compile Include="Classes\Client.cs" />
-    <Compile Include="Classes\Enums.cs" />
-    <Compile Include="Classes\Queues\DeletedQueue.cs" />
-    <Compile Include="Classes\Queues\DeletedQueueItem.cs" />
-    <Compile Include="Classes\FileLog.cs" />
-    <Compile Include="Classes\FileLogItem.cs" />
-    <Compile Include="Classes\Queues\FileQueue.cs" />
-    <Compile Include="Classes\Queues\FileQueueItem.cs" />
-    <Compile Include="Classes\IgnoreList.cs" />
-    <Compile Include="Classes\INIclass.cs" />
-    <Compile Include="Classes\Console\Log.cs" />
-    <Compile Include="Classes\Profile.cs" />
-    <Compile Include="Classes\RecentFileItem.cs" />
-    <Compile Include="Classes\RecentFiles.cs" />
-    <Compile Include="Classes\Settings.cs" />
-    <Compile Include="Classes\Translations.cs" />
     <Compile Include="Forms\Account.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -189,7 +172,9 @@
     <None Include="Resources\regular_60.ico" />
     <None Include="Resources\offline.ico" />
     <None Include="Resources\regular.ico" />
-    <Content Include="ftpboxnew.ico" />
+    <Content Include="ftpboxnew.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="regular.ico" />
     <None Include="Resources\all synced.ico" />
     <Content Include="regular_125.ico" />

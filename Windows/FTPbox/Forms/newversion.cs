@@ -1,5 +1,5 @@
 ﻿/* License
- * This file is part of FTPbox - Copyright (C) 2012 ftpbox.org
+ * This file is part of FTPbox - Copyright (C) 2012-2013 ftpbox.org
  * FTPbox is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published 
  * by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed 
  * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -39,25 +39,22 @@ namespace FTPbox
         {
             try
             {
-                //string fpathtoexe = Application.StartupPath + @"\updater.exe";
-                //Process.Start(fpathtoexe);
-                //Process p;
                 string pathtoupdater = Application.StartupPath + @"\updater.exe";
 
                 while (!File.Exists(pathtoupdater))
                 {
-                    DialogResult dr = MessageBox.Show("The file updater.exe is missing from the folder, please put it back there or reinstall before updating.", "FTPbox - Missing File", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                    DialogResult dr = MessageBox.Show("The file updater.exe is missing from the folder. Please put it back there or reinstall before updating.", "FTPbox - Missing File", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
                     if (dr == DialogResult.Cancel)
-                        KillTheProcess();                        
+                        Process.GetCurrentProcess().Kill();
                 }
 
-                ProcessStartInfo pi = new ProcessStartInfo(pathtoupdater);
+                var pi = new ProcessStartInfo(pathtoupdater);
                 pi.Verb = "runas";
                 Process.Start(pi);
             }
             catch { }
 
-            KillTheProcess();
+            Process.GetCurrentProcess().Kill();
         }
 
         private void bLearnMore_Click(object sender, EventArgs e)
@@ -88,24 +85,6 @@ namespace FTPbox
             bDownload.Text = Common.Languages.Get(lan + "/new_version/download", "Update Now");
             bLearnMore.Text = Common.Languages.Get(lan + "/new_version/learn_more", "Learn More");
             bClose.Text = Common.Languages.Get(lan + "/new_version/remind_me_next_time", "Not this time");                 
-        }
-
-        /// <summary>
-        /// Kills the current process. Called from the tray menu.
-        /// </summary>
-        public void KillTheProcess()
-        {
-            Log.Write(l.Info, "Killing the process...");
-
-            try
-            {
-                Process p = Process.GetCurrentProcess();
-                p.Kill();
-            }
-            catch
-            {
-                Application.Exit();
-            }
         }
     }
 }
