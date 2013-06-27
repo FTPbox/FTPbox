@@ -1,2 +1,13 @@
+# FTPboxLib
+FTPboxLib/FTPboxLib/bin
+FTPboxLib/FTPboxLib/obj
+
+# Windows
 Windows/FTPbox/bin
 Windows/FTPbox/obj
+Windows/FTPbox_setup/Debug
+Windows/FTPbox_setup/Release
+
+# Resharper
+FTPboxLib/_ReSharper.FTPboxLib
+Windows/_ReSharper.FTPbox
