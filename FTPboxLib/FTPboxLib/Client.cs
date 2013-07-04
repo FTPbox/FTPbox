@@ -42,6 +42,7 @@ namespace FTPboxLib
         public static event EventHandler DownloadComplete;
         public static event EventHandler<ConnectionClosedEventArgs> ConnectionClosed;
 	    public static event EventHandler ReconnectingFailed;
+	    public static event EventHandler<ValidateCertificateEventArgs> ValidateCertificate;
 
         #endregion
 
@@ -71,11 +72,30 @@ namespace FTPboxLib
 			    };
                 
 			    if (Profile.Protocol == FtpProtocol.FTPS)
-			    {			       
+                {
                     _ftpc.ValidateServerCertificate += (sender, x) =>
-			            {
-			                x.IsCertificateValid = true; //e.IsTrusted;
-			            };
+                    {
+                        // if ValidateCertificate handler isn't set, accept the certificate and move on
+                        if (ValidateCertificate == null || Settings.TrustedCertificates.Contains(x.Certificate.Thumbprint))
+                        {
+                            Log.Write(l.Client, "Trusted: {0}", x.Certificate.Thumbprint);
+                            x.IsCertificateValid = true;
+                            return;
+                        }
+
+                        var e = new ValidateCertificateEventArgs
+                        {
+                            Fingerprint = x.Certificate.Thumbprint,
+                            SerialNumber = x.Certificate.SerialNumber,
+                            Algorithm = x.Certificate.SignatureAlgorithm.FriendlyName,
+                            ValidFrom = x.Certificate.NotBefore.ToString("MM/dd/yy"),
+                            ValidTo = x.Certificate.NotAfter.ToString("MM/dd/yy"),
+                            Issuer = x.Certificate.IssuerName.Name
+                        };
+
+                        ValidateCertificate(null, e);
+                        x.IsCertificateValid = e.IsTrusted;
+                    };
                      
                     // Change Security Protocol
                     if (Profile.FtpsInvokeMethod == FtpsMethod.Explicit) 
@@ -129,6 +149,28 @@ namespace FTPboxLib
 			{                
 				_sftpc = new SftpClient(Profile.Host, Profile.Port, Profile.Username, Profile.Password);
                 _sftpc.ConnectionInfo.AuthenticationBanner += (o, x) => Log.Write(l.Warning, x.BannerMessage);			   
+
+                _sftpc.HostKeyReceived += (o, x) =>
+                {
+                    var fingerPrint = x.FingerPrint.GetCertificateData();
+
+                    // if ValidateCertificate handler isn't set, accept the certificate and move on
+                    if (ValidateCertificate == null || Settings.TrustedCertificates.Contains(fingerPrint))
+                    {
+                        Log.Write(l.Client, "Trusted: {0}", fingerPrint);
+                        x.CanTrust = true; 
+                        return;
+                    }
+
+                    var e = new ValidateCertificateEventArgs
+                    {
+                        Fingerprint = fingerPrint,
+                        Key = x.HostKeyName,
+                        KeySize = x.KeyLength.ToString()
+                    };
+                    ValidateCertificate(null, e);
+                    x.CanTrust = e.IsTrusted;
+                };
                 
                 _sftpc.Connect();			    
                 
@@ -807,6 +849,10 @@ namespace FTPboxLib
 
         #region Extensions
 
+        /// <summary>
+        /// Gets the fingerprint from the given byte-array representation of the key
+        /// </summary>
+        /// <returns>fingerprint in string format</returns>
         public static string GetCertificateData(this byte[] key)
         {
             var sb = new StringBuilder();

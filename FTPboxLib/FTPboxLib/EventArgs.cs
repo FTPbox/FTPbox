@@ -21,6 +21,24 @@ namespace FTPboxLib
         public string Text;
     }
 
+    public class ValidateCertificateEventArgs : EventArgs
+    {
+        public string Fingerprint;
+
+        // SFTP info
+        public string Key;
+        public string KeySize;
+        // FTPS info
+        public string SerialNumber;
+        public string Algorithm;
+        public string Issuer;
+        public string ValidFrom;
+        public string ValidTo;
+
+        // Trust the certificate?
+        public bool IsTrusted;
+    }
+
     // EventArgs for Notifications.cs
 
     public class NotificationArgs : EventArgs

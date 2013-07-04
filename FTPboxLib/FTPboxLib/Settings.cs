@@ -29,9 +29,11 @@ namespace FTPboxLib
 
         private static readonly string confProfiles = Path.Combine(Profile.AppdataFolder, "profiles.conf");
         private static readonly string confGeneral = Path.Combine(Profile.AppdataFolder, "general.conf");
-        
+        private static readonly string confCertificates = Path.Combine(Profile.AppdataFolder, "trusted_certificates.conf");
+                
         public static List<SettingsProfile> Profiles;
         public static SettingsGeneral settingsGeneral;
+        public static List<string> TrustedCertificates;
 
         #endregion
 
@@ -41,11 +43,13 @@ namespace FTPboxLib
         {
             Log.Write(l.Debug, "Settings file path: {0}", confGeneral);
             Log.Write(l.Debug, "Profiles file path: {0}", confProfiles);
+            Log.Write(l.Debug, "Certificates file path: {0}", confCertificates);
 
             if (!Directory.Exists(Profile.AppdataFolder)) Directory.CreateDirectory(Profile.AppdataFolder);
 
             Profiles = new List<SettingsProfile>();
             settingsGeneral = new SettingsGeneral();
+            TrustedCertificates = new List<string>();
 
             Profiles.Add(new SettingsProfile());
 
@@ -70,10 +74,16 @@ namespace FTPboxLib
             if (!string.IsNullOrWhiteSpace(config))
                 Profiles =
                     new List<SettingsProfile>(
-                        (List<SettingsProfile>) JsonConvert.DeserializeObject(config, typeof (List<SettingsProfile>)));
-            
-            Log.Write(l.Info, "Settings Loaded.");
+                        (List<SettingsProfile>) JsonConvert.DeserializeObject(config, typeof (List<SettingsProfile>)));            
+                        
             Profile.Load();
+
+            if (!File.Exists(confCertificates)) return;
+            // Load trusted certificates
+            config = File.ReadAllText(confCertificates);
+            TrustedCertificates = (List<string>)JsonConvert.DeserializeObject(config, typeof(List<string>));
+
+            Log.Write(l.Info, "Settings Loaded.");
         }
 
         /// <summary>
@@ -84,6 +94,8 @@ namespace FTPboxLib
             SaveGeneral();
 
             SaveProfile();
+
+            SaveCertificates();
         }
 
         /// <summary>
@@ -143,6 +155,15 @@ namespace FTPboxLib
 
             string config_prof = JsonConvert.SerializeObject(Profiles, Formatting.Indented);
             File.WriteAllText(confProfiles, config_prof);
+        }
+
+        /// <summary>
+        /// Save the trusted certificates to the config file
+        /// </summary>
+        public static void SaveCertificates()
+        {
+            var conf = JsonConvert.SerializeObject(TrustedCertificates, Formatting.Indented);
+            File.WriteAllText(confCertificates, conf);
         }
 
         /// <summary>
