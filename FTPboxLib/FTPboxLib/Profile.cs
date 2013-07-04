@@ -124,10 +124,6 @@ namespace FTPboxLib
 	        FtpsInvokeMethod = Settings.DefaultProfile.Account.FtpsMethod;
 
 	        SecurityProtocol = Settings.DefaultProfile.Account.FtpSecurityProtocol;
-	            // (Profile.Protocol == FtpProtocol.FTP) ? Starksoft.Net.Ftp.FtpSecurityProtocol.None : ((Settings.FTPES) ? Starksoft.Net.Ftp.FtpSecurityProtocol.Tls1OrSsl3Explicit : Starksoft.Net.Ftp.FtpSecurityProtocol.Tls1OrSsl3Implicit);
-
-	        //if (Settings.FtpsSecProtocol != "Default")
-	        //Profile.SecurityProtocol = (Starksoft.Net.Ftp.FtpSecurityProtocol)Enum.Parse(typeof(Starksoft.Net.Ftp.FtpSecurityProtocol), Settings.FtpsSecProtocol);
 
 	        SyncingMethod = Settings.DefaultProfile.Account.SyncMethod;
 	        SyncFrequency = Settings.DefaultProfile.Account.SyncFrequency;

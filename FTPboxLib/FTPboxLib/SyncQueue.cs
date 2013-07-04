@@ -27,7 +27,7 @@ namespace FTPboxLib
     {
         private List<SyncQueueItem> CompletedList = new List<SyncQueueItem>();
         private Thread _rcThread;
-        //Timer used to schedule syncing according to user's preferences
+        // Timer used to schedule automatic syncing according to user's preferences
         private Timer _tSync;
 
         public SyncQueue()
@@ -211,7 +211,10 @@ namespace FTPboxLib
             else if (folders == 1 && files == 0)
             {
                 var lastFolder = CompletedList.Last(x => x.Item.Type == ClientItemType.Folder && x.Status == StatusType.Success && !x.SkipNotification);
-                Notifications.Show(lastFolder.Item.Name, lastFolder.ActionType, false);
+                if (lastFolder.ActionType == ChangeAction.renamed)
+                    Notifications.Show(lastFolder.Item.Name, ChangeAction.renamed, Common._name(lastFolder.NewCommonPath));
+                else
+                    Notifications.Show(lastFolder.Item.Name, lastFolder.ActionType, false);
                 
             }
             else if (folders > 0 && files == 0)
@@ -219,7 +222,10 @@ namespace FTPboxLib
             else if (folders == 0 && files == 1)
             {
                 var lastFile = CompletedList.Last(x => x.Item.Type == ClientItemType.File && x.Status == StatusType.Success && !x.SkipNotification);
-                Notifications.Show(lastFile.Item.Name, lastFile.ActionType, true);
+                if (lastFile.ActionType == ChangeAction.renamed)
+                    Notifications.Show(lastFile.Item.Name, ChangeAction.renamed, Common._name(lastFile.NewCommonPath));
+                else
+                    Notifications.Show(lastFile.Item.Name, lastFile.ActionType, true);
             }
             else if (folders == 0 && files > 1)
                 Notifications.Show(files, true);
