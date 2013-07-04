@@ -71,6 +71,8 @@ namespace FTPbox.Forms
 
             Client.ReconnectingFailed += (o, n) => Log.Write(l.Warning, "Reconnecting failed"); //TODO: Use this...
 
+            Client.ValidateCertificate += CheckCertificate;
+
             WebInterface.UpdateFound += (o, n) =>
                 {
                     const string msg = "A new version of the web interface is available, do you want to upgrade to it?";
@@ -1919,6 +1921,33 @@ namespace FTPbox.Forms
                 SyncTo = SyncTo.Local,
                 SkipNotification = true
             });
+        }
+
+        /// <summary>
+        /// Display a messagebox with the certificate details, ask user to approve/decline it.
+        /// </summary>
+        public static void CheckCertificate(object sender, ValidateCertificateEventArgs n)
+        {
+            var msg = string.Empty;
+            // Add certificate info
+            if (Profile.Protocol == FtpProtocol.SFTP)
+                msg += string.Format("{0,-8}\t {1}\n{2,-8}\t {3}\n", "Key:", n.Key, "Key Size:", n.KeySize);
+            else
+                msg += string.Format("{0,-25}\t {1}\n{2,-25}\t {3}\n{4,-25}\t {5}\n{6,-25}\t {7}\n\n",
+                    "Valid from:", n.ValidFrom, "Valid to:", n.ValidTo, "Serial number:", n.SerialNumber, "Algorithm:", n.Algorithm);
+
+            msg += string.Format("Fingerprint: {0}\n\n", n.Fingerprint);
+            msg += "Trust this certificate and continue?";
+
+            // Do we trust the server's certificate?
+            bool certificate_trusted = MessageBox.Show(msg, "Do you trust this certificate?", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes;
+            n.IsTrusted = certificate_trusted;
+
+            if (certificate_trusted)
+            {
+                Settings.TrustedCertificates.Add(n.Fingerprint);
+                Settings.SaveCertificates();
+            }
         }
     }
 }

@@ -30,7 +30,7 @@ namespace FTPbox.Forms
                 System.IO.Directory.CreateDirectory(tPath.Text);
 
             var rp = string.Format("{0}/{1}", Profile.HomePath, tFullDir.Text.RemoveSlashes());
-			if (rp.StartsWith("//")) rp = rp.Substring(1);
+			while (rp.StartsWith("//")) rp = rp.Substring(1);
 
             Profile.AddPaths(rp, tPath.Text, tParent.Text);
 
