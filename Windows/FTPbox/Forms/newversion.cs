@@ -19,13 +19,13 @@ using System.IO;
 namespace FTPbox
 {
     public partial class newversion : Form
-    {
-        readonly string newvers;
+    {        
+        public static string newvers;
+        public static string downLink;
 
-        public newversion(string newv)
+        public newversion ()
         {
             InitializeComponent();
-            newvers = newv;
         }
 
         private void newversion_Load(object sender, EventArgs e)
@@ -39,7 +39,7 @@ namespace FTPbox
         {
             try
             {
-                string pathtoupdater = Application.StartupPath + @"\updater.exe";
+                string pathtoupdater = Application.StartupPath + @"\FTPbox Updater.exe";
 
                 while (!File.Exists(pathtoupdater))
                 {
@@ -48,7 +48,8 @@ namespace FTPbox
                         Process.GetCurrentProcess().Kill();
                 }
 
-                var pi = new ProcessStartInfo(pathtoupdater);
+                var param = string.Format("{0} {1} {2}", "FTPbox", newvers, downLink);
+                var pi = new ProcessStartInfo(pathtoupdater, param);
                 pi.Verb = "runas";
                 Process.Start(pi);
             }

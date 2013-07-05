@@ -50,11 +50,6 @@ namespace FTPbox
                 MessageBox.Show("The required DLL files to run this program are missing. Please make sure all the needed files are in the installation folder and then run the application. If you cannot find these files, just reinstall FTPbox.", "FTPbox - Missing Resources", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Process.GetCurrentProcess().Kill();
             }
-            else if (!IniExists)
-            {
-                MessageBox.Show("The file appinfo.ini is missing from the installation folder. If you removed it, please put it back and restart the program. Otherwise, just reinstall FTPbox.", "FTPbox - Missing File", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Process.GetCurrentProcess().Kill();
-            }
             else
             {
                 if (CheckArgs(args))
@@ -83,22 +78,11 @@ namespace FTPbox
         }
 
         /// <summary>
-        /// Returns true if the file appinfo.ini exists in the installation folder
-        /// </summary>
-        private static bool IniExists
-        {
-            get
-            {
-                return File.Exists(Path.Combine(Application.StartupPath, "appinfo.ini"));
-            }
-        }
-
-        /// <summary>
-        /// Remove any leftover DLLs from previous versions of FTPbox
+        /// Remove any leftover DLLs and files from previous versions of FTPbox
         /// </summary>
         private static void KillUnecessaryDLLs()
         {
-            string[] all = { "DiffieHellman.dll", "Org.Mentalis.Security.dll", "Tamir.SharpSSH.dll" };
+            string[] all = { "DiffieHellman.dll", "Org.Mentalis.Security.dll", "Tamir.SharpSSH.dll", "appinfo.ini", "updater.exe" };
 
             foreach (string s in all)
             {

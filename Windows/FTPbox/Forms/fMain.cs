@@ -614,7 +614,9 @@ namespace FTPbox.Forms
                 wc.DownloadStringCompleted += (o, e) =>
                 {
                     if (e.Cancelled || e.Error != null) return;
-                    string version = e.Result;
+
+                    var json = (Dictionary<string, string>) Newtonsoft.Json.JsonConvert.DeserializeObject(e.Result, typeof (Dictionary<string, string>));
+                    string version = json["NewVersion"];
 
                     //  Check that the downloaded file has the correct version format, using regex.
                     if (System.Text.RegularExpressions.Regex.IsMatch(version, @"[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"))
@@ -624,13 +626,15 @@ namespace FTPbox.Forms
                         if (version == Application.ProductVersion) return;
 
                         // show dialog box for  download now, learn more and remind me next time
-                        newversion nvform = new newversion(version) {Tag = this};
+                        newversion nvform = new newversion() {Tag = this};
+                        newversion.newvers = json["NewVersion"];
+                        newversion.downLink = json["DownloadLink"];
                         nvform.ShowDialog();
                         this.Show();                
                     }
                 };
                 // Find out what the latest version is
-                wc.DownloadStringAsync(new Uri(@"http://ftpbox.org/latestversion.txt"));
+                wc.DownloadStringAsync(new Uri(@"http://ftpbox.org/winversion.json"));
             }
             catch (Exception ex)
             {
