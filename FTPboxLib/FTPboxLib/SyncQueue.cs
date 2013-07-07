@@ -173,10 +173,7 @@ namespace FTPboxLib
                     if (d.ActionType == ChangeAction.deleted)
                         Common.FileLog.removeFolder(d.CommonPath);
                     else if (d.ActionType == ChangeAction.renamed)
-                    {
-                        Common.FileLog.removeFolder(d.CommonPath);
-                        Common.FileLog.putFolder(d.NewCommonPath);
-                    }
+                        Common.FileLog.putFolder(d.NewCommonPath, d.CommonPath);
                     else
                         Common.FileLog.putFolder(d.CommonPath);
                 }
@@ -212,7 +209,7 @@ namespace FTPboxLib
             {
                 var lastFolder = CompletedList.Last(x => x.Item.Type == ClientItemType.Folder && x.Status == StatusType.Success && !x.SkipNotification);
                 if (lastFolder.ActionType == ChangeAction.renamed)
-                    Notifications.Show(lastFolder.Item.Name, ChangeAction.renamed, Common._name(lastFolder.NewCommonPath));
+                    Notifications.Show( Common._name(lastFolder.CommonPath), ChangeAction.renamed, Common._name(lastFolder.NewCommonPath));
                 else
                     Notifications.Show(lastFolder.Item.Name, lastFolder.ActionType, false);
                 
@@ -223,7 +220,7 @@ namespace FTPboxLib
             {
                 var lastFile = CompletedList.Last(x => x.Item.Type == ClientItemType.File && x.Status == StatusType.Success && !x.SkipNotification);
                 if (lastFile.ActionType == ChangeAction.renamed)
-                    Notifications.Show(lastFile.Item.Name, ChangeAction.renamed, Common._name(lastFile.NewCommonPath));
+                    Notifications.Show( Common._name(lastFile.CommonPath), ChangeAction.renamed, Common._name(lastFile.NewCommonPath));
                 else
                     Notifications.Show(lastFile.Item.Name, lastFile.ActionType, true);
             }

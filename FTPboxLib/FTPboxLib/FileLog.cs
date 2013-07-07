@@ -70,9 +70,23 @@ namespace FTPboxLib
         /// <summary>
         /// Puts the specified folder in the Folder Log and saves to the config file
         /// </summary>
-	    public void putFolder(string cpath)
+        /// <param name="oldName">Used when renaming a folder to also rename any of its subitems in the logs</param>
+	    public void putFolder(string cpath, string oldName = null)
 	    {
-	        if (!Folders.Contains(cpath))
+            if (oldName != null && Folders.Contains(oldName))
+            {
+                Files.Each( (f,i) =>
+                    {
+                        if (f.CommonPath.StartsWith(oldName + "/"))
+                            Files[i].CommonPath = cpath + f.CommonPath.Substring(oldName.Length);
+                    });
+                Folders.Each ((f, i) =>
+                    {
+                        if (f.StartsWith(oldName + "/") || f.Equals(oldName))
+                            Folders[i] = cpath + f.Substring(oldName.Length);
+                    });
+            }
+            if (!Folders.Contains(cpath))
 	            Folders.Add(cpath);
 	        Settings.SaveProfile();
 	    }

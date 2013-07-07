@@ -499,6 +499,15 @@ namespace FTPboxLib
             return _name(cpath).Contains(" ");
         }
 
+        /// <summary>
+        /// Nice looping method that gives both variable and its index in the IEnumerable
+        /// </summary>
+        public static void Each<T>(this IEnumerable<T> li, Action<T, int> action)
+        {
+            var i = 0;
+            foreach (var e in li.ToArray()) action(e, i++);
+        }
+
         #endregion
     }
 }
