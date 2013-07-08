@@ -11,7 +11,9 @@
  */
 
 using System;
+using System.Drawing;
 using System.Windows.Forms;
+using System.Linq;
 using FTPboxLib;
 
 namespace FTPbox.Forms
@@ -114,6 +116,9 @@ namespace FTPbox.Forms
             labUN.Text = Common.Languages.Get(lan + "/main_form/username", "Username") + ":";
             labPass.Text = Common.Languages.Get(lan + "/main_form/password", "Password") + ":";
             bDone.Text = Common.Languages.Get(lan + "/new_account/done", "Done");
+            
+            // Is this a right-to-left language?            
+            RightToLeftLayout = new[] { "he" }.Contains(lan);
         }
 
         private void Account_FormClosing(object sender, FormClosingEventArgs e)
@@ -128,6 +133,21 @@ namespace FTPbox.Forms
         private void cAskForPass_CheckedChanged(object sender, EventArgs e)
         {
             just_password = cAskForPass.Checked;
+        }
+
+        private void Account_RightToLeftLayoutChanged(object sender, EventArgs e)
+        {
+            // Inherit manually
+            gDetails.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            cAskForPass.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            // Relocate controls where necessary
+            bDone.Location = RightToLeftLayout ? new Point(12, 206) : new Point(301, 206);
+            cMode.Location = RightToLeftLayout ? new Point(210, 24) : new Point(100, 24);
+            tHost.Location = RightToLeftLayout ? new Point(9, 78) : new Point(100, 78);
+            tUsername.Location = RightToLeftLayout ? new Point(9, 104) : new Point(100, 104);
+            tPass.Location = RightToLeftLayout ? new Point(9, 130) : new Point(100, 130);
+            nPort.Location = RightToLeftLayout ? new Point(215, 156) : new Point(100, 157);
+            bDone.Location = RightToLeftLayout ? new Point(12, 206) : new Point(301, 206);
         }
     }
 }

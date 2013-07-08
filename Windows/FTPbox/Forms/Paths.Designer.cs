@@ -32,15 +32,14 @@
             this.tParent = new System.Windows.Forms.TextBox();
             this.labParent = new System.Windows.Forms.Label();
             this.bDone = new System.Windows.Forms.Button();
-            this.chkDelRem = new System.Windows.Forms.CheckBox();
             this.fbd = new System.Windows.Forms.FolderBrowserDialog();
             this.bBrowse = new System.Windows.Forms.Button();
             this.tPath = new System.Windows.Forms.TextBox();
             this.labFullPath = new System.Windows.Forms.Label();
-            this.tFullDir = new System.Windows.Forms.TextBox();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.labLocal = new System.Windows.Forms.Label();
             this.labSelect = new System.Windows.Forms.Label();
+            this.tFullDir = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // tParent
@@ -56,10 +55,9 @@
             // 
             this.labParent.AccessibleDescription = "";
             this.labParent.AccessibleName = "Account\'s HTTP path";
-            this.labParent.AutoSize = true;
             this.labParent.Location = new System.Drawing.Point(12, 207);
             this.labParent.Name = "labParent";
-            this.labParent.Size = new System.Drawing.Size(97, 13);
+            this.labParent.Size = new System.Drawing.Size(403, 13);
             this.labParent.TabIndex = 66;
             this.labParent.Text = "Account\'s full path:";
             // 
@@ -74,18 +72,6 @@
             this.bDone.Text = "Done";
             this.bDone.UseVisualStyleBackColor = true;
             this.bDone.Click += new System.EventHandler(this.bDone_Click);
-            // 
-            // chkDelRem
-            // 
-            this.chkDelRem.AccessibleDescription = "label";
-            this.chkDelRem.AutoSize = true;
-            this.chkDelRem.Location = new System.Drawing.Point(15, 249);
-            this.chkDelRem.Name = "chkDelRem";
-            this.chkDelRem.Size = new System.Drawing.Size(143, 17);
-            this.chkDelRem.TabIndex = 65;
-            this.chkDelRem.Text = "Never delete remote files";
-            this.chkDelRem.UseVisualStyleBackColor = true;
-            this.chkDelRem.Visible = false;
             // 
             // bBrowse
             // 
@@ -114,23 +100,12 @@
             // 
             this.labFullPath.AccessibleDescription = "";
             this.labFullPath.AccessibleName = "Full Path";
-            this.labFullPath.AutoSize = true;
+            this.labFullPath.BackColor = System.Drawing.Color.Transparent;
             this.labFullPath.Location = new System.Drawing.Point(12, 131);
             this.labFullPath.Name = "labFullPath";
-            this.labFullPath.Size = new System.Drawing.Size(51, 13);
+            this.labFullPath.Size = new System.Drawing.Size(403, 13);
             this.labFullPath.TabIndex = 61;
             this.labFullPath.Text = "Full Path:";
-            // 
-            // tFullDir
-            // 
-            this.tFullDir.AccessibleDescription = "";
-            this.tFullDir.AccessibleName = "Full Path";
-            this.tFullDir.Enabled = false;
-            this.tFullDir.Location = new System.Drawing.Point(122, 128);
-            this.tFullDir.Name = "tFullDir";
-            this.tFullDir.Size = new System.Drawing.Size(293, 20);
-            this.tFullDir.TabIndex = 60;
-            this.tFullDir.Text = "/";
             // 
             // treeView1
             // 
@@ -149,10 +124,9 @@
             // 
             this.labLocal.AccessibleDescription = "";
             this.labLocal.AccessibleName = "Local folder";
-            this.labLocal.AutoSize = true;
             this.labLocal.Location = new System.Drawing.Point(12, 163);
             this.labLocal.Name = "labLocal";
-            this.labLocal.Size = new System.Drawing.Size(68, 13);
+            this.labLocal.Size = new System.Drawing.Size(403, 13);
             this.labLocal.TabIndex = 58;
             this.labLocal.Text = "Local Folder:";
             // 
@@ -160,12 +134,22 @@
             // 
             this.labSelect.AccessibleDescription = "";
             this.labSelect.AccessibleName = "Select Directory";
-            this.labSelect.AutoSize = true;
             this.labSelect.Location = new System.Drawing.Point(12, 9);
             this.labSelect.Name = "labSelect";
-            this.labSelect.Size = new System.Drawing.Size(85, 13);
+            this.labSelect.Size = new System.Drawing.Size(403, 13);
             this.labSelect.TabIndex = 57;
             this.labSelect.Text = "Select Directory:";
+            // 
+            // tFullDir
+            // 
+            this.tFullDir.AccessibleDescription = "";
+            this.tFullDir.AccessibleName = "Full Path";
+            this.tFullDir.Enabled = false;
+            this.tFullDir.Location = new System.Drawing.Point(122, 128);
+            this.tFullDir.Name = "tFullDir";
+            this.tFullDir.Size = new System.Drawing.Size(293, 20);
+            this.tFullDir.TabIndex = 67;
+            this.tFullDir.Text = "/";
             // 
             // Paths
             // 
@@ -173,14 +157,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(425, 281);
+            this.Controls.Add(this.tFullDir);
             this.Controls.Add(this.tParent);
             this.Controls.Add(this.labParent);
             this.Controls.Add(this.bDone);
-            this.Controls.Add(this.chkDelRem);
             this.Controls.Add(this.bBrowse);
             this.Controls.Add(this.tPath);
             this.Controls.Add(this.labFullPath);
-            this.Controls.Add(this.tFullDir);
             this.Controls.Add(this.treeView1);
             this.Controls.Add(this.labLocal);
             this.Controls.Add(this.labSelect);
@@ -193,6 +176,7 @@
             this.Text = "Paths";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Paths_FormClosing);
             this.Load += new System.EventHandler(this.Paths_Load);
+            this.RightToLeftLayoutChanged += new System.EventHandler(this.Paths_RightToLeftLayoutChanged);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -203,14 +187,13 @@
         private System.Windows.Forms.TextBox tParent;
         private System.Windows.Forms.Label labParent;
         private System.Windows.Forms.Button bDone;
-        private System.Windows.Forms.CheckBox chkDelRem;
         private System.Windows.Forms.FolderBrowserDialog fbd;
         private System.Windows.Forms.Button bBrowse;
         private System.Windows.Forms.TextBox tPath;
         private System.Windows.Forms.Label labFullPath;
-        private System.Windows.Forms.TextBox tFullDir;
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Label labLocal;
         private System.Windows.Forms.Label labSelect;
+        private System.Windows.Forms.TextBox tFullDir;
     }
 }

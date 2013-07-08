@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
@@ -383,6 +384,7 @@ namespace FTPbox.Forms
                     {"th", "Thai"},
                     {"sl", "Slovenian"},
                     {"cs", "Czech"},
+                    {"he", "Hebrew"}
                 };
 
                 if (langList.ContainsKey(locallangtwoletter))
@@ -507,6 +509,10 @@ namespace FTPbox.Forms
 
             SetTray(null, new TrayTextNotificationArgs { MessageType = _lastTrayStatus });
 
+            // Is this a right-to-left language?
+            RightToLeftLayout = new[] { "he" }.Contains(lan);
+
+            // Save
             Settings.settingsGeneral.Language = lan;
             Settings.SaveGeneral();
         }
@@ -545,10 +551,7 @@ namespace FTPbox.Forms
             {
                 Set_Language(lan);
             }
-            catch (Exception ex)
-            {
-                Common.LogError(ex);
-            }
+            catch { }
         }
 
         #endregion        
@@ -1588,12 +1591,12 @@ namespace FTPbox.Forms
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(@"https://sourceforge.net/tracker/?group_id=538656&atid=2187305");
+            Process.Start(@"http://ftpbox.org/bugs");
         }
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(@"https://sourceforge.net/tracker/?group_id=538656&atid=2187308");
+            Process.Start(@"http://ftpbox.org/bugs");
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -1952,6 +1955,34 @@ namespace FTPbox.Forms
                 Settings.TrustedCertificates.Add(n.Fingerprint);
                 Settings.SaveCertificates();
             }
+        }
+
+        private void fMain_RightToLeftLayoutChanged(object sender, EventArgs e)
+        {
+            RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            // Inherit manually
+            tabControl1.RightToLeftLayout = RightToLeftLayout;
+            trayMenu.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            lSelectiveSync.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            lSelectiveSync.RightToLeftLayout = RightToLeftLayout;
+            // Relocate controls where necessary
+            bRefresh.Location = new Point(RightToLeftLayout ? 9 : 352, 19);
+            nSyncFrequency.Location = RightToLeftLayout ? new Point(366, 94) : new Point(35, 94);
+            nDownLimit.Location = RightToLeftLayout ? new Point(373, 51) : new Point(35, 51);
+            nUpLimit.Location = RightToLeftLayout ? new Point(373, 110) : new Point(35, 110);
+
+            lVersion.Location = RightToLeftLayout ? new Point(100, 21) : new Point(272, 21);
+            linkLabel3.Location = RightToLeftLayout ? new Point(100, 44) : new Point(272, 44);
+            linkLabel4.Location = RightToLeftLayout ? new Point(100, 67) : new Point(272, 67);
+            label21.Location = RightToLeftLayout ? new Point(100, 90) : new Point(272, 90);
+            labSupportMail.Location = RightToLeftLayout ? new Point(100, 113) : new Point(272, 113);
+            label19.Location = RightToLeftLayout ? new Point(100, 136) : new Point(272, 136);
+
+            labCurVersion.Location = RightToLeftLayout ? new Point(272, 21) : new Point(100, 21);
+            labTeam.Location = RightToLeftLayout ? new Point(272, 44) : new Point(100, 44);
+            labSite.Location = RightToLeftLayout ? new Point(272, 21) : new Point(100, 71);
+            labContact.Location = RightToLeftLayout ? new Point(272, 90) : new Point(100, 90);
+            labLangUsed.Location = RightToLeftLayout ? new Point(272, 136) : new Point(100, 136);
         }
     }
 }

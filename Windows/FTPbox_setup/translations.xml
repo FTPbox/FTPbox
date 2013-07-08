@@ -3693,4 +3693,133 @@
       <view>(zobrazit v prohlížeči)</view>
     </web_interface>
   </cs>
+  <he>
+    <main_form>
+      <options>אפשרויות</options>
+      <general>כללי</general>
+      <host>שרת</host>
+      <port>שער</port>
+      <username>שם משתמש</username>
+      <password>סיסמה</password>
+      <mode>פרוטוקול</mode>
+      <change>שינוי</change>
+      <account>חשבון</account>
+      <application>יישום</application>
+      <start_on_startup>הפעל עם איתחול המחשב</start_on_startup>
+      <show_nots>הצג הודעות</show_nots>
+      <profile>פרופיל</profile>
+      <details>פרטים</details>
+      <links>קישורים</links>
+      <remote_path>נתיב מרוחק</remote_path>
+      <local_path>נתיב מקומי</local_path>
+      <account_full_path>נתיב מלא לחשבון</account_full_path>
+      <when_not_clicked>בעת לחיצה על הודעה או קובץ</when_not_clicked>
+      <open_in_browser>פתח הקישור בדפדפן</open_in_browser>
+      <copy>העתק את הקישור</copy>
+      <about>אודות</about>
+      <current_version>גרסה נוכחית</current_version>
+      <team>הצוות</team>
+      <website>האתר הרשמי</website>
+      <contact>צור קשר</contact>
+      <coded_in>נכתב ב-</coded_in>
+      <notes>הערות</notes>
+      <contribute>תרום</contribute>
+      <ftpbox_is_free>FTPbox היא תוכנה חינמית ובקוד פתוח</ftpbox_is_free>
+      <contact_me>צרו איתי קשר בכל נושא</contact_me>
+      <copyright>זכויות יוצרים</copyright>
+      <report_bug>דווח על תקלה</report_bug>
+      <request_feature>הצעות לשיפורים</request_feature>
+      <donate>תרום</donate>
+      <language>שפה</language>
+      <open_local>פתח את הקובץ המקומי</open_local>
+      <bandwidth>מהירות</bandwidth>
+      <sync_freq>תדירות הסינכרון</sync_freq>
+      <sync_when>סנכרן קבצים מרוחקים</sync_when>
+      <manually>באופן ידני</manually>
+      <auto>אוטומטית כל</auto>
+      <seconds>שניות</seconds>
+      <speed_limits>הגבלת מהירות</speed_limits>
+      <limit_download>הגבלת מהירות הורדה</limit_download>
+      <limit_upload>הגבלת מהירות שליחה</limit_upload>
+      <no_limits>(קבע ל-0 להסרת המגבלה)</no_limits>
+      <selective>סינכרון בררני</selective>
+      <selective_info>בטל את הסימון לפריטים כדי שלא יסתנכרנו</selective_info>
+      <refresh>רענן</refresh>
+      <file_filters>מסננים</file_filters>
+      <ignored_extensions>התעלם מסיומות הבאות</ignored_extensions>
+      <remove>הסר</remove>
+      <also_ignore>התעלם גם</also_ignore>
+      <dotfiles>קבצים המתחילים בנקודה</dotfiles>
+      <temp_files>קבצים זמניים</temp_files>
+      <old_files>קבצים ששונו לפני</old_files>
+    </main_form>
+    <new_account>
+      <new_ftp>חשבון FTP חדש</new_ftp>
+      <login_details>פרטי כניסה לחשבון FTP</login_details>
+      <encryption>הצפנה</encryption>
+      <add>הוסף</add>
+      <done>סיום</done>
+    </new_account>
+    <paths>
+      <new_paths>נתיבים חדשים</new_paths>
+      <add_dir>הוסף תיקיה חדשה</add_dir>
+      <select_dir>בחר תיקיה</select_dir>
+      <full_path>נתיב מלא</full_path>
+      <local_folder>תיקיה מקומית</local_folder>
+      <browse>דפדף</browse>
+    </paths>
+    <new_version>
+      <new_ver>גרסה חדשה</new_ver>
+      <update_available>קיים עידכון</update_available>
+      <new_v_available>קיימת גרסה מעודכנת של FTPbox</new_v_available>
+      <new_version>גרסה חדשה</new_version>
+      <current_version>גרסה נוכחית</current_version>
+      <wanna_download>האם להוריד את הגרסה המעודכנת</wanna_download>
+      <download>עדכן כעת</download>
+      <learn_more>פרטים נוספים</learn_more>
+      <remind_me_next_time>לא עכשיו</remind_me_next_time>
+    </new_version>
+    <tray>
+      <tray_and_nots>התראות</tray_and_nots>
+      <updated>{0} עודכן</updated>
+      <created>{0} נוצר</created>
+      <renamed>שם {0} שונה ל-{1}</renamed>
+      <deleted>{0} נמחק</deleted>
+      <changed>{0} שונה</changed>
+      <FilesOrFoldersUpdated>{0} {1} עודכן</FilesOrFoldersUpdated>
+      <FilesOrFoldersCreated>{0} {1} נוצר</FilesOrFoldersCreated>
+      <FilesAndFoldersChanged>{0} {1} ו {2} {3} עודכנו</FilesAndFoldersChanged>
+      <ItemsDeleted>{0} פריטים נמחקו</ItemsDeleted>
+      <file>קובץ</file>
+      <files>קבצים</files>
+      <folder>תיקיה</folder>
+      <folders>תיקיות</folders>
+      <connecting>FTPbox - מתחבר...</connecting>
+      <reconnecting>FTPbox - מתחבר מחדש...</reconnecting>
+      <listing>FTPbox - מקבל רשימה...</listing>
+      <uploading>שולח {0}</uploading>
+      <downloading>מקבל {0}</downloading>
+      <ready>FTPbox- מוכן</ready>
+      <synced>FTPbox - כל הקבצים מוכנים</synced>
+      <syncing>FTPbox - מסנכרן</syncing>
+      <offline>FTPbox - מנותק</offline>
+      <link_copied>הקישור הועתק</link_copied>
+      <recent_files>קבצים אחרונים</recent_files>
+      <not_available>לא זמין</not_available>
+      <start_syncing>התחל סינכרון</start_syncing>
+      <exit>יציאה</exit>
+    </tray>
+    <web_interface>
+      <web_int>ממשק דפדפן</web_int>
+      <downloading>הורדת ממשק הדפדפן תתחיל</downloading>
+      <in_a_minute>התהליך יסתיים עוד רגע</in_a_minute>
+      <removing>מסיר את ממשק הדפדפן...</removing>
+      <removed>ממשק הדפדפן הוסר</removed>
+      <updating>מעדכן את משק הדפדפן...</updating>
+      <updated>ממשק הדפדפן עודכן</updated>
+      <setup>לחצו כאן לראות ולהפעיל אותו!</setup>
+      <use_webint>השתמש בממשק הדפדפן</use_webint>
+      <view>(הצג בדפדפן)</view>
+    </web_interface>
+  </he>
 </translations>

@@ -11,9 +11,11 @@
  */
 
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 using FTPboxLib;
 using System.Diagnostics;
+using System.Linq;
 
 namespace FTPbox.Forms
 {
@@ -165,6 +167,9 @@ namespace FTPbox.Forms
             labParent.Text = Common.Languages.Get(lan + "/main_form/account_full_path", "Account's full path") + ":";
             bBrowse.Text = Common.Languages.Get(lan + "/paths/browse", "Browse");
             bDone.Text = Common.Languages.Get(lan + "/new_account/done", "Done");
+
+            // Is this a right-to-left language?
+            RightToLeftLayout = new[] { "he" }.Contains(lan);
         }
 
         /// <summary>
@@ -184,6 +189,26 @@ namespace FTPbox.Forms
                 Log.Write(l.Info, "Killing the process.....");                
                 Process.GetCurrentProcess().Kill();                
             }
+        }
+
+        private void Paths_RightToLeftLayoutChanged(object sender, EventArgs e)
+        {
+            // Inherit manually
+            labSelect.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            treeView1.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            treeView1.RightToLeftLayout = RightToLeftLayout;
+            labFullPath.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            labLocal.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            labParent.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            tFullDir.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            tParent.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            tPath.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            // Relocate controls where necessary
+            tFullDir.Location = RightToLeftLayout ? new Point(15, 128) : new Point(122, 128);
+            tPath.Location = RightToLeftLayout ? new Point(95, 179) : new Point(15, 179);
+            tParent.Location = RightToLeftLayout ? new Point(95, 223) : new Point(15, 223);
+            bBrowse.Location = RightToLeftLayout ? new Point(15, 177) : new Point(341, 177);
+            bDone.Location = RightToLeftLayout ? new Point(15,252) : new Point(340, 252);
         }
     }
 }

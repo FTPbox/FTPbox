@@ -11,10 +11,12 @@
  */
 
 using System;
-using System.Windows.Forms;
 using System.Diagnostics;
-using FTPboxLib;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using FTPboxLib;
 
 namespace FTPbox
 {
@@ -86,6 +88,23 @@ namespace FTPbox
             bDownload.Text = Common.Languages.Get(lan + "/new_version/download", "Update Now");
             bLearnMore.Text = Common.Languages.Get(lan + "/new_version/learn_more", "Learn More");
             bClose.Text = Common.Languages.Get(lan + "/new_version/remind_me_next_time", "Not this time");                 
+
+            // Is this a right-to-left language?
+            RightToLeftLayout = new[] { "he" }.Contains(lan);
+        }
+
+        private void newversion_RightToLeftLayoutChanged(object sender, EventArgs e)
+        {
+            // Inherit manually
+            label3.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            label5.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            labCurVer.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            labNewVer.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            // Relocate controls where necessary
+            labCurVer.Location = RightToLeftLayout ? new Point(150, 28) : new Point(57, 28);
+            labNewVer.Location = RightToLeftLayout ? new Point(150, 50) : new Point(57, 50);
+            label3.Location = RightToLeftLayout ? new Point(6, 28) : new Point(150, 28);
+            label5.Location = RightToLeftLayout ? new Point(6, 50) : new Point(150, 50);
         }
     }
 }

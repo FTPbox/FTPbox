@@ -53,17 +53,15 @@
             // label5
             // 
             this.label5.AccessibleDescription = "";
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(167, 50);
+            this.label5.Location = new System.Drawing.Point(150, 50);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(35, 13);
+            this.label5.Size = new System.Drawing.Size(134, 13);
             this.label5.TabIndex = 16;
             this.label5.Text = "label5";
             // 
             // labNewVer
             // 
             this.labNewVer.AccessibleDescription = "";
-            this.labNewVer.AutoSize = true;
             this.labNewVer.Location = new System.Drawing.Point(57, 50);
             this.labNewVer.Name = "labNewVer";
             this.labNewVer.Size = new System.Drawing.Size(70, 13);
@@ -107,17 +105,15 @@
             // label3
             // 
             this.label3.AccessibleDescription = "";
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(167, 28);
+            this.label3.Location = new System.Drawing.Point(150, 28);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(35, 13);
+            this.label3.Size = new System.Drawing.Size(134, 13);
             this.label3.TabIndex = 11;
             this.label3.Text = "label3";
             // 
             // labCurVer
             // 
             this.labCurVer.AccessibleDescription = "";
-            this.labCurVer.AutoSize = true;
             this.labCurVer.Location = new System.Drawing.Point(57, 28);
             this.labCurVer.Name = "labCurVer";
             this.labCurVer.Size = new System.Drawing.Size(82, 13);
@@ -162,8 +158,8 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FTPbox | Update Available";
             this.Load += new System.EventHandler(this.newversion_Load);
+            this.RightToLeftLayoutChanged += new System.EventHandler(this.newversion_RightToLeftLayoutChanged);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
