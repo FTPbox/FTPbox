@@ -85,7 +85,7 @@ namespace FTPboxLib
                 else if (p.StartsWith(rp))
                     p = p.Substring(rp.Length);
             }
-            else //if (fromLocal || File.Exists(p) || Directory.Exists(p))
+            if (fromLocal || File.Exists(p) || Directory.Exists(p))
             {
                 if (p.Equals(Profile.LocalPath)) return ".";
 
@@ -396,6 +396,7 @@ namespace FTPboxLib
         public static void LoadLocalFolders()
         {
             LocalFolders.Clear();
+            LocalFiles.Clear();
             if (Directory.Exists(Profile.LocalPath))
             {
                 var d = new DirectoryInfo(Profile.LocalPath);

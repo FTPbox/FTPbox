@@ -293,7 +293,7 @@ namespace FTPboxLib
         /// </summary>
         private void CheckLocalFolder(SyncQueueItem folder)
         {
-            if (!Common.ItemGetsSynced(folder.CommonPath)) return;
+            if (!Common.ItemGetsSynced(folder.CommonPath) && folder.CommonPath != ".") return;
 
             string cp = (folder.Item.FullPath == Profile.LocalPath) ? "." : folder.CommonPath;
 
@@ -400,6 +400,7 @@ namespace FTPboxLib
             {
                 Common.LogError(ex);
                 RemoveLast(StatusType.Failure);
+                Common.FolderWatcher.Resume();      // Resume watchers
             }
         }
 
@@ -585,6 +586,8 @@ namespace FTPboxLib
             }
             else if (rResult > 0 && remDif.TotalSeconds > 1)            
                 _status = Client.SafeDownload(item);            
+            if (lResult > 0 && locDif.TotalSeconds > 1)
+                Log.Write(l.Warning, "{0} seems to have escaped startup check", item.CommonPath);
 
             return _status;
         }
