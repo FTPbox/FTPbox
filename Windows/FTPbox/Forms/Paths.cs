@@ -33,6 +33,7 @@ namespace FTPbox.Forms
 
             var rp = string.Format("{0}/{1}", Profile.HomePath, tFullDir.Text.RemoveSlashes());
 			while (rp.StartsWith("//")) rp = rp.Substring(1);
+            rp = rp.Replace("//", "/");
 
             Profile.AddPaths(rp, tPath.Text, tParent.Text);
 

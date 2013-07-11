@@ -79,7 +79,7 @@ namespace FTPboxLib
                 var rp = Profile.RemotePath ?? "/";
                 if (rp.StartsWith(Profile.HomePath)) rp = rp.Substring(Profile.HomePath.Length);
 
-                if (rp.StartsWith("/")) rp = rp.Substring(1);
+                if (rp.StartsWith("/") && !rp.Equals("/")) rp = rp.Substring(1);
                 if (rp.Equals(p))
                     p = "/";
                 else if (p.StartsWith(rp))
@@ -88,8 +88,8 @@ namespace FTPboxLib
             if (fromLocal || File.Exists(p) || Directory.Exists(p))
             {
                 if (p.Equals(Profile.LocalPath)) return ".";
-
-                if (p.StartsWith(Profile.LocalPath))
+                
+                if (!string.IsNullOrWhiteSpace(Profile.LocalPath) && p.StartsWith(Profile.LocalPath))
                 {
                     p = p.Substring(Profile.LocalPath.Length);
                     p.ReplaceSlashes();
