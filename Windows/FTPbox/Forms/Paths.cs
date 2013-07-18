@@ -31,11 +31,7 @@ namespace FTPbox.Forms
             if (!System.IO.Directory.Exists(tPath.Text))
                 System.IO.Directory.CreateDirectory(tPath.Text);
 
-            var rp = string.Format("{0}/{1}", Profile.HomePath, tFullDir.Text.RemoveSlashes());
-			while (rp.StartsWith("//")) rp = rp.Substring(1);
-            rp = rp.Replace("//", "/");
-
-            Profile.AddPaths(rp, tPath.Text, tParent.Text);
+            Profile.AddPaths(tFullDir.Text, tPath.Text, tParent.Text);
 
             Settings.Save();
 
@@ -61,17 +57,13 @@ namespace FTPbox.Forms
         {
             string path = "/" + e.Node.FullPath.Replace('\\', '/');
             if (path.EndsWith(".."))
-            {
                 path = path.Substring(0, path.Length - 2);
-            }
             else if (path.EndsWith("."))
-            {
                 path = path.Substring(0, path.Length - 1);
-            }
-            else if (path.EndsWith("//"))
-            {
-                path = path.Substring(0, path.Length - 1);
-            }
+
+            while (path.Contains("//")) 
+                path = path.Replace("//", "/");
+
             tFullDir.Text = path;
             tParent.Text = Profile.Host + path;
         }
@@ -81,26 +73,14 @@ namespace FTPbox.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void treeView1_AfterExpand(object sender, TreeViewEventArgs e)
+        private void afterExpand(object sender, TreeViewEventArgs e)
         {
             string path = "/" + e.Node.FullPath.Replace('\\', '/');
+            while (path.Contains("//"))
+                path = path.Replace("//", "/");
 
             if (e.Node.Nodes.Count > 0)
-            {
-                int i = e.Node.Index;
-
-                foreach (TreeNode tn in e.Node.Nodes)
-                {
-                    try
-                    {
-                        treeView1.Nodes[i].Nodes.Remove(tn);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Write(l.Debug, ex.Message);
-                    }
-                }
-            }
+                e.Node.Nodes.Clear();
 
             foreach (var c in Client.List(path))
             {
@@ -115,20 +95,6 @@ namespace FTPbox.Forms
             }
         }
 
-        private void treeView1_AfterCollapse(object sender, TreeViewEventArgs e)
-        {
-            int i = e.Node.Nodes.Count;
-            Log.Write(l.Debug, i.ToString());
-
-            Log.Write(l.Debug, e.Node.FullPath);
-
-            while (i != 0)
-            {
-                i -= 1;
-                Log.Write(l.Debug, i.ToString());
-            }
-        }
-
         private void Paths_Load(object sender, EventArgs e)
         {
             Set_Language(Profile.Language); 
@@ -137,21 +103,36 @@ namespace FTPbox.Forms
 
             treeView1.Nodes.Clear();
 
-            var first = new TreeNode {Text = "/"};
-            treeView1.Nodes.Add(first);
+            var first = new TreeNode {Text = "/"};            
+            
+            var current = first;
+            foreach (var f in Profile.HomePath.Split('/'))
+            {
+                if (string.IsNullOrWhiteSpace(f)) continue;
 
+                current.Nodes.Add(f);
+                current = current.FirstNode;
+            }
+            treeView1.Nodes.Add(first);
+            treeView1.ExpandAll();
+
+            Profile.RemotePath = Profile.HomePath;
             foreach (var c in Client.List("."))
             {
                 if (c.Type == ClientItemType.Folder)
                 {
                     var ParentNode = new TreeNode {Text = c.Name};
-                    treeView1.Nodes.Add(ParentNode);
+                    current.Nodes.Add(ParentNode);
 
                     var ChildNode = new TreeNode {Text = c.Name};
                     ParentNode.Nodes.Add(ChildNode);
                 }
             }
+            current.Expand();
 
+            treeView1.AfterExpand += afterExpand;
+
+            tFullDir.Text = Profile.HomePath;
             tParent.Text = Profile.Host;            
         }
 

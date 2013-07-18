@@ -89,8 +89,6 @@ namespace FTPboxLib
 	            if (RemotePath == null) return false;
 
 	            var rpath = RemotePath;
-                //if (rpath.StartsWith(@"/") && rpath != @"/")
-                //    rpath = rpath.Substring(1);
 
                 var curpath = Client.WorkingDirectory;
                 if (rpath.Equals(curpath) || rpath.RemoveSlashes().Equals(curpath)) return true;

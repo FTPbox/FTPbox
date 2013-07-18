@@ -57,11 +57,13 @@ namespace FTPboxLib
             Log.Write(l.Client, "adding to list: {0} lwt: {1}", item.CommonPath, item.Item.LastWriteTime);
 
             if (item.Item.Type == ClientItemType.Folder && item.SyncTo == SyncTo.Remote)
+            {
                 if (item.ActionType != ChangeAction.deleted && item.ActionType != ChangeAction.renamed)
-                    {
-                        CheckLocalFolder(item);
-                        goto StartSync;
-                    }
+                {
+                    CheckLocalFolder(item);
+                    goto StartSync;
+                }
+            }
             else if (item.ActionType == ChangeAction.deleted)
             {
                 foreach (var i in this.ToList().Where(x => x.NewCommonPath == item.CommonPath))
@@ -88,8 +90,8 @@ namespace FTPboxLib
                         // Delete old file
                         base[base.IndexOf(i)].ActionType = ChangeAction.deleted;
                         // Convert new item to ChangeAction : create
-                        item.ActionType = ChangeAction.created;                        
-                        item.Item.FullPath = item.Item.NewFullPath;                        
+                        item.ActionType = ChangeAction.created;
+                        item.Item.FullPath = item.Item.NewFullPath;
                     }
                 }
             }
@@ -103,7 +105,7 @@ namespace FTPboxLib
                         base[base.IndexOf(i)].AddedOn = DateTime.Now;
                     }
                     else
-                        this.RemoveAt(base.IndexOf(i));
+                        base.RemoveAt(base.IndexOf(i));
                 }
             }
 
@@ -306,6 +308,7 @@ namespace FTPboxLib
             }
 
             var RemoteFilesList = cpExists ? new List<string>(Client.ListRecursive(cp).Select(x => x.FullPath)) : new List<string>();                        
+            RemoteFilesList = RemoteFilesList.ConvertAll(x => Common.GetCommonPath(x, false));
 
             if (Client.ListingFailed)
             {
@@ -437,9 +440,7 @@ namespace FTPboxLib
             TransferStatus _status;
             if (item.Item.Type == ClientItemType.File)
             {
-                Common.FolderWatcher.Pause();       // Pause Watchers
                 _status = (item.SyncTo == SyncTo.Remote) ? Client.SafeUpload(item) : CheckExistingFile(item);
-                Common.FolderWatcher.Resume();      // Resume watchers
 
                 if (_status == TransferStatus.None)
                     base.RemoveAt(0);

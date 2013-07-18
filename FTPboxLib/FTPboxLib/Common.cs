@@ -67,23 +67,21 @@ namespace FTPboxLib
         {
             if (!fromLocal)
             {
-                if (Profile.HomePath != string.Empty && !Profile.HomePath.Equals("/"))
+                // Remove the remote path from the begining
+                if (Profile.RemotePath != null && p.StartsWith(Profile.RemotePath))
                 {
-                    if (p.StartsWith(Profile.HomePath) || p.StartsWith(Profile.HomePath.RemoveSlashes()) || p.RemoveSlashes().StartsWith(Profile.HomePath))
-                        p = p.Substring(Profile.HomePath.Length + 1);
-                    if (p.StartsWith("/" + Profile.HomePath))
-                        p = p.Substring(Profile.HomePath.Length + 2);
+                    if (p.StartsWithButNotEqual(Profile.RemotePath))
+                        p = p.Substring(Profile.RemotePath.Length);
                 }
-
-                p = (p.StartsWith("/")) ? p.Substring(1) : p;
-                var rp = Profile.RemotePath ?? "/";
-                if (rp.StartsWith(Profile.HomePath)) rp = rp.Substring(Profile.HomePath.Length);
-
-                if (rp.StartsWith("/") && !rp.Equals("/")) rp = rp.Substring(1);
-                if (rp.Equals(p))
-                    p = "/";
-                else if (p.StartsWith(rp))
-                    p = p.Substring(rp.Length);
+                // If path starts with homepath instead, remove the home path from the begining
+                else if (Profile.HomePath != string.Empty && !Profile.HomePath.Equals("/"))
+                {
+                    if (p.StartsWithButNotEqual(Profile.HomePath) || p.StartsWithButNotEqual(Profile.HomePath.RemoveSlashes()) || p.RemoveSlashes().StartsWithButNotEqual(Profile.HomePath))
+                        p = p.Substring(Profile.HomePath.Length + 1);
+                    // ... and then remove the remote path
+                    if (Profile.RemotePath != null && p.StartsWithButNotEqual(Profile.RemotePath))
+                        p = p.Substring(Profile.RemotePath.Length);
+                }
             }
             if (fromLocal || File.Exists(p) || Directory.Exists(p))
             {
@@ -96,7 +94,8 @@ namespace FTPboxLib
                 }
             }
 
-            if (p.StartsWith("/") || p.StartsWith(@"\"))
+            p = p.RemoveSlashes();
+            if (p.StartsWithButNotEqual("/"))
                 p = p.Substring(1);
             if (p.StartsWith("./"))
                 p = p.Substring(2);
@@ -431,7 +430,7 @@ namespace FTPboxLib
             Log.Write(l.Error, "--");
             Log.Write(l.Error, "StackTrace: {0}", error.StackTrace);
             Log.Write(l.Error, "--");
-            Log.Write(l.Error, "Source: {0}", error.Source);
+            Log.Write(l.Error, "Source: {0} Type: {1}", error.Source, error.GetType().ToString());
             Log.Write(l.Error, "--");
             foreach (KeyValuePair<string, string> s in error.Data)
                 Log.Write(l.Error, "key: {0} value: {1}", s.Key, s.Value);
@@ -463,6 +462,15 @@ namespace FTPboxLib
                 path = path.Substring(0, path.Length - 1);
 
             return path;
+        }
+
+        /// <summary>
+        /// Returns <c>true</c> if a starts with b but a and b are not equal
+        /// </summary>
+        /// <returns></returns>
+        public static bool StartsWithButNotEqual(this string a, string b)
+        {
+            return a.StartsWith(b) && !a.Equals(b);
         }
 
         /// <summary>

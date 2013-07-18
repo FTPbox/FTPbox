@@ -420,7 +420,6 @@ namespace FTPbox.Forms
             labUN.Text = Common.Languages.Get(lan + "/main_form/username", "Username") + ":";
             labPort.Text = Common.Languages.Get(lan + "/main_form/port", "Port") + ":";
             labMode.Text = Common.Languages.Get(lan + "/main_form/mode", "Mode") + ":";
-            //bAddFTP.Text = languages.Get(lan + "/main_form/change", "Change");
             gApp.Text = Common.Languages.Get(lan + "/main_form/application", "Application");
             gWebInt.Text = Common.Languages.Get(lan + "/web_interface/web_int", "Web Interface");
             chkWebInt.Text = Common.Languages.Get(lan + "/web_interface/use_webint", "Use the Web Interface");
@@ -433,7 +432,7 @@ namespace FTPbox.Forms
             labRemPath.Text = Common.Languages.Get(lan + "/main_form/remote_path", "Remote Path") + ":";
             labLocPath.Text = Common.Languages.Get(lan + "/main_form/local_path", "Local Path") + ":";
             bAddAccount.Text = Common.Languages.Get(lan + "/new_account/add", "Add");
-            bRemoveAccount.Text = Common.Languages.Get(lan + "/main_form/change", "Change");
+            bRemoveAccount.Text = Common.Languages.Get(lan + "/main_form/remove", "Remove");
             gLinks.Text = Common.Languages.Get(lan + "/main_form/links", "Links");
             labFullPath.Text = Common.Languages.Get(lan + "/main_form/account_full_path", "Account's full path") + ":";
             labLinkClicked.Text = Common.Languages.Get(lan + "/main_form/when_not_clicked", "When tray notification or recent file is clicked") + ":";

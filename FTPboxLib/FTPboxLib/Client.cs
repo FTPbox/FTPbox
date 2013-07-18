@@ -274,8 +274,9 @@ namespace FTPboxLib
                     using (var file = File.OpenRead(i.LocalPath))
                         _sftpc.UploadFile(file, temp, true);
             }
-            catch
+            catch (Exception ex)
             {
+                Common.LogError(ex);
                 return TransferStatus.Failure;
             }
 
@@ -332,7 +333,11 @@ namespace FTPboxLib
                     if (i.PathToFile.Contains(" "))
                     {
                         string cd = WorkingDirectory;
-                        _ftpc.ChangeDirectoryMultiPath(i.PathToFile);
+                        if (!cd.Equals(i.PathToFile))
+                        {
+                            string path = i.PathToFile.StartsWithButNotEqual(cd + "/") ? i.PathToFile.Substring(cd.Length + 1) : i.PathToFile;
+                            _ftpc.ChangeDirectoryMultiPath(path);
+                        }
                         _ftpc.GetFile(Common._name(i.CommonPath), temp, FileAction.Create);
                         while (WorkingDirectory != cd)
                             _ftpc.ChangeDirectoryMultiPath("..");
@@ -346,6 +351,7 @@ namespace FTPboxLib
             }
             catch (Exception ex)
             {
+                // TODO: Should we cd back?
                 Common.LogError(ex);
                 goto Finish;
             }
@@ -727,8 +733,6 @@ namespace FTPboxLib
         {
             ListingFailed = false;
 
-            if (cpath.StartsWith("/")) cpath = cpath.Substring(1);
-
             var list = new List<ClientItem>();
             var cd = string.Empty;
             // Fix for folders that contain spaces: The client will cd inside any 
@@ -736,9 +740,13 @@ namespace FTPboxLib
             if (FTP && cpath.PathHasSpace())
             {
                 cd = WorkingDirectory;
-                Log.Write(l.Client, "changing dir to: {0} from wd: {1}", cpath, cd);
-                _ftpc.ChangeDirectoryMultiPath(cpath);
-                cpath = ".";
+                if (!cd.Equals(cpath))
+                {
+                    string path = cpath.StartsWithButNotEqual(cd + "/") ? cpath.Substring(cd.Length + 1) : cpath;
+                    Log.Write(l.Client, "changing dir to: {0} from wd: {1}", cpath, cd);
+                    cpath = ".";
+                    _ftpc.ChangeDirectoryMultiPath(path);
+                }
             }
             try
             {
@@ -807,17 +815,18 @@ namespace FTPboxLib
 
         /// <summary>
         /// Convert an FtpItem to a ClientItem
-        /// </summary>        
+        /// </summary>
         private static ClientItem ConvertItem(FtpItem f)
         {
             var fullPath = f.FullPath;
             if (fullPath.StartsWith("./"))
             {
                 var cwd = WorkingDirectory;
-                var wd = cwd.Equals("/") || cwd.Equals(Profile.HomePath)? cwd : Common.GetCommonPath(cwd, false);                
+                var wd = (Profile.RemotePath != null && cwd.StartsWithButNotEqual(Profile.RemotePath) && cwd != "/") ? cwd : Common.GetCommonPath(cwd, false);
                 fullPath = fullPath.Substring(2);
                 if (wd != "/")
-                    fullPath = string.Format("{0}/{1}", wd, fullPath);
+                    fullPath = string.Format("/{0}/{1}", wd, fullPath);
+                fullPath = fullPath.Replace("//", "/");
             }
             
             return new ClientItem

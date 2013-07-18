@@ -97,7 +97,7 @@ namespace FTPboxLib
             if (FolderList.Count <= 0) return false;
             if (FolderList.Contains(path)) return true;
 
-            return FolderList.Any(f => path.StartsWith(f) && !string.IsNullOrWhiteSpace(f));
+            return FolderList.Any(f => path.StartsWith(f + "/") && !string.IsNullOrWhiteSpace(f));
         }
 	}
 }
