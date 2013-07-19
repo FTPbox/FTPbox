@@ -494,18 +494,13 @@ namespace FTPboxLib
         }
 
         /// <summary>
-        /// Checks if a file's parent folder contains spaces. If yes, the specified file should not be deleted locally. 
-        /// This is temprorary, until a fix for spaces is released.
+        /// Checks if a given path contains spaces.
         /// </summary>
-        /// <param name="cpath">common path to file.</param>
+        /// <param name="cpath">the common path to check.</param>
         /// <returns></returns>
         public static bool PathHasSpace(this string cpath)
         {
-            if (cpath.Length <= _name(cpath).Length) return cpath.Contains(" ");
-
-            //cpath = cpath.Substring(0, cpath.Length - _name(cpath).Length);
-
-            return _name(cpath).Contains(" ");
+            return cpath.Contains(" ");
         }
 
         /// <summary>

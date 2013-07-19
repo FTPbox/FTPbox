@@ -668,18 +668,20 @@ namespace FTPboxLib
             var dt = DateTime.MinValue;
 
             try
-            {                
-                if (FTP && path != Common._name(path) && path.PathHasSpace())
+            {
+                if (FTP && path != Common._name(path))
                 {
-                    var parent = path.Substring(0, path.Length - Common._name(path).Length);                    
-                    // Fix for folders that contain spaces: The client will cd inside any 
-                    // such folder and request a file/folder listing of the current directory
-                    cd = WorkingDirectory;
-
-                    _ftpc.ChangeDirectoryMultiPath(parent);
-                    path = Common._name(path);
+                    var parent = path.Substring(0, path.Length - Common._name(path).Length);
+                    if (parent.PathHasSpace())
+                    {
+                        // Fix for folders that contain spaces: The client will cd inside any 
+                        // such folder and request a file/folder listing of the current directory
+                        cd = WorkingDirectory;
+                        _ftpc.ChangeDirectoryMultiPath(parent);
+                        path = Common._name(path);
+                    }
                 }
-                
+
                 dt = (Profile.Protocol != FtpProtocol.SFTP) ? _ftpc.GetFileDateTime(path, true) : _sftpc.GetLastWriteTime(path);
                 
                 // If we changed directory, we should go back...
