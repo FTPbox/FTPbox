@@ -467,6 +467,12 @@ namespace FTPboxLib
             var AllItems = new List<ClientItem>();
             Log.Write(l.Debug, "Syncing remote folder {0} to local", item.CommonPath);
 
+            if (!Client.CheckWorkingDirectory())
+            {
+                RemoveLast(StatusType.Failure); 
+                return;
+            }
+
             foreach (var f in Client.ListRecursive(item.CommonPath))
             {
                 AllItems.Add(f);

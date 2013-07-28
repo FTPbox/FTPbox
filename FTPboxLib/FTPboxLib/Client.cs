@@ -259,7 +259,7 @@ namespace FTPboxLib
                 //upload to a temp file...
                 if (FTP)
                 {
-                    if (i.PathToFile.Contains(" "))
+                    if (i.PathToFile.PathHasSpace())
                     {
                         string cd = WorkingDirectory;
                         _ftpc.ChangeDirectoryMultiPath(i.PathToFile);
@@ -277,6 +277,7 @@ namespace FTPboxLib
             catch (Exception ex)
             {
                 Common.LogError(ex);
+                if (FTP) CheckWorkingDirectory();
                 return TransferStatus.Failure;
             }
 
@@ -330,7 +331,7 @@ namespace FTPboxLib
             {
                 if (FTP)
                 {
-                    if (i.PathToFile.Contains(" "))
+                    if (i.PathToFile.PathHasSpace())
                     {
                         string cd = WorkingDirectory;
                         if (!cd.Equals(i.PathToFile))
@@ -351,8 +352,8 @@ namespace FTPboxLib
             }
             catch (Exception ex)
             {
-                // TODO: Should we cd back?
                 Common.LogError(ex);
+                if (FTP) CheckWorkingDirectory();
                 goto Finish;
             }
 
@@ -541,6 +542,30 @@ namespace FTPboxLib
             }
             _sftpc.DeleteDirectory(path);
             Common.RemoveFromLog(Common.GetCommonPath(path, false));
+        }
+
+        /// <summary>
+        /// Make sure that our client's working directory is set to the user-selected Remote Path.
+        /// If a previous operation failed and the working directory wasn't properly restored, this will prevent further issues.
+        /// </summary>
+        /// <returns>false if changing to RemotePath fails, true in any other case</returns>
+        public static bool CheckWorkingDirectory()
+        {
+            try
+            {
+                string cd = WorkingDirectory;
+                if (cd != Profile.RemotePath)
+                {
+                    Log.Write(l.Warning, "pwd is: {0} should be: {1}", cd, Profile.RemotePath);
+                    WorkingDirectory = Profile.RemotePath;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Common.LogError(ex);
+                return false;
+            }
         }
 
         public static void SetMaxDownloadSpeed(int value)
