@@ -82,7 +82,7 @@ namespace FTPbox.Forms
             if (e.Node.Nodes.Count > 0)
                 e.Node.Nodes.Clear();
 
-            foreach (var c in Client.List(path))
+            foreach (var c in Client.List(path, false))
             {
                 if (c.Type == ClientItemType.Folder)
                 {
@@ -117,7 +117,7 @@ namespace FTPbox.Forms
             treeView1.ExpandAll();
 
             Profile.RemotePath = Profile.HomePath;
-            foreach (var c in Client.List("."))
+            foreach (var c in Client.List(".", false))
             {
                 if (c.Type == ClientItemType.Folder)
                 {

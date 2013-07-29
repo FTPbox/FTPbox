@@ -404,6 +404,10 @@ namespace FTPboxLib
             }
         }
 
+        /// <summary>
+        /// Delete a file
+        /// </summary>
+        /// <param name="cpath">Path to the file</param>
         public static void Remove(string cpath)
         {
             if (FTP)
@@ -412,136 +416,38 @@ namespace FTPboxLib
                 _sftpc.Delete(cpath);
         }
 
-        public static void RemoveFolder(string path)
-        {
-            if (FTP)
-                DeleteFolderFtp(path);
-            else
-                DeleteFolderSftp(path);
-        }
-
         /// <summary>
-        /// Delete a remote folder and everything inside it (FTP)
+        /// Delete a remote folder and everything inside it
         /// </summary>
-        /// <param name="path">path to folder to delete</param>
-        private static void DeleteFolderFtp(string path)
+        /// <param name="path">Path to folder that will be deleted</param>
+        /// <param name="skipIgnored">if true, files that are normally ignored will not be deleted</param>
+        public static void RemoveFolder(string path, bool skipIgnored = true)
         {
-            if (_exists(path))
-            {
-                Log.Write(l.Client, "About to delete remote folder {0} and its contents", path);
+            if (!Exists(path)) return;
 
-                foreach (FtpItem fi in _ftpc.GetDirList(path))
+            Log.Write(l.Client, "About to delete: {0}", path);
+            // Empty the folder before deleting it
+            // List is reversed to delete an files before their parent folders
+            foreach (var i in ListRecursive(path, skipIgnored).Reverse())
+            {
+                Console.Write("\r Creating: {0,50}", i.FullPath);
+                if (i.Type == ClientItemType.File)
+                    Remove(i.FullPath);
+                else
                 {
-                    if (fi.ItemType == FtpItemType.File)
-                    {
-                        string fpath = string.Format("{0}/{1}", path, fi.Name);
-                        _ftpc.DeleteFile(fpath);
-                        Log.Write(l.Client, "Gon'delete: {0}", fpath);
-                        Common.RemoveFromLog(Common.GetCommonPath(fi.FullPath, false));
-                    }
-                    else if (fi.ItemType == FtpItemType.Directory)
-                    {
-                        if (fi.Name != "." && fi.Name != "..")
-                        {
-                            string fpath = string.Format("{0}/{1}", path.RemoveSlashes(), fi.Name);                            
-                            RecursiveDeleteFtp(fpath);
-                            Common.RemoveFromLog(Common.GetCommonPath(fi.FullPath, false));
-                        }
-                    }
+                    if (FTP)
+                        _ftpc.DeleteDirectory(i.FullPath);
+                    else
+                        _sftpc.DeleteDirectory(i.FullPath);
                 }
-                _ftpc.DeleteDirectory(path);
-                Common.RemoveFromLog(Common.GetCommonPath(path, false));
             }
 
+            if (FTP)
+                _ftpc.DeleteDirectory(path);
+            else
+                _sftpc.DeleteDirectory(path);
 
             Log.Write(l.Client, "Deleted: {0}", path);
-            Log.Write(l.Client, "current folder is: {2}", WorkingDirectory);
-        }
-
-        /// <summary>
-        /// (recursively) Delete all files and folders inside the specified path. (FTP)
-        /// </summary>
-        /// <param name="path"></param>
-        private static void RecursiveDeleteFtp(string path)
-        {
-            Log.Write(l.Client, "-> deleting: {0}", path);
-            foreach (FtpItem fi in _ftpc.GetDirList(path))
-            {
-                if (fi.ItemType == FtpItemType.File)
-                {
-                    string fpath = string.Format("{0}/{1}", path, fi.Name);
-                    Log.Write(l.Client, "--> del: {0}", fpath);
-                    _ftpc.DeleteFile(fpath);
-                    Common.RemoveFromLog(Common.GetCommonPath(fi.FullPath, false));
-                }
-                else if (fi.ItemType == FtpItemType.Directory)
-                {
-                    if (fi.Name != "." && fi.Name != "..")
-                    {
-                        string fpath = string.Format("{0}/{1}", path.RemoveSlashes(), fi.Name);
-                        RecursiveDeleteFtp(fpath);
-                    }
-                }
-            }
-
-            _ftpc.DeleteDirectory(path);
-            Common.RemoveFromLog(Common.GetCommonPath(path, false));
-        }
-
-        /// <summary>
-        /// Delete a remote folder and everything inside it (SFTP)
-        /// </summary>
-        /// <param name="path">path to folder to delete</param>
-        private static void DeleteFolderSftp(string path)
-        {
-            if (_exists(path))
-            {
-                Log.Write(l.Client, "About to delete remote folder {0} and its contents", path);
-
-                foreach (SftpFile f in _sftpc.ListDirectory(path)) //"./" + path))
-                {
-                    string cpath = Common.GetCommonPath(f.FullName, false);
-                    if (f.Name != "." && f.Name != "..")
-                    {
-                        if (f.IsDirectory)                        
-                            RecursiveDeleteSftp(cpath);                        
-                        else if (f.IsRegularFile)
-                        {
-                            Log.Write(l.Client, "--> del: {0}", cpath);
-                            _sftpc.DeleteFile(cpath);
-                            Common.RemoveFromLog(cpath);
-                        }
-                    }
-                }
-                _sftpc.DeleteDirectory(path);
-                Common.RemoveFromLog(Common.GetCommonPath(path, false));
-            }
-        }
-
-        /// <summary>
-        /// (recursively) Delete all files and folders inside the specified path. (SFTP)
-        /// </summary>
-        /// <param name="path"></param>
-        private static void RecursiveDeleteSftp(string path)
-        {
-            Log.Write(l.Client, "-> deleting: {0}", path);
-            foreach (SftpFile f in _sftpc.ListDirectory("./" + path))
-            {
-                string cpath = Common.GetCommonPath(f.FullName, false);
-                if ((Common.ItemGetsSynced(cpath) || path.StartsWith("webint")) && f.Name != "." && f.Name != "..")
-                {
-                    if (f.IsDirectory)                    
-                        RecursiveDeleteSftp(cpath);                    
-                    else if (f.IsRegularFile)
-                    {
-                        Log.Write(l.Client, "--> del: {0}", cpath);
-                        _sftpc.DeleteFile(cpath);
-                        Common.RemoveFromLog(cpath);
-                    }
-                }
-            }
-            _sftpc.DeleteDirectory(path);
-            Common.RemoveFromLog(Common.GetCommonPath(path, false));
         }
 
         /// <summary>
@@ -630,33 +536,7 @@ namespace FTPboxLib
 					_sftpc.ChangeDirectory(value);
                 Log.Write(l.Client, "cd {0}", value);
 			}
-		}                       
-
-        /// <summary>
-        /// <c>true</c> if the file/folder exists in the server.
-        /// </summary>
-        private static bool _exists(string cpath)
-        {
-            try
-            {
-                if (FTP)
-                {
-                    bool exists = false;
-                    string p = (cpath.Contains("/")) ? cpath.Substring(0, cpath.LastIndexOf("/")) : ".";
-                    string name = Common._name(cpath);
-                    foreach (FtpItem f in _ftpc.GetDirList(p))
-                        if (f.Name.Equals(name))
-                            exists = true;
-                    return exists;
-                }
-                
-                return _sftpc.Exists(cpath);
-            }
-            catch
-            {
-                return false;
-            }
-        }
+		}
 
         /// <summary>
         /// Returns the file size of the file in the given bath, in both SFTP and FTP
@@ -756,7 +636,9 @@ namespace FTPboxLib
         /// <summary>
         /// Returns a non-recursive list of files/folders inside the specified path       
         /// </summary>
-        public static IEnumerable<ClientItem> List(string cpath)
+        /// <param name="cpath">path to folder to list inside</param>
+        /// <param name="skipIgnored">if true, ignored items are not returned</param>
+        public static IEnumerable<ClientItem> List(string cpath, bool skipIgnored = true)
         {
             ListingFailed = false;
 
@@ -788,7 +670,10 @@ namespace FTPboxLib
                 ListingFailed = true;
                 yield break;
             }
-            list.RemoveAll(x => x.Name == "." || x.Name == ".." || x.FullPath.Contains("webint"));
+
+            list.RemoveAll(x => x.Name == "." || x.Name == "..");
+            if (skipIgnored)
+                list.RemoveAll(x => x.FullPath.Contains("webint"));
 
             // If we changed directory, we should go back...
             if (FTP && cpath == "." && cd != string.Empty)
@@ -802,18 +687,21 @@ namespace FTPboxLib
         /// <summary>
         /// Get a full list of files/folders inside the specified path
         /// </summary>
-        public static IEnumerable<ClientItem> ListRecursive(string cpath)
+        /// <param name="cpath">path to folder to list inside</param>
+        /// <param name="skipIgnored">if true, ignored items are not returned</param>
+        public static IEnumerable<ClientItem> ListRecursive(string cpath, bool skipIgnored = true)
         {
-            var list = new List<ClientItem>(List(cpath).ToList());
+            var list = new List<ClientItem>(List(cpath, skipIgnored).ToList());
             if (ListingFailed) yield break;
 
-            list.RemoveAll(x => !Common.ItemGetsSynced(Common.GetCommonPath(x.FullPath, false)));
+            if (skipIgnored)
+                list.RemoveAll(x => !Common.ItemGetsSynced(Common.GetCommonPath(x.FullPath, false)));
             
             foreach (var f in list.Where(x => x.Type == ClientItemType.File)) 
                 yield return f;
             
             foreach (var d in list.Where(x => x.Type == ClientItemType.Folder))
-                foreach (var f in ListRecursiveInside(d))
+                foreach (var f in ListRecursiveInside(d, skipIgnored))
                     yield return f;
         }
 
@@ -821,22 +709,24 @@ namespace FTPboxLib
         /// Returns a fully recursive listing inside the specified (directory) item
         /// </summary>
         /// <param name="p">The clientItem (should be of type directory) to list inside</param>
-	    private static IEnumerable<ClientItem> ListRecursiveInside(ClientItem p)
+        /// <param name="skipIgnored">if true, ignored items are not returned</param>
+        private static IEnumerable<ClientItem> ListRecursiveInside(ClientItem p, bool skipIgnored = true)
 	    {
 	        yield return p;
 
             var cpath = Common.GetCommonPath(p.FullPath, false);
 
-            var list = new List<ClientItem>(List(cpath).ToList());
+            var list = new List<ClientItem>(List(cpath, skipIgnored).ToList());
             if (ListingFailed) yield break;
 
-            list.RemoveAll(x => !Common.ItemGetsSynced(Common.GetCommonPath(x.FullPath, false)));
+            if (skipIgnored)
+                list.RemoveAll(x => !Common.ItemGetsSynced(Common.GetCommonPath(x.FullPath, false)));
 
             foreach (var f in list.Where(x => x.Type == ClientItemType.File))
                 yield return f;
 
             foreach (var d in list.Where(x => x.Type == ClientItemType.Folder))
-                foreach (var f in ListRecursiveInside(d))
+                foreach (var f in ListRecursiveInside(d, skipIgnored))
                     yield return f;
 	    }
 

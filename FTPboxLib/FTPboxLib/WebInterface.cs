@@ -139,12 +139,12 @@ namespace FTPboxLib
         /// <summary>
         /// Delete the Web Interface from the user's remote folder
         /// </summary>
-        /// <param name="updating"></param>
+        /// <param name="updating"><c>true</c> when updating, <c>false</c> when removing</param>
         private static void Delete(bool updating)
         {
             Notifications.Show(updating ? WebUiAction.updating : WebUiAction.removing);
-            if (Client.Exists("webint"))
-                Client.RemoveFolder("webint");
+            
+            Client.RemoveFolder("webint", false);
 
             if (!updating)
             {
@@ -153,6 +153,9 @@ namespace FTPboxLib
             }
         }
 
+        /// <summary>
+        /// Download the user's webUI version file, compare the version with the latest one
+        /// </summary>
         private static void CheckForUpdate()
         {
             try
