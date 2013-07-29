@@ -3822,4 +3822,133 @@
       <view>(הצג בדפדפן)</view>
     </web_interface>
   </he>
+  <sr>
+    <main_form>
+      <options>Opcije</options>
+      <general>Opšta podešavanja</general>
+      <host>Host</host>
+      <port>Port</port>
+      <username>Korisnik</username>
+      <password>Lozinka</password>
+      <mode>Protokol</mode>
+      <change>Promeni</change>
+      <account>Nalog</account>
+      <application>Aplikacija</application>
+      <start_on_startup>Pokreni pri startovanju sistema</start_on_startup>
+      <show_nots>pokaži obaveštenja</show_nots>
+      <profile>Profil</profile>
+      <details>Detalji</details>
+      <links>Veze</links>
+      <remote_path>Udaljena putanja</remote_path>
+      <local_path>Lokalna putanja</local_path>
+      <account_full_path>Korisnička puna putanja</account_full_path>
+      <when_not_clicked>kad je obaveštenje ili skorašnji fajl kliknut</when_not_clicked>
+      <open_in_browser>otvori vezu u podrazumevanom pregledaču</open_in_browser>
+      <copy>kopiraj vezu</copy>
+      <about>O programu</about>
+      <current_version>Trenutna verzija</current_version>
+      <team>Tim</team>
+      <website>Zvaničai veb prezentacija</website>
+      <contact>Kontakt</contact>
+      <coded_in>Kodirano u</coded_in>
+      <notes>Beleške</notes>
+      <contribute>Doprineli</contribute>
+      <ftpbox_is_free>FTPbox je besplatan program otvorenog koda</ftpbox_is_free>
+      <contact_me>Kontaktirajte me</contact_me>
+      <copyright>Autorsko pravo</copyright>
+      <report_bug>Prijavite grešku</report_bug>
+      <request_feature>Zatražite novu opciju</request_feature>
+      <donate>doniraj</donate>
+      <language>Jezik</language>
+      <open_local>Otvori fajl na računaru</open_local>
+      <bandwidth>Protok</bandwidth>
+      <sync_freq>Sinhronizuj učestalost izvršavanja</sync_freq>
+      <sync_when>Sinhronizuj udaljene fajlove</sync_when>
+      <manually>ručno</manually>
+      <auto>automatski na svakih</auto>
+      <seconds>sekundi</seconds>
+      <speed_limits>Ograničenje Brzine</speed_limits>
+      <limit_download>Ograničenje Brzine Preuzimanja</limit_download>
+      <limit_upload>Ograničenje Brzine Otpremanja</limit_upload>
+      <no_limits>( 0 = bez limita )</no_limits>
+      <selective>Odabrana Sinhronizacija</selective>
+      <selective_info>Isključite opcije koje ne želite da sinhronizujete</selective_info>
+      <refresh>Osveži</refresh>
+      <file_filters>Filteri</file_filters>
+      <ignored_extensions>Ignorisane ekstenzije</ignored_extensions>
+      <remove>Ukloni</remove>
+      <also_ignore>Takođe ignoriši</also_ignore>
+      <dotfiles>fajlovi koji počinju sa tačkom</dotfiles>
+      <temp_files>Privremeni fajlovi</temp_files>
+      <old_files>Fajlovi nad kojima je izvršena promena pre</old_files>
+    </main_form>
+    <new_account>
+      <new_ftp>Novi FTP nalog</new_ftp>
+      <login_details>Detaljna FTP podešavanja</login_details>
+      <encryption>Enkripcija</encryption>
+      <add>dodaj</add>
+      <done>gotovo</done>
+    </new_account>
+    <paths>
+      <new_paths>Nove putanje</new_paths>
+      <add_dir>Dodaj novi direktorijum</add_dir>
+      <select_dir>Obeleži direktorijum</select_dir>
+      <full_path>Puna putanja</full_path>
+      <local_folder>Folder na lokalnom računaru</local_folder>
+      <browse>Pretraži</browse>
+    </paths>
+    <new_version>
+      <new_ver>Nova Verzija</new_ver>
+      <update_available>Nadogradnja je dostupna</update_available>
+      <new_v_available>Nova verzija FTPbox-a je dostupna</new_v_available>
+      <new_version>Nova verzija</new_version>
+      <current_version>Trenutna verzija</current_version>
+      <wanna_download>Da li želite da preuzmete novu verziju sad</wanna_download>
+      <download>Nadogradi</download>
+      <learn_more>Saznaj Više</learn_more>
+      <remind_me_next_time>Ne sad</remind_me_next_time>
+    </new_version>
+    <tray>
+      <tray_and_nots>Traka _i Obaveštenja</tray_and_nots>
+      <updated>{0} je ažuriran</updated>
+      <created>{0} je kreiran</created>
+      <renamed>{0} je preimenovan u {1}</renamed>
+      <deleted>{0} je uklonjen</deleted>
+      <changed>{0} je promenjen</changed>
+      <FilesOrFoldersUpdated>{0} {1} su ažurirani</FilesOrFoldersUpdated>
+      <FilesOrFoldersCreated>{0} {1} su kreirani</FilesOrFoldersCreated>
+      <FilesAndFoldersChanged>{0} {1} i {2} {3} su ažurirani</FilesAndFoldersChanged>
+      <ItemsDeleted>{0} stavki je uklonjeno</ItemsDeleted>
+      <file>Fajl</file>
+      <files>Fajlovi</files>
+      <folder>Folder</folder>
+      <folders>Folderi</folders>
+      <connecting>FTPbox - Uspostavljanje Konekcije</connecting>
+      <reconnecting>FTPbox - Ponovno uspostavljanje Konekcije</reconnecting>
+      <listing>FTPbox - Listanje...</listing>
+      <uploading>Otprema se {0}</uploading>
+      <downloading>Preuzima se {0}</downloading>
+      <ready>FTPbox - Spreman</ready>
+      <synced>FTPbox - Svi fajlovi su sinhronizovani</synced>
+      <syncing>FTPbox - Sinhronizovanje u toku...</syncing>
+      <offline>FTPbox - Nije konektovan</offline>
+      <link_copied>Kopiraj vezu</link_copied>
+      <recent_files>Skorašnji fajlovi</recent_files>
+      <not_available>Nedostupan</not_available>
+      <start_syncing>Pokreni Sinhronizaciju</start_syncing>
+      <exit>Izađi</exit>
+    </tray>
+    <web_interface>
+      <web_int>Veb Interfejs</web_int>
+      <downloading>Veb interfejs biće preuzet</downloading>
+      <in_a_minute>Ovo će potrajati</in_a_minute>
+      <removing>Uklanjam Veb Interfejs...</removing>
+      <removed>Veb interfejs je uklonjen</removed>
+      <updating>Ažuriram Veb interfejs</updating>
+      <updated>Veb interfejs je ažuriran</updated>
+      <setup>Kliknite za pregled i podešavanje!</setup>
+      <use_webint>Koristi Veb interfejs</use_webint>
+      <view>(Vidi u pregledaču)</view>
+    </web_interface>
+  </sr>
 </translations>

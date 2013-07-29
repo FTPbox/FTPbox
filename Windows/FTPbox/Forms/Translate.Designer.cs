@@ -61,6 +61,7 @@
             System.Windows.Forms.ListViewItem listViewItem29 = new System.Windows.Forms.ListViewItem("Slovenian (sl)", 29);
             System.Windows.Forms.ListViewItem listViewItem30 = new System.Windows.Forms.ListViewItem("Czech (cs)", 30);
             System.Windows.Forms.ListViewItem listViewItem31 = new System.Windows.Forms.ListViewItem("Hebrew (he)", 31);
+            System.Windows.Forms.ListViewItem listViewItem32 = new System.Windows.Forms.ListViewItem("Serbian (sr)", 32);
             this.bCancel = new System.Windows.Forms.Button();
             this.bContinue = new System.Windows.Forms.Button();
             this.data = new System.Windows.Forms.DataGridView();
@@ -238,6 +239,7 @@
             this.imageList1.Images.SetKeyName(29, "si.png");
             this.imageList1.Images.SetKeyName(30, "cz.png");
             this.imageList1.Images.SetKeyName(31, "il.png");
+            this.imageList1.Images.SetKeyName(32, "rs.png");
             // 
             // pStartup
             // 
@@ -341,7 +343,8 @@
             listViewItem28,
             listViewItem29,
             listViewItem30,
-            listViewItem31});
+            listViewItem31,
+            listViewItem32});
             this.lLangs.Location = new System.Drawing.Point(46, 48);
             this.lLangs.Name = "lLangs";
             this.lLangs.Size = new System.Drawing.Size(395, 223);
