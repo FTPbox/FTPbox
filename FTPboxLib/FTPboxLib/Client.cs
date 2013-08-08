@@ -106,8 +106,7 @@ namespace FTPboxLib
 
                 try
                 {
-                    _ftpc.Open(Profile.Username, Profile.Password);
-                    _ftpc.CharacterEncoding = Encoding.Default;                    
+                    _ftpc.Open(Profile.Username, Profile.Password);                    
                 }
                 catch (Exception)
                 {
@@ -133,7 +132,6 @@ namespace FTPboxLib
                             }
                             connected = true;
                             Profile.SecurityProtocol = p;
-                            _ftpc.CharacterEncoding = Encoding.Default;
                             break;
                         }
                     }
@@ -502,7 +500,8 @@ namespace FTPboxLib
             {
                 Log.Write(l.Client, "Transfer Mode: {0}", _ftpc.DataTransferMode.ToString());
                 Log.Write(l.Client, "Transfer Type: {0}", _ftpc.FileTransferType.ToString());
-                Log.Write(l.Client, "Compression Enabled: {0}", _ftpc.IsCompressionEnabled);                
+                Log.Write(l.Client, "Compression Enabled: {0}", _ftpc.IsCompressionEnabled);
+                Log.Write(l.Client, "Character Encoding: {0}", _ftpc.CharacterEncoding);
             }
 
             Log.Write(l.Client, "//////////////////////////////////////////////////");
