@@ -3951,4 +3951,133 @@
       <view>(Vidi u pregledaču)</view>
     </web_interface>
   </sr>
+  <src>
+    <main_form>
+      <options>Опције</options>
+      <general>Опште</general>
+      <host>Хост</host>
+      <port>Порт</port>
+      <username>Корисник</username>
+      <password>Лозинка</password>
+      <mode>Протокол</mode>
+      <change>Промена</change>
+      <account>Налог</account>
+      <application>Апликација</application>
+      <start_on_startup>Покрени са системом</start_on_startup>
+      <show_nots>Покажи нотификације</show_nots>
+      <profile>Профил</profile>
+      <details>Детаљи</details>
+      <links>Линкови</links>
+      <remote_path>Удаљена путања</remote_path>
+      <local_path>Локална путања</local_path>
+      <account_full_path>Цела путања налога</account_full_path>
+      <when_not_clicked>На клик нотификације или недавне датотеке</when_not_clicked>
+      <open_in_browser>Отвори линк у претраживачу</open_in_browser>
+      <copy>Копирај линк у остави</copy>
+      <about>О...</about>
+      <current_version>Тренутно</current_version>
+      <team>Екипа</team>
+      <website>Интернет страница</website>
+      <contact>Контакт</contact>
+      <coded_in>Кодирано у</coded_in>
+      <notes>Белешке</notes>
+      <contribute>Допринеси</contribute>
+      <ftpbox_is_free>ФТПбокс је бесплатан и отвореног-кода</ftpbox_is_free>
+      <contact_me>Контактирајте ме за било шта</contact_me>
+      <copyright>Копирајт</copyright>
+      <report_bug>Обавести грешку</report_bug>
+      <request_feature>тражи способност</request_feature>
+      <donate>донација</donate>
+      <language>Језик</language>
+      <open_local>Отвори локану датотеку</open_local>
+      <bandwidth>Проток</bandwidth>
+      <sync_freq>Учесталост синхронизације</sync_freq>
+      <sync_when>Синхронизуј удаљене датотеке</sync_when>
+      <manually>ручно</manually>
+      <auto>сваки(а)</auto>
+      <seconds>секунда</seconds>
+      <speed_limits>Ограничење брзине</speed_limits>
+      <limit_download>Ограничи брзијну преузимања</limit_download>
+      <limit_upload>Ограничи брзијну слања</limit_upload>
+      <no_limits>(0 за без ограничавања)</no_limits>
+      <selective>Селектвна синхронизација</selective>
+      <selective_info>Скините одабирање ставке које не желите да синх.</selective_info>
+      <refresh>Освежи</refresh>
+      <file_filters>Филтери</file_filters>
+      <ignored_extensions>Игнорисане екстензије</ignored_extensions>
+      <remove>Уклони</remove>
+      <also_ignore>Исто игнориши</also_ignore>
+      <dotfiles>dotfiles</dotfiles>
+      <temp_files>Привремене датотеке</temp_files>
+      <old_files>Промењене пре</old_files>
+    </main_form>
+    <new_account>
+      <new_ftp>Нов ФТП налог</new_ftp>
+      <login_details>Детаљи ФТП налога</login_details>
+      <encryption>Шифровање</encryption>
+      <add>додај</add>
+      <done>у реду</done>
+    </new_account>
+    <paths>
+      <new_paths>Нова путања</new_paths>
+      <add_dir>Додај нову фасциклу</add_dir>
+      <select_dir>Одабрати фасциклу</select_dir>
+      <full_path>Пуна путања</full_path>
+      <local_folder>Локална фасцикла</local_folder>
+      <browse>Птретражи</browse>
+    </paths>
+    <new_version>
+      <new_ver>Нова верзија</new_ver>
+      <update_available>Ажурирање је доступно</update_available>
+      <new_v_available>Новија верзија је доступна</new_v_available>
+      <new_version>Нова</new_version>
+      <current_version>Тренутна</current_version>
+      <wanna_download>Да се сада преузме нова верзија</wanna_download>
+      <download>Ажурирај сада</download>
+      <learn_more>Сазнај више</learn_more>
+      <remind_me_next_time>Не сада</remind_me_next_time>
+    </new_version>
+    <tray>
+      <tray_and_nots>Треј и нотификације</tray_and_nots>
+      <updated>{0} ажурирано.</updated>
+      <created>{0} креирано.</created>
+      <renamed>{0} преименовано у {1}</renamed>
+      <deleted>{0} избрисано.</deleted>
+      <changed>{0} промењено.</changed>
+      <FilesOrFoldersUpdated>{0} {1} је ажурирано</FilesOrFoldersUpdated>
+      <FilesOrFoldersCreated>{0} {1} је креирано</FilesOrFoldersCreated>
+      <FilesAndFoldersChanged>{0} {1} и {2} {3} је ажурирано</FilesAndFoldersChanged>
+      <ItemsDeleted>{0} ставке су избрисане.</ItemsDeleted>
+      <file>Датотека</file>
+      <files>Датотеке</files>
+      <folder>Фасцикла</folder>
+      <folders>Фасцикле</folders>
+      <connecting>ФТПбокс - привезивање...</connecting>
+      <reconnecting>ФТПбокс - поновно привезивање...</reconnecting>
+      <listing>ФТПбокс - листање...</listing>
+      <uploading>Слање {0}</uploading>
+      <downloading>Преузимање {0}</downloading>
+      <ready>ФТПбокс - спремно</ready>
+      <synced>ФТПбокс - све синхронизовано</synced>
+      <syncing>ФТПбокс - синхронизација...</syncing>
+      <offline>ФТПбокс - ван мреже</offline>
+      <link_copied>Вежа копирана у остави</link_copied>
+      <recent_files>Недавне датотеке</recent_files>
+      <not_available>Није доступно</not_available>
+      <start_syncing>Почни синх.</start_syncing>
+      <exit>Излаз</exit>
+    </tray>
+    <web_interface>
+      <web_int>Веб интерфејс</web_int>
+      <downloading>Веб интерфејс ће бити преузет.</downloading>
+      <in_a_minute>То може да потраје.</in_a_minute>
+      <removing>Уклањање веб интерфејса...</removing>
+      <removed>Веб интерфејс је уклоњен</removed>
+      <updating>Ажурирање веб интерфејса...</updating>
+      <updated>Веб интерфејс је ажуриран.</updated>
+      <setup>Кликнути овде за преглед/подешавање!</setup>
+      <use_webint>Употреби веб интерфејс</use_webint>
+      <view>(види у претраћивач)</view>
+    </web_interface>
+  </src>
 </translations>

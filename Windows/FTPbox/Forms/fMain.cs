@@ -384,7 +384,8 @@ namespace FTPbox.Forms
                     {"th", "Thai"},
                     {"sl", "Slovenian"},
                     {"cs", "Czech"},
-                    {"he", "Hebrew"}
+                    {"he", "Hebrew"},
+                    {"sr", "Serbian"}
                 };
 
                 if (langList.ContainsKey(locallangtwoletter))

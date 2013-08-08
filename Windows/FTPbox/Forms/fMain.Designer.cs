@@ -61,7 +61,8 @@
             System.Windows.Forms.ListViewItem listViewItem30 = new System.Windows.Forms.ListViewItem("Slovenian (sl)", 29);
             System.Windows.Forms.ListViewItem listViewItem31 = new System.Windows.Forms.ListViewItem("Czech (cs)", 30);
             System.Windows.Forms.ListViewItem listViewItem32 = new System.Windows.Forms.ListViewItem("Hebrew (he)", 31);
-            System.Windows.Forms.ListViewItem listViewItem33 = new System.Windows.Forms.ListViewItem("Serbian (sr)", 32);
+            System.Windows.Forms.ListViewItem listViewItem33 = new System.Windows.Forms.ListViewItem("Serbian, Latin (sr)", 32);
+            System.Windows.Forms.ListViewItem listViewItem34 = new System.Windows.Forms.ListViewItem("Serbian, Cyrillic (src)", 32);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(fMain));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
@@ -1021,7 +1022,8 @@
             listViewItem30,
             listViewItem31,
             listViewItem32,
-            listViewItem33});
+            listViewItem33,
+            listViewItem34});
             this.listView1.Location = new System.Drawing.Point(8, 16);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(447, 269);
