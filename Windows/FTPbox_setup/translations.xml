@@ -875,122 +875,131 @@
 
   <pt-BR>
     <main_form>
-      <options>Opcoes</options>
+      <options>Opções</options>
       <general>Geral</general>
       <host>Host</host>
-      <port>Porta </port>
-      <username>Usuario </username>
+      <port>Porta</port>
+      <username>Usuário</username>
       <password>Senha</password>
       <mode>Protocolo</mode>
-      <change>Trocar</change>
+      <change>Alterar</change>
       <account>Conta</account>
-      <application>Programa</application>
-      <start_on_startup>Iniciar o programa no inicio do sistema</start_on_startup>
-      <show_nots>Mostrar notificacoes</show_nots>
+      <application>Aplicação</application>
+      <start_on_startup>Carregar no inicio do Windows</start_on_startup>
+      <show_nots>Exibir Notificações</show_nots>
+      <profile>Perfil</profile>
       <details>Detalhes</details>
       <links>Links</links>
-      <remote_path>Pasta Remota</remote_path>
-      <local_path>Pasta Local</local_path>
-      <account_full_path>Endereco completo da conta ftp do site</account_full_path>
-      <when_not_clicked>Quando exibir uma notificacao ou clicar em um arquivo recente</when_not_clicked>
+      <remote_path>Caminho remoto</remote_path>
+      <local_path>Caminho local</local_path>
+      <account_full_path>Caminho completo dos usuários</account_full_path>
+      <when_not_clicked>quando exibir notificações ou arquivo recente é clicado</when_not_clicked>
       <open_in_browser>Abrir link no navegador</open_in_browser>
-      <copy>copiar para area de transferencia</copy>
+      <copy>Copiar link</copy>
       <about>Sobre</about>
       <current_version>Versão atual</current_version>
       <team>A Equipe</team>
       <website>Site oficial</website>
       <contact>Contato</contact>
-      <coded_in>Escrito em</coded_in>
+      <coded_in>Coded in</coded_in>
       <notes>Notas</notes>
-      <contribute>Contribuição</contribute>
-      <ftpbox_is_free>FTPbox é gratuito e de codigo aberto</ftpbox_is_free>
-      <contact_me>Sinta-se a vontade para me contactar sobre qualquer coisa</contact_me>
-      <copyright>Direitos  Reservados</copyright>
-      <report_bug>Reportar um erro</report_bug>
-      <request_feature>Pedir uma funcao</request_feature>
-      <donate>Doar</donate>
-      <language>Idioma</language>
+      <contribute>Contribuições</contribute>
+      <ftpbox_is_free>FTPbox é gratuito e de codigo livre</ftpbox_is_free>
+      <contact_me>Sinta-se a vontade para contatar-me a qualquer hora</contact_me>
+      <copyright>Direitos Autorais</copyright>
+      <report_bug>Relatar problemas</report_bug>
+      <request_feature>Sugestões de recursos</request_feature>
+      <donate>Donativos</donate>
+      <language>Linguagem</language>
       <open_local>Abrir arquivo local</open_local>
-      <bandwidth>Uso da Rede</bandwidth>
-      <sync_freq>Sincronização</sync_freq>
-      <sync_when>Sincronizar arquivos com servidor</sync_when>
-      <manually>manualmente</manually>
-      <auto>automaticamente a cada</auto>
+      <bandwidth>Largura de Banda</bandwidth>
+      <sync_freq>Frequencia de sincronização</sync_freq>
+      <sync_when>Sincronizar arquivos remotos</sync_when>
+      <manually>Manualmente</manually>
+      <auto>Automáticamente</auto>
       <seconds>segundos</seconds>
-      <speed_limits>Limites de velocidade</speed_limits>
-      <limit_download>Limite de velocidade para download</limit_download>
-      <limit_upload>Limite de velocidade para upload</limit_upload>
-      <no_limits>(Coloque 0 para velocidade máxima)</no_limits>
-      <selective>Selecione para sincronização</selective>
-      <selective_info>Desmarque o que não deseja sincronizar</selective_info>
+      <speed_limits>Limites de Velocidade</speed_limits>
+      <limit_download>Limite de velocidade de recepção</limit_download>
+      <limit_upload>Limite de velocidade de envio</limit_upload>
+      <no_limits>(defina 9 para sem limites)</no_limits>
+      <selective>Sincronia seletiva</selective>
+      <selective_info>Desmarque os itens quando não deseja sincronizar</selective_info>
+      <refresh>Atualizar</refresh>
+      <file_filters>Filtro</file_filters>
+      <ignored_extensions>Ignorar Extensões</ignored_extensions>
+      <remove>Remover</remove>
+      <also_ignore>ignorar também</also_ignore>
+      <dotfiles>dotfiles</dotfiles>
+      <temp_files>Arquivos temporários</temp_files>
+      <old_files>Arquivos modificados antes</old_files>
     </main_form>
     <new_account>
       <new_ftp>Nova conta FTP</new_ftp>
-      <login_details>Detalhes de Login FTP</login_details>
-      <encryption>Criptografar</encryption>
+      <login_details>Detalhes de login FTP</login_details>
+      <encryption>Encriptação</encryption>
       <add>Adicionar</add>
       <done>OK</done>
     </new_account>
     <paths>
-      <new_paths>Novo Caminho</new_paths>
-      <add_dir>Adicionar nova pasta</add_dir>
-      <select_dir>Selecionar pasta</select_dir>
+      <new_paths>Novos caminhos</new_paths>
+      <add_dir>Novo diretório</add_dir>
+      <select_dir>Selecionar diretório</select_dir>
       <full_path>Caminho completo</full_path>
-      <local_folder>Pasta Local</local_folder>
-      <browse>Explorar</browse>
+      <local_folder>Pasta local</local_folder>
+      <browse>Browse</browse>
     </paths>
     <new_version>
       <new_ver>Nova versão</new_ver>
-      <update_available>Atualização Disponível</update_available>
+      <update_available>Atualização disponível</update_available>
       <new_v_available>Nova versão do FTPbox está disponível</new_v_available>
       <new_version>Nova versão</new_version>
       <current_version>Versão atual</current_version>
-      <wanna_download>Você deseja baixar a nova versão agora</wanna_download>
-      <download>Baixar</download>
+      <wanna_download>Você deseja baixar nova versão?</wanna_download>
+      <download>Atualização em andamenteo</download>
       <learn_more>Saiba mais</learn_more>
-      <remind_me_next_time>Me lembre depois</remind_me_next_time>
+      <remind_me_next_time>Agora não</remind_me_next_time>
     </new_version>
     <tray>
-      <tray_and_nots>Sistema e Notificações</tray_and_nots>
-      <updated>{0} foi atualizado.</updated>
-      <created>{0} foi criado.</created>
+      <tray_and_nots>Tentativas de notificação</tray_and_nots>
+      <updated>{0} foi atualizado</updated>
+      <created>{0) foi criado</created>
       <renamed>{0} foi renomeado para {1}</renamed>
-      <deleted>{0} foi deletado.</deleted>
-      <changed>{0} foi trocado.</changed>
-      <FilesOrFoldersUpdated>{0} {1} foram atualizados</FilesOrFoldersUpdated>
-      <FilesOrFoldersCreated>{0} {1} foram criados</FilesOrFoldersCreated>
-      <FilesAndFoldersChanged>{0} {1} e {2} {3} foram atualizados</FilesAndFoldersChanged>
-      <ItemsDeleted>{0} itens foram deletados.</ItemsDeleted>
+      <deleted>{0} foi deletado</deleted>
+      <changed>{0} foi alterado</changed>
+      <FilesOrFoldersUpdated>{0} {1} foi atualizado</FilesOrFoldersUpdated>
+      <FilesOrFoldersCreated>{0} {1} foi criado</FilesOrFoldersCreated>
+      <FilesAndFoldersChanged>{0} {1} e{2} {3} foram atualizados</FilesAndFoldersChanged>
+      <ItemsDeleted>{0} items foram deletados</ItemsDeleted>
       <file>Arquivo</file>
       <files>Arquivos</files>
       <folder>Pasta</folder>
       <folders>Pastas</folders>
-      <connecting>FTPbox - Conectando...</connecting>
-      <reconnecting>FTPbox - Re-conectando...</reconnecting>
-      <listing>FTPbox - Aguardando...</listing>
-      <uploading>Uploading {0}</uploading>
-      <downloading>Downloading {0}</downloading>
-      <ready>FTPbox – Pronto</ready>
-      <synced>FTPbox - Todos os arquivos foram sincronizados</synced>
+      <connecting>FTPbox - Conectando..</connecting>
+      <reconnecting>FTPbox - Re-Conectando...</reconnecting>
+      <listing>FTPbox - Listando...</listing>
+      <uploading>Enviando {0}</uploading>
+      <downloading>Recebendo {0}</downloading>
+      <ready>FTPbox - Pronto</ready>
+      <synced>FTPbox - Todos arquivos sincronizados</synced>
       <syncing>FTPbox - Sincronizando</syncing>
-      <offline>FTPbox – Desconectado</offline>
-      <link_copied>Link copiado para área de transferência</link_copied>
-      <recent_files>Arquivos Recentes</recent_files>
-      <not_available>Arquivos Recentes</not_available>
-      <start_syncing>Indisponível</start_syncing>
+      <offline>FTPbox - Offline</offline>
+      <link_copied>Link copiado para clipboard</link_copied>
+      <recent_files>Arquivos recentes</recent_files>
+      <not_available>Não disponível</not_available>
+      <start_syncing>Iniciar Sincronia</start_syncing>
       <exit>Sair</exit>
     </tray>
     <web_interface>
       <web_int>Interface Web</web_int>
-      <downloading>A interface web será aberta.</downloading>
-      <in_a_minute>Isto vai demorar apenas um minuto.</in_a_minute>
-      <removing>Removendo a interface web...</removing>
-      <removed>A interface web foi removida</removed>
-      <updating>Atualizando a interface web...</updating>
-      <updated>A interface web foi atualizada.</updated>
-      <setup>Clique aqui para ver e configurar!</setup>
-      <use_webint>Usar a interface web</use_webint>
-      <view>(Ver no navegador)</view>
+      <downloading>A interface Web será carregada</downloading>
+      <in_a_minute>Aguarde 1 minuto</in_a_minute>
+      <removing>Removendo a interface Web</removing>
+      <removed>A interface Web foi removida</removed>
+      <updating>Atualizando a interface Web</updating>
+      <updated>A interface Web foi atualizada</updated>
+      <setup>Clique aqui para ver configurações</setup>
+      <use_webint>Usar a interface Web</use_webint>
+      <view>Ver no navegador web</view>
     </web_interface>
   </pt-BR>
 
