@@ -32,7 +32,7 @@ namespace FTPboxLib
             name = Common._name(name);
             string body = string.Format(Get_Message(ca, file), name);
 
-            NotificationReady(null, new NotificationArgs { Text = body });
+            InvokeNotificationReady(null, new NotificationArgs { Text = body });
 		}
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace FTPboxLib
             name = Common._name(name);
             newname = Common._name(newname);
             string body = string.Format(Get_Message(ChangeAction.renamed, true), name, newname);
-            NotificationReady(null, new NotificationArgs { Text = body });
+            InvokeNotificationReady(null, new NotificationArgs { Text = body });
 		}
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace FTPboxLib
             string type = (file) ? Common._(MessageType.Files) : Common._(MessageType.Folders);
             string change = (file) ? Common._(MessageType.FilesOrFoldersUpdated) : Common._(MessageType.FilesOrFoldersCreated);
             string body = string.Format(change, i, type);
-            NotificationReady(null, new NotificationArgs { Text = body });
+            InvokeNotificationReady(null, new NotificationArgs { Text = body });
 		}
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace FTPboxLib
             if (Settings.settingsGeneral.Notifications && (f > 0 || d > 0))
             {
                 string body = string.Format(Common._(MessageType.FilesAndFoldersChanged), d, dType, f, fType);
-                NotificationReady(null, new NotificationArgs { Text = body });
+                InvokeNotificationReady(null, new NotificationArgs { Text = body });
             }
 		}
 
@@ -95,7 +95,7 @@ namespace FTPboxLib
             if (c != ChangeAction.deleted || !Settings.settingsGeneral.Notifications) return;
 
             string body = string.Format(Common._(MessageType.ItemsDeleted), n);
-            NotificationReady(null, new NotificationArgs { Text = body });
+            InvokeNotificationReady(null, new NotificationArgs { Text = body });
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace FTPboxLib
             if (!Settings.settingsGeneral.Notifications) return;
 
             string msg = Get_WebUI_Message(a);
-            NotificationReady(null, new NotificationArgs { Text = msg });
+            InvokeNotificationReady(null, new NotificationArgs { Text = msg });
         }
 
         private static string Get_Message(ChangeAction ca, bool file)
@@ -152,10 +152,25 @@ namespace FTPboxLib
             }
         }
 
+        /// <summary>
+        /// Prepare the event data and safely invoke TrayTextNotification
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="name"></param>
         public static void ChangeTrayText(MessageType m, string name = null)
         {
             var args = new TrayTextNotificationArgs { AssossiatedFile = name, MessageType = m };
-            TrayTextNotification(null, args);
+            if (TrayTextNotification != null)
+                TrayTextNotification(null, args);
+        }
+
+        /// <summary>
+        /// Safely invoke NotificationReady
+        /// </summary>
+        private static void InvokeNotificationReady(object sender, NotificationArgs e)
+        {
+            if (NotificationReady != null)
+                NotificationReady(sender, e);
         }
 	}
 }

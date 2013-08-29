@@ -27,9 +27,9 @@ namespace FTPboxLib
         public static bool UpdatePending;
         public static bool DeletePending;
 
-        public static event EventHandler<EventArgs> UpdateFound;
-        public static event EventHandler<EventArgs> InterfaceUploaded;
-        public static event EventHandler<EventArgs> InterfaceRemoved;
+        public static event EventHandler UpdateFound;
+        public static event EventHandler InterfaceUploaded;
+        public static event EventHandler InterfaceRemoved;
 
         /// <summary>
         /// Does the Web Interface exist on the user's folder?
@@ -121,7 +121,7 @@ namespace FTPboxLib
 
             // Let main form know everything's ready
             Notifications.Show(WebUiAction.updated);
-            InterfaceUploaded(null, EventArgs.Empty);
+            InterfaceUploaded.SafeInvoke(null, EventArgs.Empty);
             Notifications.ChangeTrayText(MessageType.AllSynced);
 
             // Delete the local WebUI files
@@ -149,7 +149,7 @@ namespace FTPboxLib
             if (!updating)
             {
                 Notifications.Show(WebUiAction.removed);
-                InterfaceRemoved(null, EventArgs.Empty);
+                InterfaceRemoved.SafeInvoke(null, EventArgs.Empty);
             }
         }
 
@@ -172,7 +172,7 @@ namespace FTPboxLib
                     var vinfo = (WebInterfaceVersionInfo)JsonConvert.DeserializeObject(e.Result, typeof(WebInterfaceVersionInfo));
 
                     if (!vinfo.uptodate)
-                        UpdateFound(null, EventArgs.Empty);
+                        UpdateFound.SafeInvoke(null, EventArgs.Empty);
                     else
                         Log.Write(l.Client, "Web Interface is up to date");
 

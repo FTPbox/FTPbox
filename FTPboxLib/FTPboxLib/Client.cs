@@ -64,7 +64,7 @@ namespace FTPboxLib
                 _ftpc.ConnectionClosed += (o, e) =>
                 {                    
                     Notifications.ChangeTrayText(MessageType.Nothing);
-                    ConnectionClosed(null, new ConnectionClosedEventArgs { Text = _ftpc.LastResponse.Text });
+                    if (ConnectionClosed != null) ConnectionClosed(null, new ConnectionClosedEventArgs { Text = _ftpc.LastResponse.Text });
                     Reconnect();
                 };
                 
@@ -172,7 +172,7 @@ namespace FTPboxLib
                 _sftpc.ErrorOccurred += (o, e) =>
                 {
                     if (!isConnected) Notifications.ChangeTrayText(MessageType.Nothing);
-                    ConnectionClosed(null, new ConnectionClosedEventArgs { Text = e.Exception.Message });
+                    if (ConnectionClosed != null) ConnectionClosed(null, new ConnectionClosedEventArgs { Text = e.Exception.Message });
 
                     if (e.Exception is Renci.SshNet.Common.SftpPermissionDeniedException)
                         Log.Write(l.Warning, "Permission denied error occured");

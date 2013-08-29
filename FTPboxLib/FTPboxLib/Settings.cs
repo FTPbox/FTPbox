@@ -27,10 +27,11 @@ namespace FTPboxLib
     {
         #region Variables
 
+        // Paths to our configuration files
         private static readonly string confProfiles = Path.Combine(Profile.AppdataFolder, "profiles.conf");
         private static readonly string confGeneral = Path.Combine(Profile.AppdataFolder, "general.conf");
         private static readonly string confCertificates = Path.Combine(Profile.AppdataFolder, "trusted_certificates.conf");
-                
+        
         public static List<SettingsProfile> Profiles;
         public static SettingsGeneral settingsGeneral;
         public static List<string> TrustedCertificates;

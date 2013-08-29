@@ -19,7 +19,7 @@ namespace FTPboxLib
 	public class FileLog
 	{
         // An event used from the main form to refresh the recent files list
-	    public event EventHandler<EventArgs> FileLogChanged;
+	    public event EventHandler FileLogChanged;
 
 	    public FileLog ()
 		{
@@ -49,7 +49,7 @@ namespace FTPboxLib
                 Remote = Client.GetLwtOf(file.NewCommonPath) //file.SyncTo == SyncTo.Local ? file.Item.LastWriteTime : Client.GetLwtOf(file.NewCommonPath)
             });
 
-            FileLogChanged(null, EventArgs.Empty);
+            FileLogChanged.SafeInvoke(null, EventArgs.Empty);
 
             Settings.SaveProfile();
         }
