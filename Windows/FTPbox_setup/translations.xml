@@ -635,7 +635,7 @@
     <main_form>
       <options>Ayarlar</options>
       <general>Genel</general>
-      <host>Host</host>
+      <host>Sunucu</host>
       <port>Port</port>
       <username>Kullanıcı adı</username>
       <password>Şifre</password>
@@ -643,25 +643,26 @@
       <change>Değiştir</change>
       <account>Hesap</account>
       <application>Uygulama</application>
-      <start_on_startup>Sistem başlandığında başlat</start_on_startup>
+      <start_on_startup>Bilgisayar Açıldığında Başlat</start_on_startup>
       <show_nots>uyarıları göster</show_nots>
+      <profile>Profil</profile>
       <details>Ayrıntılar</details>
-      <links>Linkler</links>
+      <links>Bağlantılar</links>
       <remote_path>Uzak Sunucu Adresi</remote_path>
       <local_path>Yerel Dizin Adresi</local_path>
       <account_full_path>Hesabın tam adresi</account_full_path>
       <when_not_clicked>simge ya da en son dosyaya tıklandığında</when_not_clicked>
-      <open_in_browser>varsayılan tarayıcıda aç</open_in_browser>
-      <copy>linki kopyala</copy>
+      <open_in_browser>bağlantıyı varsayılan tarayıcıda aç</open_in_browser>
+      <copy>bağlantıyı kopyala</copy>
       <about>Hakkında</about>
-      <current_version>Şimdiki versiyon</current_version>
+      <current_version>Mevcut Versiyon</current_version>
       <team>Takım</team>
-      <website>resmi web sitesi</website>
+      <website>Resmi Web Sitesi</website>
       <contact>İletişim</contact>
-      <coded_in>kodlandı</coded_in>
+      <coded_in>Kodlandığı Dil</coded_in>
       <notes>Notlar</notes>
       <contribute>Katkıda bulun</contribute>
-      <ftpbox_is_free>FTPbox bedava ve açık kaynak kodlu</ftpbox_is_free>
+      <ftpbox_is_free>FTPbox ücretsiz ve açık kaynak kodludur.</ftpbox_is_free>
       <contact_me>Benimle her konuda iletişime geçebilirsiniz</contact_me>
       <copyright>Telif Hakkı</copyright>
       <report_bug>Hata bildir</report_bug>
@@ -673,7 +674,7 @@
       <sync_freq>Senkronizasyon Sıklığı</sync_freq>
       <sync_when>Uzak dosyaları senkronize et</sync_when>
       <manually>el ile</manually>
-      <auto>her zaman otomatik</auto>
+      <auto>otomatik olarak her </auto>
       <seconds>saniye</seconds>
       <speed_limits>Hız Limitleri</speed_limits>
       <limit_download>İndirme Hızı Limiti</limit_download>
@@ -681,32 +682,40 @@
       <no_limits>( limitsiz için 0 giriniz )</no_limits>
       <selective>Seçimsel Senkronizasyon</selective>
       <selective_info>Senkronize edilmesini istemediğiniz dosyaları işaretleyiniz</selective_info>
+      <refresh>Yenile</refresh>
+      <file_filters>Filtreler</file_filters>
+      <ignored_extensions>Reddedilen Uzantılar</ignored_extensions>
+      <remove>Sil</remove>
+      <also_ignore>Ayrıca Red Et</also_ignore>
+      <dotfiles>gizli dosyalar</dotfiles>
+      <temp_files>Geçici Dosyalar</temp_files>
+      <old_files>Daha Önce Modifye Edilen Dosyalar</old_files>
     </main_form>
     <new_account>
       <new_ftp>Yeni FTP hesabı</new_ftp>
       <login_details>FTP giriş ayrıntıları</login_details>
-      <encryption>ekle</encryption>
-      <add>tamam</add>
-      <done>Yeni adres</done>
+      <encryption>Şifreleme</encryption>
+      <add>ekle</add>
+      <done>Tamam</done>
     </new_account>
     <paths>
-      <new_paths>yeni dizin ekle</new_paths>
-      <add_dir>dizin seç</add_dir>
-      <select_dir>tam adres</select_dir>
-      <full_path>yerel klasör</full_path>
-      <local_folder>göz at</local_folder>
-      <browse>uzak dosyaları asla silme</browse>
+      <new_paths>Yeni Dizinler</new_paths>
+      <add_dir>Yeni Dizin Ekle</add_dir>
+      <select_dir>Dizin Seç</select_dir>
+      <full_path>Tam Dosya Yolu</full_path>
+      <local_folder>Yerel Dosya</local_folder>
+      <browse>Gözat</browse>
     </paths>
     <new_version>
       <new_ver>Yeni Versiyon</new_ver>
       <update_available>Güncelleme mevcut</update_available>
       <new_v_available>FTPbox'ın yeni sürümü mevcut</new_v_available>
       <new_version>Yeni sürüm</new_version>
-      <current_version>Şimdiki sürüm</current_version>
-      <wanna_download>Yeni sürümü hemen indirmek ister misiniz?</wanna_download>
-      <download>İndir</download>
-      <learn_more>Daha fazlasını öğren</learn_more>
-      <remind_me_next_time>Bir dahaki sefe hatırlat</remind_me_next_time>
+      <current_version>Mecut Sürüm</current_version>
+      <wanna_download>YeniSürümü İndirmek İstermisiniz?</wanna_download>
+      <download>Şimdi Güncelle</download>
+      <learn_more>Daha Fazla Detay</learn_more>
+      <remind_me_next_time>Şimdi Değil</remind_me_next_time>
     </new_version>
     <tray>
       <tray_and_nots>Simge durumu _and Uyarılar</tray_and_nots>
@@ -732,16 +741,16 @@
       <synced>FTPbox - Tüm dosyalar eşitlendi</synced>
       <syncing>FTPbox - Eşitleniyor</syncing>
       <offline>FTPbox - Bağlı değil</offline>
-      <link_copied>Link kopyalandı.</link_copied>
+      <link_copied>Bağlantı Kopyalandı</link_copied>
       <recent_files>Son Dosyalar</recent_files>
       <not_available>Uygun Değil</not_available>
       <start_syncing>Senkronizasyonu Başlat</start_syncing>
-      <exit>yakın</exit>
+      <exit>Çıkış</exit>
     </tray>
     <web_interface>
       <web_int>Web arayüzü</web_int>
       <downloading>Web arayüzü indirilecek.</downloading>
-      <in_a_minute>Bu işlem birkaç dk. alabilir.</in_a_minute>
+      <in_a_minute>Bu işlem bir dakika sürecek</in_a_minute>
       <removing>Web arayüzü kaldırılıyor.</removing>
       <removed>Web arayüzü kaldırıldı.</removed>
       <updating>Web arayüzü güncelleniyor.</updating>
