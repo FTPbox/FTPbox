@@ -73,16 +73,15 @@ namespace FTPboxLib
             // Load Profiles
             config = File.ReadAllText(confProfiles);
             if (!string.IsNullOrWhiteSpace(config))
-                Profiles =
-                    new List<SettingsProfile>(
-                        (List<SettingsProfile>) JsonConvert.DeserializeObject(config, typeof (List<SettingsProfile>)));            
+                Profiles = (List<SettingsProfile>) JsonConvert.DeserializeObject(config, typeof (List<SettingsProfile>));
                         
             Profile.Load();
 
             if (!File.Exists(confCertificates)) return;
             // Load trusted certificates
             config = File.ReadAllText(confCertificates);
-            TrustedCertificates = (List<string>)JsonConvert.DeserializeObject(config, typeof(List<string>));
+            if (!string.IsNullOrWhiteSpace(config))
+                TrustedCertificates = (List<string>)JsonConvert.DeserializeObject(config, typeof(List<string>));
 
             Log.Write(l.Info, "Settings Loaded.");
         }
