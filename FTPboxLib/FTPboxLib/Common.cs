@@ -512,6 +512,14 @@ namespace FTPboxLib
             foreach (var e in li.ToArray()) action(e, i++);
         }
 
+        /// <summary>
+        /// Only invoke the EventHandler if it isn't null, to prevent exceptions
+        /// </summary>
+        public static void SafeInvoke<TEventArgs>(this EventHandler handler, object sender, TEventArgs args) where TEventArgs : EventArgs
+        {
+            if (handler != null) handler(sender, args);
+        }
+
         #endregion
     }
 }

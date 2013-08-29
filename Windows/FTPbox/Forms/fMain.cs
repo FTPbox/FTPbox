@@ -37,7 +37,8 @@ namespace FTPbox.Forms
         Paths newDir;
         Translate ftranslate;
 
-        MessageType _lastTrayStatus = MessageType.AllSynced;
+        private TrayTextNotificationArgs _lastTrayStatus = new TrayTextNotificationArgs
+            {AssossiatedFile = null, MessageType = MessageType.AllSynced};
         private Thread tRefresh;
 
         //Links
@@ -96,7 +97,20 @@ namespace FTPbox.Forms
                     link = Common.GetHttpLink("webint");
                 };
 
-            Notifications.TrayTextNotification += SetTray;
+            Notifications.TrayTextNotification += (o,n) => this.Invoke(new MethodInvoker(() => SetTray(o,n)));
+
+            Client.TransferProgress += (o,n) =>
+            {
+                // Only when Downloading/Uploading.
+                if (string.IsNullOrWhiteSpace(_lastTrayStatus.AssossiatedFile)) return;
+                // Update tray text.
+                this.Invoke(new MethodInvoker(() =>
+                    {
+                        SetTray(null, _lastTrayStatus);
+                        // Append progress details in a new line
+                        tray.Text += string.Format("\n{0,3}% - {1}", n.Progress, n.Rate);
+                    }));               
+            };
 
             fNewFtp = new Account {Tag = this};
             newDir = new Paths {Tag = this};
@@ -507,7 +521,7 @@ namespace FTPbox.Forms
                 }
             }
 
-            SetTray(null, new TrayTextNotificationArgs { MessageType = _lastTrayStatus });
+            SetTray(null, _lastTrayStatus);
 
             // Is this a right-to-left language?
             RightToLeftLayout = new[] { "he" }.Contains(lan);
@@ -1831,11 +1845,12 @@ namespace FTPbox.Forms
         {
             try
             {
+                // Save latest tray status
+                _lastTrayStatus = e;
+
                 string msg = null;
                 if (!string.IsNullOrWhiteSpace(e.AssossiatedFile))
                 {
-                    _lastTrayStatus = MessageType.Syncing;
-
                     msg = (e.MessageType == MessageType.Uploading) ? string.Format(Common._(MessageType.Uploading), e.AssossiatedFile) : string.Format(Common._(MessageType.Downloading), e.AssossiatedFile);
 
                     if (msg.Length > 64)
@@ -1854,48 +1869,39 @@ namespace FTPbox.Forms
                         break;
                     case MessageType.AllSynced:
                         tray.Icon = Properties.Resources.AS;
-                        tray.Text = Common._(MessageType.AllSynced);
-                        _lastTrayStatus = MessageType.AllSynced;
+                        tray.Text = Common._(MessageType.AllSynced);                        
                         break;
                     case MessageType.Syncing:
                         tray.Icon = Properties.Resources.syncing;
-                        tray.Text = Common._(MessageType.Syncing);
-                        _lastTrayStatus = MessageType.Syncing;
+                        tray.Text = Common._(MessageType.Syncing);                        
                         break;
                     case MessageType.Offline:
                         tray.Icon = Properties.Resources.offline1;
-                        tray.Text = Common._(MessageType.Offline);
-                        _lastTrayStatus = MessageType.Offline;
+                        tray.Text = Common._(MessageType.Offline);                        
                         break;
                     case MessageType.Listing:
                         tray.Icon = Properties.Resources.AS;
-                        tray.Text = (Profile.SyncingMethod == SyncMethod.Automatic) ? Common._(MessageType.AllSynced) : Common._(MessageType.Listing);
-                        _lastTrayStatus = MessageType.Listing;
+                        tray.Text = (Profile.SyncingMethod == SyncMethod.Automatic) ? Common._(MessageType.AllSynced) : Common._(MessageType.Listing);                        
                         break;
                     case MessageType.Connecting:
                         tray.Icon = Properties.Resources.syncing;
-                        tray.Text = Common._(MessageType.Connecting);
-                        _lastTrayStatus = MessageType.Connecting;
+                        tray.Text = Common._(MessageType.Connecting);                        
                         break;
                     case MessageType.Disconnected:
                         tray.Icon = Properties.Resources.syncing;
-                        tray.Text = Common._(MessageType.Disconnected);
-                        _lastTrayStatus = MessageType.Disconnected;
+                        tray.Text = Common._(MessageType.Disconnected);                        
                         break;
                     case MessageType.Reconnecting:
                         tray.Icon = Properties.Resources.syncing;
-                        tray.Text = Common._(MessageType.Reconnecting);
-                        _lastTrayStatus = MessageType.Reconnecting;
+                        tray.Text = Common._(MessageType.Reconnecting);                       
                         break;
                     case MessageType.Ready:
                         tray.Icon = Properties.Resources.AS;
-                        tray.Text = Common._(MessageType.Ready);
-                        _lastTrayStatus = MessageType.Ready;
+                        tray.Text = Common._(MessageType.Ready);                        
                         break;
                     case MessageType.Nothing:
                         tray.Icon = Properties.Resources.ftpboxnew;
-                        tray.Text = Common._(MessageType.Nothing);
-                        _lastTrayStatus = MessageType.Nothing;
+                        tray.Text = Common._(MessageType.Nothing);                        
                         break;
                 }
             }

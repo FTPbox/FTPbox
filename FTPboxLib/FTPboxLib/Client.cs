@@ -43,6 +43,7 @@ namespace FTPboxLib
         public static event EventHandler<ConnectionClosedEventArgs> ConnectionClosed;
 	    public static event EventHandler ReconnectingFailed;
 	    public static event EventHandler<ValidateCertificateEventArgs> ValidateCertificate;
+        public static event EventHandler<TransferProgressArgs> TransferProgress;
 
         #endregion
 
@@ -66,10 +67,6 @@ namespace FTPboxLib
                     ConnectionClosed(null, new ConnectionClosedEventArgs { Text = _ftpc.LastResponse.Text });
                     Reconnect();
                 };
-			    _ftpc.TransferProgress += (o, e) =>
-			    {
-			        // if (e.KilobytesPerSecond > 0) Console.Write("\r Transferring at {0,6} kb/s Transferred: {1}\n", e.KilobytesPerSecond, e.BytesTransferred);
-			    };
                 
 			    if (Profile.Protocol == FtpProtocol.FTPS)
                 {
@@ -213,7 +210,7 @@ namespace FTPboxLib
             {
                 Common.LogError(ex);
                 Notifications.ChangeTrayText(MessageType.Disconnected);
-                ReconnectingFailed(null, EventArgs.Empty);
+                ReconnectingFailed.SafeInvoke(null, EventArgs.Empty);
             }
             finally
             {
@@ -254,9 +251,19 @@ namespace FTPboxLib
             string temp = Common._tempName(i.CommonPath);
             try
             {
+                var _startedOn = DateTime.Now;
+                long _transfered = 0;
                 //upload to a temp file...
                 if (FTP)
                 {
+                    EventHandler<TransferProgressEventArgs> action = (o, e) =>
+                    {
+                        _transfered += e.BytesTransferred;
+                        ReportTransferProgress(new TransferProgressArgs(e.BytesTransferred, _transfered, i, _startedOn));
+                    };
+
+                    _ftpc.TransferProgress += action;
+
                     if (i.PathToFile.PathHasSpace())
                     {
                         string cd = WorkingDirectory;
@@ -267,10 +274,19 @@ namespace FTPboxLib
                     }
                     else
                         _ftpc.PutFile(i.LocalPath, temp, FileAction.Create);
+                    
+                    // Unsubscribe
+                    _ftpc.TransferProgress -= action;
+
                 }
                 else
                     using (var file = File.OpenRead(i.LocalPath))
-                        _sftpc.UploadFile(file, temp, true);
+                        _sftpc.UploadFile(file, temp, true,
+                            (d) => 
+                                {
+                                    ReportTransferProgress(new TransferProgressArgs((long) d-_transfered, (long) d, i, _startedOn));
+                                    _transfered = (long)d;
+                                });
             }
             catch (Exception ex)
             {
@@ -306,12 +322,12 @@ namespace FTPboxLib
 	    {
             if (FTP)
             {
-                _ftpc.GetFileAsyncCompleted += (sender, args) => DownloadComplete.Invoke(sender, args);
+                _ftpc.GetFileAsyncCompleted += (sender, args) => DownloadComplete.SafeInvoke(sender, args);
                 _ftpc.GetFileAsync(cpath, lpath, FileAction.Create);
             }
             else
                 using (var f = new FileStream(lpath, FileMode.Create, FileAccess.ReadWrite))
-                    _sftpc.BeginDownloadFile(cpath, f, ar => DownloadComplete.Invoke(_sftpc, EventArgs.Empty), state: null);	        
+                    _sftpc.BeginDownloadFile(cpath, f, ar => DownloadComplete.SafeInvoke(_sftpc, EventArgs.Empty), state: null);	        
 	    }
 
         /// <summary>
@@ -327,8 +343,19 @@ namespace FTPboxLib
             string temp = Common._tempLocal(i.LocalPath);
             try
             {
+                var _startedOn = DateTime.Now;
+                long _transfered = 0;
+                // download to a temp file...
                 if (FTP)
                 {
+                    EventHandler<TransferProgressEventArgs> action = (o, e) =>
+                    {
+                        _transfered += e.BytesTransferred;
+                        ReportTransferProgress(new TransferProgressArgs(e.BytesTransferred, _transfered, i, _startedOn));
+                    };
+                    
+                    _ftpc.TransferProgress += action;
+
                     if (i.PathToFile.PathHasSpace())
                     {
                         string cd = WorkingDirectory;
@@ -336,17 +363,25 @@ namespace FTPboxLib
                         {
                             string path = i.PathToFile.StartsWithButNotEqual(cd + "/") ? i.PathToFile.Substring(cd.Length + 1) : i.PathToFile;
                             _ftpc.ChangeDirectoryMultiPath(path);
-                        }
+                        }                        
                         _ftpc.GetFile(Common._name(i.CommonPath), temp, FileAction.Create);
                         while (WorkingDirectory != cd)
                             _ftpc.ChangeDirectoryMultiPath("..");
                     }
                     else
-                        _ftpc.GetFile(i.CommonPath, temp, FileAction.Create);
+                        _ftpc.GetFile(i.CommonPath, temp, FileAction.Create);                    
+
+                    // Unsubscribe
+                    _ftpc.TransferProgress -= action;
                 }
                 else
                     using (var f = new FileStream(temp, FileMode.Create, FileAccess.ReadWrite))
-                        _sftpc.DownloadFile(i.CommonPath, f);
+                        _sftpc.DownloadFile(i.CommonPath, f,
+                            (d) =>
+                                {
+                                    ReportTransferProgress(new TransferProgressArgs((long) d-_transfered, (long) d, i, _startedOn));
+                                    _transfered = (long)d;
+                                });
             }
             catch (Exception ex)
             {
@@ -505,6 +540,15 @@ namespace FTPboxLib
             }
 
             Log.Write(l.Client, "//////////////////////////////////////////////////");
+        }
+
+        /// <summary>
+        /// Safely invoke TransferProgress.
+        /// </summary>
+        private static void ReportTransferProgress(TransferProgressArgs e)
+        {
+            if (TransferProgress != null)
+                TransferProgress(null, e);
         }
 
         #endregion                
