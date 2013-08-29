@@ -279,21 +279,26 @@ namespace FTPbox.Forms
                 gLimits.Visible = false;
 
             Common.FolderWatcher.Setup();
-            // Check local folder for changes
-            string cpath = Common.GetCommonPath(Profile.LocalPath, true);
-            Common.SyncQueue.Add(new SyncQueueItem
+
+            // in a separate thread...
+            new Thread(() =>
             {
-                Item = new ClientItem
-                {
-                    FullPath = Profile.LocalPath,
-                    Name = Common._name(cpath),
-                    Type = ClientItemType.Folder,
-                    Size = 0x0,
-                    LastWriteTime = DateTime.MinValue
-                },
-                ActionType = ChangeAction.changed,
-                SyncTo = SyncTo.Remote
-            });
+                // ...check local folder for changes
+                string cpath = Common.GetCommonPath(Profile.LocalPath, true);
+                Common.SyncQueue.Add(new SyncQueueItem
+                    {
+                        Item = new ClientItem
+                            {
+                                FullPath = Profile.LocalPath,
+                                Name = Common._name(cpath),
+                                Type = ClientItemType.Folder,
+                                Size = 0x0,
+                                LastWriteTime = DateTime.MinValue
+                            },
+                        ActionType = ChangeAction.changed,
+                        SyncTo = SyncTo.Remote
+                    });
+            }).Start();
         }        
 
         /// <summary>
