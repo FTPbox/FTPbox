@@ -1015,7 +1015,7 @@
   <el>
     <main_form>
       <options>Ρυθμίσεις</options>
-      <general>Γενικά</general>
+      <general>Γενικές</general>
       <host>Κόμβος </host>
       <port>Θύρα </port>
       <username>Όνομα Χρήστη</username>
@@ -1042,7 +1042,7 @@
       <contact>Επικοινωνία</contact>
       <coded_in>Γλώσσα Προγραμματισμού</coded_in>
       <notes>Σημείωσεις</notes>
-      <contribute>Συμβολή</contribute>
+      <contribute>Συμβάλετε</contribute>
       <ftpbox_is_free>Το FTPbox διατίθεται δωρεάν</ftpbox_is_free>
       <contact_me>Επικοινωνήστε μαζί μου για οτιδήποτε</contact_me>
       <copyright>Πνευματική Ιδιοκτησία</copyright>
@@ -1057,15 +1057,15 @@
       <manually>χειροκίνητα</manually>
       <auto>αυτόματα κάθε</auto>
       <seconds>δευτερόλεπτα</seconds>
-      <speed_limits>Όρια Ταχύτητας</speed_limits>
-      <limit_download>Περιορισμός ταχύτητας κατεβάσματος στα</limit_download>
-      <limit_upload>Περιορισμός ταχύτητας ανεβάσματος στα</limit_upload>
-      <no_limits>( θέστε ως τιμή το 0 για κανένα περιορισμό )</no_limits>
+      <speed_limits>Περιορισμοί Ταχύτητας</speed_limits>
+      <limit_download>Περιορισμός ταχύτητας λήψης στα</limit_download>
+      <limit_upload>Περιορισμός ταχύτητας μεταφόρτωσης στα</limit_upload>
+      <no_limits>( θέστε 0 για κανένα περιορισμό )</no_limits>
       <selective>Επιλεκτικός Συγχρονισμός</selective>
       <selective_info>Επιλέξτε μόνο τους φακέλους που θέλετε να συγχρονίσετε.</selective_info>
       <refresh>Ανανέωση</refresh>
       <file_filters>Φίλτρα</file_filters>
-      <ignored_extensions>Παραλειπόμενες Επεκτάσεις</ignored_extensions>
+      <ignored_extensions>Παράλειψη Επεκτάσεων</ignored_extensions>
       <remove>Αφαίρεση</remove>
       <also_ignore>Επίσης παράλειψη</also_ignore>
       <dotfiles>dotfiles</dotfiles>
@@ -1081,7 +1081,7 @@
     </new_account>
     <paths>
       <new_paths>Αλλαγή Φακέλων</new_paths>
-      <add_dir>Αλλαγή Φακέλων</add_dir>
+      <add_dir>Επιλογή Φακέλων</add_dir>
       <select_dir>Επιλέξτε φάκελο</select_dir>
       <full_path>Πλήρης διεύθυνση</full_path>
       <local_folder>Τοπικός Φάκελος</local_folder>
@@ -1089,11 +1089,11 @@
     </paths>
     <new_version>
       <new_ver>Νέα Έκδοση</new_ver>
-      <update_available>Νέα έκδοση διαθέσιμη</update_available>
+      <update_available>Διαθέσιμη Ενημέρωση</update_available>
       <new_v_available>Μία νέα έκδοση του FTPbox είναι διαθέσιμη.</new_v_available>
       <new_version>Νέα Έκδοση</new_version>
       <current_version>Τρέχουσα Έκδοση</current_version>
-      <wanna_download>Θέλετε να κατεβάσετε τη καινούργια έκδοση τώρα;</wanna_download>
+      <wanna_download>Θέλετε να γίνει λήψη της καινούργιας έκδοσης τώρα;</wanna_download>
       <download>Download</download>
       <learn_more>Περισσότερα</learn_more>
       <remind_me_next_time>Όχι τώρα</remind_me_next_time>
@@ -1103,7 +1103,7 @@
       <updated>{0} ανανεώθηκε.</updated>
       <created>{0} δημιουργήθηκε.</created>
       <renamed>{0} μετονομάστηκε σε {1}</renamed>
-      <deleted>{0} διαγράφτηκε.</deleted>
+      <deleted>{0} διαγράφηκε.</deleted>
       <changed>{0} τροποποιήθηκε</changed>
       <FilesOrFoldersUpdated>{0} {1} ανανεώθηκαν</FilesOrFoldersUpdated>
       <FilesOrFoldersCreated>{0} {1} δημιουργήθηκαν</FilesOrFoldersCreated>
@@ -1116,13 +1116,13 @@
       <connecting>FTPbox - Γίνεται Σύνδεση...</connecting>
       <reconnecting>FTPbox - Γίνεται Επανασύνδεση...</reconnecting>
       <listing>FTPbox - Έλεγχος Αρχείων...</listing>
-      <uploading>Ανέβασμα του {0}</uploading>
-      <downloading>Κατέβασμα του {0}</downloading>
+      <uploading>Mεταφόρτωση του {0}</uploading>
+      <downloading>Λήψη του {0}</downloading>
       <ready>FTPbox - Έτοιμο</ready>
       <synced>FTPbox - Όλα τα αρχεία είναι συγχρονισμένα</synced>
       <syncing>FTPbox - Συγχρονισμός...</syncing>
       <offline>FTPbox - Εκτός Σύνδεσης</offline>
-      <link_copied>Ο σύνδεσμος αντιγράφτηκε</link_copied>
+      <link_copied>Ο σύνδεσμος αντιγράφηκε</link_copied>
       <recent_files>Πρόσφατα Αρχεία</recent_files>
       <not_available>Μη Διαθέσιμο</not_available>
       <start_syncing>Έναρξη Συγχρονισμού</start_syncing>
@@ -1130,15 +1130,15 @@
     </tray>
     <web_interface>
       <web_int>Web Inteface</web_int>
-      <downloading>Το web interface κατεβαίνει.</downloading>
+      <downloading>Θα γίνει λήψη του web interface.</downloading>
       <in_a_minute>Αυτό θα πάρει ένα λεπτάκι...</in_a_minute>
       <removing>Το web interface θα διαγραφεί.</removing>
-      <removed>Το web interface διαγράφτηκε.</removed>
+      <removed>Το web interface διαγράφηκε.</removed>
       <updating>Το web interface ανανεώνεται...</updating>
       <updated>Το web interface ανανεώθηκε.</updated>
       <setup>Κάντε κλικ εδώ για να το ελέγξετε και να κάνετε τις απαραίτητες ρυθμίσεις</setup>
       <use_webint>Χρήση του Web Interface</use_webint>
-      <view>(Εμφάνιση στον Browser)</view>
+      <view>(Εμφάνιση στον περιηγητή)</view>
     </web_interface>
   </el>
 
