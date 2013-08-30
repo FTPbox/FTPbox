@@ -1856,10 +1856,12 @@ namespace FTPbox.Forms
                 string msg = null;
                 if (!string.IsNullOrWhiteSpace(e.AssossiatedFile))
                 {
-                    msg = (e.MessageType == MessageType.Uploading) ? string.Format(Common._(MessageType.Uploading), e.AssossiatedFile) : string.Format(Common._(MessageType.Downloading), e.AssossiatedFile);
+                    string name = e.AssossiatedFile;
+                    // Shorten long names to be all cool with the stupid 64-character limit
+                    if (name.Length >= 15)
+                        name = string.Format("{0}...{1}",name.Substring(0,7), name.Substring(name.Length-5));
 
-                    if (msg.Length > 64)
-                        msg = msg.Substring(0, 54) + "..." + msg.Substring(msg.Length - 5);
+                    msg = (e.MessageType == MessageType.Uploading) ? string.Format(Common._(MessageType.Uploading), name) : string.Format(Common._(MessageType.Downloading), name);
                 }
 
                 switch (e.MessageType)
