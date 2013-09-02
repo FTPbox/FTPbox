@@ -894,7 +894,7 @@
       <change>Alterar</change>
       <account>Conta</account>
       <application>Aplicação</application>
-      <start_on_startup>Carregar no inicio do Windows</start_on_startup>
+      <start_on_startup>Carregar no início do Windows</start_on_startup>
       <show_nots>Exibir Notificações</show_nots>
       <profile>Perfil</profile>
       <details>Detalhes</details>
@@ -910,34 +910,34 @@
       <team>A Equipe</team>
       <website>Site oficial</website>
       <contact>Contato</contact>
-      <coded_in>Coded in</coded_in>
+      <coded_in>Programado em</coded_in>
       <notes>Notas</notes>
       <contribute>Contribuições</contribute>
-      <ftpbox_is_free>FTPbox é gratuito e de codigo livre</ftpbox_is_free>
-      <contact_me>Sinta-se a vontade para contatar-me a qualquer hora</contact_me>
-      <copyright>Direitos Autorais</copyright>
+      <ftpbox_is_free>FTPbox é gratuito e de código livre</ftpbox_is_free>
+      <contact_me>Sinta-se à vontade para contatar-me a qualquer hora</contact_me>
+      <copyright>Direitos autorais</copyright>
       <report_bug>Relatar problemas</report_bug>
       <request_feature>Sugestões de recursos</request_feature>
       <donate>Donativos</donate>
       <language>Linguagem</language>
       <open_local>Abrir arquivo local</open_local>
       <bandwidth>Largura de Banda</bandwidth>
-      <sync_freq>Frequencia de sincronização</sync_freq>
+      <sync_freq>Frequência de sincronização</sync_freq>
       <sync_when>Sincronizar arquivos remotos</sync_when>
       <manually>Manualmente</manually>
-      <auto>Automáticamente</auto>
+      <auto>Automaticamente a cada</auto>
       <seconds>segundos</seconds>
       <speed_limits>Limites de Velocidade</speed_limits>
       <limit_download>Limite de velocidade de recepção</limit_download>
       <limit_upload>Limite de velocidade de envio</limit_upload>
-      <no_limits>(defina 9 para sem limites)</no_limits>
+      <no_limits>(defina 0 para sem limites)</no_limits>
       <selective>Sincronia seletiva</selective>
       <selective_info>Desmarque os itens quando não deseja sincronizar</selective_info>
       <refresh>Atualizar</refresh>
       <file_filters>Filtro</file_filters>
       <ignored_extensions>Ignorar Extensões</ignored_extensions>
       <remove>Remover</remove>
-      <also_ignore>ignorar também</also_ignore>
+      <also_ignore>Ignorar também</also_ignore>
       <dotfiles>dotfiles</dotfiles>
       <temp_files>Arquivos temporários</temp_files>
       <old_files>Arquivos modificados antes</old_files>
@@ -945,7 +945,7 @@
     <new_account>
       <new_ftp>Nova conta FTP</new_ftp>
       <login_details>Detalhes de login FTP</login_details>
-      <encryption>Encriptação</encryption>
+      <encryption>Criptografia</encryption>
       <add>Adicionar</add>
       <done>OK</done>
     </new_account>
