@@ -1250,6 +1250,7 @@
       <application>Applikation</application>
       <start_on_startup>Starta vid systemstart</start_on_startup>
       <show_nots>visa notifikationer</show_nots>
+      <profile>Profil</profile>
       <details>Detaljer</details>
       <links>Länkar</links>
       <remote_path>Fjärrsökväg</remote_path>
@@ -1257,10 +1258,10 @@
       <account_full_path>Kontots kompletta sökväg</account_full_path>
       <when_not_clicked>när notifikationen eller senaste fil är klickad på</when_not_clicked>
       <open_in_browser>öppna länk i webbläsare</open_in_browser>
-      <copy>kopiera länk till minnet</copy>
+      <copy>kopiera länk till urklipp</copy>
       <about>Om</about>
       <current_version>Nuvarande version</current_version>
-      <team>Teamet</team>
+      <team>Laget</team>
       <website>officiell hemsida</website>
       <contact>Kontakt</contact>
       <coded_in>Skrivet i</coded_in>
@@ -1286,10 +1287,18 @@
       <no_limits>( sätt till 0 för obegränsad )</no_limits>
       <selective>Selektiv synk</selective>
       <selective_info>Klicka bort de filer du inte vill synka</selective_info>
+      <refresh>Uppdatera</refresh>
+      <file_filters>Filter</file_filters>
+      <ignored_extensions>Ignorera filändelse</ignored_extensions>
+      <remove>Ta bort</remove>
+      <also_ignore>Ignorera även</also_ignore>
+      <dotfiles>dotfiles</dotfiles>
+      <temp_files>Temporära filer</temp_files>
+      <old_files>Filer modifierade innan</old_files>
     </main_form>
     <new_account>
       <new_ftp>Nytt FTP konto</new_ftp>
-      <login_details>FTP login detaljer</login_details>
+      <login_details>FTP inloggnings detaljer</login_details>
       <encryption>Kryptera</encryption>
       <add>lägg till</add>
       <done>klar</done>
@@ -1298,9 +1307,9 @@
       <new_paths>Ny sökväg</new_paths>
       <add_dir>Lägg till en katalog</add_dir>
       <select_dir>välj katalog</select_dir>
-      <full_path>komplett sökväg</full_path>
-      <local_folder>lokal sökväg</local_folder>
-      <browse>bläddra</browse>
+      <full_path>Komplett sökväg</full_path>
+      <local_folder>Lokal sökväg</local_folder>
+      <browse>Bläddra</browse>
     </paths>
     <new_version>
       <new_ver>Ny Version</new_ver>
@@ -1309,7 +1318,7 @@
       <new_version>Ny version</new_version>
       <current_version>Nuvarande version</current_version>
       <wanna_download>Vill du ladda ned den nya versionen nu</wanna_download>
-      <download>Ladda ned</download>
+      <download>Uppdatera nu</download>
       <learn_more>Lär dig mer</learn_more>
       <remind_me_next_time>Påmin mig nästa gång</remind_me_next_time>
     </new_version>
@@ -1337,11 +1346,11 @@
       <synced>FTPbox - Alla filer synkroniserade</synced>
       <syncing>FTPbox - Synkroniserar…</syncing>
       <offline>FTPbox - Offline</offline>
-      <link_copied>Länk kopierad till minnet</link_copied>
-      <recent_files>Senaste Filerna</recent_files>
+      <link_copied>Länk kopierad till urklipp</link_copied>
+      <recent_files>Senaste Filer</recent_files>
       <not_available>Inte tillgäng</not_available>
       <start_syncing>Starta synkroniceringen</start_syncing>
-      <exit>Utgång</exit>
+      <exit>Avsluta</exit>
     </tray>
     <web_interface>
       <web_int>Webbgränssnitt</web_int>
@@ -1353,7 +1362,7 @@
       <updated>Webbgränssnittet har uppdaterats.</updated>
       <setup>Klicka här för att se samt konfigurera!</setup>
       <use_webint>Använd webbgränssnittet</use_webint>
-      <view>(Se i webbläsare)</view>
+      <view>(Visa i webbläsaren)</view>
     </web_interface>
   </sv>
 
