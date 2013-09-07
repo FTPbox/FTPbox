@@ -15,6 +15,18 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_02DE2196831D41E586082F7EB5DDDFDA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_191590EB906A40BE8270400DF5A4BECE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_231F280B5764E3735C4853E2CFD9F4C9"
         "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
@@ -40,6 +52,12 @@
         "Entry"
         {
         "MsmKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_403680D83347408BA7D4A4A78AEB584F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -280,11 +298,51 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_02DE2196831D41E586082F7EB5DDDFDA"
+            {
+            "SourcePath" = "8:general.conf"
+            "TargetName" = "8:general.conf"
+            "Tag" = "8:"
+            "Folder" = "8:_1FDAE3AA22FF4B7DA8B28AE3E79B73D8"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_191590EB906A40BE8270400DF5A4BECE"
+            {
+            "SourcePath" = "8:trusted_certificates.conf"
+            "TargetName" = "8:trusted_certificates.conf"
+            "Tag" = "8:"
+            "Folder" = "8:_1FDAE3AA22FF4B7DA8B28AE3E79B73D8"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_231F280B5764E3735C4853E2CFD9F4C9"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:FTPboxLib, Version=2.4.3.1, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:FTPboxLib, Version=2.4.4.1, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                 }
@@ -330,6 +388,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_403680D83347408BA7D4A4A78AEB584F"
+            {
+            "SourcePath" = "8:profiles.conf"
+            "TargetName" = "8:profiles.conf"
+            "Tag" = "8:"
+            "Folder" = "8:_1FDAE3AA22FF4B7DA8B28AE3E79B73D8"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_49B3F435DB37C06B11FBC6B80EE5CD32"
@@ -547,6 +625,28 @@
                 {
                 }
             }
+            "{1525181F-901A-416C-8A58-119130FE478E}:_89C6CDD5AAE94BF78EC5618BCCA1693D"
+            {
+            "Name" = "8:#1915"
+            "AlwaysCreate" = "11:FALSE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Property" = "8:AppDataFolder"
+                "Folders"
+                {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_1FDAE3AA22FF4B7DA8B28AE3E79B73D8"
+                    {
+                    "Name" = "8:FTPbox"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_397955D403E54AB0964E69BC0E2D0924"
+                        "Folders"
+                        {
+                        }
+                    }
+                }
+            }
             "{1525181F-901A-416C-8A58-119130FE478E}:_CAA617C610314FBA9A316A55CBC75574"
             {
             "Name" = "8:#1921"
@@ -585,15 +685,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FTPbox"
-        "ProductCode" = "8:{73169CAB-E271-4D54-8DEA-0F46C699FBED}"
-        "PackageCode" = "8:{440E304D-4EB0-447B-86AB-F961300A3F94}"
+        "ProductCode" = "8:{F4B48613-0ADA-49CD-85C2-644A025226B9}"
+        "PackageCode" = "8:{7BE84BEF-DDD9-4673-80A2-74C4640F4871}"
         "UpgradeCode" = "8:{C3AC21D9-1CD1-40EC-A4F8-F482D3922829}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.4.4"
+        "ProductVersion" = "8:2.4.5"
         "Manufacturer" = "8:ftpbox.org"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:ftpbox.org"
