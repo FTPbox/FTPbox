@@ -86,7 +86,18 @@ namespace FTPboxLib
         private void FileChanged(object source, FileSystemEventArgs e)
         {
             string cpath = Common.GetCommonPath(e.FullPath, true);
-            if (!Common.ItemGetsSynced(cpath) || Common.FileIsUsed(e.FullPath) || !File.Exists(e.FullPath)) return;
+            if (!Common.ItemGetsSynced(cpath) || !File.Exists(e.FullPath)) return;
+
+            int retries = 0;
+            while (true)
+            {
+                if (!Common.FileIsUsed(e.FullPath)) break;
+                // Exit after 5 retries
+                if (retries > 5) return;
+                // Sleep for half a second, then check again
+                System.Threading.Thread.Sleep(500);
+                retries++;
+            }
 
         #if __MonoCs__
             // Ignore temp files on linux
@@ -108,9 +119,6 @@ namespace FTPboxLib
                 SyncTo = SyncTo.Remote,
                 ActionType = e.ChangeType == WatcherChangeTypes.Changed ? ChangeAction.changed : ChangeAction.created
             });
-
-            // else if (File.Exists(e.FullPath) || Directory.Exists(e.FullPath))
-            //      SyncInFolder(Directory.GetParent(e.FullPath).FullName, true);
         }
 
         /// <summary>
