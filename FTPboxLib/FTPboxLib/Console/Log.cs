@@ -42,6 +42,9 @@ namespace FTPboxLib
         private static l _level;
         private static bool _debug;
 
+        private const string FontFormat = "<font color=\"{0}\">{1}</font>";
+        private const string OutputFormat = "[ {0} - {1} ] : {2} <br />";   // timestamp, caller, log message
+
         public static void Init(string fname, l level, bool del, bool debug)
         {
             _fname = fname;
@@ -52,7 +55,10 @@ namespace FTPboxLib
             {
                 try
                 {
-                    File.Delete(fname);
+                    // delete log file after a certain size
+                    long size = new FileInfo(fname).Length;
+                    if (size > 10*1024*1024)
+                        File.Delete(fname);
                 }
                 catch
                 {
@@ -120,7 +126,7 @@ namespace FTPboxLib
             CultureInfo culture = new CultureInfo("en-US");
 
             if (_debug)
-                finalWrite(String.Format("<font color=\"green\">[at {0} from {1}] : </font>{2} <br />", thisDate.ToString("yyyy-MM-dd HH:mm:ss", culture), lItem.Caller, lItem.Text));
+                finalWrite(formatOutLine(lItem));
 
             if ((_level & lItem.Level) != lItem.Level)
                 goto Finish;
@@ -169,6 +175,35 @@ namespace FTPboxLib
                 _logWriter.Dispose();
             }
             catch { }
+        }
+
+        private static string formatOutLine(LogItem li)
+        {
+            DateTime thisDate = DateTime.Now;
+            CultureInfo culture = new CultureInfo("en-US");
+            // Get color based on Level
+            string color = getColorCode(li.Level);
+
+            string time = string.Format(FontFormat, "#c5c3bd", thisDate.ToString("yyyy-MM-dd HH:mm:ss", culture));
+            string caller = string.Format(FontFormat, "#c5c3bd", li.Caller);
+            string text = string.Format(FontFormat, color, li.Text);
+
+            return string.Format(OutputFormat, time, caller, text);
+        }
+
+        private static string getColorCode(l li)
+        {
+            if (li == l.Debug)
+                return "#222";
+            if (li == l.Info)
+                return "#666";
+            if (li == l.Warning)
+                return "orange";
+            if (li == l.Error)
+                return "red";
+            // if l.Client            
+            return "green";
+            
         }
 
         private class LogItem
