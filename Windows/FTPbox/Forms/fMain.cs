@@ -60,6 +60,9 @@ namespace FTPbox.Forms
             Common.LoadLocalFolders();
             Load_Recent();
 
+            if (!Log.DebugEnabled && Settings.settingsGeneral.EnableLogging)
+                Log.DebugEnabled = true;
+
             Notifications.NotificationReady += (o, n) =>
                 {
                     link = Common.LinkToRecent();
@@ -237,6 +240,7 @@ namespace FTPbox.Forms
             tParent.Text = Profile.HttpPath;
 
             chkShowNots.Checked = Settings.settingsGeneral.Notifications;
+            chkEnableLogging.Checked = Settings.settingsGeneral.EnableLogging;
 
             if (Profile.TrayAction == TrayAction.OpenInBrowser)
                 rOpenInBrowser.Checked = true;
@@ -445,7 +449,8 @@ namespace FTPbox.Forms
             chkWebInt.Text = Common.Languages.Get(lan + "/web_interface/use_webint", "Use the Web Interface");
             labViewInBrowser.Text = Common.Languages.Get(lan + "/web_interface/view", "(View in browser)");
             chkShowNots.Text = Common.Languages.Get(lan + "/main_form/show_nots", "Show notifications");
-            chkStartUp.Text = Common.Languages.Get(lan + "/main_form/start_on_startup", "Start on system start-up");            
+            chkStartUp.Text = Common.Languages.Get(lan + "/main_form/start_on_startup", "Start on system start-up");
+            chkEnableLogging.Text = Common.Languages.Get(lan + "/main_form/view_log", "View Log");
             //account tab
             lProfile.Text = Common.Languages.Get(lan + "/main_form/profile", "Profile") + ":";
             gDetails.Text = Common.Languages.Get(lan + "/main_form/details", "Details");
@@ -534,20 +539,6 @@ namespace FTPbox.Forms
             // Save
             Settings.settingsGeneral.Language = lan;
             Settings.SaveGeneral();
-        }
-
-        private void cmbLang_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string lan = cmbLang.Text.Substring(cmbLang.Text.IndexOf("(") + 1);
-            lan = lan.Substring(0, lan.Length - 1);
-            try
-            {
-                Set_Language(lan);
-            }
-            catch (Exception ex)
-            {
-                Common.LogError(ex);
-            }
         }
 
         /// <summary>
@@ -1308,6 +1299,23 @@ namespace FTPbox.Forms
         private void labViewInBrowser_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start(Profile.WebInterfaceLink);
+        }
+
+        private void chkEnableLogging_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.settingsGeneral.EnableLogging = chkEnableLogging.Checked;
+            Settings.SaveGeneral();
+
+            Log.DebugEnabled = chkEnableLogging.Checked || Profile.IsDebugMode;
+        }
+
+        private void bBrowseLogs_Click(object sender, EventArgs e)
+        {
+            string logFile = Path.Combine(Profile.AppdataFolder, "Debug.html");
+
+            if (File.Exists(logFile))
+                Process.Start("explorer.exe", logFile);
+
         }
 
         #endregion

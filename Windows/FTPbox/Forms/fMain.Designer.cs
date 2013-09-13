@@ -77,8 +77,6 @@
             this.labViewInBrowser = new System.Windows.Forms.LinkLabel();
             this.chkWebInt = new System.Windows.Forms.CheckBox();
             this.gApp = new System.Windows.Forms.GroupBox();
-            this.labLang = new System.Windows.Forms.Label();
-            this.cmbLang = new System.Windows.Forms.ComboBox();
             this.chkShowNots = new System.Windows.Forms.CheckBox();
             this.chkStartUp = new System.Windows.Forms.CheckBox();
             this.tabAccount = new System.Windows.Forms.TabPage();
@@ -170,6 +168,8 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkEnableLogging = new System.Windows.Forms.CheckBox();
+            this.bBrowseLogs = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.gLinks.SuspendLayout();
@@ -346,61 +346,16 @@
             // gApp
             // 
             this.gApp.AccessibleDescription = "";
-            this.gApp.Controls.Add(this.labLang);
-            this.gApp.Controls.Add(this.cmbLang);
+            this.gApp.Controls.Add(this.bBrowseLogs);
+            this.gApp.Controls.Add(this.chkEnableLogging);
             this.gApp.Controls.Add(this.chkShowNots);
             this.gApp.Controls.Add(this.chkStartUp);
             this.gApp.Location = new System.Drawing.Point(8, 223);
             this.gApp.Name = "gApp";
-            this.gApp.Size = new System.Drawing.Size(449, 69);
+            this.gApp.Size = new System.Drawing.Size(449, 92);
             this.gApp.TabIndex = 3;
             this.gApp.TabStop = false;
             this.gApp.Text = "Application";
-            // 
-            // labLang
-            // 
-            this.labLang.AccessibleDescription = "";
-            this.labLang.AccessibleName = "Language";
-            this.labLang.AutoSize = true;
-            this.labLang.Location = new System.Drawing.Point(8, 67);
-            this.labLang.Name = "labLang";
-            this.labLang.Size = new System.Drawing.Size(58, 13);
-            this.labLang.TabIndex = 5;
-            this.labLang.Text = "Language:";
-            this.labLang.Visible = false;
-            // 
-            // cmbLang
-            // 
-            this.cmbLang.AccessibleDescription = "";
-            this.cmbLang.AccessibleName = "select language";
-            this.cmbLang.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbLang.FormattingEnabled = true;
-            this.cmbLang.Items.AddRange(new object[] {
-            "English (en)",
-            "Español (es)",
-            "Deutsch (de)",
-            "Français (fr)",
-            "Dutch (nl)",
-            "Ελληνικά (el)",
-            "Italian (it)",
-            "Turkish (tr)",
-            "Brazilian Portuguese (pt-BR)",
-            "Føroyskt (fo)",
-            "Swedish (sv)",
-            "Albanian (sq)",
-            "Romanian (ro)",
-            "Korean (ko)",
-            "Russian (ru)",
-            "Japanese (ja)",
-            "Vietnamese (vi)",
-            "Norwegian (no)",
-            "Hungarian (hu)"});
-            this.cmbLang.Location = new System.Drawing.Point(72, 64);
-            this.cmbLang.Name = "cmbLang";
-            this.cmbLang.Size = new System.Drawing.Size(164, 21);
-            this.cmbLang.TabIndex = 8;
-            this.cmbLang.Visible = false;
-            this.cmbLang.SelectedIndexChanged += new System.EventHandler(this.cmbLang_SelectedIndexChanged);
             // 
             // chkShowNots
             // 
@@ -1419,6 +1374,26 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // chkEnableLogging
+            // 
+            this.chkEnableLogging.Location = new System.Drawing.Point(9, 65);
+            this.chkEnableLogging.Name = "chkEnableLogging";
+            this.chkEnableLogging.Size = new System.Drawing.Size(434, 17);
+            this.chkEnableLogging.TabIndex = 9;
+            this.chkEnableLogging.Text = "Enable logging";
+            this.chkEnableLogging.UseVisualStyleBackColor = true;
+            this.chkEnableLogging.CheckedChanged += new System.EventHandler(this.chkEnableLogging_CheckedChanged);
+            // 
+            // bBrowseLogs
+            // 
+            this.bBrowseLogs.Location = new System.Drawing.Point(191, 61);
+            this.bBrowseLogs.Name = "bBrowseLogs";
+            this.bBrowseLogs.Size = new System.Drawing.Size(89, 23);
+            this.bBrowseLogs.TabIndex = 10;
+            this.bBrowseLogs.Text = "View Log";
+            this.bBrowseLogs.UseVisualStyleBackColor = true;
+            this.bBrowseLogs.Click += new System.EventHandler(this.bBrowseLogs_Click);
+            // 
             // fMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1442,7 +1417,6 @@
             this.gWebInt.ResumeLayout(false);
             this.gWebInt.PerformLayout();
             this.gApp.ResumeLayout(false);
-            this.gApp.PerformLayout();
             this.tabAccount.ResumeLayout(false);
             this.gAccount.ResumeLayout(false);
             this.gDetails.ResumeLayout(false);
@@ -1476,8 +1450,6 @@
         private System.Windows.Forms.LinkLabel labViewInBrowser;
         private System.Windows.Forms.CheckBox chkWebInt;
         private System.Windows.Forms.GroupBox gApp;
-        private System.Windows.Forms.Label labLang;
-        private System.Windows.Forms.ComboBox cmbLang;
         private System.Windows.Forms.CheckBox chkShowNots;
         private System.Windows.Forms.CheckBox chkStartUp;
         private System.Windows.Forms.TabPage tabAccount;
@@ -1578,5 +1550,7 @@
         private System.Windows.Forms.Label lProfile;
         private System.Windows.Forms.Label labLinkClicked;
         private System.Windows.Forms.ComboBox cProfiles;
+        private System.Windows.Forms.CheckBox chkEnableLogging;
+        private System.Windows.Forms.Button bBrowseLogs;
     }
 }

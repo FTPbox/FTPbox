@@ -242,6 +242,8 @@ namespace FTPboxLib
             public int UploadLimit = 0;
 
             public int DefaultProfile = 0;
+
+            public bool EnableLogging = true;
         }
 
         public class SettingsProfile

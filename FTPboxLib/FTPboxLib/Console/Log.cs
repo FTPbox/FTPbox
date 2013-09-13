@@ -40,7 +40,7 @@ namespace FTPboxLib
 
         private static string _fname;
         private static l _level;
-        private static bool _debug;
+        public static bool DebugEnabled;
 
         private const string FontFormat = "<font color=\"{0}\">{1}</font>";
         private const string OutputFormat = "[ {0} - {1} ] : {2} <br />";   // timestamp, caller, log message
@@ -49,9 +49,9 @@ namespace FTPboxLib
         {
             _fname = fname;
             _level = level;
-            _debug = debug;
+            DebugEnabled = debug;
 
-            if (del)
+            if (del && File.Exists(fname))
             {
                 try
                 {
@@ -65,8 +65,8 @@ namespace FTPboxLib
                     Log.Write(l.Warning, "Could not delete previous log file");
                 }
             }
-
-            Thread wrtThread = new Thread(new ThreadStart(LogWriter));
+            
+            Thread wrtThread = new Thread(LogWriter);
             wrtThread.Start();
         }
 
@@ -125,7 +125,7 @@ namespace FTPboxLib
             DateTime thisDate = DateTime.Now;
             CultureInfo culture = new CultureInfo("en-US");
 
-            if (_debug)
+            if (DebugEnabled)
                 finalWrite(formatOutLine(lItem));
 
             if ((_level & lItem.Level) != lItem.Level)
@@ -204,7 +204,7 @@ namespace FTPboxLib
             // if l.Client            
             return "green";
             
-        }
+        }        
 
         private class LogItem
         {

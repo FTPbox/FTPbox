@@ -66,6 +66,11 @@ namespace FTPboxLib
 	        }
 	    }
 
+	    public static string DebugLogPath
+	    {
+	        get { return Path.Combine(AppdataFolder, "Debug.html"); }
+	    }
+
         public static string WebInterfaceLink
         {
             get
