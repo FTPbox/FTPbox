@@ -772,11 +772,12 @@
       <mode>Protocollo</mode>
       <change>Cambia</change>
       <account>Account</account>
-      <application>Application</application>
+      <application>Applicazione</application>
       <start_on_startup>Apri all'avvio di windows</start_on_startup>
       <show_nots>Mostra notifiche</show_nots>
+      <profile>Profilo</profile>
       <details>Dettagli</details>
-      <links>Links</links>
+      <links>Collegamenti</links>
       <remote_path>Percorso Remoto</remote_path>
       <local_path>Percorso Locale</local_path>
       <account_full_path>Percorso completo dell'account</account_full_path>
@@ -801,7 +802,7 @@
       <open_local>Apri file locale</open_local>
       <bandwidth>Banda</bandwidth>
       <sync_freq>Frequenza di Sincronizzazione</sync_freq>
-      <sync_when>Sincronia files remoti</sync_when>
+      <sync_when>Sincronizzazione file remoti</sync_when>
       <manually>Manuale</manually>
       <auto>Automaticamente ogni</auto>
       <seconds>secondi</seconds>
@@ -811,6 +812,14 @@
       <no_limits>( seleziona 0 per nessun limite )</no_limits>
       <selective>Sincronizzazione selettiva</selective>
       <selective_info>Deseleziona gli oggetti che non vuoi sincronizzare</selective_info>
+      <refresh>Aggiorna</refresh>
+      <file_filters>Filtri</file_filters>
+      <ignored_extensions>Estensioni ignorate</ignored_extensions>
+      <remove>Rimuovi</remove>
+      <also_ignore>Ignora anche:</also_ignore>
+      <dotfiles>Dot-files</dotfiles>
+      <temp_files>File temporanei</temp_files>
+      <old_files>File modificati precedentemente</old_files>
     </main_form>
     <new_account>
       <new_ftp>Nuovo account FTP</new_ftp>
@@ -850,7 +859,7 @@
       <FilesAndFoldersChanged>{0} {1} e {2} {3} sono stati aggiornati</FilesAndFoldersChanged>
       <ItemsDeleted>{0} oggetti sono stati cancellati</ItemsDeleted>
       <file>File</file>
-      <files>Files</files>
+      <files>File</files>
       <folder>Cartella</folder>
       <folders>Cartelle</folders>
       <connecting>FTPbox - Connessione...</connecting>
@@ -863,7 +872,7 @@
       <syncing>FTPbox - Sincronizzazione in corso…</syncing>
       <offline>FTPbox - Offline</offline>
       <link_copied>Link copiato negli appunti</link_copied>
-      <recent_files>Files Recenti</recent_files>
+      <recent_files>File Recenti</recent_files>
       <not_available>Non Disponibile</not_available>
       <start_syncing>Inizio Sincronizzazione</start_syncing>
       <exit>Uscire</exit>
