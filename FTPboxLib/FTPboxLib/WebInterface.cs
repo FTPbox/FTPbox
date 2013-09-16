@@ -8,6 +8,7 @@
  */
 /* WebInterface.cs
  * Handle anything related to the web interface from here
+ * TODO: Report progress status
  */
 
 using System;
