@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace FTPbox.Classes
 {
-    public class IniFile
+    internal class IniFile
     {
         public string path;
 

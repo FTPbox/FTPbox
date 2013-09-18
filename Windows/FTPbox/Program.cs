@@ -27,20 +27,26 @@ namespace FTPbox
 {
     static class Program
     {
+        public static AccountController Account;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main(string[] args)
         {
+            Settings.Load();
+            Account = new AccountController();
+            Account = Settings.DefaultProfile;
+
             // Allocate console
             if (args.Length > 0 && args.Contains("-console"))
                 aConsole.Allocate();
 
-            Profile.IsDebugMode = args.Contains("-debug");
-            Profile.IsNoMenusMode = args.Contains("-nomenus");
+            Settings.IsDebugMode = args.Contains("-debug");
+            Settings.IsNoMenusMode = args.Contains("-nomenus");
 
-            Log.Init(Profile.DebugLogPath, l.Debug | l.Info | l.Warning | l.Error | l.Client, true, Profile.IsDebugMode);
+            Log.Init(Common.DebugLogPath, l.Debug | l.Info | l.Warning | l.Error | l.Client, true, Settings.IsDebugMode);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

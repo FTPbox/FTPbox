@@ -53,56 +53,54 @@ namespace FTPbox.Forms
         private void fMain_Load(object sender, EventArgs e)
         {
             NetworkChange.NetworkAddressChanged += OnNetworkChange;            
-
-            Settings.Load();
-            Common.Setup();
+            
             //TODO: Should this stay?
-            Common.LoadLocalFolders();
+            Program.Account.LoadLocalFolders();
             Load_Recent();
 
-            if (!Log.DebugEnabled && Settings.settingsGeneral.EnableLogging)
+            if (!Log.DebugEnabled && Settings.General.EnableLogging)
                 Log.DebugEnabled = true;
 
             Notifications.NotificationReady += (o, n) =>
                 {
-                    link = Common.LinkToRecent();
+                    link = Program.Account.LinkToRecent();
                     tray.ShowBalloonTip(100, "FTPbox", n.Text, ToolTipIcon.Info);
                 };
 
 
-            Common.FileLog.FileLogChanged += (o, n) => Load_Recent();
+            Program.Account.FileLog.FileLogChanged += (o, n) => Load_Recent();
 
-            Client.ConnectionClosed += (o, n) => Log.Write(l.Warning, "Connection closed: {0}", n.Text);
+            Program.Account.Client.ConnectionClosed += (o, n) => Log.Write(l.Warning, "Connection closed: {0}", n.Text);
 
-            Client.ReconnectingFailed += (o, n) => Log.Write(l.Warning, "Reconnecting failed"); //TODO: Use this...
+            Program.Account.Client.ReconnectingFailed += (o, n) => Log.Write(l.Warning, "Reconnecting failed"); //TODO: Use this...
 
-            Client.ValidateCertificate += CheckCertificate;
+            Program.Account.Client.ValidateCertificate += CheckCertificate;
 
-            WebInterface.UpdateFound += (o, n) =>
+            Program.Account.WebInterface.UpdateFound += (o, n) =>
                 {
                     const string msg = "A new version of the web interface is available, do you want to upgrade to it?";
                     if (MessageBox.Show(msg, "FTPbox - WebUI Update", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
                     {
-                        WebInterface.UpdatePending = true;
-                        WebInterface.Update();
+                        Program.Account.WebInterface.UpdatePending = true;
+                        Program.Account.WebInterface.Update();
                     }
                 };
-            WebInterface.InterfaceRemoved += (o, n) =>
+            Program.Account.WebInterface.InterfaceRemoved += (o, n) =>
                 {
                     chkWebInt.Enabled = true;
                     labViewInBrowser.Enabled = false;
                     link = string.Empty;
                 };
-            WebInterface.InterfaceUploaded += (o, n) =>
+            Program.Account.WebInterface.InterfaceUploaded += (o, n) =>
                 {
                     chkWebInt.Enabled = true;
                     labViewInBrowser.Enabled = true;
-                    link = Common.GetHttpLink("webint");
+                    link = Program.Account.WebInterfaceLink;
                 };
 
             Notifications.TrayTextNotification += (o,n) => this.Invoke(new MethodInvoker(() => SetTray(o,n)));
 
-            Client.TransferProgress += (o,n) =>
+            Program.Account.Client.TransferProgress += (o, n) =>
             {
                 // Only when Downloading/Uploading.
                 if (string.IsNullOrWhiteSpace(_lastTrayStatus.AssossiatedFile)) return;
@@ -144,7 +142,7 @@ namespace FTPbox.Forms
 
                 UpdateDetails();
 
-                if (!Profile.IsNoMenusMode)
+                if (!Settings.IsNoMenusMode)
                 {
                     AddContextMenu();
                     RunServer();
@@ -164,20 +162,20 @@ namespace FTPbox.Forms
         /// </summary>
         private void CheckAccount()
         {
-            if (!Profile.isAccountSet || (Profile.isAccountSet && string.IsNullOrWhiteSpace(Profile.Password)))
+            if (!Program.Account.isAccountSet || (Program.Account.isAccountSet && string.IsNullOrWhiteSpace(Program.Account.Account.Password)))
             {
                 Log.Write(l.Info, "Will open New FTP form.");
-                Account.just_password = string.IsNullOrWhiteSpace(Profile.Password);
+                Account.just_password = string.IsNullOrWhiteSpace(Program.Account.Account.Password);
                 fNewFtp.ShowDialog();
 
                 Log.Write(l.Info, "Done");
 
                 this.Show();
             }
-            else if (Profile.isAccountSet)            
+            else if (Program.Account.isAccountSet)            
                 try
                 {
-                    Client.Connect();
+                    Program.Account.Client.Connect();
 
                     this.ShowInTaskbar = false;
                     this.Hide();
@@ -199,7 +197,7 @@ namespace FTPbox.Forms
         /// </summary>
         public void CheckPaths()
         {
-            if (!Profile.isPathsSet)
+            if (!Program.Account.isPathsSet)
             {
                 newDir.ShowDialog();       
                 this.Show();
@@ -213,7 +211,7 @@ namespace FTPbox.Forms
             else
                 gotpaths = true;
             
-            Common.LoadLocalFolders();
+            Program.Account.LoadLocalFolders();
         }
         
         /// <summary>
@@ -223,48 +221,48 @@ namespace FTPbox.Forms
         {
             Log.Write(l.Debug, "Updating the form details");
 
-            bool e = WebInterface.Exists;
+            bool e = Program.Account.WebInterface.Exists;
             chkWebInt.Checked = e;
             labViewInBrowser.Enabled = e;
             changedfromcheck = false;
 
             chkStartUp.Checked = CheckStartup();
 
-            lHost.Text = Profile.Host;
-            lUsername.Text = Profile.Username;
-            lPort.Text = Profile.Port.ToString();
-            lMode.Text = (Profile.Protocol != FtpProtocol.SFTP) ? "FTP" : "SFTP";
+            lHost.Text = Program.Account.Account.Host;
+            lUsername.Text = Program.Account.Account.Username;
+            lPort.Text = Program.Account.Account.Port.ToString();
+            lMode.Text = (Program.Account.Account.Protocol != FtpProtocol.SFTP) ? "FTP" : "SFTP";
 
-            lLocPath.Text = Profile.LocalPath;
-            lRemPath.Text = Profile.RemotePath;
-            tParent.Text = Profile.HttpPath;
+            lLocPath.Text = Program.Account.Paths.Local;
+            lRemPath.Text = Program.Account.Paths.Remote;
+            tParent.Text = Program.Account.Paths.Parent;
 
-            chkShowNots.Checked = Settings.settingsGeneral.Notifications;
-            chkEnableLogging.Checked = Settings.settingsGeneral.EnableLogging;
+            chkShowNots.Checked = Settings.General.Notifications;
+            chkEnableLogging.Checked = Settings.General.EnableLogging;
 
-            if (Profile.TrayAction == TrayAction.OpenInBrowser)
+            if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
                 rOpenInBrowser.Checked = true;
-            else if (Profile.TrayAction == TrayAction.CopyLink)
+            else if (Settings.General.TrayAction == TrayAction.CopyLink)
                 rCopy2Clipboard.Checked = true;
             else
                 rOpenLocal.Checked = true;
 
             cProfiles.Items.AddRange(Settings.ProfileTitles);
-            cProfiles.SelectedIndex = Settings.settingsGeneral.DefaultProfile;
+            cProfiles.SelectedIndex = Settings.General.DefaultProfile;
 
             lVersion.Text = Application.ProductVersion.Substring(0, 5) + @" Beta";
 
             //   Filters Tab    //
 
-            cIgnoreDotfiles.Checked = Common.IgnoreList.IgnoreDotFiles;
-            cIgnoreTempFiles.Checked = Common.IgnoreList.IgnoreTempFiles;
+            cIgnoreDotfiles.Checked = Program.Account.IgnoreList.IgnoreDotFiles;
+            cIgnoreTempFiles.Checked = Program.Account.IgnoreList.IgnoreTempFiles;
             lIgnoredExtensions.Clear();
-            foreach (string s in Common.IgnoreList.ExtensionList) 
+            foreach (string s in Program.Account.IgnoreList.Extensions) 
                 if (!string.IsNullOrWhiteSpace(s))  lIgnoredExtensions.Items.Add(new ListViewItem(s));
 
             //  Bandwidth tab   //
 
-            if (Profile.SyncingMethod == SyncMethod.Automatic)
+            if (Program.Account.Account.SyncMethod == SyncMethod.Automatic)
                 cAuto.Checked = true;
             else
                 cManually.Checked = true;
@@ -272,28 +270,28 @@ namespace FTPbox.Forms
             nSyncFrequency.Value = Convert.ToDecimal(Settings.DefaultProfile.Account.SyncFrequency);
             if (nSyncFrequency.Value == 0) nSyncFrequency.Value = 10;
 
-            if (Profile.Protocol != FtpProtocol.SFTP)
+            if (Program.Account.Account.Protocol != FtpProtocol.SFTP)
             {
                 if (LimitUpSpeed())
-                    nUpLimit.Value = Convert.ToDecimal(Settings.settingsGeneral.UploadLimit);
+                    nUpLimit.Value = Convert.ToDecimal(Settings.General.UploadLimit);
                 if (LimitDownSpeed())
-                    nDownLimit.Value = Convert.ToDecimal(Settings.settingsGeneral.DownloadLimit);
+                    nDownLimit.Value = Convert.ToDecimal(Settings.General.DownloadLimit);
             }
             else
                 gLimits.Visible = false;
 
-            Common.FolderWatcher.Setup();
+            Program.Account.FolderWatcher.Setup();
 
             // in a separate thread...
             new Thread(() =>
             {
                 // ...check local folder for changes
-                string cpath = Common.GetCommonPath(Profile.LocalPath, true);
-                Common.SyncQueue.Add(new SyncQueueItem
+                string cpath = Program.Account.GetCommonPath(Program.Account.Paths.Local, true);
+                Program.Account.SyncQueue.Add(new SyncQueueItem (Program.Account)
                     {
                         Item = new ClientItem
                             {
-                                FullPath = Profile.LocalPath,
+                                FullPath = Program.Account.Paths.Local,
                                 Name = Common._name(cpath),
                                 Type = ClientItemType.Folder,
                                 Size = 0x0,
@@ -310,7 +308,7 @@ namespace FTPbox.Forms
         /// </summary>
         public void KillTheProcess()
         {
-            if (!Profile.IsNoMenusMode)
+            if (!Settings.IsNoMenusMode)
                 RemoveFTPboxMenu();
 
             ExitedFromTray = true;
@@ -334,7 +332,7 @@ namespace FTPbox.Forms
         /// </summary>
         private void Load_Recent()
         {
-            var list = new List<FileLogItem>(Common.RecentList);
+            var list = new List<FileLogItem>(Program.Account.RecentList);
             int lim = list.Count > 5 ? 5 : list.Count;
             
             for (int i = 0; i < 5; i++)
@@ -369,7 +367,7 @@ namespace FTPbox.Forms
         /// </summary>
         private void Get_Language()
         {
-            string curlan = Settings.settingsGeneral.Language;
+            string curlan = Settings.General.Language;
 
             if (string.IsNullOrEmpty(curlan))
             {
@@ -432,7 +430,7 @@ namespace FTPbox.Forms
         /// <param name="lan">The language to translate to in 2-letter format</param>
         private void Set_Language(string lan)
         {
-            Profile.Language = lan;
+            Settings.General.Language = lan;
             Log.Write(l.Debug, "Changing language to: {0}", lan);
 
             this.Text = "FTPbox | " + Common.Languages.Get(lan + "/main_form/options", "Options");
@@ -537,7 +535,7 @@ namespace FTPbox.Forms
             RightToLeftLayout = new[] { "he" }.Contains(lan);
 
             // Save
-            Settings.settingsGeneral.Language = lan;
+            Settings.General.Language = lan;
             Settings.SaveGeneral();
         }
 
@@ -590,7 +588,7 @@ namespace FTPbox.Forms
                 {
                     if (!OfflineMode)
                     {
-                        Client.Disconnect();
+                        Program.Account.Client.Disconnect();
                         fswFiles.Dispose();
                         fswFolders.Dispose();
                     }
@@ -716,12 +714,12 @@ namespace FTPbox.Forms
 
         private bool LimitUpSpeed()
         {
-            return Settings.settingsGeneral.UploadLimit > 0;
+            return Settings.General.UploadLimit > 0;
         }
 
         private bool LimitDownSpeed()
         {
-            return Settings.settingsGeneral.DownloadLimit > 0;
+            return Settings.General.DownloadLimit > 0;
         }
         
         #endregion        
@@ -880,7 +878,7 @@ namespace FTPbox.Forms
         /// <returns></returns>
         private string getAppliesTo(bool isForMoveItem)
         {
-            string path = Profile.LocalPath;
+            string path = Program.Account.Paths.Local;
             string applies_to = (isForMoveItem) ? string.Format("NOT System.ItemFolderPathDisplay:~< \"{0}\"", path) : string.Format("System.ItemFolderPathDisplay:~< \"{0}\"", path);
             string short_path = null;
             var Libraries = new[] { Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.MyMusic, Environment.SpecialFolder.MyPictures, Environment.SpecialFolder.MyVideos };
@@ -1004,7 +1002,7 @@ namespace FTPbox.Forms
             int i = 0;
             foreach (string s in args)
             {
-                if (!s.StartsWith(Profile.LocalPath))
+                if (!s.StartsWith(Program.Account.Paths.Local))
                 {
                     MessageBox.Show("You cannot use this for files that are not inside the FTPbox folder.", "FTPbox - Invalid file", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     continue;
@@ -1012,7 +1010,7 @@ namespace FTPbox.Forms
 
                 i++;
                 //if (File.Exists(s))
-                c += Common.GetHttpLink(s);
+                c += Program.Account.GetHttpLink(s);
                 if (i<args.Count())
                     c += Environment.NewLine;
             }
@@ -1043,7 +1041,7 @@ namespace FTPbox.Forms
             foreach (string s in args)
             {
                 Log.Write(l.Info, "Syncing local item: {0}", s);
-                if (!s.StartsWith(Profile.LocalPath))
+                if (!s.StartsWith(Program.Account.Paths.Local))
                 {
                     MessageBox.Show("You cannot use this for files that are not inside the FTPbox folder.", "FTPbox - Invalid file", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     continue;
@@ -1051,17 +1049,17 @@ namespace FTPbox.Forms
 
                 if (Common.PathIsFile(s) && File.Exists(s))
                 {
-                    var cpath = Common.GetCommonPath(s, true);
-                    bool exists = Client.Exists(cpath);
-                    Common.SyncQueue.Add(new SyncQueueItem
+                    var cpath = Program.Account.GetCommonPath(s, true);
+                    bool exists = Program.Account.Client.Exists(cpath);
+                    Program.Account.SyncQueue.Add(new SyncQueueItem (Program.Account)
                     {
                         Item = new ClientItem
                         {
                             FullPath = s,
                             Name = Common._name(cpath),
                             Type = ClientItemType.File,
-                            Size = exists ? Client.SizeOf(cpath) : new FileInfo(s).Length,
-                            LastWriteTime = exists ? Client.GetLwtOf(cpath) : File.GetLastWriteTime(s)
+                            Size = exists ? Program.Account.Client.SizeOf(cpath) : new FileInfo(s).Length,
+                            LastWriteTime = exists ? Program.Account.Client.GetLwtOf(cpath) : File.GetLastWriteTime(s)
                         },
                         ActionType = ChangeAction.changed,
                         SyncTo = exists ? SyncTo.Local : SyncTo.Remote
@@ -1070,7 +1068,7 @@ namespace FTPbox.Forms
                 else if (!Common.PathIsFile(s) && Directory.Exists(s))
                 {
                     var di = new DirectoryInfo(s);
-                    Common.SyncQueue.Add(new SyncQueueItem
+                    Program.Account.SyncQueue.Add(new SyncQueueItem (Program.Account)
                     {
                         Item = new ClientItem
                         {
@@ -1096,13 +1094,13 @@ namespace FTPbox.Forms
         {
             foreach (string s in args)
             {
-                if (!s.StartsWith(Profile.LocalPath))
+                if (!s.StartsWith(Program.Account.Paths.Local))
                 {
                     MessageBox.Show("You cannot use this for files that are not inside the FTPbox folder.", "FTPbox - Invalid file", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     continue;
                 }
 
-                string link = Common.GetHttpLink(s);
+                string link = Program.Account.GetHttpLink(s);
                 try
                 {
                     Process.Start(link);
@@ -1124,24 +1122,24 @@ namespace FTPbox.Forms
         {
             foreach (string s in args)
             {
-                if (!s.StartsWith(Profile.LocalPath))
+                if (!s.StartsWith(Program.Account.Paths.Local))
                 {
                     if (File.Exists(s))
                     {
                         FileInfo fi = new FileInfo(s);
-                        File.Copy(s, Path.Combine(Profile.LocalPath, fi.Name));
+                        File.Copy(s, Path.Combine(Program.Account.Paths.Local, fi.Name));
                     }
                     else if (Directory.Exists(s))
                     {
                         foreach (string dir in Directory.GetDirectories(s, "*", SearchOption.AllDirectories))
                         {
                             string name = dir.Substring(s.Length);
-                            Directory.CreateDirectory(Path.Combine(Profile.LocalPath, name));
+                            Directory.CreateDirectory(Path.Combine(Program.Account.Paths.Local, name));
                         }
                         foreach (string file in Directory.GetFiles(s, "*", SearchOption.AllDirectories))
                         {
                             string name = file.Substring(s.Length);
-                            File.Copy(file, Path.Combine(Profile.LocalPath, name));
+                            File.Copy(file, Path.Combine(Program.Account.Paths.Local, name));
                         }
                     }
                 }
@@ -1157,8 +1155,8 @@ namespace FTPbox.Forms
             if (tRefresh != null && tRefresh.IsAlive) return;   
             tRefresh = new Thread(() =>
             {
-                var li = new List<ClientItem>(Client.List(".").ToList());
-                if (Client.ListingFailed) goto Finish;
+                var li = new List<ClientItem>(Program.Account.Client.List(".").ToList());
+                if (Program.Account.Client.ListingFailed) goto Finish;
 
                 this.Invoke(new MethodInvoker(() => lSelectiveSync.Nodes.Clear()));
 
@@ -1192,8 +1190,8 @@ namespace FTPbox.Forms
                 if (!tn.Parent.Checked)
                 {
                     tn.Parent.Checked = true;
-                    if (Common.IgnoreList.FolderList.Contains(tn.Parent.FullPath))
-                        Common.IgnoreList.FolderList.Remove(tn.Parent.FullPath);
+                    if (Program.Account.IgnoreList.Items.Contains(tn.Parent.FullPath))
+                        Program.Account.IgnoreList.Items.Remove(tn.Parent.FullPath);
                     CheckSingleRoute(tn.Parent);
                 }
         }
@@ -1205,7 +1203,7 @@ namespace FTPbox.Forms
         {
             foreach (TreeNode t in lSelectiveSync.Nodes)
             {
-                if (!Common.IgnoreList.isInIgnoredFolders(t.FullPath)) t.Checked = true;
+                if (!Program.Account.IgnoreList.isInIgnoredFolders(t.FullPath)) t.Checked = true;
                 if (t.Parent != null)
                     if (!t.Parent.Checked) t.Checked = false;
 
@@ -1216,7 +1214,7 @@ namespace FTPbox.Forms
 
         private void EditNodeCheckboxesRecursive(TreeNode t)
         {
-            t.Checked = Common.IgnoreList.isInIgnoredFolders(t.FullPath);
+            t.Checked = Program.Account.IgnoreList.isInIgnoredFolders(t.FullPath);
             if (t.Parent != null)
                 if (!t.Parent.Checked) t.Checked = false;
 
@@ -1241,8 +1239,7 @@ namespace FTPbox.Forms
         {
             if (rOpenInBrowser.Checked)
             {
-                Profile.TrayAction = TrayAction.OpenInBrowser;
-                Settings.settingsGeneral.TrayAction = TrayAction.OpenInBrowser;
+                Settings.General.TrayAction = TrayAction.OpenInBrowser;
                 Settings.SaveGeneral();
             }
         }
@@ -1251,8 +1248,7 @@ namespace FTPbox.Forms
         {
             if (rCopy2Clipboard.Checked)
             {
-                Profile.TrayAction = TrayAction.CopyLink;
-                Settings.settingsGeneral.TrayAction = TrayAction.CopyLink;
+                Settings.General.TrayAction = TrayAction.CopyLink;
                 Settings.SaveGeneral();
             }
         }
@@ -1260,22 +1256,21 @@ namespace FTPbox.Forms
         private void rOpenLocal_CheckedChanged(object sender, EventArgs e)
         {
             if (rOpenLocal.Checked)
-            {
-                Profile.TrayAction = TrayAction.OpenLocalFile;
-                Settings.settingsGeneral.TrayAction = TrayAction.OpenLocalFile;
+            {                
+                Settings.General.TrayAction = TrayAction.OpenLocalFile;
                 Settings.SaveGeneral();
             }
         }
 
         private void tParent_TextChanged(object sender, EventArgs e)
         {
-            Profile.HttpPath = tParent.Text;
+            Program.Account.Paths.Parent = tParent.Text;
             Settings.SaveProfile();
         }
 
         private void chkShowNots_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.settingsGeneral.Notifications = chkShowNots.Checked;
+            Settings.General.Notifications = chkShowNots.Checked;
             Settings.SaveGeneral();
         }
 
@@ -1284,34 +1279,34 @@ namespace FTPbox.Forms
             if (!changedfromcheck)
             {
                 if (chkWebInt.Checked)
-                    WebInterface.UpdatePending = true;
+                    Program.Account.WebInterface.UpdatePending = true;
                 else
-                    WebInterface.DeletePending = true;
+                    Program.Account.WebInterface.DeletePending = true;
                 
                 chkWebInt.Enabled = false;
 
-                if (!Common.SyncQueue.Running)
-                    WebInterface.Update();
+                if (!Program.Account.SyncQueue.Running)
+                    Program.Account.WebInterface.Update();
             }
             changedfromcheck = false;
         }
 
         private void labViewInBrowser_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(Profile.WebInterfaceLink);
+            Process.Start(Program.Account.WebInterfaceLink);
         }
 
         private void chkEnableLogging_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.settingsGeneral.EnableLogging = chkEnableLogging.Checked;
+            Settings.General.EnableLogging = chkEnableLogging.Checked;
             Settings.SaveGeneral();
 
-            Log.DebugEnabled = chkEnableLogging.Checked || Profile.IsDebugMode;
+            Log.DebugEnabled = chkEnableLogging.Checked || Settings.IsDebugMode;
         }
 
         private void bBrowseLogs_Click(object sender, EventArgs e)
         {
-            string logFile = Path.Combine(Profile.AppdataFolder, "Debug.html");
+            string logFile = Path.Combine(Common.AppdataFolder, "Debug.html");
 
             if (File.Exists(logFile))
                 Process.Start("explorer.exe", logFile);
@@ -1325,7 +1320,7 @@ namespace FTPbox.Forms
         private void bRemoveAccount_Click(object sender, EventArgs e)
         {
             string msg = string.Format("Are you sure you want to delete profile: {0}?",
-                   Settings.ProfileTitles[Settings.settingsGeneral.DefaultProfile]);
+                   Settings.ProfileTitles[Settings.General.DefaultProfile]);
             if (MessageBox.Show(msg, "Confirm Account Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 Settings.RemoveCurrentProfile();
@@ -1338,7 +1333,7 @@ namespace FTPbox.Forms
 
         private void bAddAccount_Click(object sender, EventArgs e)
         {
-            Settings.settingsGeneral.DefaultProfile = Settings.Profiles.Count;
+            Settings.General.DefaultProfile = Settings.Profiles.Count;
             Settings.SaveGeneral();
 
             //  Restart
@@ -1348,12 +1343,12 @@ namespace FTPbox.Forms
 
         private void cProfiles_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cProfiles.SelectedIndex == Settings.settingsGeneral.DefaultProfile) return;
+            if (cProfiles.SelectedIndex == Settings.General.DefaultProfile) return;
 
             var msg = string.Format("Switch to {0} ?", Settings.ProfileTitles[cProfiles.SelectedIndex]);
             if (MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                Settings.settingsGeneral.DefaultProfile = cProfiles.SelectedIndex;
+                Settings.General.DefaultProfile = cProfiles.SelectedIndex;
                 Settings.SaveGeneral();
 
                 //  Restart
@@ -1361,7 +1356,7 @@ namespace FTPbox.Forms
                 KillTheProcess();
             }
             else
-                cProfiles.SelectedIndex = Settings.settingsGeneral.DefaultProfile;
+                cProfiles.SelectedIndex = Settings.General.DefaultProfile;
         }
 
         #endregion
@@ -1370,14 +1365,14 @@ namespace FTPbox.Forms
 
         private void cIgnoreTempFiles_CheckedChanged(object sender, EventArgs e)
         {
-            Common.IgnoreList.IgnoreTempFiles = cIgnoreTempFiles.Checked;
-            Common.IgnoreList.Save();
+            Program.Account.IgnoreList.IgnoreTempFiles = cIgnoreTempFiles.Checked;
+            Program.Account.IgnoreList.Save();
         }
 
         private void cIgnoreDotfiles_CheckedChanged(object sender, EventArgs e)
         {
-            Common.IgnoreList.IgnoreDotFiles = cIgnoreDotfiles.Checked;
-            Common.IgnoreList.Save();
+            Program.Account.IgnoreList.IgnoreDotFiles = cIgnoreDotfiles.Checked;
+            Program.Account.IgnoreList.Save();
         }
 
         private void bAddExt_Click(object sender, EventArgs e)
@@ -1385,14 +1380,14 @@ namespace FTPbox.Forms
             string newext = tNewExt.Text;
             if (newext.StartsWith(".")) newext = newext.Substring(1);
 
-            if (!Common.IgnoreList.ExtensionList.Contains(newext))
-                Common.IgnoreList.ExtensionList.Add(newext);
-            Common.IgnoreList.Save();
+            if (!Program.Account.IgnoreList.Extensions.Contains(newext))
+                Program.Account.IgnoreList.Extensions.Add(newext);
+            Program.Account.IgnoreList.Save();
 
             tNewExt.Text = string.Empty;
             //refresh the list
             lIgnoredExtensions.Clear();
-            foreach (string s in Common.IgnoreList.ExtensionList)
+            foreach (string s in Program.Account.IgnoreList.Extensions)
                 if (!string.IsNullOrWhiteSpace(s)) lIgnoredExtensions.Items.Add(new ListViewItem(s));
         }
 
@@ -1407,12 +1402,12 @@ namespace FTPbox.Forms
         {
             foreach (ListViewItem li in lIgnoredExtensions.SelectedItems)
                 if (!string.IsNullOrWhiteSpace(li.Text))
-                    Common.IgnoreList.ExtensionList.Remove(li.Text);
-            Common.IgnoreList.Save();
+                    Program.Account.IgnoreList.Extensions.Remove(li.Text);
+            Program.Account.IgnoreList.Save();
 
             //refresh the list
             lIgnoredExtensions.Clear();
-            foreach (string s in Common.IgnoreList.ExtensionList)
+            foreach (string s in Program.Account.IgnoreList.Extensions)
                 if (!string.IsNullOrWhiteSpace(s)) lIgnoredExtensions.Items.Add(new ListViewItem(s));
         }
 
@@ -1425,16 +1420,16 @@ namespace FTPbox.Forms
         private void cIgnoreOldFiles_CheckedChanged(object sender, EventArgs e)
         {
             dtpLastModTime.Enabled = cIgnoreOldFiles.Checked;
-            Common.IgnoreList.IgnoreOldFiles = cIgnoreOldFiles.Checked;
-            Common.IgnoreList.LastModifiedMinimum = (cIgnoreOldFiles.Checked) ? dtpLastModTime.Value : DateTime.MinValue;
-            Common.IgnoreList.Save();
+            Program.Account.IgnoreList.IgnoreOldFiles = cIgnoreOldFiles.Checked;
+            Program.Account.IgnoreList.LastModifiedMinimum = (cIgnoreOldFiles.Checked) ? dtpLastModTime.Value : DateTime.MinValue;
+            Program.Account.IgnoreList.Save();
         }
 
         private void dtpLastModTime_ValueChanged(object sender, EventArgs e)
         {
-            Common.IgnoreList.IgnoreOldFiles = cIgnoreOldFiles.Checked;
-            Common.IgnoreList.LastModifiedMinimum = (cIgnoreOldFiles.Checked) ? dtpLastModTime.Value : DateTime.MinValue;
-            Common.IgnoreList.Save();
+            Program.Account.IgnoreList.IgnoreOldFiles = cIgnoreOldFiles.Checked;
+            Program.Account.IgnoreList.LastModifiedMinimum = (cIgnoreOldFiles.Checked) ? dtpLastModTime.Value : DateTime.MinValue;
+            Program.Account.IgnoreList.Save();
         }
 
         private void lSelectiveSync_AfterExpand(object sender, TreeViewEventArgs e)
@@ -1463,7 +1458,7 @@ namespace FTPbox.Forms
                 List<ClientItem> li = new List<ClientItem>();
                 try
                 {
-                    li = Client.List(path).ToList();
+                    li = Program.Account.Client.List(path).ToList();
                 }
                 catch (Exception ex)
                 {
@@ -1488,7 +1483,7 @@ namespace FTPbox.Forms
                 foreach (TreeNode tn in e.Node.Nodes)
                     this.Invoke(new MethodInvoker(delegate
                     {
-                        tn.Checked = !Common.IgnoreList.isInIgnoredFolders(tn.FullPath);
+                        tn.Checked = !Program.Account.IgnoreList.isInIgnoredFolders(tn.FullPath);
                     }));
             });
             tExpandItem.Start();
@@ -1498,14 +1493,14 @@ namespace FTPbox.Forms
         {
             if (checking_nodes || e.Node.Text == "!tempnode!") return;
 
-            string cpath = Common.GetCommonPath(e.Node.FullPath, false);
-            // Log.Write(l.Debug, "{0} is ignored: {1} already in list: {2}", cpath, !e.Node.Checked, Common.IgnoreList.FolderList.Contains(cpath));
+            string cpath = Program.Account.GetCommonPath(e.Node.FullPath, false);
+            // Log.Write(l.Debug, "{0} is ignored: {1} already in list: {2}", cpath, !e.Node.Checked, Program.Account.IgnoreList.Items.Contains(cpath));
 
-            if (e.Node.Checked && Common.IgnoreList.FolderList.Contains(cpath))
-                Common.IgnoreList.FolderList.Remove(cpath);
-            else if (!e.Node.Checked && !Common.IgnoreList.FolderList.Contains(cpath))
-                Common.IgnoreList.FolderList.Add(cpath);
-            Common.IgnoreList.Save();
+            if (e.Node.Checked && Program.Account.IgnoreList.Items.Contains(cpath))
+                Program.Account.IgnoreList.Items.Remove(cpath);
+            else if (!e.Node.Checked && !Program.Account.IgnoreList.Items.Contains(cpath))
+                Program.Account.IgnoreList.Items.Add(cpath);
+            Program.Account.IgnoreList.Save();
 
             checking_nodes = true;
             CheckUncheckChildNodes(e.Node, e.Node.Checked);
@@ -1514,11 +1509,11 @@ namespace FTPbox.Forms
                 if (!e.Node.Parent.Checked)
                 {
                     e.Node.Parent.Checked = true;
-                    if (Common.IgnoreList.FolderList.Contains(e.Node.Parent.FullPath))
-                        Common.IgnoreList.FolderList.Remove(e.Node.Parent.FullPath);
+                    if (Program.Account.IgnoreList.Items.Contains(e.Node.Parent.FullPath))
+                        Program.Account.IgnoreList.Items.Remove(e.Node.Parent.FullPath);
                     CheckSingleRoute(e.Node.Parent);
                 }
-            Common.IgnoreList.Save();
+            Program.Account.IgnoreList.Save();
             checking_nodes = false;
         }
 
@@ -1540,13 +1535,13 @@ namespace FTPbox.Forms
 
         private void cManually_CheckedChanged(object sender, EventArgs e)
         {
-            SyncToolStripMenuItem.Enabled = cManually.Checked || !Common.SyncQueue.Running;
-            Profile.SyncingMethod = (cManually.Checked) ? SyncMethod.Manual : SyncMethod.Automatic;
+            SyncToolStripMenuItem.Enabled = cManually.Checked || !Program.Account.SyncQueue.Running;
+            Program.Account.Account.SyncMethod = (cManually.Checked) ? SyncMethod.Manual : SyncMethod.Automatic;
             Settings.SaveProfile();
 
-            if (Profile.SyncingMethod == SyncMethod.Automatic)
+            if (Program.Account.Account.SyncMethod == SyncMethod.Automatic)
             {
-                Profile.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
+                Program.Account.Account.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
                 nSyncFrequency.Enabled = true;
             }
             else
@@ -1558,13 +1553,13 @@ namespace FTPbox.Forms
 
         private void cAuto_CheckedChanged(object sender, EventArgs e)
         {
-            SyncToolStripMenuItem.Enabled = !cAuto.Checked || !Common.SyncQueue.Running;
-            Profile.SyncingMethod = (!cAuto.Checked) ? SyncMethod.Manual : SyncMethod.Automatic;
+            SyncToolStripMenuItem.Enabled = !cAuto.Checked || !Program.Account.SyncQueue.Running;
+            Program.Account.Account.SyncMethod = (!cAuto.Checked) ? SyncMethod.Manual : SyncMethod.Automatic;
             Settings.SaveProfile();
 
-            if (Profile.SyncingMethod == SyncMethod.Automatic)
+            if (Program.Account.Account.SyncMethod == SyncMethod.Automatic)
             {
-                Profile.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
+                Program.Account.Account.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
                 nSyncFrequency.Enabled = true;
             }
             else
@@ -1576,7 +1571,7 @@ namespace FTPbox.Forms
 
         private void nSyncFrequency_ValueChanged(object sender, EventArgs e)
         {
-            Profile.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
+            Program.Account.Account.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
             Settings.SaveProfile();
         }
 
@@ -1584,8 +1579,8 @@ namespace FTPbox.Forms
         {
             try
             {
-                Settings.settingsGeneral.DownloadLimit = Convert.ToInt32(nDownLimit.Value);
-                Client.SetMaxDownloadSpeed(Convert.ToInt32(nDownLimit.Value));
+                Settings.General.DownloadLimit = Convert.ToInt32(nDownLimit.Value);
+                Program.Account.Client.MaxDownloadSpeed = Convert.ToInt32(nDownLimit.Value);
                 Settings.SaveGeneral();
             }
             catch { }
@@ -1595,8 +1590,8 @@ namespace FTPbox.Forms
         {
             try
             {
-                Settings.settingsGeneral.UploadLimit = Convert.ToInt32(nUpLimit.Value);
-                Client.SetMaxUploadSpeed(Convert.ToInt32(nUpLimit.Value));
+                Settings.General.UploadLimit = Convert.ToInt32(nUpLimit.Value);
+                Program.Account.Client.MaxUploadSpeed = Convert.ToInt32(nUpLimit.Value);
                 Settings.SaveGeneral();
             }
             catch { }
@@ -1638,7 +1633,7 @@ namespace FTPbox.Forms
         private void tray_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
-                Process.Start("explorer.exe", Profile.LocalPath);
+                Process.Start("explorer.exe", Program.Account.Paths.Local);
         }
 
         private void SyncToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1677,126 +1672,126 @@ namespace FTPbox.Forms
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
             int ind = 0;
-            if (Profile.TrayAction == TrayAction.OpenInBrowser)
+            if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
             {
                 try
                 {
-                    Process.Start(Common.LinkToRecent(ind));
+                    Process.Start(Program.Account.LinkToRecent(ind));
                 }
                 catch { }
 
             }
-            else if (Profile.TrayAction == TrayAction.CopyLink)
+            else if (Settings.General.TrayAction == TrayAction.CopyLink)
             {
                 try
                 {
-                    Clipboard.SetText(Common.LinkToRecent(ind));
+                    Clipboard.SetText(Program.Account.LinkToRecent(ind));
                     SetTray(null, new TrayTextNotificationArgs { MessageType = MessageType.LinkCopied });
                 }
                 catch { }
             }
             else
-                Process.Start(Common.PathToRecent(ind));
+                Process.Start(Program.Account.PathToRecent(ind));
         }
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
             int ind = 1;
-            if (Profile.TrayAction == TrayAction.OpenInBrowser)
+            if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
             {
                 try
                 {
-                    Process.Start(Common.LinkToRecent(ind));
+                    Process.Start(Program.Account.LinkToRecent(ind));
                 }
                 catch { }
 
             }
-            else if (Profile.TrayAction == TrayAction.CopyLink)
+            else if (Settings.General.TrayAction == TrayAction.CopyLink)
             {
                 try
                 {
-                    Clipboard.SetText(Common.LinkToRecent(ind));
+                    Clipboard.SetText(Program.Account.LinkToRecent(ind));
                     SetTray(null, new TrayTextNotificationArgs { MessageType = MessageType.LinkCopied });
                 }
                 catch { }
             }
             else
-                Process.Start(Common.PathToRecent(ind));
+                Process.Start(Program.Account.PathToRecent(ind));
         }
 
         private void toolStripMenuItem3_Click(object sender, EventArgs e)
         {
             int ind = 2;
-            if (Profile.TrayAction == TrayAction.OpenInBrowser)
+            if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
             {
                 try
                 {
-                    Process.Start(Common.LinkToRecent(ind));
+                    Process.Start(Program.Account.LinkToRecent(ind));
                 }
                 catch { }
 
             }
-            else if (Profile.TrayAction == TrayAction.CopyLink)
+            else if (Settings.General.TrayAction == TrayAction.CopyLink)
             {
                 try
                 {
-                    Clipboard.SetText(Common.LinkToRecent(ind));
+                    Clipboard.SetText(Program.Account.LinkToRecent(ind));
                     SetTray(null, new TrayTextNotificationArgs { MessageType = MessageType.LinkCopied });
                 }
                 catch { }
             }
             else
-                Process.Start(Common.PathToRecent(ind));
+                Process.Start(Program.Account.PathToRecent(ind));
         }
 
         private void toolStripMenuItem4_Click(object sender, EventArgs e)
         {
             int ind = 3;
-            if (Profile.TrayAction == TrayAction.OpenInBrowser)
+            if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
             {
                 try
                 {
-                    Process.Start(Common.LinkToRecent(ind));
+                    Process.Start(Program.Account.LinkToRecent(ind));
                 }
                 catch { }
 
             }
-            else if (Profile.TrayAction == TrayAction.CopyLink)
+            else if (Settings.General.TrayAction == TrayAction.CopyLink)
             {
                 try
                 {
-                    Clipboard.SetText(Common.LinkToRecent(ind));
+                    Clipboard.SetText(Program.Account.LinkToRecent(ind));
                     SetTray(null, new TrayTextNotificationArgs { MessageType = MessageType.LinkCopied });
                 }
                 catch { }
             }
             else
-                Process.Start(Common.PathToRecent(ind));
+                Process.Start(Program.Account.PathToRecent(ind));
         }
 
         private void toolStripMenuItem5_Click(object sender, EventArgs e)
         {
             int ind = 4;
-            if (Profile.TrayAction == TrayAction.OpenInBrowser)
+            if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
             {
                 try
                 {
-                    Process.Start(Common.LinkToRecent(ind));
+                    Process.Start(Program.Account.LinkToRecent(ind));
                 }
                 catch { }
 
             }
-            else if (Profile.TrayAction == TrayAction.CopyLink)
+            else if (Settings.General.TrayAction == TrayAction.CopyLink)
             {
                 try
                 {
-                    Clipboard.SetText(Common.LinkToRecent(ind));
+                    Clipboard.SetText(Program.Account.LinkToRecent(ind));
                     SetTray(null, new TrayTextNotificationArgs { MessageType = MessageType.LinkCopied });
                 }
                 catch { }
             }
             else
-                Process.Start(Common.PathToRecent(ind));
+                Process.Start(Program.Account.PathToRecent(ind));
         }
 
         private void tray_BalloonTipClicked(object sender, EventArgs e)
@@ -1809,22 +1804,22 @@ namespace FTPbox.Forms
             {
                 if ((MouseButtons & MouseButtons.Right) != MouseButtons.Right)
                 {
-                    if (Profile.TrayAction == TrayAction.OpenInBrowser)
+                    if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
                     {
                         try
                         {
-                            Process.Start(Common.LinkToRecent());
+                            Process.Start(Program.Account.LinkToRecent());
                         }
                         catch
                         {
                             //Gotta catch 'em all 
                         }
                     }
-                    else if (Profile.TrayAction == TrayAction.CopyLink)
+                    else if (Settings.General.TrayAction == TrayAction.CopyLink)
                     {
                         try
                         {
-                            Clipboard.SetText(Common.LinkToRecent());
+                            Clipboard.SetText(Program.Account.LinkToRecent());
                         }
                         catch
                         {
@@ -1836,7 +1831,7 @@ namespace FTPbox.Forms
                     {
                         try
                         {
-                            Process.Start(Common.PathToRecent());
+                            Process.Start(Program.Account.PathToRecent());
                         }
                         catch
                         {
@@ -1896,7 +1891,7 @@ namespace FTPbox.Forms
                         break;
                     case MessageType.Listing:
                         tray.Icon = Properties.Resources.AS;
-                        tray.Text = (Profile.SyncingMethod == SyncMethod.Automatic) ? Common._(MessageType.AllSynced) : Common._(MessageType.Listing);                        
+                        tray.Text = (Program.Account.Account.SyncMethod == SyncMethod.Automatic) ? Common._(MessageType.AllSynced) : Common._(MessageType.Listing);                        
                         break;
                     case MessageType.Connecting:
                         tray.Icon = Properties.Resources.syncing;
@@ -1933,9 +1928,9 @@ namespace FTPbox.Forms
         /// <param name="state"></param>
         public void StartRemoteSync(object state)
         {
-            if (Profile.SyncingMethod == SyncMethod.Automatic) SyncToolStripMenuItem.Enabled = false;
+            if (Program.Account.Account.SyncMethod == SyncMethod.Automatic) SyncToolStripMenuItem.Enabled = false;
             Log.Write(l.Debug, "Starting remote sync...");
-            Common.SyncQueue.Add(new SyncQueueItem
+            Program.Account.SyncQueue.Add(new SyncQueueItem (Program.Account)
             {
                 Item = new ClientItem
                 {
@@ -1958,7 +1953,7 @@ namespace FTPbox.Forms
         {
             var msg = string.Empty;
             // Add certificate info
-            if (Profile.Protocol == FtpProtocol.SFTP)
+            if (Program.Account.Account.Protocol == FtpProtocol.SFTP)
                 msg += string.Format("{0,-8}\t {1}\n{2,-8}\t {3}\n", "Key:", n.Key, "Key Size:", n.KeySize);
             else
                 msg += string.Format("{0,-25}\t {1}\n{2,-25}\t {3}\n{4,-25}\t {5}\n{6,-25}\t {7}\n\n",

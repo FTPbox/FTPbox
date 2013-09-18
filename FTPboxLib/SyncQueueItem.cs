@@ -16,6 +16,13 @@ namespace FTPboxLib
 {
     public class SyncQueueItem
     {
+        private AccountController controller;
+
+        public SyncQueueItem(AccountController account)
+        {
+            this.controller = account;
+        }
+
         /// <summary>
         /// Client item that contains the item's name, full path, size and LastWriteTime
         /// </summary>
@@ -53,14 +60,14 @@ namespace FTPboxLib
 
         public string CommonPath
         {
-            get { return Common.GetCommonPath(Item.FullPath, SyncTo ==  SyncTo.Remote); }
+            get { return controller.GetCommonPath(Item.FullPath, SyncTo ==  SyncTo.Remote); }
         }
 
         public string NewCommonPath
         {
             get { 
                 return ActionType == ChangeAction.renamed ?
-                    Common.GetCommonPath(Item.NewFullPath, true) : CommonPath;
+                    controller.GetCommonPath(Item.NewFullPath, true) : CommonPath;
             }
         }
 
@@ -79,7 +86,7 @@ namespace FTPboxLib
         {
             get
             {
-                return SyncTo == SyncTo.Remote ? Item.FullPath : System.IO.Path.Combine(Profile.LocalPath, CommonPath);
+                return SyncTo == SyncTo.Remote ? Item.FullPath : System.IO.Path.Combine(controller.Paths.Local, CommonPath);
             }
         }
     }

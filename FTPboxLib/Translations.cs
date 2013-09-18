@@ -6,7 +6,7 @@ namespace FTPboxLib
     public class Translations
     {
         XmlDocument xmlDocument = new XmlDocument();       
-        string documentPath = Environment.CurrentDirectory + "\\translations.xml"; //Application.StartupPath + "\\translations.xml";
+        string documentPath = Environment.CurrentDirectory + "\\translations.xml";
 
         public Translations()
         {            

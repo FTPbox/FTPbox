@@ -13,10 +13,10 @@
 
 namespace FTPboxLib
 {
-    public class DecryptionInfo
+    public static partial class Common
     {
         public static string DecryptionPassword = "removed";
-        
+
         public static string DecryptionSalt = "removed";
     }
 }

@@ -17,30 +17,25 @@ using System.Linq;
 
 namespace FTPboxLib
 {
-    public static class Common
+    public static partial class Common
     {
         #region Fields
 
         public static List<string> LocalFolders = new List<string>();       //Used to store all the local folders at all times
         public static List<string> LocalFiles = new List<string>();         //Used to store all the local files at all times
 
-        public static IgnoreList IgnoreList;                	            //list of ignored folders
-        public static FileLog FileLog;                                      //the file log
         public static Translations Languages = new Translations();          //Used to grab the translations from the translations.xml file
-
-        public static SyncQueue SyncQueue;
-        public static FolderWatcher FolderWatcher;
 
         #endregion
 
-        #region Properties
+        #region Methods
 
         /// <summary>
         /// Encrypt the given password. Used to store passwords encrypted in the config file.
         /// </summary>
         public static string Encrypt(string password)
         {
-            return Utilities.Encryption.AESEncryption.Encrypt(password, DecryptionInfo.DecryptionPassword, DecryptionInfo.DecryptionSalt);
+            return Utilities.Encryption.AESEncryption.Encrypt(password, DecryptionPassword, DecryptionSalt);
         }
 
         /// <summary>
@@ -48,62 +43,7 @@ namespace FTPboxLib
         /// </summary>
         public static string Decrypt(string encrypted)
         {
-            return Utilities.Encryption.AESEncryption.Decrypt(encrypted, DecryptionInfo.DecryptionPassword, DecryptionInfo.DecryptionSalt);
-        }
-
-        /// <summary>
-        /// Gets the common path of both local and remote directories.
-        /// </summary>
-        /// <returns>
-        /// The common path, using forward slashes ( / )
-        /// </returns>
-        /// <param name='p'>
-        /// The full path to be 'shortened'
-        /// </param>
-        /// <param name='fromLocal'>
-        /// True if the given path is in local format.
-        /// </param>
-        public static string GetCommonPath(string p, bool fromLocal)
-        {
-            if (!fromLocal)
-            {
-                // Remove the remote path from the begining
-                if (Profile.RemotePath != null && p.StartsWith(Profile.RemotePath))
-                {
-                    if (p.StartsWithButNotEqual(Profile.RemotePath))
-                        p = p.Substring(Profile.RemotePath.Length);
-                }
-                // If path starts with homepath instead, remove the home path from the begining
-                else if (Profile.HomePath != string.Empty && !Profile.HomePath.Equals("/"))
-                {
-                    if (p.StartsWithButNotEqual(Profile.HomePath) || p.StartsWithButNotEqual(Profile.HomePath.RemoveSlashes()) || p.RemoveSlashes().StartsWithButNotEqual(Profile.HomePath))
-                        p = p.Substring(Profile.HomePath.Length + 1);
-                    // ... and then remove the remote path
-                    if (Profile.RemotePath != null && p.StartsWithButNotEqual(Profile.RemotePath))
-                        p = p.Substring(Profile.RemotePath.Length);
-                }
-            }
-            if (fromLocal || File.Exists(p) || Directory.Exists(p))
-            {
-                if (p.Equals(Profile.LocalPath)) return ".";
-                
-                if (!string.IsNullOrWhiteSpace(Profile.LocalPath) && p.StartsWith(Profile.LocalPath))
-                {
-                    p = p.Substring(Profile.LocalPath.Length);
-                    p.ReplaceSlashes();
-                }
-            }
-
-            p = p.RemoveSlashes();
-            if (p.StartsWithButNotEqual("/"))
-                p = p.Substring(1);
-            if (p.StartsWith("./"))
-                p = p.Substring(2);
-
-            if (string.IsNullOrWhiteSpace(p))
-                p = "/";
-
-            return p.ReplaceSlashes();
+            return Utilities.Encryption.AESEncryption.Decrypt(encrypted, DecryptionPassword, DecryptionSalt);
         }
 
         /// <summary>
@@ -148,12 +88,12 @@ namespace FTPboxLib
         public static string _tempName(string cpath)
         {
             if (!cpath.Contains("/") && !cpath.Contains(@"\"))
-                return string.Format("~ftpb_{0}", cpath);
+                return String.Format("~ftpb_{0}", cpath);
 
             string parent = cpath.Substring(0, cpath.LastIndexOf("/"));
-            string temp_name = string.Format("~ftpb_{0}", _name(cpath));
+            string temp_name = String.Format("~ftpb_{0}", _name(cpath));
 
-            return string.Format("{0}/{1}", parent, temp_name);
+            return String.Format("{0}/{1}", parent, temp_name);
         }
 
         /// <summary>
@@ -166,34 +106,13 @@ namespace FTPboxLib
             lpath = lpath.ReplaceSlashes();
             string parent = lpath.Substring(0, lpath.LastIndexOf("/"));            
 
-            return string.Format("{0}/~ftpb_{1}", parent, _name(lpath));
+            return String.Format("{0}/~ftpb_{1}", parent, _name(lpath));
         }
-
-        /// <summary>
-        /// Whether the specified path should be synced. Used in selective sync and to avoid syncing the webUI folder, temp files and invalid file/folder-names.
-        /// </summary>
-        public static bool ItemGetsSynced(string name)
-        {
-            if (name.EndsWith("/"))
-                name = name.Substring(0, name.Length - 1);
-            string aName = (name.Contains("/")) ? name.Substring(name.LastIndexOf("/")) : name;         //the actual name of the file in the given path. (removes the path from the beginning of the given string)
-            if (aName.StartsWith("/"))
-                aName = aName.Substring(1);
-
-            bool b = !(IgnoreList.IsIgnored(name)
-                || name.Contains("webint") || name.EndsWith(".") || name.EndsWith("..")                 //web interface, current and parent folders are ignored
-                || aName == ".ftpquota" || aName == "error_log" || aName.StartsWith(".bash")            //server files are ignored
-                || !IsAllowedFilename(aName)                                                            //checks characters not allowed in windows file/folder names
-                || aName.StartsWith("~ftpb_")                                                           //FTPbox-generated temporary files are ignored
-                );
-
-            return b;
-        }       
 
         /// <summary>
         /// Checks a filename for chars that wont work with most servers
         /// </summary>
-        private static bool IsAllowedFilename(string name)
+        public static bool IsAllowedFilename(string name)
         {
             return name.ToCharArray().All(IsAllowedChar);
         }
@@ -205,33 +124,6 @@ namespace FTPboxLib
         {
             var forbidden = new char[] { '?', '"', '*', ':', '<', '>', '|' };
             return !forbidden.Any(ch.Equals);
-        }
-
-        /// <summary>
-        /// Get the HTTP link to a file
-        /// </summary>
-        /// <param name='file'>
-        /// The common path to the file/folder.
-        /// </param>
-        public static string GetHttpLink(string file)
-        {
-            string cpath = GetCommonPath(file, true);
-
-            string newlink = Profile.HttpPath.RemoveSlashes() + @"/";
-
-            if (!newlink.RemoveSlashes().StartsWith("http://") && !newlink.RemoveSlashes().StartsWith("https://"))            
-                newlink = @"http://" + newlink;            
-            
-            if (newlink.EndsWith("/"))
-                newlink = newlink.Substring(0, newlink.Length - 1);
-
-            if (cpath.StartsWith("/"))
-                cpath = cpath.Substring(1);
-
-            newlink = string.Format("{0}/{1}", newlink, cpath);
-            newlink = newlink.Replace(@" ", @"%20");
-
-            return newlink;
         }
 
         /// <summary>
@@ -261,53 +153,9 @@ namespace FTPboxLib
                 if (stream != null)
                     stream.Close();
             }
-            if (!string.IsNullOrWhiteSpace(name))
+            if (!String.IsNullOrWhiteSpace(name))
                 Log.Write(l.Debug, "File {0} is locked: False", name);
             return false;
-        }
-
-        /// <summary>
-        /// Order the Files list by last time of change and
-        /// return the first 5 items in the list
-        /// </summary>
-        public static List<FileLogItem> RecentList
-        {
-            get
-            {
-                var recent = new List<FileLogItem>(FileLog.Files);
-                recent.Sort((x, y) => DateTime.Compare(x.LatestChangeTime(), y.LatestChangeTime()));
-
-                recent.Reverse();
-                Log.Write(l.Client, "{0} items in RecentList", recent.Count);
-
-                if (recent.Count > 5)
-                    return recent.GetRange(0, 5);
-                else
-                    return recent;
-            }
-        }
-
-        /// <summary>
-        /// Get the HTTP link to an item on the recent list, based on index
-        /// </summary>
-        /// <param name="index">item's index in list</param>
-        public static string LinkToRecent(int index = 0)
-        {            
-            return GetHttpLink(RecentList[index].CommonPath);
-        }
-
-        /// <summary>
-        /// Get the local path to an item on the recent list, based on index
-        /// </summary>
-        /// <param name="index">item's index in list</param>
-        public static string PathToRecent(int index = 0)
-        {
-            return Path.Combine(Profile.LocalPath, RecentList[index].CommonPath);
-        }
-
-        public static string LastLink()
-        {
-            return RecentList.Count > 0 ? GetHttpLink(RecentList[0].CommonPath) : null;
         }
 
         /// <summary>
@@ -322,101 +170,58 @@ namespace FTPboxLib
                 default:
                     return null;
                 case MessageType.ItemChanged:
-                    return Languages.Get(Profile.Language + "/tray/changed", "{0} was changed.");
+                    return Languages.Get(Settings.General.Language + "/tray/changed", "{0} was changed.");
                 case MessageType.ItemCreated:
-                    return Languages.Get(Profile.Language + "/tray/created", "{0} was created.");
+                    return Languages.Get(Settings.General.Language + "/tray/created", "{0} was created.");
                 case MessageType.ItemDeleted:
-                    return Languages.Get(Profile.Language + "/tray/deleted", "{0} was deleted.");
+                    return Languages.Get(Settings.General.Language + "/tray/deleted", "{0} was deleted.");
                 case MessageType.ItemRenamed:
-                    return Languages.Get(Profile.Language + "/tray/renamed", "{0} was renamed to {1}.");
+                    return Languages.Get(Settings.General.Language + "/tray/renamed", "{0} was renamed to {1}.");
                 case MessageType.ItemUpdated:
-                    return Languages.Get(Profile.Language + "/tray/updated", "{0} was updated.");
+                    return Languages.Get(Settings.General.Language + "/tray/updated", "{0} was updated.");
                 case MessageType.FilesOrFoldersUpdated:
-                    return Languages.Get(Profile.Language + "/tray/FilesOrFoldersUpdated", "{0} {1} have been updated");
+                    return Languages.Get(Settings.General.Language + "/tray/FilesOrFoldersUpdated", "{0} {1} have been updated");
                 case MessageType.FilesOrFoldersCreated:
-                    return Languages.Get(Profile.Language + "/tray/FilesOrFoldersCreated", "{0} {1} have been created");
+                    return Languages.Get(Settings.General.Language + "/tray/FilesOrFoldersCreated", "{0} {1} have been created");
                 case MessageType.FilesAndFoldersChanged:
-                    return Languages.Get(Profile.Language + "/tray/FilesAndFoldersChanged", "{0} {1} and {2} {3} have been updated");
+                    return Languages.Get(Settings.General.Language + "/tray/FilesAndFoldersChanged", "{0} {1} and {2} {3} have been updated");
                 case MessageType.ItemsDeleted:
-                    return Languages.Get(Profile.Language + "/tray/ItemsDeleted", "{0} items have been deleted.");
+                    return Languages.Get(Settings.General.Language + "/tray/ItemsDeleted", "{0} items have been deleted.");
                 case MessageType.File:
-                    return Languages.Get(Profile.Language + "/tray/file", "File");
+                    return Languages.Get(Settings.General.Language + "/tray/file", "File");
                 case MessageType.Files:
-                    return Languages.Get(Profile.Language + "/tray/files", "Files");
+                    return Languages.Get(Settings.General.Language + "/tray/files", "Files");
                 case MessageType.Folder:
-                    return Languages.Get(Profile.Language + "/tray/folder", "Folder");
+                    return Languages.Get(Settings.General.Language + "/tray/folder", "Folder");
                 case MessageType.Folders:
-                    return Languages.Get(Profile.Language + "/tray/folders", "Folders");
+                    return Languages.Get(Settings.General.Language + "/tray/folders", "Folders");
                 case MessageType.LinkCopied:
-                    return Languages.Get(Profile.Language + "/tray/link_copied", "Link copied to clipboard");
+                    return Languages.Get(Settings.General.Language + "/tray/link_copied", "Link copied to clipboard");
                 case MessageType.Connecting:
-                    return Languages.Get(Profile.Language + "/tray/connecting", "FTPbox - Connecting...");
+                    return Languages.Get(Settings.General.Language + "/tray/connecting", "FTPbox - Connecting...");
                 case MessageType.Disconnected:
-                    return Languages.Get(Profile.Language + "/tray/disconnected", "FTPbox - Disconnected");
+                    return Languages.Get(Settings.General.Language + "/tray/disconnected", "FTPbox - Disconnected");
                 case MessageType.Reconnecting:
-                    return Languages.Get(Profile.Language + "/tray/reconnecting", "FTPbox - Re-Connecting...");
+                    return Languages.Get(Settings.General.Language + "/tray/reconnecting", "FTPbox - Re-Connecting...");
                 case MessageType.Listing:
-                    return Languages.Get(Profile.Language + "/tray/listing", "FTPbox - Listing...");
+                    return Languages.Get(Settings.General.Language + "/tray/listing", "FTPbox - Listing...");
                 case MessageType.Uploading:
-                    return Languages.Get(Profile.Language + "/tray/uploading", "Uploading {0}");
+                    return Languages.Get(Settings.General.Language + "/tray/uploading", "Uploading {0}");
                 case MessageType.Downloading:
-                    return Languages.Get(Profile.Language + "/tray/downloading", "Downloading {0}");
+                    return Languages.Get(Settings.General.Language + "/tray/downloading", "Downloading {0}");
                 case MessageType.Syncing:
-                    return Languages.Get(Profile.Language + "/tray/syncing", "FTPbox - Syncing");
+                    return Languages.Get(Settings.General.Language + "/tray/syncing", "FTPbox - Syncing");
                 case MessageType.AllSynced:
-                    return Languages.Get(Profile.Language + "/tray/synced", "FTPbox - All files synced");
+                    return Languages.Get(Settings.General.Language + "/tray/synced", "FTPbox - All files synced");
                 case MessageType.Offline:
-                    return Languages.Get(Profile.Language + "/tray/offline", "FTPbox - Offline");
+                    return Languages.Get(Settings.General.Language + "/tray/offline", "FTPbox - Offline");
                 case MessageType.Ready:
-                    return Languages.Get(Profile.Language + "/tray/ready", "FTPbox - Ready");
+                    return Languages.Get(Settings.General.Language + "/tray/ready", "FTPbox - Ready");
                 case MessageType.Nothing:
                     return "FTPbox";
                 case MessageType.NotAvailable:
-                    return Languages.Get(Profile.Language + "/tray/not_available", "Not Available");
+                    return Languages.Get(Settings.General.Language + "/tray/not_available", "Not Available");
             }
-        }
-
-        #endregion
-
-        #region Functions
-
-        public static void Setup()
-        {
-            IgnoreList = new IgnoreList(); 
-            FileLog = new FileLog();
-            SyncQueue = new SyncQueue();
-            FolderWatcher = new FolderWatcher();            
-        }
-
-        /// <summary>
-        /// Loads the local folders. Used to determine 
-        /// the type of deleted items (file/folder?)
-        /// </summary>
-        public static void LoadLocalFolders()
-        {
-            LocalFolders.Clear();
-            LocalFiles.Clear();
-            if (Directory.Exists(Profile.LocalPath))
-            {
-                var d = new DirectoryInfo(Profile.LocalPath);
-                foreach (var di in d.GetDirectories("*", SearchOption.AllDirectories))
-                    LocalFolders.Add(di.FullName);
-
-                foreach (var fi in d.GetFiles("*", SearchOption.AllDirectories))
-                    LocalFiles.Add(fi.FullName);
-            }
-            Log.Write(l.Info, "Loaded {0} local directories and {1} files", LocalFolders.Count, LocalFiles.Count);
-        }
-
-        /// <summary>
-        /// removes an item from the log
-        /// </summary>
-        /// <param name="cPath">name to remove</param>
-        public static void RemoveFromLog(string cPath)
-        {
-            if (FileLog.Contains(cPath))
-                FileLog.Remove(cPath);
-            Settings.SaveProfile();
         }
 
         /// <summary>
@@ -439,85 +244,23 @@ namespace FTPboxLib
 
         #endregion
 
-        #region Extensions
+        #region Properties
 
-        /// <summary>
-        /// Backslashes are Windows only, however 
-        /// forward slashes work on Windows, Linux 
-        /// and Mac. So we just use / on all systems
-        /// </summary>
-        public static string ReplaceSlashes(this string path)
+        public static string AppdataFolder
         {
-            return path.Replace(@"\", "/");
+            get
+            {
+                #if DEBUG   //on debug mode, build the portable version. (load settings from exe's folder 
+                    return Environment.CurrentDirectory;
+                #else       //on release, build the full version. (load settings from appdata)
+                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox");
+                #endif
+            }
         }
 
-        /// <summary>
-        /// Removes slashes from the beggining and the end of the provided path
-        /// </summary>
-        public static string RemoveSlashes(this string path)
+        public static string DebugLogPath
         {
-            if (path.StartsWith(@"\"))
-                path = path.Substring(1, path.Length - 1);
-            if (path.EndsWith(@"/") || path.EndsWith(@"\"))
-                path = path.Substring(0, path.Length - 1);
-
-            return path;
-        }
-
-        /// <summary>
-        /// Returns <c>true</c> if a starts with b but a and b are not equal
-        /// </summary>
-        /// <returns></returns>
-        public static bool StartsWithButNotEqual(this string a, string b)
-        {
-            return a.StartsWith(b) && !a.Equals(b);
-        }
-
-        /// <summary>
-        /// Format a DateTime: 
-        /// Returns time only (HH:mm format) if the DateTime is within the current day
-        /// In any other case, returns a simple date (mm-dd-yy format)
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        public static string FormatDate(this DateTime date)
-        {
-            return (date.Date == DateTime.Today) ? date.ToString("HH:mm") : date.ToString("MM-dd-yy");
-        }
-
-        /// <summary>
-        /// Returns the time of last change (any) for the given item.
-        /// </summary>
-        private static DateTime LatestChangeTime(this FileLogItem item)
-        {
-            return DateTime.Compare(item.Remote, item.Local) < 0 ? item.Remote : item.Local;
-        }
-
-        /// <summary>
-        /// Checks if a given path contains spaces.
-        /// </summary>
-        /// <param name="cpath">the common path to check.</param>
-        /// <returns></returns>
-        public static bool PathHasSpace(this string cpath)
-        {
-            return cpath.Contains(" ");
-        }
-
-        /// <summary>
-        /// Nice looping method that gives both variable and its index in the IEnumerable
-        /// </summary>
-        public static void Each<T>(this IEnumerable<T> li, Action<T, int> action)
-        {
-            var i = 0;
-            foreach (var e in li.ToArray()) action(e, i++);
-        }
-
-        /// <summary>
-        /// Only invoke the EventHandler if it isn't null, to prevent exceptions
-        /// </summary>
-        public static void SafeInvoke<TEventArgs>(this EventHandler handler, object sender, TEventArgs args) where TEventArgs : EventArgs
-        {
-            if (handler != null) handler(sender, args);
+            get { return Path.Combine(AppdataFolder, "Debug.html"); }
         }
 
         #endregion

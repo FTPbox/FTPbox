@@ -27,7 +27,7 @@ namespace FTPboxLib
         /// <param name="file">True if file, False if Folder</param>
 		public static void Show(string name, ChangeAction ca, bool file)
 		{
-			if (!Settings.settingsGeneral.Notifications) return;
+			if (!Settings.General.Notifications) return;
 
             name = Common._name(name);
             string body = string.Format(Get_Message(ca, file), name);
@@ -43,7 +43,7 @@ namespace FTPboxLib
         /// /// <param name="newname">The new name of the file/folder</param>
 		public static void Show(string name, ChangeAction ca, string newname)
 		{					
-			if (!Settings.settingsGeneral.Notifications) return;
+			if (!Settings.General.Notifications) return;
 
             name = Common._name(name);
             newname = Common._name(newname);
@@ -58,7 +58,7 @@ namespace FTPboxLib
         /// <param name="file">True if files, False if folders</param>
 		public static void Show(int i, bool file)
 		{
-			if (!Settings.settingsGeneral.Notifications || i <= 0) return;
+			if (!Settings.General.Notifications || i <= 0) return;
 
             string type = (file) ? Common._(MessageType.Files) : Common._(MessageType.Folders);
             string change = (file) ? Common._(MessageType.FilesOrFoldersUpdated) : Common._(MessageType.FilesOrFoldersCreated);
@@ -73,12 +73,12 @@ namespace FTPboxLib
         /// <param name="d"># of folders</param>
 		public static void Show(int f, int d)
 		{
-			if (!Settings.settingsGeneral.Notifications) return;
+			if (!Settings.General.Notifications) return;
 
             string fType = (f != 1) ? Common._(MessageType.Files) : Common._(MessageType.File);
             string dType = (d != 1) ? Common._(MessageType.Folders) : Common._(MessageType.Folder);
 
-            if (Settings.settingsGeneral.Notifications && (f > 0 || d > 0))
+            if (Settings.General.Notifications && (f > 0 || d > 0))
             {
                 string body = string.Format(Common._(MessageType.FilesAndFoldersChanged), d, dType, f, fType);
                 InvokeNotificationReady(null, new NotificationArgs { Text = body });
@@ -92,7 +92,7 @@ namespace FTPboxLib
         /// <param name="c">ChangeAction, should be ChangeAction.deleted</param>
         public static void Show(int n, ChangeAction c)
         {
-            if (c != ChangeAction.deleted || !Settings.settingsGeneral.Notifications) return;
+            if (c != ChangeAction.deleted || !Settings.General.Notifications) return;
 
             string body = string.Format(Common._(MessageType.ItemsDeleted), n);
             InvokeNotificationReady(null, new NotificationArgs { Text = body });
@@ -103,7 +103,7 @@ namespace FTPboxLib
         /// </summary>
         public static void Show(WebUiAction a)
         {
-            if (!Settings.settingsGeneral.Notifications) return;
+            if (!Settings.General.Notifications) return;
 
             string msg = Get_WebUI_Message(a);
             InvokeNotificationReady(null, new NotificationArgs { Text = msg });
@@ -138,17 +138,17 @@ namespace FTPboxLib
             switch (a)
             {
                 case WebUiAction.waiting:
-                    return Common.Languages.Get(Profile.Language + "/web_interface/downloading", "The Web Interface will be downloaded.") + Environment.NewLine +
-                           Common.Languages.Get(Profile.Language + "/web_interface/in_a_minute", "This will take a minute.");
+                    return Common.Languages.Get(Settings.General.Language + "/web_interface/downloading", "The Web Interface will be downloaded.") + Environment.NewLine +
+                           Common.Languages.Get(Settings.General.Language + "/web_interface/in_a_minute", "This will take a minute.");
                 case WebUiAction.removing:
-                    return Common.Languages.Get(Profile.Language + "/web_interface/removing", "Removing the Web Interface...");
+                    return Common.Languages.Get(Settings.General.Language + "/web_interface/removing", "Removing the Web Interface...");
                 case WebUiAction.updating:
-                    return Common.Languages.Get(Profile.Language + "/web_interface/updating", "Updating the web interface...");
+                    return Common.Languages.Get(Settings.General.Language + "/web_interface/updating", "Updating the web interface...");
                 case WebUiAction.removed:
-                    return Common.Languages.Get(Profile.Language + "/web_interface/removed", "Web interface has been removed.");
+                    return Common.Languages.Get(Settings.General.Language + "/web_interface/removed", "Web interface has been removed.");
                 default:
-                    return Common.Languages.Get(Profile.Language + "/web_interface/updated", "Web Interface has been updated.")
-                       + Environment.NewLine + Common.Languages.Get(Profile.Language + "/web_interface/setup", "Click here to view and set it up!");
+                    return Common.Languages.Get(Settings.General.Language + "/web_interface/updated", "Web Interface has been updated.")
+                       + Environment.NewLine + Common.Languages.Get(Settings.General.Language + "/web_interface/setup", "Click here to view and set it up!");
             }
         }
 

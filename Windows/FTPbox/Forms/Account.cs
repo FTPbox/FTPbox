@@ -34,27 +34,27 @@ namespace FTPbox.Forms
             bool ftps = cMode.SelectedIndex == 0 && cEncryption.SelectedIndex != 0;
             bool ftpes = cEncryption.SelectedIndex == 1;
 
-            Profile.AddAccount(tHost.Text, tUsername.Text, tPass.Text, Convert.ToInt32(nPort.Value));
+            Program.Account.AddAccount(tHost.Text, tUsername.Text, tPass.Text, Convert.ToInt32(nPort.Value));
             if (ftporsftp && ftps)
-                Profile.Protocol = FtpProtocol.FTPS;
+                Program.Account.Account.Protocol = FtpProtocol.FTPS;
             else if (ftporsftp)
-                Profile.Protocol = FtpProtocol.FTP;
+                Program.Account.Account.Protocol = FtpProtocol.FTP;
             else
-                Profile.Protocol = FtpProtocol.SFTP;
+                Program.Account.Account.Protocol = FtpProtocol.SFTP;
 
             if (!ftps)
-                Profile.FtpsInvokeMethod = FtpsMethod.None;
+                Program.Account.Account.FtpsMethod = FtpsMethod.None;
             else if (ftpes)
-                Profile.FtpsInvokeMethod = FtpsMethod.Explicit;
+                Program.Account.Account.FtpsMethod = FtpsMethod.Explicit;
             else
-                Profile.FtpsInvokeMethod = FtpsMethod.Implicit;
+                Program.Account.Account.FtpsMethod = FtpsMethod.Implicit;
             
             try
             {
-                Client.Connect();
-                Log.Write(l.Debug, "Connected: {0}", Client.isConnected);
+                Program.Account.Client.Connect();
+                Log.Write(l.Debug, "Connected: {0}", Program.Account.Client.isConnected);
 
-                Profile.AskForPassword = cAskForPass.Checked;
+                Settings.AskForPassword = cAskForPass.Checked;
 
                 Hide();
             }
@@ -71,15 +71,15 @@ namespace FTPbox.Forms
             cAskForPass.Checked = just_password;
             cEncryption.SelectedIndex = 0;
             cMode.SelectedIndex = 0;
-            Set_Language(Profile.Language);
+            Set_Language(Settings.General.Language);
 
-            if (just_password && Profile.isAccountSet)
+            if (just_password && Program.Account.isAccountSet)
             {
-                tHost.Text = Profile.Host;
-                tUsername.Text = Profile.Username;
-                nPort.Value = Profile.Port;
-                cEncryption.SelectedIndex = (Profile.Protocol != FtpProtocol.FTPS) ? 0 : (Profile.FtpsInvokeMethod == FtpsMethod.Explicit ? 1 : 2);
-                cMode.SelectedIndex = (Profile.Protocol != FtpProtocol.SFTP) ? 0 : 1;
+                tHost.Text = Program.Account.Account.Host;
+                tUsername.Text = Program.Account.Account.Username;
+                nPort.Value = Program.Account.Account.Port;
+                cEncryption.SelectedIndex = (Program.Account.Account.Protocol != FtpProtocol.FTPS) ? 0 : (Program.Account.Account.FtpsMethod == FtpsMethod.Explicit ? 1 : 2);
+                cMode.SelectedIndex = (Program.Account.Account.Protocol != FtpProtocol.SFTP) ? 0 : 1;
 
                 ActiveControl = tPass;
             }

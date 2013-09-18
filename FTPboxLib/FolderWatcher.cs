@@ -21,6 +21,13 @@ namespace FTPboxLib
         private FileSystemWatcher _fswFiles;
         private FileSystemWatcher _fswFolders;
 
+        private AccountController controller;
+
+        public FolderWatcher (AccountController account)
+        {
+            this.controller = account;
+        }
+
         /// <summary>
         /// Sets the file watchers for the local directory.
         /// </summary>
@@ -30,8 +37,8 @@ namespace FTPboxLib
 
             _fswFiles = new FileSystemWatcher();
             _fswFolders = new FileSystemWatcher();
-            _fswFiles.Path = Profile.LocalPath;
-            _fswFolders.Path = Profile.LocalPath;
+            _fswFiles.Path = controller.Paths.Local;
+            _fswFolders.Path = controller.Paths.Local;
             _fswFiles.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
             _fswFolders.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName;
 
@@ -85,8 +92,8 @@ namespace FTPboxLib
         /// <param name="e"></param>
         private void FileChanged(object source, FileSystemEventArgs e)
         {
-            string cpath = Common.GetCommonPath(e.FullPath, true);
-            if (!Common.ItemGetsSynced(cpath) || !File.Exists(e.FullPath)) return;
+            string cpath = controller.GetCommonPath(e.FullPath, true);
+            if (!controller.ItemGetsSynced(cpath) || !File.Exists(e.FullPath)) return;
 
             int retries = 0;
             while (true)
@@ -106,7 +113,7 @@ namespace FTPboxLib
 
             var fli = new FileInfo(e.FullPath);
 
-            Common.SyncQueue.Add(new SyncQueueItem
+            controller.SyncQueue.Add(new SyncQueueItem(controller)
             {
                 Item = new ClientItem
                 {
@@ -128,14 +135,14 @@ namespace FTPboxLib
         /// <param name="e"></param>
         private void FolderChanged(object source, FileSystemEventArgs e)
         {
-            string cpath = Common.GetCommonPath(e.FullPath, true);
-            if (!Common.ItemGetsSynced(cpath) || !Directory.Exists(e.FullPath)) return;
+            string cpath = controller.GetCommonPath(e.FullPath, true);
+            if (!controller.ItemGetsSynced(cpath) || !Directory.Exists(e.FullPath)) return;
         #if __MonoCs__
             // Ignore temp files on linux
             if (Common._name(cpath).StartsWith(".goutputstream-") || Common._name(cpath).EndsWith("~")) return;
         #endif
 
-            Common.SyncQueue.Add(new SyncQueueItem
+            controller.SyncQueue.Add(new SyncQueueItem(controller)
             {
                 Item = new ClientItem
                 {
@@ -157,13 +164,13 @@ namespace FTPboxLib
         /// <param name="e"></param>
         private void OnDeleted(object source, FileSystemEventArgs e)
         {
-            string cpath = Common.GetCommonPath(e.FullPath, true);
-            if (!Common.ItemGetsSynced(cpath)) return;
+            string cpath = controller.GetCommonPath(e.FullPath, true);
+            if (!controller.ItemGetsSynced(cpath)) return;
         #if __MonoCs__
             // Ignore temp files on linux
             if (Common._name(cpath).StartsWith(".goutputstream-") || Common._name(cpath).EndsWith("~")) return;
         #endif
-            Common.SyncQueue.Add(new SyncQueueItem
+            controller.SyncQueue.Add(new SyncQueueItem(controller)
             {
                 Item = new ClientItem
                 {
@@ -184,10 +191,10 @@ namespace FTPboxLib
         private void OnRenamed(object source, RenamedEventArgs e)
         {
             Log.Write(l.Debug, "Item {0} was renamed", e.OldName);
-            if (!Common.ItemGetsSynced(Common.GetCommonPath(e.FullPath, true)) || !Common.ItemGetsSynced(Common.GetCommonPath(e.OldFullPath, true)))
+            if (!controller.ItemGetsSynced(controller.GetCommonPath(e.FullPath, true)) || !controller.ItemGetsSynced(controller.GetCommonPath(e.OldFullPath, true)))
                 return;
 
-            Common.SyncQueue.Add(new SyncQueueItem
+            controller.SyncQueue.Add(new SyncQueueItem(controller)
             {
                 Item = new ClientItem
                 {

@@ -30,7 +30,7 @@ namespace Utilities.Encryption
     /// <summary>
     /// Utility class that handles encryption
     /// </summary>
-    public class AESEncryption
+    internal class AESEncryption
     {
         #region Static Functions
    

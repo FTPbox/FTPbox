@@ -13,21 +13,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace FTPboxLib
 {
+    [JsonObject(MemberSerialization.OptIn)]
 	public class FileLog
 	{
+        [JsonProperty("Items")]
+        public List<FileLogItem> Files { get; private set; }
+
+        [JsonProperty]
+        public List<string> Folders { get; private set; }
+
         // An event used from the main form to refresh the recent files list
 	    public event EventHandler FileLogChanged;
 
-	    public FileLog ()
-		{
-            Files = new List<FileLogItem>();
-            Folders = new List<string>();
+        private AccountController controller;
 
-            if (Settings.DefaultProfile.Log.Items != null) Files = new List<FileLogItem>(Settings.DefaultProfile.Log.Items);
-            if (Settings.DefaultProfile.Log.Folders != null) Folders = new List<string>(Settings.DefaultProfile.Log.Folders);
+        public FileLog(AccountController account)
+        {
+            this.controller = account;
 
 			Log.Write(l.Info, "Opened FileLog");
 		}
@@ -46,7 +52,7 @@ namespace FTPboxLib
             {
                 CommonPath = file.NewCommonPath,
                 Local = file.SyncTo == SyncTo.Remote ? file.Item.LastWriteTime : System.IO.File.GetLastWriteTime(file.LocalPath),
-                Remote = Client.GetLwtOf(file.NewCommonPath) //file.SyncTo == SyncTo.Local ? file.Item.LastWriteTime : Client.GetLwtOf(file.NewCommonPath)
+                Remote = controller.Client.GetLwtOf(file.NewCommonPath)
             });
 
             FileLogChanged.SafeInvoke(null, EventArgs.Empty);
@@ -100,43 +106,36 @@ namespace FTPboxLib
 	        if (Folders.Contains(cpath))
 	            Folders.Remove(cpath);
 	        Settings.SaveProfile();
-	    }
+        }
 
-	    #endregion
+        public DateTime getLocal(string path)
+        {
+            DateTime ret = DateTime.MinValue;
 
-	    #region Properties
+            foreach (FileLogItem fi in Files)
+                if (fi.CommonPath == path)
+                    return fi.Local;
+            return ret;
+        }
 
-        public List<FileLogItem> Files { get; private set; }
-        public List<string> Folders { get; private set; }
+        public DateTime getRemote(string path)
+        {
+            DateTime ret = DateTime.MinValue;
 
-	    public DateTime getLocal(string path)
-	    {
-	        DateTime ret = DateTime.MinValue;
+            foreach (FileLogItem fi in Files)
+                if (fi.CommonPath == path)
+                    return fi.Remote;
+            return ret;
+        }
 
-	        foreach (FileLogItem fi in Files)
-	            if (fi.CommonPath == path)
-	                return fi.Local;
-	        return ret;
-	    }
-
-	    public DateTime getRemote(string path)
-	    {
-	        DateTime ret = DateTime.MinValue;
-
-	        foreach (FileLogItem fi in Files)
-	            if (fi.CommonPath == path)
-	                return fi.Remote;
-	        return ret;
-	    }
-
-	    public bool Contains(string path)
-	    {
-	        bool ret = false;
-	        foreach (FileLogItem fi in Files)
-	            if (fi.CommonPath == path)
-	                ret = true;
-	        return ret;
-	    }
+        public bool Contains(string path)
+        {
+            bool ret = false;
+            foreach (FileLogItem fi in Files)
+                if (fi.CommonPath == path)
+                    ret = true;
+            return ret;
+        }
 
 	    #endregion
 

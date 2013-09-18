@@ -39,9 +39,6 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
-    <Reference Include="FTPboxLib">
-      <HintPath>.\FTPboxLib.dll</HintPath>
-    </Reference>
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>.\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
@@ -177,6 +174,12 @@
     <None Include="Resources\Icons\refresh.ico" />
     <None Include="Resources\Icons\offline60.ico" />
     <None Include="Resources\Icons\main.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\FTPboxLib\FTPboxLib.csproj">
+      <Project>{25390A1B-8A7E-4D68-9C84-0F0E744ED15E}</Project>
+      <Name>FTPboxLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -11,157 +11,126 @@
  */
 
 using System;
-using System.IO;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using Starksoft.Net.Ftp;
 
 namespace FTPboxLib
 {
-	public static class Profile
-	{
-	    #region Properties
-        
-        public static string Host { get; set; }
-
-	    public static string Username { get; set; }
-
-	    public static string Password { get; set; }
-
-	    public static int Port { get; set; }
-
-	    public static string RemotePath { get; set; }
-
-	    public static string LocalPath { get; set; }
-
-	    public static string HttpPath { get; set; }
-
-	    public static string HomePath { get; set; }
-
-	    public static FtpProtocol Protocol { get; set; }
-
-	    public static FtpsMethod FtpsInvokeMethod { get; set; }
-
-	    public static string Language { get; set; }
-
-	    public static SyncMethod SyncingMethod { get; set; }
-
-	    public static int SyncFrequency { get; set; }
-
-	    public static FtpSecurityProtocol SecurityProtocol { get; set; }
-
-	    public static bool IsDebugMode { get; set; }
-	    public static bool IsNoMenusMode { get; set; }
-
-	    public static TrayAction TrayAction { get; set; }
-	    public static bool AskForPassword { get; set; }
-
-	    public static string AppdataFolder
-	    {
-	        get
-	        {
-                #if DEBUG   //on debug mode, build the portable version. (load settings from exe's folder 
-                    return Environment.CurrentDirectory;
-                #else       //on release, build the full version. (load settings from appdata)
-	                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox");
-                #endif
-	        }
-	    }
-
-	    public static string DebugLogPath
-	    {
-	        get { return Path.Combine(AppdataFolder, "Debug.html"); }
-	    }
-
-        public static string WebInterfaceLink
+    [JsonObject(MemberSerialization.OptIn)]
+	public class Profile
+    {
+        public Profile()
         {
-            get
-            {
-                return Common.GetHttpLink("webint");
-            }
+            Account = new Account();
+            Paths = new Paths();
         }
 
-	    public static bool isAccountSet
-	    {
-	        get
-	        {
-	            return !string.IsNullOrWhiteSpace(Host) && !string.IsNullOrWhiteSpace(Username);
-	        }
-	    }
+        [JsonProperty]
+        public Account Account;
+        
+        [JsonProperty]
+        public Paths Paths;
 
-	    public static bool isPathsSet
-	    {
-	        get
-	        {
-	            if (RemotePath == null) return false;
+	    #region Properties
 
-	            var rpath = RemotePath;
+        public string HomePath { get; set; }
 
-                var curpath = Client.WorkingDirectory;
-                if (rpath.Equals(curpath) || rpath.RemoveSlashes().Equals(curpath)) return true;
-                
-	            curpath = curpath.Equals(HomePath) ? "/" : curpath.Substring(HomePath.Length + 1).RemoveSlashes();
+        #endregion
 
-	            if (string.IsNullOrWhiteSpace(rpath) || string.IsNullOrWhiteSpace(LocalPath)) return false;                
-
-	            Log.Write(l.Client, "rpath: {0} curpath: {1} home: {2}", rpath, curpath, HomePath);
-                if ((rpath != "/" && curpath != rpath) || !Directory.Exists(LocalPath)) return false;
-
-	            return true;
-	        }
-	    }
-
-	    #endregion
-
-	    #region Functions
+	    #region Methods
 
 	    /// <summary>
 	    /// Load the profile data from the settings file
 	    /// </summary>
-	    public static void Load()
+	    public void Load()
 	    {
-	        AskForPassword = false;
+	        Settings.AskForPassword = false;
 	        AddAccount(Settings.DefaultProfile.Account.Host, Settings.DefaultProfile.Account.Username,
 	                   Common.Decrypt(Settings.DefaultProfile.Account.Password), Settings.DefaultProfile.Account.Port);
 	        AddPaths(Settings.DefaultProfile.Paths.Remote, Settings.DefaultProfile.Paths.Local,
 	                 Settings.DefaultProfile.Paths.Parent);
-	        Protocol = Settings.DefaultProfile.Account.Protocol;
-	        FtpsInvokeMethod = Settings.DefaultProfile.Account.FtpsMethod;
+	        
+            Account.Protocol = Settings.DefaultProfile.Account.Protocol;
+	        Account.FtpsMethod = Settings.DefaultProfile.Account.FtpsMethod;
 
-	        SecurityProtocol = Settings.DefaultProfile.Account.FtpSecurityProtocol;
+	        Account.FtpSecurityProtocol = Settings.DefaultProfile.Account.FtpSecurityProtocol;
 
-	        SyncingMethod = Settings.DefaultProfile.Account.SyncMethod;
-	        SyncFrequency = Settings.DefaultProfile.Account.SyncFrequency;
-
-	        TrayAction = Settings.settingsGeneral.TrayAction;
+            Account.SyncMethod = Settings.DefaultProfile.Account.SyncMethod;
+            Account.SyncFrequency = Settings.DefaultProfile.Account.SyncFrequency;
 	    }
 
-	    public static void AddAccount(string host, string user, string pass, int port)
+	    public void AddAccount(string host, string user, string pass, int port)
 	    {
-	        Host = host;
-	        Username = user;
-	        Password = pass;
-	        Port = port;
+	        Account = new Account()
+	        {
+                Host = host,
+                Username = user,
+                Password = pass,
+	            Port = port
+	        };
 
             Console.WriteLine("Added to profile: {0}@{1}:{2}", user, host, port);
 	    }
 
-	    public static void AddPaths(string remote, string local, string http)
+	    public void AddPaths(string remote, string local, string http)
 	    {
-	        RemotePath = remote;
-	        LocalPath = local;
-	        HttpPath = http;
+            Paths = new Paths()
+            {
+                Remote = remote,
+	            Local = local, 
+	            Parent = http
+            };
 	    }
 
-	    public static void Clear()
+	    public void Clear()
 	    {
-	        Host = null;
-	        Username = null;
-	        Password = null;
-	        Port = 21;
-	        RemotePath = null;
-	        LocalPath = null;
-	        HttpPath = null;
+	        Account = new Account();
+	        Paths = new Paths();
 	    }
 
 	    #endregion
+
+        #region Serialization
+
+        [OnSerializing]
+        internal void OnSerializing(StreamingContext context)
+        {
+            Account.Password = Common.Encrypt(Account.Password);
+        }
+
+        [OnSerialized]
+        internal void OnSerialized(StreamingContext context)
+        {
+            Account.Password = Common.Decrypt(Account.Password);
+        }
+
+        [OnDeserialized]
+        internal void OnDeserialized(StreamingContext context)
+        {
+            Account.Password = Common.Decrypt(Account.Password);
+        }
+
+        #endregion
 	}
+
+    public class Account
+    {
+        public string Host { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public int Port { get; set; }
+        public FtpProtocol Protocol { get; set; }
+        public FtpsMethod FtpsMethod { get; set; }
+        public FtpSecurityProtocol FtpSecurityProtocol { get; set; }
+        public SyncMethod SyncMethod { get; set; }
+        public int SyncFrequency { get; set; }
+    }
+
+    public class Paths
+    {
+        public string Remote { get; set; }
+        public string Local { get; set; }
+        public string Parent { get; set; }
+    }
 }

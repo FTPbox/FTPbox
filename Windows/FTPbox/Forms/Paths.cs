@@ -31,11 +31,11 @@ namespace FTPbox.Forms
             if (!System.IO.Directory.Exists(tPath.Text))
                 System.IO.Directory.CreateDirectory(tPath.Text);
 
-            Profile.AddPaths(tFullDir.Text, tPath.Text, tParent.Text);
+            Program.Account.AddPaths(tFullDir.Text, tPath.Text, tParent.Text);
 
             Settings.Save();
 
-            Client.WorkingDirectory = Profile.RemotePath;
+            Program.Account.Client.WorkingDirectory = Program.Account.Paths.Remote;
 
             ((fMain)Tag).gotpaths = true;
             
@@ -65,7 +65,7 @@ namespace FTPbox.Forms
                 path = path.Replace("//", "/");
 
             tFullDir.Text = path;
-            tParent.Text = Profile.Host + path;
+            tParent.Text = Program.Account.Account.Host + path;
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace FTPbox.Forms
             if (e.Node.Nodes.Count > 0)
                 e.Node.Nodes.Clear();
 
-            foreach (var c in Client.List(path, false))
+            foreach (var c in Program.Account.Client.List(path, false))
             {
                 if (c.Type == ClientItemType.Folder)
                 {
@@ -97,7 +97,7 @@ namespace FTPbox.Forms
 
         private void Paths_Load(object sender, EventArgs e)
         {
-            Set_Language(Profile.Language); 
+            Set_Language(Settings.General.Language); 
             
             tPath.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\FTPbox";
 
@@ -106,7 +106,7 @@ namespace FTPbox.Forms
             var first = new TreeNode {Text = "/"};            
             
             var current = first;
-            foreach (var f in Profile.HomePath.Split('/'))
+            foreach (var f in Program.Account.HomePath.Split('/'))
             {
                 if (string.IsNullOrWhiteSpace(f)) continue;
 
@@ -116,8 +116,8 @@ namespace FTPbox.Forms
             treeView1.Nodes.Add(first);
             treeView1.ExpandAll();
 
-            Profile.RemotePath = Profile.HomePath;
-            foreach (var c in Client.List(".", false))
+            Program.Account.Paths.Remote = Program.Account.HomePath;
+            foreach (var c in Program.Account.Client.List(".", false))
             {
                 if (c.Type == ClientItemType.Folder)
                 {
@@ -132,8 +132,8 @@ namespace FTPbox.Forms
 
             treeView1.AfterExpand += afterExpand;
 
-            tFullDir.Text = Profile.HomePath;
-            tParent.Text = Profile.Host;            
+            tFullDir.Text = Program.Account.HomePath;
+            tParent.Text = Program.Account.Account.Host;            
         }
 
         /// <summary>
