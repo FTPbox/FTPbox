@@ -33,7 +33,7 @@ namespace FTPbox.Forms
 
             Program.Account.AddPaths(tFullDir.Text, tPath.Text, tParent.Text);
 
-            Settings.Save();
+            Settings.Save(Program.Account);
 
             Program.Account.Client.WorkingDirectory = Program.Account.Paths.Remote;
 

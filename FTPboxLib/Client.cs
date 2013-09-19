@@ -507,6 +507,7 @@ namespace FTPboxLib
             }
             catch (Exception ex)
             {
+                if (!isConnected) Log.Write(l.Warning, "Client not connected!");
                 Common.LogError(ex);
                 return false;
             }

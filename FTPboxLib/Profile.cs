@@ -36,29 +36,11 @@ namespace FTPboxLib
 
         public string HomePath { get; set; }
 
+        public bool AskForPassword = false;
+
         #endregion
 
 	    #region Methods
-
-	    /// <summary>
-	    /// Load the profile data from the settings file
-	    /// </summary>
-	    public void Load()
-	    {
-	        Settings.AskForPassword = false;
-	        AddAccount(Settings.DefaultProfile.Account.Host, Settings.DefaultProfile.Account.Username,
-	                   Common.Decrypt(Settings.DefaultProfile.Account.Password), Settings.DefaultProfile.Account.Port);
-	        AddPaths(Settings.DefaultProfile.Paths.Remote, Settings.DefaultProfile.Paths.Local,
-	                 Settings.DefaultProfile.Paths.Parent);
-	        
-            Account.Protocol = Settings.DefaultProfile.Account.Protocol;
-	        Account.FtpsMethod = Settings.DefaultProfile.Account.FtpsMethod;
-
-	        Account.FtpSecurityProtocol = Settings.DefaultProfile.Account.FtpSecurityProtocol;
-
-            Account.SyncMethod = Settings.DefaultProfile.Account.SyncMethod;
-            Account.SyncFrequency = Settings.DefaultProfile.Account.SyncFrequency;
-	    }
 
 	    public void AddAccount(string host, string user, string pass, int port)
 	    {
@@ -93,16 +75,25 @@ namespace FTPboxLib
 
         #region Serialization
 
+        private string tmpPassword = string.Empty;
+
         [OnSerializing]
         internal void OnSerializing(StreamingContext context)
         {
-            Account.Password = Common.Encrypt(Account.Password);
+            tmpPassword = Account.Password;
+            if (AskForPassword)
+                Account.Password = string.Empty;
+            else
+                Account.Password = Common.Encrypt(Account.Password);
         }
 
         [OnSerialized]
         internal void OnSerialized(StreamingContext context)
         {
-            Account.Password = Common.Decrypt(Account.Password);
+            if (AskForPassword)
+                Account.Password = tmpPassword;
+            else
+                Account.Password = Common.Decrypt(Account.Password);
         }
 
         [OnDeserialized]

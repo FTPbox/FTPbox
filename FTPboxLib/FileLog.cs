@@ -35,6 +35,9 @@ namespace FTPboxLib
         {
             this.controller = account;
 
+            Files = new List<FileLogItem>();
+            Folders = new List<string>();
+
 			Log.Write(l.Info, "Opened FileLog");
 		}
 

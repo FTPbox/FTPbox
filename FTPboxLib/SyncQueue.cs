@@ -532,38 +532,58 @@ namespace FTPboxLib
             }
 
             // Look for local files that should be deleted
-            foreach (var local in new DirectoryInfo(item.LocalPath).GetFiles("*", SearchOption.AllDirectories).Where(x => controller.ItemGetsSynced(controller.GetCommonPath(x.FullName, true))))
-                if (AllItems.All(x => controller.GetCommonPath(x.FullPath, false) != controller.GetCommonPath(local.FullName, true)))
-                    Add(new SyncQueueItem(controller)
-                    {
-                        Item = new ClientItem
-                        {
-                            FullPath = controller.GetCommonPath(local.FullName, true),
-                            Name = local.Name,
-                            Type = ClientItemType.File,
-                            LastWriteTime = local.LastWriteTime,
-                            Size = local.Length
-                        },
-                        ActionType = ChangeAction.deleted,
-                        SyncTo = SyncTo.Local
-                    });
-            // Look for local folders that should be deleted
-            foreach (var local in new DirectoryInfo(item.LocalPath).GetDirectories("*", SearchOption.AllDirectories).Where(x => controller.ItemGetsSynced(controller.GetCommonPath(x.FullName, true))))
-                if (AllItems.All(x => controller.GetCommonPath(x.FullPath, false) != controller.GetCommonPath(local.FullName, true)))
-                    Add(new SyncQueueItem(controller)
-                    {
-                        Item = new ClientItem
-                        {
-                            FullPath = controller.GetCommonPath(local.FullName, true),
-                            Name = local.Name,
-                            Type = ClientItemType.Folder,
-                            LastWriteTime = DateTime.MinValue,  // Doesn't matter
-                            Size = 0x0                          // Doesn't matter
-                        },
-                        ActionType = ChangeAction.deleted,
-                        SyncTo = SyncTo.Local                        
-                    });
+            foreach (var local in new DirectoryInfo(item.LocalPath).GetFiles("*", SearchOption.AllDirectories))
+            {
+                var cpath = controller.GetCommonPath(local.FullName, true);
+                // continue if the file is ignored
+                if (!controller.ItemGetsSynced(cpath)) continue;
+                // continue if the file was found in the remote list
+                if (AllItems.Any(x => controller.GetCommonPath(x.FullPath, false) == cpath)) continue;
+                // continue if the file is not in the log, or is changed compared to the logged data TODO: Maybe send to remote folder?
+                if (controller.FileLog.Files.All(x => x.CommonPath != cpath) ||
+                    controller.FileLog.Files.Find(x => x.CommonPath == cpath).Local != local.LastWriteTime) continue;
 
+                // Seems like the file was deleted from the remote folder
+                Add(new SyncQueueItem(controller)
+                {
+                    Item = new ClientItem
+                    {
+                        FullPath = cpath,
+                        Name = local.Name,
+                        Type = ClientItemType.File,
+                        LastWriteTime = local.LastWriteTime,
+                        Size = local.Length
+                    },
+                    ActionType = ChangeAction.deleted,
+                    SyncTo = SyncTo.Local
+                });
+            }
+            // Look for local folders that should be deleted
+            foreach (var local in new DirectoryInfo(item.LocalPath).GetDirectories("*", SearchOption.AllDirectories))
+            {
+                var cpath = controller.GetCommonPath(local.FullName, true);
+                // continue if the folder is ignored
+                if (!controller.ItemGetsSynced(cpath)) continue;
+                // continue if the folder was found in the remote list
+                if (AllItems.Any(x => controller.GetCommonPath(x.FullPath, false) == cpath)) continue;
+                // continue if the folder is not in the log TODO: Maybe send to remote folder?
+                if (controller.FileLog.Folders.All(x => x != cpath)) continue;
+
+                // Seems like the folder was deleted from the remote folder
+                Add(new SyncQueueItem(controller)
+                {
+                    Item = new ClientItem
+                    {
+                        FullPath = controller.GetCommonPath(local.FullName, true),
+                        Name = local.Name,
+                        Type = ClientItemType.Folder,
+                        LastWriteTime = DateTime.MinValue, // Doesn't matter
+                        Size = 0x0 // Doesn't matter
+                    },
+                    ActionType = ChangeAction.deleted,
+                    SyncTo = SyncTo.Local
+                });
+            }
             RemoveLast(StatusType.Success);
         }
 

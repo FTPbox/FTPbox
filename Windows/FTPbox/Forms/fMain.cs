@@ -1046,11 +1046,11 @@ namespace FTPbox.Forms
                     MessageBox.Show("You cannot use this for files that are not inside the FTPbox folder.", "FTPbox - Invalid file", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     continue;
                 }
+                var cpath = Program.Account.GetCommonPath(s, true);
+                bool exists = Program.Account.Client.Exists(cpath);
 
                 if (Common.PathIsFile(s) && File.Exists(s))
                 {
-                    var cpath = Program.Account.GetCommonPath(s, true);
-                    bool exists = Program.Account.Client.Exists(cpath);
                     Program.Account.SyncQueue.Add(new SyncQueueItem (Program.Account)
                     {
                         Item = new ClientItem
@@ -1079,7 +1079,7 @@ namespace FTPbox.Forms
                             LastWriteTime = DateTime.MinValue
                         },
                         ActionType = ChangeAction.changed,
-                        SyncTo = SyncTo.Local,
+                        SyncTo = exists ? SyncTo.Local : SyncTo.Remote,
                         SkipNotification = true
                     });
                 }

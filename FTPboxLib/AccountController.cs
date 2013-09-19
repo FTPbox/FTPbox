@@ -44,7 +44,6 @@ namespace FTPboxLib
             SyncQueue = new SyncQueue(this);            
 
             Client = new Client(this);
-            
         }
 
         #region Properties
@@ -227,7 +226,7 @@ namespace FTPboxLib
         /// <param name="index">item's index in list</param>
         public string LinkToRecent(int index = 0)
         {
-            return GetHttpLink(RecentList[index].CommonPath);
+            return index < RecentList.Count ? GetHttpLink(RecentList[index].CommonPath) : null;
         }
 
         /// <summary>

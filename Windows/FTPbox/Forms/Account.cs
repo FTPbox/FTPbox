@@ -54,7 +54,7 @@ namespace FTPbox.Forms
                 Program.Account.Client.Connect();
                 Log.Write(l.Debug, "Connected: {0}", Program.Account.Client.isConnected);
 
-                Settings.AskForPassword = cAskForPass.Checked;
+                Program.Account.AskForPassword = cAskForPass.Checked;
 
                 Hide();
             }

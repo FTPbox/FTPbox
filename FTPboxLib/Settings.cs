@@ -36,8 +36,6 @@ namespace FTPboxLib
         public static bool IsDebugMode;
         public static bool IsNoMenusMode;
 
-        public static bool AskForPassword;
-
         #endregion
 
         #region Methods
@@ -82,11 +80,11 @@ namespace FTPboxLib
         /// <summary>
         /// Saves Profiles & General settings to the config file
         /// </summary>
-        public static void Save()
+        public static void Save(AccountController account = null)
         {
             SaveGeneral();
 
-            SaveProfile();
+            SaveProfile(account);
 
             SaveCertificates();
         }
