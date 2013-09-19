@@ -114,16 +114,28 @@ namespace FTPboxLib
         /// </summary>
         public static bool IsAllowedFilename(string name)
         {
-            return name.ToCharArray().All(IsAllowedChar);
+            return name.ToCharArray().All(IsAllowedChar) && IsNotReservedName(name);
         }
 
         /// <summary>
         /// Checks if a char is allowed, based on the allowed chars for filenames
         /// </summary>
         private static bool IsAllowedChar(char ch)
+        {            
+            return !Path.GetInvalidFileNameChars().Any(ch.Equals);
+        }
+
+        /// <summary>
+        /// Checks if the given file name is one of the system-reserved names
+        /// </summary>
+        private static bool IsNotReservedName(string name)
         {
-            var forbidden = new char[] { '?', '"', '*', ':', '<', '>', '|' };
-            return !forbidden.Any(ch.Equals);
+            return ! new[]
+                {
+                    "CON", "PRN", "AUX", "CLOCK$", "NUL", "COM0", "COM1", "COM2", "COM3", "COM4",
+                    "COM5", "COM6", "COM7", "COM8", "COM9", "LPT0", "LPT1", "LPT2", "LPT3", "LPT4",
+                    "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
+                }.Any(name.Equals);
         }
 
         /// <summary>
