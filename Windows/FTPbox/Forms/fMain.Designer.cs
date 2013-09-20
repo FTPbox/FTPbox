@@ -29,61 +29,56 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("English (en)", 0);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Espanol (es)", 12);
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Deutsch (de)", 13);
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Francais (fr)", 19);
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Dutch (nl)", 14);
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Ελληνικά (el)", 2);
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Italian (it)", 6);
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Turkish (tr)", 7);
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Português Brasileiro (pt-BR)", 15);
-            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("Foroyskt (fo)", 10);
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Swedish (sv)", 18);
-            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Albanian (sq)", 1);
-            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("Romanian (ro)", 17);
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("Korean (ko)", 16);
-            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("Russian (ru)", 5);
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem("Japanese (ja)", 3);
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem("Vietnamese (vi)", 8);
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem("Norwegian (no)", 4);
-            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem("Hungarian (hu)", 20);
-            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem("中國傳統 (zh_HANT)", 9);
-            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem("简体中文 (zh_HANS)", 9);
-            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem("Lithuanian (lt)", 21);
-            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem("Dansk (da)", 22);
-            System.Windows.Forms.ListViewItem listViewItem24 = new System.Windows.Forms.ListViewItem("Polish (pl)", 23);
-            System.Windows.Forms.ListViewItem listViewItem25 = new System.Windows.Forms.ListViewItem("Croatian (hr)", 24);
-            System.Windows.Forms.ListViewItem listViewItem26 = new System.Windows.Forms.ListViewItem("Portuguese (pt)", 26);
-            System.Windows.Forms.ListViewItem listViewItem27 = new System.Windows.Forms.ListViewItem("Galego (gl)", 25);
-            System.Windows.Forms.ListViewItem listViewItem28 = new System.Windows.Forms.ListViewItem("Slovak (sk)", 27);
-            System.Windows.Forms.ListViewItem listViewItem29 = new System.Windows.Forms.ListViewItem("Thai (th)", 28);
-            System.Windows.Forms.ListViewItem listViewItem30 = new System.Windows.Forms.ListViewItem("Slovenian (sl)", 29);
-            System.Windows.Forms.ListViewItem listViewItem31 = new System.Windows.Forms.ListViewItem("Czech (cs)", 30);
-            System.Windows.Forms.ListViewItem listViewItem32 = new System.Windows.Forms.ListViewItem("Hebrew (he)", 31);
-            System.Windows.Forms.ListViewItem listViewItem33 = new System.Windows.Forms.ListViewItem("Serbian, Latin (sr)", 32);
-            System.Windows.Forms.ListViewItem listViewItem34 = new System.Windows.Forms.ListViewItem("Serbian, Cyrillic (src)", 32);
+            System.Windows.Forms.ListViewItem listViewItem35 = new System.Windows.Forms.ListViewItem("English (en)", 0);
+            System.Windows.Forms.ListViewItem listViewItem36 = new System.Windows.Forms.ListViewItem("Espanol (es)", 12);
+            System.Windows.Forms.ListViewItem listViewItem37 = new System.Windows.Forms.ListViewItem("Deutsch (de)", 13);
+            System.Windows.Forms.ListViewItem listViewItem38 = new System.Windows.Forms.ListViewItem("Francais (fr)", 19);
+            System.Windows.Forms.ListViewItem listViewItem39 = new System.Windows.Forms.ListViewItem("Dutch (nl)", 14);
+            System.Windows.Forms.ListViewItem listViewItem40 = new System.Windows.Forms.ListViewItem("Ελληνικά (el)", 2);
+            System.Windows.Forms.ListViewItem listViewItem41 = new System.Windows.Forms.ListViewItem("Italian (it)", 6);
+            System.Windows.Forms.ListViewItem listViewItem42 = new System.Windows.Forms.ListViewItem("Turkish (tr)", 7);
+            System.Windows.Forms.ListViewItem listViewItem43 = new System.Windows.Forms.ListViewItem("Português Brasileiro (pt-BR)", 15);
+            System.Windows.Forms.ListViewItem listViewItem44 = new System.Windows.Forms.ListViewItem("Foroyskt (fo)", 10);
+            System.Windows.Forms.ListViewItem listViewItem45 = new System.Windows.Forms.ListViewItem("Swedish (sv)", 18);
+            System.Windows.Forms.ListViewItem listViewItem46 = new System.Windows.Forms.ListViewItem("Albanian (sq)", 1);
+            System.Windows.Forms.ListViewItem listViewItem47 = new System.Windows.Forms.ListViewItem("Romanian (ro)", 17);
+            System.Windows.Forms.ListViewItem listViewItem48 = new System.Windows.Forms.ListViewItem("Korean (ko)", 16);
+            System.Windows.Forms.ListViewItem listViewItem49 = new System.Windows.Forms.ListViewItem("Russian (ru)", 5);
+            System.Windows.Forms.ListViewItem listViewItem50 = new System.Windows.Forms.ListViewItem("Japanese (ja)", 3);
+            System.Windows.Forms.ListViewItem listViewItem51 = new System.Windows.Forms.ListViewItem("Vietnamese (vi)", 8);
+            System.Windows.Forms.ListViewItem listViewItem52 = new System.Windows.Forms.ListViewItem("Norwegian (no)", 4);
+            System.Windows.Forms.ListViewItem listViewItem53 = new System.Windows.Forms.ListViewItem("Hungarian (hu)", 20);
+            System.Windows.Forms.ListViewItem listViewItem54 = new System.Windows.Forms.ListViewItem("中國傳統 (zh_HANT)", 9);
+            System.Windows.Forms.ListViewItem listViewItem55 = new System.Windows.Forms.ListViewItem("简体中文 (zh_HANS)", 9);
+            System.Windows.Forms.ListViewItem listViewItem56 = new System.Windows.Forms.ListViewItem("Lithuanian (lt)", 21);
+            System.Windows.Forms.ListViewItem listViewItem57 = new System.Windows.Forms.ListViewItem("Dansk (da)", 22);
+            System.Windows.Forms.ListViewItem listViewItem58 = new System.Windows.Forms.ListViewItem("Polish (pl)", 23);
+            System.Windows.Forms.ListViewItem listViewItem59 = new System.Windows.Forms.ListViewItem("Croatian (hr)", 24);
+            System.Windows.Forms.ListViewItem listViewItem60 = new System.Windows.Forms.ListViewItem("Portuguese (pt)", 26);
+            System.Windows.Forms.ListViewItem listViewItem61 = new System.Windows.Forms.ListViewItem("Galego (gl)", 25);
+            System.Windows.Forms.ListViewItem listViewItem62 = new System.Windows.Forms.ListViewItem("Slovak (sk)", 27);
+            System.Windows.Forms.ListViewItem listViewItem63 = new System.Windows.Forms.ListViewItem("Thai (th)", 28);
+            System.Windows.Forms.ListViewItem listViewItem64 = new System.Windows.Forms.ListViewItem("Slovenian (sl)", 29);
+            System.Windows.Forms.ListViewItem listViewItem65 = new System.Windows.Forms.ListViewItem("Czech (cs)", 30);
+            System.Windows.Forms.ListViewItem listViewItem66 = new System.Windows.Forms.ListViewItem("Hebrew (he)", 31);
+            System.Windows.Forms.ListViewItem listViewItem67 = new System.Windows.Forms.ListViewItem("Serbian, Latin (sr)", 32);
+            System.Windows.Forms.ListViewItem listViewItem68 = new System.Windows.Forms.ListViewItem("Serbian, Cyrillic (src)", 32);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(fMain));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
             this.gLinks = new System.Windows.Forms.GroupBox();
             this.rOpenLocal = new System.Windows.Forms.RadioButton();
             this.labLinkClicked = new System.Windows.Forms.Label();
-            this.tParent = new System.Windows.Forms.TextBox();
-            this.labFullPath = new System.Windows.Forms.Label();
             this.rCopy2Clipboard = new System.Windows.Forms.RadioButton();
             this.rOpenInBrowser = new System.Windows.Forms.RadioButton();
-            this.gWebInt = new System.Windows.Forms.GroupBox();
-            this.labViewInBrowser = new System.Windows.Forms.LinkLabel();
-            this.chkWebInt = new System.Windows.Forms.CheckBox();
             this.gApp = new System.Windows.Forms.GroupBox();
+            this.bBrowseLogs = new System.Windows.Forms.Button();
+            this.chkEnableLogging = new System.Windows.Forms.CheckBox();
             this.chkShowNots = new System.Windows.Forms.CheckBox();
             this.chkStartUp = new System.Windows.Forms.CheckBox();
             this.tabAccount = new System.Windows.Forms.TabPage();
             this.cProfiles = new System.Windows.Forms.ComboBox();
             this.lProfile = new System.Windows.Forms.Label();
-            this.bRemoveAccount = new System.Windows.Forms.Button();
-            this.bAddAccount = new System.Windows.Forms.Button();
             this.gAccount = new System.Windows.Forms.GroupBox();
             this.lMode = new System.Windows.Forms.Label();
             this.labMode = new System.Windows.Forms.Label();
@@ -168,12 +163,16 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkEnableLogging = new System.Windows.Forms.CheckBox();
-            this.bBrowseLogs = new System.Windows.Forms.Button();
+            this.bAddAccount = new System.Windows.Forms.Button();
+            this.bRemoveAccount = new System.Windows.Forms.Button();
+            this.gWebInt = new System.Windows.Forms.GroupBox();
+            this.labViewInBrowser = new System.Windows.Forms.LinkLabel();
+            this.chkWebInt = new System.Windows.Forms.CheckBox();
+            this.tParent = new System.Windows.Forms.TextBox();
+            this.labFullPath = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.gLinks.SuspendLayout();
-            this.gWebInt.SuspendLayout();
             this.gApp.SuspendLayout();
             this.tabAccount.SuspendLayout();
             this.gAccount.SuspendLayout();
@@ -193,6 +192,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gNotes.SuspendLayout();
             this.trayMenu.SuspendLayout();
+            this.gWebInt.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -207,19 +207,18 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(472, 357);
+            this.tabControl1.Size = new System.Drawing.Size(472, 392);
             this.tabControl1.TabIndex = 12;
             // 
             // tabGeneral
             // 
             this.tabGeneral.AccessibleDescription = "";
             this.tabGeneral.Controls.Add(this.gLinks);
-            this.tabGeneral.Controls.Add(this.gWebInt);
             this.tabGeneral.Controls.Add(this.gApp);
             this.tabGeneral.Location = new System.Drawing.Point(4, 22);
             this.tabGeneral.Name = "tabGeneral";
             this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGeneral.Size = new System.Drawing.Size(464, 331);
+            this.tabGeneral.Size = new System.Drawing.Size(464, 366);
             this.tabGeneral.TabIndex = 0;
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
@@ -229,13 +228,11 @@
             this.gLinks.AccessibleDescription = "";
             this.gLinks.Controls.Add(this.rOpenLocal);
             this.gLinks.Controls.Add(this.labLinkClicked);
-            this.gLinks.Controls.Add(this.tParent);
-            this.gLinks.Controls.Add(this.labFullPath);
             this.gLinks.Controls.Add(this.rCopy2Clipboard);
             this.gLinks.Controls.Add(this.rOpenInBrowser);
             this.gLinks.Location = new System.Drawing.Point(8, 6);
             this.gLinks.Name = "gLinks";
-            this.gLinks.Size = new System.Drawing.Size(449, 148);
+            this.gLinks.Size = new System.Drawing.Size(449, 111);
             this.gLinks.TabIndex = 12;
             this.gLinks.TabStop = false;
             this.gLinks.Text = "Links";
@@ -244,7 +241,7 @@
             // 
             this.rOpenLocal.AccessibleDescription = "";
             this.rOpenLocal.AccessibleName = "open the local file";
-            this.rOpenLocal.Location = new System.Drawing.Point(19, 122);
+            this.rOpenLocal.Location = new System.Drawing.Point(22, 86);
             this.rOpenLocal.Name = "rOpenLocal";
             this.rOpenLocal.Size = new System.Drawing.Size(424, 17);
             this.rOpenLocal.TabIndex = 3;
@@ -255,36 +252,17 @@
             // labLinkClicked
             // 
             this.labLinkClicked.AccessibleDescription = "";
-            this.labLinkClicked.Location = new System.Drawing.Point(6, 55);
+            this.labLinkClicked.Location = new System.Drawing.Point(9, 19);
             this.labLinkClicked.Name = "labLinkClicked";
             this.labLinkClicked.Size = new System.Drawing.Size(437, 13);
             this.labLinkClicked.TabIndex = 18;
             this.labLinkClicked.Text = "When tray notification or recent file is clicked:";
             // 
-            // tParent
-            // 
-            this.tParent.AccessibleDescription = "";
-            this.tParent.AccessibleName = "account\'s http path";
-            this.tParent.Location = new System.Drawing.Point(19, 32);
-            this.tParent.Name = "tParent";
-            this.tParent.Size = new System.Drawing.Size(410, 20);
-            this.tParent.TabIndex = 0;
-            this.tParent.TextChanged += new System.EventHandler(this.tParent_TextChanged);
-            // 
-            // labFullPath
-            // 
-            this.labFullPath.AccessibleDescription = "";
-            this.labFullPath.Location = new System.Drawing.Point(6, 16);
-            this.labFullPath.Name = "labFullPath";
-            this.labFullPath.Size = new System.Drawing.Size(437, 13);
-            this.labFullPath.TabIndex = 2;
-            this.labFullPath.Text = "Account\'s full path:";
-            // 
             // rCopy2Clipboard
             // 
             this.rCopy2Clipboard.AccessibleDescription = "";
             this.rCopy2Clipboard.AccessibleName = "copy link to clipboard";
-            this.rCopy2Clipboard.Location = new System.Drawing.Point(19, 99);
+            this.rCopy2Clipboard.Location = new System.Drawing.Point(22, 63);
             this.rCopy2Clipboard.Name = "rCopy2Clipboard";
             this.rCopy2Clipboard.Size = new System.Drawing.Size(424, 17);
             this.rCopy2Clipboard.TabIndex = 2;
@@ -297,7 +275,7 @@
             this.rOpenInBrowser.AccessibleDescription = "";
             this.rOpenInBrowser.AccessibleName = "open link in default browser";
             this.rOpenInBrowser.Checked = true;
-            this.rOpenInBrowser.Location = new System.Drawing.Point(19, 76);
+            this.rOpenInBrowser.Location = new System.Drawing.Point(22, 40);
             this.rOpenInBrowser.Name = "rOpenInBrowser";
             this.rOpenInBrowser.Size = new System.Drawing.Size(424, 17);
             this.rOpenInBrowser.TabIndex = 1;
@@ -306,43 +284,6 @@
             this.rOpenInBrowser.UseVisualStyleBackColor = true;
             this.rOpenInBrowser.CheckedChanged += new System.EventHandler(this.rOpenInBrowser_CheckedChanged);
             // 
-            // gWebInt
-            // 
-            this.gWebInt.AccessibleDescription = "";
-            this.gWebInt.Controls.Add(this.labViewInBrowser);
-            this.gWebInt.Controls.Add(this.chkWebInt);
-            this.gWebInt.Location = new System.Drawing.Point(8, 160);
-            this.gWebInt.Name = "gWebInt";
-            this.gWebInt.Size = new System.Drawing.Size(449, 57);
-            this.gWebInt.TabIndex = 11;
-            this.gWebInt.TabStop = false;
-            this.gWebInt.Text = "Web Interface";
-            // 
-            // labViewInBrowser
-            // 
-            this.labViewInBrowser.AccessibleDescription = "opens the web interface in browser";
-            this.labViewInBrowser.AccessibleName = "View in browser";
-            this.labViewInBrowser.AutoSize = true;
-            this.labViewInBrowser.Location = new System.Drawing.Point(188, 25);
-            this.labViewInBrowser.Name = "labViewInBrowser";
-            this.labViewInBrowser.Size = new System.Drawing.Size(87, 13);
-            this.labViewInBrowser.TabIndex = 5;
-            this.labViewInBrowser.TabStop = true;
-            this.labViewInBrowser.Text = "(View in browser)";
-            this.labViewInBrowser.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labViewInBrowser_LinkClicked);
-            // 
-            // chkWebInt
-            // 
-            this.chkWebInt.AccessibleDescription = "";
-            this.chkWebInt.AccessibleName = "use the web interface?";
-            this.chkWebInt.Location = new System.Drawing.Point(9, 24);
-            this.chkWebInt.Name = "chkWebInt";
-            this.chkWebInt.Size = new System.Drawing.Size(434, 17);
-            this.chkWebInt.TabIndex = 4;
-            this.chkWebInt.Text = "Use the web interface";
-            this.chkWebInt.UseVisualStyleBackColor = true;
-            this.chkWebInt.CheckedChanged += new System.EventHandler(this.chkWebInt_CheckedChanged);
-            // 
             // gApp
             // 
             this.gApp.AccessibleDescription = "";
@@ -350,12 +291,32 @@
             this.gApp.Controls.Add(this.chkEnableLogging);
             this.gApp.Controls.Add(this.chkShowNots);
             this.gApp.Controls.Add(this.chkStartUp);
-            this.gApp.Location = new System.Drawing.Point(8, 223);
+            this.gApp.Location = new System.Drawing.Point(8, 123);
             this.gApp.Name = "gApp";
             this.gApp.Size = new System.Drawing.Size(449, 92);
             this.gApp.TabIndex = 3;
             this.gApp.TabStop = false;
             this.gApp.Text = "Application";
+            // 
+            // bBrowseLogs
+            // 
+            this.bBrowseLogs.Location = new System.Drawing.Point(191, 61);
+            this.bBrowseLogs.Name = "bBrowseLogs";
+            this.bBrowseLogs.Size = new System.Drawing.Size(89, 23);
+            this.bBrowseLogs.TabIndex = 10;
+            this.bBrowseLogs.Text = "View Log";
+            this.bBrowseLogs.UseVisualStyleBackColor = true;
+            this.bBrowseLogs.Click += new System.EventHandler(this.bBrowseLogs_Click);
+            // 
+            // chkEnableLogging
+            // 
+            this.chkEnableLogging.Location = new System.Drawing.Point(9, 65);
+            this.chkEnableLogging.Name = "chkEnableLogging";
+            this.chkEnableLogging.Size = new System.Drawing.Size(434, 17);
+            this.chkEnableLogging.TabIndex = 9;
+            this.chkEnableLogging.Text = "Enable logging";
+            this.chkEnableLogging.UseVisualStyleBackColor = true;
+            this.chkEnableLogging.CheckedChanged += new System.EventHandler(this.chkEnableLogging_CheckedChanged);
             // 
             // chkShowNots
             // 
@@ -386,16 +347,17 @@
             // tabAccount
             // 
             this.tabAccount.AccessibleDescription = "";
-            this.tabAccount.Controls.Add(this.cProfiles);
-            this.tabAccount.Controls.Add(this.lProfile);
+            this.tabAccount.Controls.Add(this.gWebInt);
             this.tabAccount.Controls.Add(this.bRemoveAccount);
             this.tabAccount.Controls.Add(this.bAddAccount);
+            this.tabAccount.Controls.Add(this.cProfiles);
+            this.tabAccount.Controls.Add(this.lProfile);
             this.tabAccount.Controls.Add(this.gAccount);
             this.tabAccount.Controls.Add(this.gDetails);
             this.tabAccount.Location = new System.Drawing.Point(4, 22);
             this.tabAccount.Name = "tabAccount";
             this.tabAccount.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAccount.Size = new System.Drawing.Size(464, 331);
+            this.tabAccount.Size = new System.Drawing.Size(464, 366);
             this.tabAccount.TabIndex = 1;
             this.tabAccount.Text = "Account";
             this.tabAccount.UseVisualStyleBackColor = true;
@@ -408,7 +370,7 @@
             this.cProfiles.FormattingEnabled = true;
             this.cProfiles.Location = new System.Drawing.Point(103, 11);
             this.cProfiles.Name = "cProfiles";
-            this.cProfiles.Size = new System.Drawing.Size(271, 21);
+            this.cProfiles.Size = new System.Drawing.Size(190, 21);
             this.cProfiles.TabIndex = 15;
             this.cProfiles.SelectedIndexChanged += new System.EventHandler(this.cProfiles_SelectedIndexChanged);
             // 
@@ -420,26 +382,6 @@
             this.lProfile.Size = new System.Drawing.Size(441, 13);
             this.lProfile.TabIndex = 14;
             this.lProfile.Text = "Profile:";
-            // 
-            // bRemoveAccount
-            // 
-            this.bRemoveAccount.Location = new System.Drawing.Point(380, 250);
-            this.bRemoveAccount.Name = "bRemoveAccount";
-            this.bRemoveAccount.Size = new System.Drawing.Size(75, 23);
-            this.bRemoveAccount.TabIndex = 5;
-            this.bRemoveAccount.Text = "Remove";
-            this.bRemoveAccount.UseVisualStyleBackColor = true;
-            this.bRemoveAccount.Click += new System.EventHandler(this.bRemoveAccount_Click);
-            // 
-            // bAddAccount
-            // 
-            this.bAddAccount.Location = new System.Drawing.Point(299, 250);
-            this.bAddAccount.Name = "bAddAccount";
-            this.bAddAccount.Size = new System.Drawing.Size(75, 23);
-            this.bAddAccount.TabIndex = 4;
-            this.bAddAccount.Text = "Add New";
-            this.bAddAccount.UseVisualStyleBackColor = true;
-            this.bAddAccount.Click += new System.EventHandler(this.bAddAccount_Click);
             // 
             // gAccount
             // 
@@ -535,13 +477,15 @@
             // gDetails
             // 
             this.gDetails.AccessibleDescription = "";
+            this.gDetails.Controls.Add(this.tParent);
+            this.gDetails.Controls.Add(this.labFullPath);
             this.gDetails.Controls.Add(this.lLocPath);
             this.gDetails.Controls.Add(this.lRemPath);
             this.gDetails.Controls.Add(this.labLocPath);
             this.gDetails.Controls.Add(this.labRemPath);
             this.gDetails.Location = new System.Drawing.Point(8, 146);
             this.gDetails.Name = "gDetails";
-            this.gDetails.Size = new System.Drawing.Size(447, 98);
+            this.gDetails.Size = new System.Drawing.Size(447, 142);
             this.gDetails.TabIndex = 0;
             this.gDetails.TabStop = false;
             this.gDetails.Text = "Details";
@@ -589,7 +533,7 @@
             this.tabFilters.Location = new System.Drawing.Point(4, 22);
             this.tabFilters.Name = "tabFilters";
             this.tabFilters.Padding = new System.Windows.Forms.Padding(3);
-            this.tabFilters.Size = new System.Drawing.Size(464, 331);
+            this.tabFilters.Size = new System.Drawing.Size(464, 366);
             this.tabFilters.TabIndex = 5;
             this.tabFilters.Text = "Filters";
             this.tabFilters.UseVisualStyleBackColor = true;
@@ -762,7 +706,7 @@
             this.tabBandwidth.Location = new System.Drawing.Point(4, 22);
             this.tabBandwidth.Name = "tabBandwidth";
             this.tabBandwidth.Padding = new System.Windows.Forms.Padding(3);
-            this.tabBandwidth.Size = new System.Drawing.Size(464, 331);
+            this.tabBandwidth.Size = new System.Drawing.Size(464, 366);
             this.tabBandwidth.TabIndex = 3;
             this.tabBandwidth.Text = "Bandwidth";
             this.tabBandwidth.UseVisualStyleBackColor = true;
@@ -926,7 +870,7 @@
             this.tabLanguage.Location = new System.Drawing.Point(4, 22);
             this.tabLanguage.Name = "tabLanguage";
             this.tabLanguage.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLanguage.Size = new System.Drawing.Size(464, 331);
+            this.tabLanguage.Size = new System.Drawing.Size(464, 366);
             this.tabLanguage.TabIndex = 4;
             this.tabLanguage.Text = "Language";
             this.tabLanguage.UseVisualStyleBackColor = true;
@@ -945,40 +889,40 @@
             // 
             this.listView1.AutoArrange = false;
             this.listView1.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4,
-            listViewItem5,
-            listViewItem6,
-            listViewItem7,
-            listViewItem8,
-            listViewItem9,
-            listViewItem10,
-            listViewItem11,
-            listViewItem12,
-            listViewItem13,
-            listViewItem14,
-            listViewItem15,
-            listViewItem16,
-            listViewItem17,
-            listViewItem18,
-            listViewItem19,
-            listViewItem20,
-            listViewItem21,
-            listViewItem22,
-            listViewItem23,
-            listViewItem24,
-            listViewItem25,
-            listViewItem26,
-            listViewItem27,
-            listViewItem28,
-            listViewItem29,
-            listViewItem30,
-            listViewItem31,
-            listViewItem32,
-            listViewItem33,
-            listViewItem34});
+            listViewItem35,
+            listViewItem36,
+            listViewItem37,
+            listViewItem38,
+            listViewItem39,
+            listViewItem40,
+            listViewItem41,
+            listViewItem42,
+            listViewItem43,
+            listViewItem44,
+            listViewItem45,
+            listViewItem46,
+            listViewItem47,
+            listViewItem48,
+            listViewItem49,
+            listViewItem50,
+            listViewItem51,
+            listViewItem52,
+            listViewItem53,
+            listViewItem54,
+            listViewItem55,
+            listViewItem56,
+            listViewItem57,
+            listViewItem58,
+            listViewItem59,
+            listViewItem60,
+            listViewItem61,
+            listViewItem62,
+            listViewItem63,
+            listViewItem64,
+            listViewItem65,
+            listViewItem66,
+            listViewItem67,
+            listViewItem68});
             this.listView1.Location = new System.Drawing.Point(8, 16);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(447, 269);
@@ -1045,7 +989,7 @@
             this.tabAbout.Location = new System.Drawing.Point(4, 22);
             this.tabAbout.Name = "tabAbout";
             this.tabAbout.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAbout.Size = new System.Drawing.Size(464, 331);
+            this.tabAbout.Size = new System.Drawing.Size(464, 375);
             this.tabAbout.TabIndex = 2;
             this.tabAbout.Text = "About";
             this.tabAbout.UseVisualStyleBackColor = true;
@@ -1374,31 +1318,89 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // chkEnableLogging
+            // bAddAccount
             // 
-            this.chkEnableLogging.Location = new System.Drawing.Point(9, 65);
-            this.chkEnableLogging.Name = "chkEnableLogging";
-            this.chkEnableLogging.Size = new System.Drawing.Size(434, 17);
-            this.chkEnableLogging.TabIndex = 9;
-            this.chkEnableLogging.Text = "Enable logging";
-            this.chkEnableLogging.UseVisualStyleBackColor = true;
-            this.chkEnableLogging.CheckedChanged += new System.EventHandler(this.chkEnableLogging_CheckedChanged);
+            this.bAddAccount.Location = new System.Drawing.Point(299, 10);
+            this.bAddAccount.Name = "bAddAccount";
+            this.bAddAccount.Size = new System.Drawing.Size(75, 23);
+            this.bAddAccount.TabIndex = 16;
+            this.bAddAccount.Text = "Add New";
+            this.bAddAccount.UseVisualStyleBackColor = true;
+            this.bAddAccount.Click += new System.EventHandler(this.bAddAccount_Click);
             // 
-            // bBrowseLogs
+            // bRemoveAccount
             // 
-            this.bBrowseLogs.Location = new System.Drawing.Point(191, 61);
-            this.bBrowseLogs.Name = "bBrowseLogs";
-            this.bBrowseLogs.Size = new System.Drawing.Size(89, 23);
-            this.bBrowseLogs.TabIndex = 10;
-            this.bBrowseLogs.Text = "View Log";
-            this.bBrowseLogs.UseVisualStyleBackColor = true;
-            this.bBrowseLogs.Click += new System.EventHandler(this.bBrowseLogs_Click);
+            this.bRemoveAccount.Location = new System.Drawing.Point(380, 10);
+            this.bRemoveAccount.Name = "bRemoveAccount";
+            this.bRemoveAccount.Size = new System.Drawing.Size(75, 23);
+            this.bRemoveAccount.TabIndex = 17;
+            this.bRemoveAccount.Text = "Remove";
+            this.bRemoveAccount.UseVisualStyleBackColor = true;
+            this.bRemoveAccount.Click += new System.EventHandler(this.bRemoveAccount_Click);
+            // 
+            // gWebInt
+            // 
+            this.gWebInt.AccessibleDescription = "";
+            this.gWebInt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gWebInt.Controls.Add(this.labViewInBrowser);
+            this.gWebInt.Controls.Add(this.chkWebInt);
+            this.gWebInt.Location = new System.Drawing.Point(8, 294);
+            this.gWebInt.Name = "gWebInt";
+            this.gWebInt.Size = new System.Drawing.Size(447, 57);
+            this.gWebInt.TabIndex = 18;
+            this.gWebInt.TabStop = false;
+            this.gWebInt.Text = "Web Interface";
+            // 
+            // labViewInBrowser
+            // 
+            this.labViewInBrowser.AccessibleDescription = "opens the web interface in browser";
+            this.labViewInBrowser.AccessibleName = "View in browser";
+            this.labViewInBrowser.AutoSize = true;
+            this.labViewInBrowser.Location = new System.Drawing.Point(188, 25);
+            this.labViewInBrowser.Name = "labViewInBrowser";
+            this.labViewInBrowser.Size = new System.Drawing.Size(87, 13);
+            this.labViewInBrowser.TabIndex = 5;
+            this.labViewInBrowser.TabStop = true;
+            this.labViewInBrowser.Text = "(View in browser)";
+            this.labViewInBrowser.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labViewInBrowser_LinkClicked);
+            // 
+            // chkWebInt
+            // 
+            this.chkWebInt.AccessibleDescription = "";
+            this.chkWebInt.AccessibleName = "use the web interface?";
+            this.chkWebInt.Location = new System.Drawing.Point(9, 24);
+            this.chkWebInt.Name = "chkWebInt";
+            this.chkWebInt.Size = new System.Drawing.Size(434, 17);
+            this.chkWebInt.TabIndex = 4;
+            this.chkWebInt.Text = "Use the web interface";
+            this.chkWebInt.UseVisualStyleBackColor = true;
+            this.chkWebInt.CheckedChanged += new System.EventHandler(this.chkWebInt_CheckedChanged);
+            // 
+            // tParent
+            // 
+            this.tParent.AccessibleDescription = "";
+            this.tParent.AccessibleName = "account\'s http path";
+            this.tParent.Location = new System.Drawing.Point(29, 109);
+            this.tParent.Name = "tParent";
+            this.tParent.Size = new System.Drawing.Size(400, 20);
+            this.tParent.TabIndex = 7;
+            this.tParent.TextChanged += new System.EventHandler(this.tParent_TextChanged);
+            // 
+            // labFullPath
+            // 
+            this.labFullPath.AccessibleDescription = "";
+            this.labFullPath.Location = new System.Drawing.Point(6, 93);
+            this.labFullPath.Name = "labFullPath";
+            this.labFullPath.Size = new System.Drawing.Size(437, 13);
+            this.labFullPath.TabIndex = 8;
+            this.labFullPath.Text = "Account\'s full path:";
             // 
             // fMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(471, 349);
+            this.ClientSize = new System.Drawing.Size(471, 384);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1413,13 +1415,11 @@
             this.tabControl1.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
             this.gLinks.ResumeLayout(false);
-            this.gLinks.PerformLayout();
-            this.gWebInt.ResumeLayout(false);
-            this.gWebInt.PerformLayout();
             this.gApp.ResumeLayout(false);
             this.tabAccount.ResumeLayout(false);
             this.gAccount.ResumeLayout(false);
             this.gDetails.ResumeLayout(false);
+            this.gDetails.PerformLayout();
             this.tabFilters.ResumeLayout(false);
             this.gSelectiveSync.ResumeLayout(false);
             this.gFileFilters.ResumeLayout(false);
@@ -1438,6 +1438,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.gNotes.ResumeLayout(false);
             this.trayMenu.ResumeLayout(false);
+            this.gWebInt.ResumeLayout(false);
+            this.gWebInt.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1446,9 +1448,6 @@
 
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabGeneral;
-        private System.Windows.Forms.GroupBox gWebInt;
-        private System.Windows.Forms.LinkLabel labViewInBrowser;
-        private System.Windows.Forms.CheckBox chkWebInt;
         private System.Windows.Forms.GroupBox gApp;
         private System.Windows.Forms.CheckBox chkShowNots;
         private System.Windows.Forms.CheckBox chkStartUp;
@@ -1494,8 +1493,6 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.TabPage tabBandwidth;
         private System.Windows.Forms.GroupBox gLinks;
-        private System.Windows.Forms.TextBox tParent;
-        private System.Windows.Forms.Label labFullPath;
         private System.Windows.Forms.RadioButton rCopy2Clipboard;
         private System.Windows.Forms.RadioButton rOpenInBrowser;
         private System.Windows.Forms.GroupBox gAccount;
@@ -1545,12 +1542,17 @@
         private System.Windows.Forms.DateTimePicker dtpLastModTime;
         private System.Windows.Forms.TreeView lSelectiveSync;
         private System.Windows.Forms.Button bRefresh;
-        private System.Windows.Forms.Button bRemoveAccount;
-        private System.Windows.Forms.Button bAddAccount;
         private System.Windows.Forms.Label lProfile;
         private System.Windows.Forms.Label labLinkClicked;
         private System.Windows.Forms.ComboBox cProfiles;
         private System.Windows.Forms.CheckBox chkEnableLogging;
         private System.Windows.Forms.Button bBrowseLogs;
+        private System.Windows.Forms.Button bAddAccount;
+        private System.Windows.Forms.Button bRemoveAccount;
+        private System.Windows.Forms.GroupBox gWebInt;
+        private System.Windows.Forms.LinkLabel labViewInBrowser;
+        private System.Windows.Forms.CheckBox chkWebInt;
+        private System.Windows.Forms.TextBox tParent;
+        private System.Windows.Forms.Label labFullPath;
     }
 }

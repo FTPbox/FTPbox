@@ -1982,6 +1982,10 @@ namespace FTPbox.Forms
             lSelectiveSync.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
             lSelectiveSync.RightToLeftLayout = RightToLeftLayout;
             // Relocate controls where necessary
+            bAddAccount.Location = new Point(RightToLeftLayout ? 14 : 299, 10);
+            bRemoveAccount.Location = new Point(RightToLeftLayout ? 95 : 380, 10);
+            cProfiles.Location = new Point(RightToLeftLayout ? 176 : 103, 11);
+
             bRefresh.Location = new Point(RightToLeftLayout ? 9 : 352, 19);
             nSyncFrequency.Location = RightToLeftLayout ? new Point(366, 94) : new Point(35, 94);
             nDownLimit.Location = RightToLeftLayout ? new Point(373, 51) : new Point(35, 51);
