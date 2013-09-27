@@ -33,8 +33,7 @@ namespace FTPbox.Forms
         private bool changedfromcheck = true;
 
         //Form instances
-        Account fNewFtp;
-        Paths newDir;
+        private Setup fSetup;
         Translate ftranslate;
 
         private TrayTextNotificationArgs _lastTrayStatus = new TrayTextNotificationArgs
@@ -112,12 +111,11 @@ namespace FTPbox.Forms
                         tray.Text += string.Format("\n{0,3}% - {1}", n.Progress, n.Rate);
                     }));               
             };
-
-            fNewFtp = new Account {Tag = this};
-            newDir = new Paths {Tag = this};
+            fSetup = new Setup {Tag = this};
             ftranslate = new Translate {Tag = this};
-
-            Get_Language();
+            
+            if (!string.IsNullOrEmpty(Settings.General.Language))
+                Set_Language(Settings.General.Language);
             
             StartUpWork();
 
@@ -165,14 +163,15 @@ namespace FTPbox.Forms
             if (!Program.Account.isAccountSet || (Program.Account.isAccountSet && string.IsNullOrWhiteSpace(Program.Account.Account.Password)))
             {
                 Log.Write(l.Info, "Will open New FTP form.");
-                Account.just_password = string.IsNullOrWhiteSpace(Program.Account.Account.Password);
-                fNewFtp.ShowDialog();
+                Setup.JustPassword = Program.Account.isAccountSet && string.IsNullOrWhiteSpace(Program.Account.Account.Password);
+                
+                fSetup.ShowDialog();
 
                 Log.Write(l.Info, "Done");
 
                 this.Show();
             }
-            else if (Program.Account.isAccountSet)            
+            else if (Program.Account.isAccountSet)
                 try
                 {
                     Program.Account.Client.Connect();
@@ -185,7 +184,7 @@ namespace FTPbox.Forms
                 {
                     Log.Write(l.Info, "Will open New FTP form");
                     Common.LogError(ex);
-                    fNewFtp.ShowDialog();
+                    fSetup.ShowDialog();
                     Log.Write(l.Info, "Done");
 
                     this.Show();
@@ -199,7 +198,7 @@ namespace FTPbox.Forms
         {
             if (!Program.Account.isPathsSet)
             {
-                newDir.ShowDialog();       
+                fSetup.ShowDialog();       
                 this.Show();
 
                 if (!gotpaths)
@@ -279,6 +278,8 @@ namespace FTPbox.Forms
             }
             else
                 gLimits.Visible = false;
+
+            Set_Language(Settings.General.Language);
 
             Program.Account.FolderWatcher.Setup();
 
@@ -360,69 +361,6 @@ namespace FTPbox.Forms
         #endregion
 
         #region translations
-
-        /// <summary>
-        /// Checks the computer's language and offers to switch to it, if available.
-        /// Finally, calls Set_Language to set the form's language
-        /// </summary>
-        private void Get_Language()
-        {
-            string curlan = Settings.General.Language;
-
-            if (string.IsNullOrEmpty(curlan))
-            {
-                string locallangtwoletter = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;                
-
-                var langList = new Dictionary<string, string>
-                {
-                    {"es", "Spanish"},
-                    {"de", "German"},
-                    {"fr", "French"},
-                    {"nl", "Dutch"},
-                    {"el", "Greek"},
-                    {"it", "Italian"},
-                    {"tr", "Turkish"},
-                    {"pt-BR", "Brazilian Portuguese"},
-                    {"fo", "Faroese"},
-                    {"sv", "Swedish"},
-                    {"sq", "Albanian"},
-                    {"ro", "Romanian"},
-                    {"ko", "Korean"},
-                    {"ru", "Russian"},
-                    {"ja", "Japanese"},
-                    {"no", "Norwegian"},
-                    {"hu", "Hungarian"},
-                    {"vi", "Vietnamese"},
-                    {"zh_HANS", "Simplified Chinese"},
-                    {"zh_HANT", "Traditional Chinese"},
-                    {"lt", "Lithuanian"},
-                    {"da", "Dansk"},
-                    {"pl", "Polish"},
-                    {"hr", "Croatian"},
-                    {"sk", "Slovak"},
-                    {"pt", "Portuguese"},
-                    {"gl", "Galego"},
-                    {"th", "Thai"},
-                    {"sl", "Slovenian"},
-                    {"cs", "Czech"},
-                    {"he", "Hebrew"},
-                    {"sr", "Serbian"}
-                };
-
-                if (langList.ContainsKey(locallangtwoletter))
-                {
-                    string msg = string.Format("FTPbox detected that you use {0} as your computer language. Do you want to use {0} as the language of FTPbox as well?", langList[locallangtwoletter]);
-                    DialogResult x = MessageBox.Show(msg, "FTPbox", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-                    Set_Language(x == DialogResult.Yes ? locallangtwoletter : "en");
-                }
-                else                
-                    Set_Language("en");                
-            }
-            else
-                Set_Language(curlan);
-
-        }
 
         /// <summary>
         /// Translate all controls and stuff to the given language.

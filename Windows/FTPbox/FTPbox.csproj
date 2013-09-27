@@ -67,12 +67,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Forms\Account.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Account.Designer.cs">
-      <DependentUpon>Account.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\fMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -85,11 +79,11 @@
     <Compile Include="Forms\newversion.designer.cs">
       <DependentUpon>newversion.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Paths.cs">
+    <Compile Include="Forms\Setup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Paths.Designer.cs">
-      <DependentUpon>Paths.cs</DependentUpon>
+    <Compile Include="Forms\Setup.Designer.cs">
+      <DependentUpon>Setup.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Translate.cs">
       <SubType>Form</SubType>
@@ -99,9 +93,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\Account.resx">
-      <DependentUpon>Account.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\fMain.resx">
       <DependentUpon>fMain.cs</DependentUpon>
     </EmbeddedResource>
@@ -109,8 +100,8 @@
       <DependentUpon>newversion.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Paths.resx">
-      <DependentUpon>Paths.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Setup.resx">
+      <DependentUpon>Setup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Translate.resx">
       <DependentUpon>Translate.cs</DependentUpon>
