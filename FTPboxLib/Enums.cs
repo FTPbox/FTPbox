@@ -122,4 +122,28 @@ namespace FTPboxLib
         removed,
         waiting
     }
+
+    public enum UiControl
+    {
+        // Setup    
+        LoginDetails, Protocol, Encryption, Host, Port, Username, Password, AskForPassword,
+        LocalFolder, DefaultLocalFolder, CustomLocalFolder, Browse,
+        RemotePath, FullRemotePath, FullAccountPath,
+        SelectiveSync, SyncAllFiles, SyncSpecificFiles, UncheckFiles,
+        Previous, Next, Finish,
+
+        // Options
+        Options, General, Links, WhenRecentFileClicked, OpenUrl, CopyUrl, OpenLocal, Application, ShowNotifications, StartOnStartup, EnableLogging, ViewLog,
+        Account, Profile, Add, Remove, Details, WebUi, UseWebUi, ViewInBrowser,
+        Filters, Refresh, IgnoredExtensions, AlsoIgnore, Dotfiles, TempFiles, FilesModifiedBefore,
+        Bandwidth, SyncFrequency, SyncWhen, AutoEvery, Seconds, Manually, SpeedLimits, DownLimit, UpLimit, NoLimits,
+        Language,
+        About, TheTeam, Website, Contact, CodedIn, Notes, Contribute, FreeAndAll, GetInTouch, ReportBug, RequestFeature, Donate,
+
+        // Tray
+        RecentFiles, StartSync, Exit,
+
+        //  New Version
+        UpdateAvailable, NewVersionAvailable, CurrentVersion, NewVersion, AskDownload, DownloadNow, LearnMore, RemindLater
+    }
 }

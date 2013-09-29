@@ -178,39 +178,38 @@ namespace FTPbox.Forms
         private void SetLanguage(string lan)
         {
             Log.Write(l.Info, "Setting lang: {0}", lan);
-
+            Settings.General.Language = lan;
             // Language
-            gLanguage.Text = Common.Languages.Get(lan + "/main_form/language", "Language");
-            //TODO: labSelectLanguage.Text = 
+            // this should be left to English only.
 
-            // Login            
-            gLoginDetails.Text = Common.Languages.Get(lan + "/new_account/login_details", "FTP login details");
-            labMode.Text = Common.Languages.Get(lan + "/main_form/mode", "Protocol") + ":";
-            labEncryption.Text = Common.Languages.Get(lan + "/new_account/encryption", "Encryption") + ":";
-            labHost.Text = Common.Languages.Get(lan + "/main_form/host", "Host") + ":";
-            labUN.Text = Common.Languages.Get(lan + "/main_form/username", "Username") + ":";
-            labPass.Text = Common.Languages.Get(lan + "/main_form/password", "Password") + ":";
-            //TODO: cAskForPass.Text =     
+            // Login
+            gLoginDetails.Text = Common.Languages[UiControl.LoginDetails];
+            labMode.Text = Common.Languages[UiControl.Protocol];
+            labEncryption.Text = Common.Languages[UiControl.Encryption];
+            labHost.Text = Common.Languages[UiControl.Host];
+            labUN.Text = Common.Languages[UiControl.Username];
+            labPass.Text = Common.Languages[UiControl.Password];
+            cAskForPass.Text = Common.Languages[UiControl.AskForPassword];
         
             // Local Folder
-            gLocalFolder.Text = Common.Languages.Get(lan + "/paths/local_folder", "Local folder");
-            //TODO: rDefaultLocalFolder.Text = 
-            //TODO: rCustomLocalFolder.Text = 
-            bBrowse.Text = Common.Languages.Get(lan + "/paths/browse", "Browse");
+            gLocalFolder.Text = Common.Languages[UiControl.LocalFolder];
+            rDefaultLocalFolder.Text = Common.Languages[UiControl.DefaultLocalFolder];
+            rCustomLocalFolder.Text = Common.Languages[UiControl.CustomLocalFolder];
+            bBrowse.Text = Common.Languages[UiControl.Browse];
 
             // Remote Folder
-            gRemoteFolder.Text = Common.Languages.Get(lan + "/main_form/remote_path", "Remote Path");
-            labFullPath.Text = Common.Languages.Get(lan + "/paths/full_path", "Full path") + ":";
+            gRemoteFolder.Text = Common.Languages[UiControl.RemotePath];
+            labFullPath.Text = Common.Languages[UiControl.FullRemotePath];
     
             // Selective Sync
-            gSelectiveSync.Text = Common.Languages.Get(lan + "/main_form/selective", "Selective Sync");
-            //TODO: rSyncAll.Text = 
-            //TODO: rSyncCustom.Text =
+            gSelectiveSync.Text = Common.Languages[UiControl.SelectiveSync];
+            rSyncAll.Text = Common.Languages[UiControl.SyncAllFiles];
+            rSyncCustom.Text = Common.Languages[UiControl.SyncSpecificFiles];
 
             // Buttons
-            //TODO: bPrevious.Text = 
-            //TODO: bNext.Text = 
-            bFinish.Text = Common.Languages.Get(lan + "/new_account/done", "Done");
+            bPrevious.Text = Common.Languages[UiControl.Previous];
+            bNext.Text = Common.Languages[UiControl.Next];
+            bFinish.Text = Common.Languages[UiControl.Finish];
 
             // Is this a right-to-left language?            
             RightToLeftLayout = new[] { "he" }.Contains(lan);
@@ -399,7 +398,7 @@ namespace FTPbox.Forms
                 Program.Account.Client.WorkingDirectory = Program.Account.HomePath;
                 tRemoteList.CheckBoxes = false;
                 tFullRemotePath.Visible = true;
-                labFullPath.Text = Common.Languages.Get(Settings.General.Language + "/paths/full_path", "Full path") + ":";
+                labFullPath.Text = Common.Languages[UiControl.FullRemotePath];
                 PopulateRemoteList();
             }
 
@@ -429,8 +428,8 @@ namespace FTPbox.Forms
 
                     tRemoteList.CheckBoxes = false;
                     tFullRemotePath.Visible = true;
-                    labFullPath.Text = Common.Languages.Get(Settings.General.Language + "/paths/full_path", "Full path") + ":";
-                    gRemoteFolder.Text = Common.Languages.Get(Settings.General.Language + "/main_form/remote_path", "Remote Path");
+                    labFullPath.Text = Common.Languages[UiControl.FullRemotePath];
+                    gRemoteFolder.Text = Common.Languages[UiControl.RemotePath];
                     SwitchTab(AccountSetupTab.RemoteFolder);
                     PopulateRemoteList();
                     break;
@@ -446,8 +445,8 @@ namespace FTPbox.Forms
 
                     tRemoteList.CheckBoxes = true;
                     tFullRemotePath.Visible = false;
-                    labFullPath.Text = Common.Languages.Get(Settings.General.Language + "/main_form/selective_info", "Uncheck the items you don't want to sync") + ":";
-                    gRemoteFolder.Text = Common.Languages.Get(Settings.General.Language + "/main_form/selective", "Selective Sync");
+                    labFullPath.Text = Common.Languages[UiControl.UncheckFiles];
+                    gRemoteFolder.Text = Common.Languages[UiControl.SelectiveSync];
                     SwitchTab(AccountSetupTab.SelectiveSync);
                     PopulateRemoteList();
                     break;

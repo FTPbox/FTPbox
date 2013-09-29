@@ -78,16 +78,16 @@ namespace FTPbox
         private void Set_Language(string lan)
         {
             string qmark = "?";
-            if (lan == "el") qmark = "";
-            
-            Text = "FTPbox | " + Common.Languages.Get(lan + "/new_version/update_available", "Update Available");
-            labInfo.Text = Common.Languages.Get(lan + "/new_version/new_v_available", "New version of FTPbox is available");
-            labCurVer.Text = Common.Languages.Get(lan + "/new_version/current_version", "Current Version") + ":";
-            labNewVer.Text = Common.Languages.Get(lan + "/new_version/new_ver", "New Version") + ":";
-            labQuest.Text = Common.Languages.Get(lan + "/new_version/wanna_download", "Do you want to download the new version now") + qmark;
-            bDownload.Text = Common.Languages.Get(lan + "/new_version/download", "Update Now");
-            bLearnMore.Text = Common.Languages.Get(lan + "/new_version/learn_more", "Learn More");
-            bClose.Text = Common.Languages.Get(lan + "/new_version/remind_me_next_time", "Not this time");                 
+            if (lan == "el") qmark = ";";
+
+            Text = "FTPbox | " + Common.Languages[UiControl.UpdateAvailable];
+            labInfo.Text = Common.Languages[UiControl.NewVersionAvailable];
+            labCurVer.Text = Common.Languages[UiControl.CurrentVersion] + ":";
+            labNewVer.Text = Common.Languages[UiControl.NewVersion] + ":";
+            labQuest.Text = Common.Languages[UiControl.AskDownload] + qmark;
+            bDownload.Text = Common.Languages[UiControl.DownloadNow];
+            bLearnMore.Text = Common.Languages[UiControl.LearnMore];
+            bClose.Text = Common.Languages[UiControl.RemindLater];
 
             // Is this a right-to-left language?
             RightToLeftLayout = new[] { "he" }.Contains(lan);
