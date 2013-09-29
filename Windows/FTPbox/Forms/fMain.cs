@@ -340,7 +340,7 @@ namespace FTPbox.Forms
             {
                 if (i >= lim)
                 {
-                    recentFilesToolStripMenuItem.DropDownItems[i].Text = Common._(MessageType.NotAvailable);
+                    recentFilesToolStripMenuItem.DropDownItems[i].Text = Common.Languages[MessageType.NotAvailable];
                     recentFilesToolStripMenuItem.DropDownItems[i].Enabled = false;
                     recentFilesToolStripMenuItem.DropDownItems[i].ToolTipText = string.Empty;
                     continue;
@@ -456,14 +456,14 @@ namespace FTPbox.Forms
                     {
                         foreach (ToolStripItem t in recentFilesToolStripMenuItem.DropDownItems)
                             if (!t.Enabled)
-                                t.Text = Common._(MessageType.NotAvailable);
+                                t.Text = Common.Languages[MessageType.NotAvailable];
                     }));
                 }
                 else
                 {
                     foreach (ToolStripItem t in recentFilesToolStripMenuItem.DropDownItems)
                         if (!t.Enabled)
-                            t.Text = Common._(MessageType.NotAvailable);
+                            t.Text = Common.Languages[MessageType.NotAvailable];
                 }
             }
 
@@ -1802,54 +1802,54 @@ namespace FTPbox.Forms
                     if (name.Length >= 15)
                         name = string.Format("{0}...{1}",name.Substring(0,7), name.Substring(name.Length-5));
 
-                    msg = (e.MessageType == MessageType.Uploading) ? string.Format(Common._(MessageType.Uploading), name) : string.Format(Common._(MessageType.Downloading), name);
+                    msg = (e.MessageType == MessageType.Uploading) ? string.Format(Common.Languages[MessageType.Uploading], name) : string.Format(Common.Languages[MessageType.Downloading], name);
                 }
 
                 switch (e.MessageType)
                 {
                     case MessageType.Uploading:
                         tray.Icon = Properties.Resources.syncing;
-                        tray.Text = msg ?? Common._(MessageType.Syncing);
+                        tray.Text = msg ?? Common.Languages[MessageType.Syncing];
                         break;
                     case MessageType.Downloading:
                         tray.Icon = Properties.Resources.syncing;
-                        tray.Text = msg ?? Common._(MessageType.Syncing);
+                        tray.Text = msg ?? Common.Languages[MessageType.Syncing];
                         break;
                     case MessageType.AllSynced:
                         tray.Icon = Properties.Resources.AS;
-                        tray.Text = Common._(MessageType.AllSynced);                        
+                        tray.Text = Common.Languages[MessageType.AllSynced];                        
                         break;
                     case MessageType.Syncing:
                         tray.Icon = Properties.Resources.syncing;
-                        tray.Text = Common._(MessageType.Syncing);                        
+                        tray.Text = Common.Languages[MessageType.Syncing];                        
                         break;
                     case MessageType.Offline:
                         tray.Icon = Properties.Resources.offline1;
-                        tray.Text = Common._(MessageType.Offline);                        
+                        tray.Text = Common.Languages[MessageType.Offline];                        
                         break;
                     case MessageType.Listing:
                         tray.Icon = Properties.Resources.AS;
-                        tray.Text = (Program.Account.Account.SyncMethod == SyncMethod.Automatic) ? Common._(MessageType.AllSynced) : Common._(MessageType.Listing);                        
+                        tray.Text = (Program.Account.Account.SyncMethod == SyncMethod.Automatic) ? Common.Languages[MessageType.AllSynced] : Common.Languages[MessageType.Listing];
                         break;
                     case MessageType.Connecting:
                         tray.Icon = Properties.Resources.syncing;
-                        tray.Text = Common._(MessageType.Connecting);                        
+                        tray.Text = Common.Languages[MessageType.Connecting];                        
                         break;
                     case MessageType.Disconnected:
                         tray.Icon = Properties.Resources.syncing;
-                        tray.Text = Common._(MessageType.Disconnected);                        
+                        tray.Text = Common.Languages[MessageType.Disconnected];                        
                         break;
                     case MessageType.Reconnecting:
                         tray.Icon = Properties.Resources.syncing;
-                        tray.Text = Common._(MessageType.Reconnecting);                       
+                        tray.Text = Common.Languages[MessageType.Reconnecting];                       
                         break;
                     case MessageType.Ready:
                         tray.Icon = Properties.Resources.AS;
-                        tray.Text = Common._(MessageType.Ready);                        
+                        tray.Text = Common.Languages[MessageType.Ready];                        
                         break;
                     case MessageType.Nothing:
                         tray.Icon = Properties.Resources.ftpboxnew;
-                        tray.Text = Common._(MessageType.Nothing);                        
+                        tray.Text = Common.Languages[MessageType.Nothing];                        
                         break;
                 }
             }
