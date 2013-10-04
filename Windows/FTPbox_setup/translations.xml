@@ -59,22 +59,33 @@
       <dotfiles>dotfiles</dotfiles>
       <temp_files>Temporary Files</temp_files>
       <old_files>Files modified before</old_files>
+	  <enable_logging>Enable Logging</enable_logging>
+	  <view_log>View Log</view_log>
     </main_form>
     <new_account>
       <new_ftp>New FTP account</new_ftp>
       <login_details>FTP login details</login_details>
       <encryption>Encryption</encryption>
-      <add>add</add>
-      <done>done</done>
+	  <ask_for_password>Always ask for password</ask_for_password>
+      <add>Add</add>
+      <done>Done</done>
     </new_account>
     <paths>
       <new_paths>New paths</new_paths>
       <add_dir>Add a new directory</add_dir>
       <select_dir>Select directory</select_dir>
       <full_path>Full path</full_path>
+	  <default_local>I want to use the default local folder</default_local>
+	  <custom_local>I want to select a local folder</custom_local>
       <local_folder>Local folder</local_folder>
       <browse>Browse</browse>
     </paths>
+	<setup>
+	  <sync_all_files>I want to synchronize all files</sync_all_files>
+	  <sync_specific_files>I want to select what files will be synchronized</sync_specific_files>
+	  <previous>Previous</previous>
+	  <next>Next</next>
+	</setup>
     <new_version>
       <new_ver>New Version</new_ver>
       <update_available>Update available</update_available>
