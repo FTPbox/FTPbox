@@ -1091,11 +1091,14 @@
       <dotfiles>dotfiles</dotfiles>
       <temp_files>προσωρινά αρχεία</temp_files>
       <old_files>Αρχεία που τροποποιήθηκαν πρίν</old_files>
+      <enable_logging>Καταγραφή σφαλμάτων</enable_logging>
+      <view_log>Άνοιγμα αρχείου</view_log>
     </main_form>
     <new_account>
       <new_ftp>Νέος Λογαριασμός FTP</new_ftp>
       <login_details>Στοιχεία Σύνδεσης</login_details>
       <encryption>Κρυπτογράφηση</encryption>
+      <ask_for_password>Να μη γίνει αποθήκευση του κωδικού</ask_for_password>
       <add>Προσθήκη</add>
       <done>Τέλος</done>
     </new_account>
@@ -1104,9 +1107,17 @@
       <add_dir>Επιλογή Φακέλων</add_dir>
       <select_dir>Επιλέξτε φάκελο</select_dir>
       <full_path>Πλήρης διεύθυνση</full_path>
+      <default_local>Θέλω να γίνει χρήση του προκαθορισμένου φακέλου</default_local>
+      <custom_local>Θέλω να επιλέξω διαφορετικό τοπικό φάκελο</custom_local>
       <local_folder>Τοπικός Φάκελος</local_folder>
       <browse>Αναζήτηση</browse>
     </paths>
+    <setup>
+      <sync_all_files>Θέλω να γίνει συγχρονισμός όλων των αρχείων</sync_all_files>
+      <sync_specific_files>Θέλω να επιλέξω ποια αρχεία θα συγχρονιστούν</sync_specific_files>
+      <previous>Προηγούμενο</previous>
+      <next>Επόμενο</next>
+    </setup>
     <new_version>
       <new_ver>Νέα Έκδοση</new_ver>
       <update_available>Διαθέσιμη Ενημέρωση</update_available>
