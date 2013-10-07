@@ -47,6 +47,7 @@ namespace FTPbox.Forms
         public fMain()
         {
             InitializeComponent();
+            PopulateLanguages();
         }
 
         private void fMain_Load(object sender, EventArgs e)
@@ -302,7 +303,20 @@ namespace FTPbox.Forms
                         SyncTo = SyncTo.Remote
                     });
             }).Start();
-        }        
+        }
+
+        /// <summary>
+        /// Fill the combo-box of available translations.
+        /// </summary>
+        private void PopulateLanguages()
+        {
+            cLanguages.Items.Clear();
+            cLanguages.Items.AddRange(Common.FormattedLanguageList);
+            // Default to English
+            cLanguages.SelectedIndex = Common.SelectedLanguageIndex;
+
+            cLanguages.SelectedIndexChanged += cLanguages_SelectedIndexChanged;
+        }
 
         /// <summary>
         /// Kills the current process. Called from the tray menu.
@@ -391,8 +405,8 @@ namespace FTPbox.Forms
             //account tab
             lProfile.Text = Common.Languages[UiControl.Profile];
             gDetails.Text = Common.Languages[UiControl.Details];
-            labRemPath.Text = Common.Languages[UiControl.RemotePath];
-            labLocPath.Text = Common.Languages[UiControl.LocalFolder];
+            labRemPath.Text = Common.Languages[UiControl.RemotePath] + ":";
+            labLocPath.Text = Common.Languages[UiControl.LocalFolder] + ":";
             bAddAccount.Text = Common.Languages[UiControl.Add];
             bRemoveAccount.Text = Common.Languages[UiControl.Remove];
             gLinks.Text = Common.Languages[UiControl.Links];
@@ -417,7 +431,7 @@ namespace FTPbox.Forms
             //bandwidth tab
             tabBandwidth.Text = Common.Languages[UiControl.Bandwidth];
             gSyncing.Text = Common.Languages[UiControl.SyncFrequency];
-            labSyncWhen.Text = Common.Languages[UiControl.StartSync];
+            labSyncWhen.Text = Common.Languages[UiControl.StartSync] + ":";
             cAuto.Text = Common.Languages[UiControl.AutoEvery];
             labSeconds.Text = Common.Languages[UiControl.Seconds];
             cManually.Text = Common.Languages[UiControl.Manually];
@@ -426,10 +440,10 @@ namespace FTPbox.Forms
             labUpSpeed.Text = Common.Languages[UiControl.UpLimit];
             labNoLimits.Text = Common.Languages[UiControl.NoLimits];
             //language tab
-            tabLanguage.Text = Common.Languages[UiControl.Language];
+            gLanguage.Text = Common.Languages[UiControl.Language];
             //about tab
             tabAbout.Text = Common.Languages[UiControl.About];
-            labCurVersion.Text = Common.Languages[UiControl.CurrentVersion];
+            labCurVersion.Text = Common.Languages[UiControl.CurrentVersion] + ":";
             labTeam.Text = Common.Languages[UiControl.TheTeam];
             labSite.Text = Common.Languages[UiControl.Website];
             labContact.Text = Common.Languages[UiControl.Contact];
@@ -483,16 +497,9 @@ namespace FTPbox.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        private void cLanguages_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string text = "(en)";
-            foreach (ListViewItem l in listView1.Items)
-                if (listView1.SelectedItems.Contains(l))
-                {
-                    text = l.Text;
-                    break;
-                }
-            string lan = text.Substring(text.IndexOf("(") + 1);
+            string lan = cLanguages.SelectedItem.ToString().Substring(cLanguages.SelectedItem.ToString().IndexOf("(") + 1);
             lan = lan.Substring(0, lan.Length - 1);
             try
             {
@@ -1921,14 +1928,18 @@ namespace FTPbox.Forms
             lSelectiveSync.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
             lSelectiveSync.RightToLeftLayout = RightToLeftLayout;
             // Relocate controls where necessary
+            cLanguages.Location = RightToLeftLayout ? new Point(267, 19) : new Point(9, 19);
+            bTranslate.Location = RightToLeftLayout ? new Point(172, 17) : new Point(191, 17);
+            bBrowseLogs.Location = RightToLeftLayout ? new Point(172, 61) : new Point(191, 61); 
+
             bAddAccount.Location = new Point(RightToLeftLayout ? 14 : 299, 10);
             bRemoveAccount.Location = new Point(RightToLeftLayout ? 95 : 380, 10);
             cProfiles.Location = new Point(RightToLeftLayout ? 176 : 103, 11);
 
             bRefresh.Location = new Point(RightToLeftLayout ? 9 : 352, 19);
-            nSyncFrequency.Location = RightToLeftLayout ? new Point(366, 94) : new Point(35, 94);
-            nDownLimit.Location = RightToLeftLayout ? new Point(373, 51) : new Point(35, 51);
-            nUpLimit.Location = RightToLeftLayout ? new Point(373, 110) : new Point(35, 110);
+            nSyncFrequency.Location = RightToLeftLayout ? new Point(359, 94) : new Point(35, 94);
+            nDownLimit.Location = RightToLeftLayout ? new Point(359, 51) : new Point(35, 51);
+            nUpLimit.Location = RightToLeftLayout ? new Point(359, 110) : new Point(35, 110);
 
             lVersion.Location = RightToLeftLayout ? new Point(100, 21) : new Point(272, 21);
             linkLabel3.Location = RightToLeftLayout ? new Point(100, 44) : new Point(272, 44);

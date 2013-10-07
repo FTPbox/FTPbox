@@ -23,29 +23,22 @@ namespace FTPbox.Forms
         public Translate()
         {
             InitializeComponent();
+            PopulateLanguages();
         }
 
         private void bContinue_Click(object sender, EventArgs e)
         {
             if (rImprove.Checked)
             {
-                if (lLangs.SelectedItems.Count > 0)
-                {
-                    string text = "(en)";
-                    foreach (ListViewItem li in lLangs.Items)
-                        if (lLangs.SelectedItems.Contains(li))
-                        {
-                            text = li.Text;
-                            break;
-                        }
-                    string lan = text.Substring(text.IndexOf("(") + 1);
-                    lan = lan.Substring(0, lan.Length - 1);
+                string lan = cLanguages.SelectedItem.ToString();
+                lan = lan.Substring(0, lan.IndexOf("(") - 1);
+                string sc = cLanguages.SelectedItem.ToString().Substring(cLanguages.SelectedItem.ToString().IndexOf("(") + 1);
+                sc = sc.Substring(0, sc.Length - 1);
 
-                    LanguageSettings.Language = text.Substring(0, text.IndexOf("(") - 1);
-                    LanguageSettings.ShortCode = lan;
+                LanguageSettings.Language = lan;
+                LanguageSettings.ShortCode = sc;
 
-                    LoadData(lan);
-                }
+                LoadData(sc);
             }
             else
             {
@@ -304,7 +297,7 @@ namespace FTPbox.Forms
 
         private void rCreate_CheckedChanged(object sender, EventArgs e)
         {
-            lLangs.Enabled = rImprove.Checked;
+            cLanguages.Enabled = rImprove.Checked;
 
             foreach (Control ctrl in pWriteNew.Controls)
             {
@@ -314,7 +307,7 @@ namespace FTPbox.Forms
 
         private void rImprove_CheckedChanged(object sender, EventArgs e)
         {
-            lLangs.Enabled = rImprove.Checked;
+            cLanguages.Enabled = rImprove.Checked;
             
             foreach (Control ctrl in pWriteNew.Controls)
             {
@@ -343,9 +336,15 @@ namespace FTPbox.Forms
             data.SelectedCells[0].Value = "";
         }
 
-        private void Translate_Load(object sender, EventArgs e)
+        /// <summary>
+        /// Fill the combo-box of available translations.
+        /// </summary>
+        private void PopulateLanguages()
         {
-
+            cLanguages.Items.Clear();
+            cLanguages.Items.AddRange(Common.FormattedLanguageList);
+            // Default to English
+            cLanguages.SelectedIndex = Common.SelectedLanguageIndex;
         }
     }
 

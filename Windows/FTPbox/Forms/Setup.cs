@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -20,9 +19,6 @@ namespace FTPbox.Forms
 
         private bool _checkingNodes = false;
         public static bool JustPassword = false;
-
-        private readonly Dictionary<string, string> langList = new Dictionary<string, string> 
-            { {"en", "English" }, { "es", "Spanish" }, { "de", "German" }, { "fr", "French" }, { "nl", "Dutch" }, { "el", "Greek" }, { "it", "Italian" }, { "tr", "Turkish" }, { "pt-BR", "Brazilian Portuguese" }, { "fo", "Faroese" }, { "sv", "Swedish" }, { "sq", "Albanian" }, { "ro", "Romanian" }, { "ko", "Korean" }, { "ru", "Russian" }, { "ja", "Japanese" }, { "no", "Norwegian" }, { "hu", "Hungarian" }, { "vi", "Vietnamese" }, { "zh_HANS", "Simplified Chinese" }, { "zh_HANT", "Traditional Chinese" }, { "lt", "Lithuanian" }, { "da", "Dansk" }, { "pl", "Polish" }, { "hr", "Croatian" }, { "sk", "Slovak" }, { "pt", "Portuguese" }, { "gl", "Galego" }, { "th", "Thai" }, { "sl", "Slovenian" }, { "cs", "Czech" }, { "he", "Hebrew" }, { "sr", "Serbian" } };
 
         public Setup()
         {
@@ -153,11 +149,10 @@ namespace FTPbox.Forms
         /// </summary>
         private void PopulateLanguages()
         {
-            cLanguages.Items.Clear();
-            var formatted = langList.ToList().ConvertAll(x => string.Format("{0} ({1})", x.Value, x.Key)).ToArray();
-            cLanguages.Items.AddRange(formatted);
+            cLanguages.Items.Clear();            
+            cLanguages.Items.AddRange(Common.FormattedLanguageList);
             // Default to English
-            cLanguages.SelectedIndex = 0;
+            cLanguages.SelectedIndex = Common.SelectedLanguageIndex;
         }
 
         /// <summary>
@@ -168,8 +163,8 @@ namespace FTPbox.Forms
         {
             var locallangtwoletter = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
             
-            if (langList.ContainsKey(locallangtwoletter))
-                cLanguages.SelectedIndex = langList.Keys.ToList().IndexOf(locallangtwoletter);            
+            if (Common.LanguageList.ContainsKey(locallangtwoletter))
+                cLanguages.SelectedIndex = Common.LanguageList.Keys.ToList().IndexOf(locallangtwoletter);            
         }
 
         /// <summary>

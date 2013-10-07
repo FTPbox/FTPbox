@@ -30,39 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Translate));
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Espanol (es)", 12);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Deutsch (de)", 13);
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Francais (fr)", 19);
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Dutch (nl)", 14);
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Ελληνικά (el)", 2);
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Italian (it)", 6);
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Turkish (tr)", 7);
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Português Brasileiro (pt-BR)", 15);
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Foroyskt (fo)", 10);
-            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("Swedish (sv)", 18);
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Albanian (sq)", 1);
-            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Romanian (ro)", 17);
-            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("Korean (ko)", 16);
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("Russian (ru)", 5);
-            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("Japanese (ja)", 3);
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem("Vietnamese (vi)", 8);
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem("Norwegian (no)", 4);
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem("Hungarian (hu)", 20);
-            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem("中國傳統 (zh_HANT)", 9);
-            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem("简体中文 (zh_HANS)", 9);
-            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem("Lithuanian (lt)", 21);
-            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem("Dansk (da)", 22);
-            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem("Polish (pl)", 23);
-            System.Windows.Forms.ListViewItem listViewItem24 = new System.Windows.Forms.ListViewItem("Croatian (hr)", 24);
-            System.Windows.Forms.ListViewItem listViewItem25 = new System.Windows.Forms.ListViewItem("Portuguese (pt)", 26);
-            System.Windows.Forms.ListViewItem listViewItem26 = new System.Windows.Forms.ListViewItem("Galego (gl)", 25);
-            System.Windows.Forms.ListViewItem listViewItem27 = new System.Windows.Forms.ListViewItem("Slovak (sk)", 27);
-            System.Windows.Forms.ListViewItem listViewItem28 = new System.Windows.Forms.ListViewItem("Thai (th)", 28);
-            System.Windows.Forms.ListViewItem listViewItem29 = new System.Windows.Forms.ListViewItem("Slovenian (sl)", 29);
-            System.Windows.Forms.ListViewItem listViewItem30 = new System.Windows.Forms.ListViewItem("Czech (cs)", 30);
-            System.Windows.Forms.ListViewItem listViewItem31 = new System.Windows.Forms.ListViewItem("Hebrew (he)", 31);
-            System.Windows.Forms.ListViewItem listViewItem32 = new System.Windows.Forms.ListViewItem("Serbian, Latin (sr)", 32);
-            System.Windows.Forms.ListViewItem listViewItem33 = new System.Windows.Forms.ListViewItem("Serbian, Cyrillic (src)", 32);
             this.bCancel = new System.Windows.Forms.Button();
             this.bContinue = new System.Windows.Forms.Button();
             this.data = new System.Windows.Forms.DataGridView();
@@ -73,15 +40,14 @@
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bFinish = new System.Windows.Forms.Button();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.pStartup = new System.Windows.Forms.Panel();
+            this.cLanguages = new System.Windows.Forms.ComboBox();
             this.pWriteNew = new System.Windows.Forms.Panel();
             this.label5 = new System.Windows.Forms.Label();
             this.tShortCode = new System.Windows.Forms.TextBox();
             this.tLanguage = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.lLangs = new System.Windows.Forms.ListView();
             this.rCreate = new System.Windows.Forms.RadioButton();
             this.rImprove = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
@@ -204,49 +170,11 @@
             this.bFinish.UseVisualStyleBackColor = true;
             this.bFinish.Click += new System.EventHandler(this.bFinish_Click);
             // 
-            // imageList1
-            // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "gb.png");
-            this.imageList1.Images.SetKeyName(1, "al.png");
-            this.imageList1.Images.SetKeyName(2, "gr.png");
-            this.imageList1.Images.SetKeyName(3, "jp.png");
-            this.imageList1.Images.SetKeyName(4, "no.png");
-            this.imageList1.Images.SetKeyName(5, "ru.png");
-            this.imageList1.Images.SetKeyName(6, "it.png");
-            this.imageList1.Images.SetKeyName(7, "tr.png");
-            this.imageList1.Images.SetKeyName(8, "vn.png");
-            this.imageList1.Images.SetKeyName(9, "cn.png");
-            this.imageList1.Images.SetKeyName(10, "fo.png");
-            this.imageList1.Images.SetKeyName(11, "fr.png");
-            this.imageList1.Images.SetKeyName(12, "es.png");
-            this.imageList1.Images.SetKeyName(13, "de.png");
-            this.imageList1.Images.SetKeyName(14, "nl.png");
-            this.imageList1.Images.SetKeyName(15, "br.png");
-            this.imageList1.Images.SetKeyName(16, "kr.png");
-            this.imageList1.Images.SetKeyName(17, "ro.png");
-            this.imageList1.Images.SetKeyName(18, "se.png");
-            this.imageList1.Images.SetKeyName(19, "fr.png");
-            this.imageList1.Images.SetKeyName(20, "hu.png");
-            this.imageList1.Images.SetKeyName(21, "lt.png");
-            this.imageList1.Images.SetKeyName(22, "dk.png");
-            this.imageList1.Images.SetKeyName(23, "pl.png");
-            this.imageList1.Images.SetKeyName(24, "hr.png");
-            this.imageList1.Images.SetKeyName(25, "gl.png");
-            this.imageList1.Images.SetKeyName(26, "pt.png");
-            this.imageList1.Images.SetKeyName(27, "sk.png");
-            this.imageList1.Images.SetKeyName(28, "th.png");
-            this.imageList1.Images.SetKeyName(29, "si.png");
-            this.imageList1.Images.SetKeyName(30, "cz.png");
-            this.imageList1.Images.SetKeyName(31, "il.png");
-            this.imageList1.Images.SetKeyName(32, "rs.png");
-            // 
             // pStartup
             // 
             this.pStartup.BackColor = System.Drawing.Color.Transparent;
+            this.pStartup.Controls.Add(this.cLanguages);
             this.pStartup.Controls.Add(this.pWriteNew);
-            this.pStartup.Controls.Add(this.lLangs);
             this.pStartup.Controls.Add(this.rCreate);
             this.pStartup.Controls.Add(this.rImprove);
             this.pStartup.Controls.Add(this.label1);
@@ -254,6 +182,22 @@
             this.pStartup.Name = "pStartup";
             this.pStartup.Size = new System.Drawing.Size(456, 391);
             this.pStartup.TabIndex = 20;
+            // 
+            // cLanguages
+            // 
+            this.cLanguages.AccessibleDescription = "";
+            this.cLanguages.AccessibleName = "Encryption";
+            this.cLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cLanguages.Enabled = false;
+            this.cLanguages.FormattingEnabled = true;
+            this.cLanguages.Items.AddRange(new object[] {
+            "None",
+            "require explicit FTP over TLS",
+            "require implicit FTP over TLS"});
+            this.cLanguages.Location = new System.Drawing.Point(46, 48);
+            this.cLanguages.Name = "cLanguages";
+            this.cLanguages.Size = new System.Drawing.Size(176, 21);
+            this.cLanguages.TabIndex = 25;
             // 
             // pWriteNew
             // 
@@ -263,7 +207,7 @@
             this.pWriteNew.Controls.Add(this.tLanguage);
             this.pWriteNew.Controls.Add(this.label4);
             this.pWriteNew.Controls.Add(this.label3);
-            this.pWriteNew.Location = new System.Drawing.Point(17, 300);
+            this.pWriteNew.Location = new System.Drawing.Point(17, 116);
             this.pWriteNew.Name = "pWriteNew";
             this.pWriteNew.Size = new System.Drawing.Size(424, 90);
             this.pWriteNew.TabIndex = 24;
@@ -309,57 +253,11 @@
             this.label3.TabIndex = 22;
             this.label3.Text = "Your Language:";
             // 
-            // lLangs
-            // 
-            this.lLangs.AutoArrange = false;
-            this.lLangs.Enabled = false;
-            this.lLangs.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4,
-            listViewItem5,
-            listViewItem6,
-            listViewItem7,
-            listViewItem8,
-            listViewItem9,
-            listViewItem10,
-            listViewItem11,
-            listViewItem12,
-            listViewItem13,
-            listViewItem14,
-            listViewItem15,
-            listViewItem16,
-            listViewItem17,
-            listViewItem18,
-            listViewItem19,
-            listViewItem20,
-            listViewItem21,
-            listViewItem22,
-            listViewItem23,
-            listViewItem24,
-            listViewItem25,
-            listViewItem26,
-            listViewItem27,
-            listViewItem28,
-            listViewItem29,
-            listViewItem30,
-            listViewItem31,
-            listViewItem32,
-            listViewItem33});
-            this.lLangs.Location = new System.Drawing.Point(46, 48);
-            this.lLangs.Name = "lLangs";
-            this.lLangs.Size = new System.Drawing.Size(395, 223);
-            this.lLangs.SmallImageList = this.imageList1;
-            this.lLangs.TabIndex = 23;
-            this.lLangs.UseCompatibleStateImageBehavior = false;
-            this.lLangs.View = System.Windows.Forms.View.List;
-            // 
             // rCreate
             // 
             this.rCreate.AutoSize = true;
             this.rCreate.Checked = true;
-            this.rCreate.Location = new System.Drawing.Point(17, 277);
+            this.rCreate.Location = new System.Drawing.Point(17, 93);
             this.rCreate.Name = "rCreate";
             this.rCreate.Size = new System.Drawing.Size(133, 17);
             this.rCreate.TabIndex = 22;
@@ -390,6 +288,7 @@
             // 
             // pDone
             // 
+            this.pDone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pDone.BackColor = System.Drawing.Color.Transparent;
             this.pDone.Controls.Add(this.label16);
             this.pDone.Controls.Add(this.label15);
@@ -506,7 +405,6 @@
             this.Name = "Translate";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FTPbox Translator";
-            this.Load += new System.EventHandler(this.Translate_Load);
             ((System.ComponentModel.ISupportInitialize)(this.data)).EndInit();
             this.cMenu.ResumeLayout(false);
             this.pStartup.ResumeLayout(false);
@@ -528,7 +426,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn cNames;
         private System.Windows.Forms.Button bFinish;
-        private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.Panel pStartup;
         private System.Windows.Forms.Panel pWriteNew;
         private System.Windows.Forms.Label label5;
@@ -536,7 +433,6 @@
         private System.Windows.Forms.TextBox tLanguage;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ListView lLangs;
         private System.Windows.Forms.RadioButton rCreate;
         private System.Windows.Forms.RadioButton rImprove;
         private System.Windows.Forms.Label label1;
@@ -553,5 +449,6 @@
         private System.Windows.Forms.ContextMenuStrip cMenu;
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
+        private System.Windows.Forms.ComboBox cLanguages;
     }
 }
