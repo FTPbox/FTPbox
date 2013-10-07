@@ -3016,11 +3016,8 @@
       <view>(Pogledaj u internet pregledniku)</view>
     </web_interface>
   </hr>
+  
   <sk>
-
-
-
-
     <main_form>
       <options>Nastavenia</options>
       <general>Základné</general>
@@ -3390,6 +3387,7 @@
       <view>(Ver no navegador)</view>
     </web_interface>
   </pt>
+  
   <th>
     <main_form>
       <options>ตัวเลือก</options>
@@ -3510,6 +3508,7 @@
       <view>(ดูในเบราว์เซอร์)</view>
     </web_interface>
   </th>
+  
   <sl>
     <main_form>
       <options>Možnosti</options>
@@ -3751,6 +3750,7 @@
       <view>(zobrazit v prohlížeči)</view>
     </web_interface>
   </cs>
+  
   <he>
     <main_form>
       <options>אפשרויות</options>
@@ -3880,6 +3880,7 @@
       <view>(הצג בדפדפן)</view>
     </web_interface>
   </he>
+  
   <sr>
     <main_form>
       <options>Opcije</options>
@@ -4009,6 +4010,7 @@
       <view>(Vidi u pregledaču)</view>
     </web_interface>
   </sr>
+  
   <src>
     <main_form>
       <options>Опције</options>
@@ -4138,4 +4140,134 @@
       <view>(види у претраћивач)</view>
     </web_interface>
   </src>
+  
+  <eu>
+    <main_form>
+      <options>Ezarpenak</options>
+      <general>Orokorra</general>
+      <host>Zerbitzaria</host>
+      <port>Ataka</port>
+      <username>Erabiltzailea</username>
+      <password>Pasahitza</password>
+      <mode>Protokoloa</mode>
+      <change>Aldatu</change>
+      <account>Kontua</account>
+      <application>Aplikazioa</application>
+      <start_on_startup>Sistema abiaraztean hasi</start_on_startup>
+      <show_nots>jakinarazpenak erakutsi</show_nots>
+      <profile>Profila</profile>
+      <details>Xehetasunak</details>
+      <links>Estekak</links>
+      <remote_path>Urrutiko bidea</remote_path>
+      <local_path>Lokaleko bidea</local_path>
+      <account_full_path>Kontuaren bide osoa</account_full_path>
+      <when_not_clicked>erretilu jakinarazpen edo fitxategi berrian klik egiten denean</when_not_clicked>
+      <open_in_browser>ireki esteka hobetsitako nabigatzailean</open_in_browser>
+      <copy>kopiatu esteka arbelera</copy>
+      <about>Honi buruz</about>
+      <current_version>Honen bertsioa</current_version>
+      <team>Taldea</team>
+      <website>Webgune ofiziala</website>
+      <contact>Kontaktua</contact>
+      <coded_in>Hontan kodeatua</coded_in>
+      <notes>Oharra</notes>
+      <contribute>Lagundu</contribute>
+      <ftpbox_is_free>FTPBox doakoa da eta kode-irekikoa</ftpbox_is_free>
+      <contact_me>Arazo gabe jarri nirekin harremanetan</contact_me>
+      <copyright>Copyright</copyright>
+      <report_bug>Akats baten berri eman</report_bug>
+      <request_feature>funtzionatitate bat eskatu</request_feature>
+      <donate>eman</donate>
+      <language>Hizkuntza</language>
+      <open_local>Ireki fitxategi lokala</open_local>
+      <bandwidth>Banda zabalera</bandwidth>
+      <sync_freq>Sinkronizazio maiztasuna</sync_freq>
+      <sync_when>Sinkronizatu urrutiko fitxategiak</sync_when>
+      <manually>eskuz</manually>
+      <auto>automatikoki honako hau oro</auto>
+      <seconds>segundu</seconds>
+      <speed_limits>Abiadura Mugak</speed_limits>
+      <limit_download>Mugatu Jaitsiera Abiadura</limit_download>
+      <limit_upload>Mugatu Igoera Abiadura</limit_upload>
+      <no_limits>(Jarri 0 mugarik gabe izateko)</no_limits>
+      <selective>Sinkronizazio Selektiboa</selective>
+      <selective_info>Sinkroizatu nahi ez dituzun elementuei marka kendu</selective_info>
+      <refresh>Freskatu</refresh>
+      <file_filters>Iragazkiak</file_filters>
+      <ignored_extensions>Jaramonik ez Luzapen hauei</ignored_extensions>
+      <remove>Ezabatu</remove>
+      <also_ignore>Hauei ere jaramonik ez</also_ignore>
+      <dotfiles>puntu fitxategiak</dotfiles>
+      <temp_files>Behinbehineko Fitxategiak</temp_files>
+      <old_files>Lehenago aldatutako fitxategiak</old_files>
+    </main_form>
+    <new_account>
+      <new_ftp>FTP kontu berria</new_ftp>
+      <login_details>FTP saio hasiera xehetasunak</login_details>
+      <encryption>Enkriptazioa</encryption>
+      <add>gehitu</add>
+      <done>eginda</done>
+    </new_account>
+    <paths>
+      <new_paths>Bide berriak</new_paths>
+      <add_dir>Karpeta berria gehitu</add_dir>
+      <select_dir>Karpeta hautatu</select_dir>
+      <full_path>Bide osoa</full_path>
+      <local_folder>Karpeta lokala</local_folder>
+      <browse>Arakatu</browse>
+    </paths>
+    <new_version>
+      <new_ver>Bertsio Berria</new_ver>
+      <update_available>Eguneraketa eskura</update_available>
+      <new_v_available>FTBoxen bertsio berria eskura duzu</new_v_available>
+      <new_version>Bertsio Berria</new_version>
+      <current_version>Uneko Bertsioa</current_version>
+      <wanna_download>Bertsio berria jaitsi nahi duzu orain</wanna_download>
+      <download>Eguneratu orain</download>
+      <learn_more>Gehiago Ikasi</learn_more>
+      <remind_me_next_time>Orain ez</remind_me_next_time>
+    </new_version>
+    <tray>
+      <tray_and_nots>Erretilua _and Jakinarazpenak</tray_and_nots>
+      <updated>{0} eguneratua izan da.</updated>
+      <created>{0} sortu da.</created>
+      <renamed>{0} berrizendatua izan da {1} bezala</renamed>
+      <deleted>{0} ezabatua izan da.</deleted>
+      <changed>{0} aldatua izan da.</changed>
+      <FilesOrFoldersUpdated>{0} {1} aldatuak izan dira</FilesOrFoldersUpdated>
+      <FilesOrFoldersCreated>{0} {1} sortuak izan dira.</FilesOrFoldersCreated>
+      <FilesAndFoldersChanged>{0} {1} eta {2} {3} aldatuak izan dira</FilesAndFoldersChanged>
+      <ItemsDeleted>{0} item ezabatu dira.</ItemsDeleted>
+      <file>Fitxategia</file>
+      <files>Fitxategiak</files>
+      <folder>Karpeta</folder>
+      <folders>Karpetak</folders>
+      <connecting>FTPbox - Konektatzen...</connecting>
+      <reconnecting>FTPbox - Birkonektazen...</reconnecting>
+      <listing>FTPbox - Zerrendatzen...</listing>
+      <uploading>{0} Igotzen</uploading>
+      <downloading>{0} Jaisten</downloading>
+      <ready>FTPbox - Prest</ready>
+      <synced>FTPbox - Fitxategi guztiak sinkronizatuak</synced>
+      <syncing>FTPbox - Sinkronizatzen...</syncing>
+      <offline>FTPbox - Lineaz kanpo</offline>
+      <link_copied>Esteka arbelean kopiatu da</link_copied>
+      <recent_files>Fitxategi berriak</recent_files>
+      <not_available>Ez dago erabilgarri</not_available>
+      <start_syncing>Hasi Sinkronizazioa</start_syncing>
+      <exit>Irten</exit>
+    </tray>
+    <web_interface>
+      <web_int>Web Interfazea</web_int>
+      <downloading>Web Interfazea jaitsi egingo da.</downloading>
+      <in_a_minute>Honek minutua beharko du.</in_a_minute>
+      <removing>Web Interfazea ezabatzen...</removing>
+      <removed>Web interfazea ezabatu da</removed>
+      <updating>Web interfazea eguneratzen</updating>
+      <updated>Web interfazea eguneratu da.</updated>
+      <setup>Egin klik hemen ikusi eta konfiguratzeko!</setup>
+      <use_webint>Erabili web interfazea</use_webint>
+      <view>(Nabigatzailean ikusi)</view>
+    </web_interface>
+  </eu>
 </translations>
