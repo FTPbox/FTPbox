@@ -64,6 +64,8 @@ namespace FTPbox.Forms
                     _privateKey = Program.Account.Account.PrivateKeyFile;
                     labKeyPath.Text = new System.IO.FileInfo(_privateKey).Name;
                     cEncryption.SelectedIndex = 1;
+
+                    labEncryption.Text = Common.Languages[UiControl.Authentication];
                 }
 
                 SwitchTab(AccountSetupTab.Login);
@@ -495,6 +497,8 @@ namespace FTPbox.Forms
             else
                 cEncryption.Items.AddRange(new[] { "Normal", "public key authentication" });
             cEncryption.SelectedIndex = 0;
+
+            labEncryption.Text = cMode.SelectedIndex == 0 ? Common.Languages[UiControl.Encryption] : Common.Languages[UiControl.Authentication];
         }
 
         private void cEncryption_SelectedIndexChanged(object sender, EventArgs e)

@@ -146,6 +146,8 @@ namespace FTPboxLib
                         return Get(Settings.General.Language + "/main_form/password", "Password") + ":";
                     case UiControl.AskForPassword:
                         return Get(Settings.General.Language + "/new_account/ask_for_password", "Always ask for password");
+                    case UiControl.Authentication:
+                        return Get(Settings.General.Language + "/setup/authentication", "Authentication") + ":";
                     case UiControl.LocalFolder:
                         return Get(Settings.General.Language + "/paths/local_folder", "Local folder");
                     case UiControl.DefaultLocalFolder:

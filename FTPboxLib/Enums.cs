@@ -126,7 +126,7 @@ namespace FTPboxLib
     public enum UiControl
     {
         // Setup    
-        LoginDetails, Protocol, Encryption, Host, Port, Username, Password, AskForPassword,
+        LoginDetails, Protocol, Encryption, Host, Port, Username, Password, AskForPassword, Authentication,
         LocalFolder, DefaultLocalFolder, CustomLocalFolder, Browse,
         RemotePath, FullRemotePath, FullAccountPath,
         SelectiveSync, SyncAllFiles, SyncSpecificFiles, UncheckFiles,

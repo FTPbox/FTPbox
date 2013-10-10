@@ -81,6 +81,7 @@
       <browse>Browse</browse>
     </paths>
 	<setup>
+    <authentication>Authentication</authentication>
 	  <sync_all_files>I want to synchronize all files</sync_all_files>
 	  <sync_specific_files>I want to select what files will be synchronized</sync_specific_files>
 	  <previous>Previous</previous>
