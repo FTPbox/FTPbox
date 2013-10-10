@@ -148,7 +148,13 @@ namespace FTPboxLib
 			}
 			else // SFTP
 			{
-                _sftpc = new SftpClient(controller.Account.Host, controller.Account.Port, controller.Account.Username, controller.Account.Password);
+			    ConnectionInfo connectionInfo;
+                if (controller.isPrivateKeyValid)
+                    connectionInfo = new PrivateKeyConnectionInfo(controller.Account.Host, controller.Account.Port, controller.Account.Username, new PrivateKeyFile(controller.Account.PrivateKeyFile, controller.Account.Password));
+                else
+                    connectionInfo = new PasswordConnectionInfo(controller.Account.Host, controller.Account.Port, controller.Account.Username, controller.Account.Password);
+                
+                _sftpc = new SftpClient(connectionInfo);
                 _sftpc.ConnectionInfo.AuthenticationBanner += (o, x) => Log.Write(l.Warning, x.BannerMessage);			   
 
                 _sftpc.HostKeyReceived += (o, x) =>

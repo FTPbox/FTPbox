@@ -116,6 +116,7 @@ namespace FTPboxLib
         public FtpSecurityProtocol FtpSecurityProtocol { get; set; }
         public SyncMethod SyncMethod { get; set; }
         public int SyncFrequency { get; set; }
+        public string PrivateKeyFile { get; set; }
     }
 
     public class Paths

@@ -161,10 +161,10 @@ namespace FTPbox.Forms
         /// </summary>
         private void CheckAccount()
         {
-            if (!Program.Account.isAccountSet || (Program.Account.isAccountSet && string.IsNullOrWhiteSpace(Program.Account.Account.Password)))
+            if (!Program.Account.isAccountSet || Program.Account.isPasswordRequired)
             {
                 Log.Write(l.Info, "Will open New FTP form.");
-                Setup.JustPassword = Program.Account.isAccountSet && string.IsNullOrWhiteSpace(Program.Account.Account.Password);
+                Setup.JustPassword = Program.Account.isPasswordRequired;
                 
                 fSetup.ShowDialog();
 

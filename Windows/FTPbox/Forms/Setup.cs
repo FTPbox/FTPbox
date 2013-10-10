@@ -19,6 +19,7 @@ namespace FTPbox.Forms
 
         private bool _checkingNodes = false;
         public static bool JustPassword = false;
+        private string _privateKey;
 
         public Setup()
         {
@@ -56,15 +57,24 @@ namespace FTPbox.Forms
                 nPort.Value = Program.Account.Account.Port;
                 cEncryption.SelectedIndex = (Program.Account.Account.Protocol != FtpProtocol.FTPS) ? 0 : (Program.Account.Account.FtpsMethod == FtpsMethod.Explicit ? 1 : 2);
                 cMode.SelectedIndex = (Program.Account.Account.Protocol != FtpProtocol.SFTP) ? 0 : 1;
-                cAskForPass.Checked = true;                
+                cAskForPass.Checked = true;
+
+                if (Program.Account.isPrivateKeyValid)
+                {
+                    _privateKey = Program.Account.Account.PrivateKeyFile;
+                    labKeyPath.Text = new System.IO.FileInfo(_privateKey).Name;
+                    cEncryption.SelectedIndex = 1;
+                }
 
                 SwitchTab(AccountSetupTab.Login);
 
+                this.AcceptButton = bFinish;
                 this.ActiveControl = tPass;
                 bFinish.Enabled = true;
                 bNext.Enabled = false;
                 bPrevious.Enabled = false;
             }
+            cEncryption.SelectedIndexChanged += cEncryption_SelectedIndexChanged;
         }
 
         /// <summary>
@@ -235,6 +245,8 @@ namespace FTPbox.Forms
                 Program.Account.Account.FtpsMethod = FtpsMethod.Explicit;
             else
                 Program.Account.Account.FtpsMethod = FtpsMethod.Implicit;
+
+            Program.Account.Account.PrivateKeyFile = (!ftporsftp && cEncryption.SelectedIndex == 1) ? _privateKey : null;
 
             try
             {
@@ -475,9 +487,32 @@ namespace FTPbox.Forms
         private void cMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             nPort.Value = cMode.SelectedIndex != 1 ? 21 : 22;
-            cEncryption.Enabled = cMode.SelectedIndex != 1;
-            if (cMode.SelectedIndex == 1)
+
+            labKeyPath.Text = string.Empty;
+            cEncryption.Items.Clear();
+            if (cMode.SelectedIndex == 0)
+                cEncryption.Items.AddRange(new[] { "None", "require explicit FTP over TLS", "require implicit FTP over TLS"});
+            else
+                cEncryption.Items.AddRange(new[] { "Normal", "public key authentication" });
+            cEncryption.SelectedIndex = 0;
+        }
+
+        private void cEncryption_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            labKeyPath.Text = string.Empty;
+            if (cMode.SelectedIndex != 1 || cEncryption.SelectedIndex != 1) return;
+
+            var ofd = new OpenFileDialog() { InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), Multiselect = false };
+
+            if (ofd.ShowDialog() != DialogResult.OK)
+            {
                 cEncryption.SelectedIndex = 0;
+                return;
+            }
+
+            cEncryption.SelectedIndex = 1;
+            _privateKey = ofd.FileName;
+            labKeyPath.Text = new System.IO.FileInfo(ofd.FileName).Name;
         }
 
         private void Setup_FormClosing(object sender, FormClosingEventArgs e)
@@ -616,6 +651,7 @@ namespace FTPbox.Forms
             nPort.Location      = RightToLeftLayout ? new Point(15, 81) : new Point(391, 81);
             tUsername.Location  = RightToLeftLayout ? new Point(15, 107) : new Point(145, 107);
             tPass.Location      = RightToLeftLayout ? new Point(15, 133) : new Point(145, 133);
+            labKeyPath.Location = RightToLeftLayout ? new Point(15, 57) : new Point(324, 57);
 
             tLocalPath.Location      = RightToLeftLayout ? new Point(95, 133) : new Point(15, 133);
             bBrowse.Location         = RightToLeftLayout ? new Point(15, 131) : new Point(375, 131);

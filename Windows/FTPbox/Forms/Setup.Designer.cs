@@ -61,6 +61,7 @@
             this.gLanguage = new System.Windows.Forms.GroupBox();
             this.labSelectLanguage = new System.Windows.Forms.Label();
             this.cLanguages = new System.Windows.Forms.ComboBox();
+            this.labKeyPath = new System.Windows.Forms.Label();
             this.gLoginDetails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nPort)).BeginInit();
             this.gLocalFolder.SuspendLayout();
@@ -82,6 +83,7 @@
             // 
             this.gLoginDetails.AccessibleDescription = "";
             this.gLoginDetails.AccessibleName = "FTP Details";
+            this.gLoginDetails.Controls.Add(this.labKeyPath);
             this.gLoginDetails.Controls.Add(this.labColon);
             this.gLoginDetails.Controls.Add(this.cEncryption);
             this.gLoginDetails.Controls.Add(this.cMode);
@@ -461,6 +463,14 @@
             this.cLanguages.Size = new System.Drawing.Size(256, 21);
             this.cLanguages.TabIndex = 0;
             // 
+            // labKeyPath
+            // 
+            this.labKeyPath.Location = new System.Drawing.Point(324, 57);
+            this.labKeyPath.Name = "labKeyPath";
+            this.labKeyPath.Size = new System.Drawing.Size(124, 13);
+            this.labKeyPath.TabIndex = 33;
+            this.labKeyPath.Text = "KeyFilePath";
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -531,5 +541,6 @@
         private System.Windows.Forms.RadioButton rSyncCustom;
         private System.Windows.Forms.TextBox tFullRemotePath;
         private System.Windows.Forms.Label labFullPath;
+        private System.Windows.Forms.Label labKeyPath;
     }
 }

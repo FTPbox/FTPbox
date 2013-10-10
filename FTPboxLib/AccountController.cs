@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
 namespace FTPboxLib
@@ -102,6 +103,45 @@ namespace FTPboxLib
 
 	            return true;
 	        }
+        }
+        
+        /// <summary>
+        /// Returns true if a private-key file is set, and the file exists.
+        /// </summary>
+        public bool isPrivateKeyValid
+        {
+            get { return !string.IsNullOrWhiteSpace(Account.PrivateKeyFile) && File.Exists(Account.PrivateKeyFile); }
+        }
+
+        /// <summary>
+        /// Returns true if the private-key file is encrypted but the pass-phrase is empty.
+        /// Will return false if no (valid) private-key file is set.
+        /// </summary>
+        public bool PrivateKeyPassPhraseRequired
+        {
+            get
+            {
+                if (!isPrivateKeyValid || !string.IsNullOrWhiteSpace(Account.Password)) return false;
+
+                var _privateKeyRegex = new Regex("^-+ *BEGIN (?<keyName>\\w+( \\w+)*) PRIVATE KEY *-+\\r?\\n(Proc-Type: 4,ENCRYPTED\\r?\\nDEK-Info: (?<cipherName>[A-Z0-9-]+),(?<salt>[A-F0-9]+)\\r?\\n\\r?\\n)?(?<data>([a-zA-Z0-9/+=]{1,80}\\r?\\n)+)-+ *END \\k<keyName> PRIVATE KEY *-+", RegexOptions.Multiline | RegexOptions.Compiled);
+                var match = _privateKeyRegex.Match(File.ReadAllText(Account.PrivateKeyFile));
+                var cipher = match.Result("${cipherName}");
+                var salt = match.Result("${salt}");
+
+                return !string.IsNullOrWhiteSpace(cipher) && !string.IsNullOrWhiteSpace(salt);
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the account is set but the password/pass-phrase is required.
+        /// </summary>
+        public bool isPasswordRequired
+        {
+            get
+            {
+                return (isAccountSet && string.IsNullOrWhiteSpace(Account.Password) && !isPrivateKeyValid) ||
+                        (isPrivateKeyValid && PrivateKeyPassPhraseRequired);
+            }
         }
 
         #endregion
