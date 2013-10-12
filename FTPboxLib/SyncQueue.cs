@@ -541,22 +541,35 @@ namespace FTPboxLib
                 if (AllItems.Any(x => controller.GetCommonPath(x.FullPath, false) == cpath)) continue;
                 // continue if the file is not in the log, or is changed compared to the logged data TODO: Maybe send to remote folder?
                 if (controller.FileLog.Files.All(x => x.CommonPath != cpath) ||
-                    controller.FileLog.Files.Find(x => x.CommonPath == cpath).Local != local.LastWriteTime) continue;
-
-                // Seems like the file was deleted from the remote folder
-                Add(new SyncQueueItem(controller)
-                {
-                    Item = new ClientItem
+                    controller.FileLog.Files.Find(x => x.CommonPath == cpath).Local != local.LastWriteTime)
+                    Add(new SyncQueueItem(controller)
                     {
-                        FullPath = cpath,
-                        Name = local.Name,
-                        Type = ClientItemType.File,
-                        LastWriteTime = local.LastWriteTime,
-                        Size = local.Length
-                    },
-                    ActionType = ChangeAction.deleted,
-                    SyncTo = SyncTo.Local
-                });
+                        Item = new ClientItem
+                        {
+                            Name = local.Name,
+                            FullPath = local.FullName,
+                            Type = ClientItemType.File,
+                            LastWriteTime = local.LastWriteTime,
+                            Size = local.Length
+                        },
+                        ActionType = ChangeAction.created,
+                        SyncTo = SyncTo.Remote
+                    });
+                else
+                    // Seems like the file was deleted from the remote folder
+                    Add(new SyncQueueItem(controller)
+                    {
+                        Item = new ClientItem
+                        {
+                            FullPath = cpath,
+                            Name = local.Name,
+                            Type = ClientItemType.File,
+                            LastWriteTime = local.LastWriteTime,
+                            Size = local.Length
+                        },
+                        ActionType = ChangeAction.deleted,
+                        SyncTo = SyncTo.Local
+                    });
             }
             // Look for local folders that should be deleted
             foreach (var local in new DirectoryInfo(item.LocalPath).GetDirectories("*", SearchOption.AllDirectories))
@@ -615,9 +628,25 @@ namespace FTPboxLib
                     _status = controller.Client.SafeDownload(item);                                    
             }
             else if (rResult > 0 && remDif.TotalSeconds > 1)
-                _status = controller.Client.SafeDownload(item);            
+                _status = controller.Client.SafeDownload(item);
             if (lResult > 0 && locDif.TotalSeconds > 1)
+            {
                 Log.Write(l.Warning, "{0} seems to have escaped startup check", item.CommonPath);
+                Add(new SyncQueueItem(controller)
+                {
+                    Item = new ClientItem
+                    {
+                        Name = item.Item.Name,
+                        FullPath = item.LocalPath,
+                        Type = item.Item.Type,
+                        LastWriteTime = File.GetLastWriteTime(item.LocalPath),
+                        Size = new FileInfo(item.LocalPath).Length
+                    },
+                    ActionType = ChangeAction.changed,
+                    Status = StatusType.Waiting,
+                    SyncTo = SyncTo.Remote
+                });
+            }
 
             return _status;
         }
