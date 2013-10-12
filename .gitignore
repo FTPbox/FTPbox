@@ -11,3 +11,6 @@ Windows/FTPbox_setup/Release
 # Resharper
 FTPboxLib/_ReSharper.FTPboxLib
 Windows/_ReSharper.FTPbox
+
+# Ignore DecryptionInfo file
+FTPboxLib/DecryptionInfo.cs

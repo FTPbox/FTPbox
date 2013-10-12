@@ -39,26 +39,22 @@ You can find the to-do list on [trello.com][todo]
 
 ### Changelog
 
-See [ftpbox.org/changelog][changelog]
+See [ftpbox.org/changelog](http://ftpbox.org/changelog)
 
-### Issues
+### Get in touch
 
-Check the [Issues][issues] page.
-
-### Feature Requests
-
-Submit your ideas at the [UserVoice forum][uservoice]
+I'd love to hear from you. Please send your emails to support@ftpbox.org
 
 Support
 --------------
 
-### Feedback
+### Reporting
 
-Follow the links above or simply send an email to support@ftpbox.org
+See [Feedback](https://github.com/FTPbox/FTPbox/wiki/Feedback)
 
 ### Translate
 
-Thanks to the awesome users of FTPbox, the application is currently available in more than 30 languages. To translate FTPbox to your language, head to the Languages tab, click 'Translate' and follow the instructions.
+See [Translating](https://github.com/FTPbox/FTPbox/wiki/Translating)
 
 ### Donate
 
@@ -66,12 +62,9 @@ You can show the project some love by making a donation! You'll find the paypal 
 
 [website]: http://ftpbox.org
 [webUI]: https://github.com/FTPbox/Web-Interface
-[changelog]: http://ftpbox.org/changelog/
-[issues]: https://github.com/FTPbox/FTPbox/issues
 [gpl]: http://www.tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)
 [license]: https://github.com/FTPbox/FTPbox/blob/master/LICENSE
 [todo]: https://trello.com/board/ftpbox/515afda9a23fa0b412001067
-[uservoice]: https://ftpbox.uservoice.com/
 [abt]: http://ftpbox.org/about/
 [starksoft]: http://biko.codeplex.com/
 [sshnet]: http://sshnet.codeplex.com/
