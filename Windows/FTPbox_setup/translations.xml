@@ -3687,6 +3687,7 @@
       <application>Aplikace</application>
       <start_on_startup>Spustit se systémem</start_on_startup>
       <show_nots>zobrazovat upozornění</show_nots>
+      <profile>Profil</profile>
       <details>Detaily</details>
       <links>Odkazy</links>
       <remote_path>Vzdálená cesta</remote_path>
@@ -3723,11 +3724,22 @@
       <no_limits>(nastavte na 0 pro nepoužívání limitů)</no_limits>
       <selective>Selektivní synchronizace</selective>
       <selective_info>Odškrtněte položky, které nechcete synchronizovat</selective_info>
+      <refresh>Obnovit</refresh>
+      <file_filters>Filtry</file_filters>
+      <ignored_extensions>Ignorovaná rozšíření</ignored_extensions>
+      <remove>Odstranit</remove>
+      <also_ignore>Rovněž ignorovat</also_ignore>
+      <dotfiles>Skryté soubory</dotfiles>
+      <temp_files>Dočasné soubory</temp_files>
+      <old_files>Sobory modifikované před</old_files>
+      <enable_logging>Povolit logování</enable_logging>
+      <view_log>Zobrazit log</view_log>
     </main_form>
     <new_account>
       <new_ftp>Nový FTP účet</new_ftp>
       <login_details>Přihlašovací údaje FTP</login_details>
       <encryption>Šifrování</encryption>
+      <ask_for_password>Vždy se ptát na heslo</ask_for_password>
       <add>přidat</add>
       <done>hotovo</done>
     </new_account>
@@ -3736,9 +3748,18 @@
       <add_dir>Přidat novou složku</add_dir>
       <select_dir>vybrat složku</select_dir>
       <full_path>celá cesta</full_path>
+      <default_local>Chci použít výchozí lokální složku</default_local>
+      <custom_local>Chci si vybrat lokální složku</custom_local>
       <local_folder>lokální složka</local_folder>
       <browse>procházet</browse>
     </paths>
+    <setup>
+      <authentication>Ověření</authentication>
+      <sync_all_files>Chci synchronizovat všechny soubory</sync_all_files>
+      <sync_specific_files>Chci si vybrat, co se bude synchronizovat</sync_specific_files>
+      <previous>Předchozí</previous>
+      <next>Další</next>
+    </setup>
     <new_version>
       <new_ver>Nová verze</new_ver>
       <update_available>Aktualizace je dostupná</update_available>
