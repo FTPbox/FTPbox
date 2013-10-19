@@ -2800,121 +2800,142 @@
 	<pl>
     <main_form>
       <options>Opcje</options>
-      <general>Ogolne</general>
-      <host>Host</host>
+      <general>Ogólne</general>
+      <host>Serwer</host>
       <port>Port</port>
-      <username>Nazwa uzytkownika</username>
-      <password>Haslo</password>
-      <mode>Protokol</mode>
-      <change>Zmien</change>
+      <username>Nazwa użytkownika</username>
+      <password>Hasło</password>
+      <mode>Protokół</mode>
+      <change>Zmień</change>
       <account>Konto</account>
       <application>Aplikacja</application>
       <start_on_startup>Uruchom przy starcie systemu</start_on_startup>
       <show_nots>Pokazuj powiadomienia</show_nots>
-      <details>Szczegoly</details>
-      <links>Odnosniki</links>
-      <remote_path>Sciezka zdalna</remote_path>
-      <local_path>Sciezka lokalna</local_path>
-      <account_full_path>Pelna sciezka do konta</account_full_path>
+      <profile>Profil</profile>
+      <details>Szczegóły</details>
+      <links>Odnośniki</links>
+      <remote_path>Scieżka zdalna</remote_path>
+      <local_path>Scieżka lokalna</local_path>
+      <account_full_path>Pełna scieżka do konta</account_full_path>
       <when_not_clicked>po kliknieciu na powiadomienie lub ostatnie pliki</when_not_clicked>
-      <open_in_browser>otworz odnosnik w domyslnej przegladarce</open_in_browser>
-      <copy>Skopiuj odnosnik do schowka</copy>
-      <about>O...</about>
+      <open_in_browser>otworz odnośnik w domyślnej przeglądarce</open_in_browser>
+      <copy>Skopiuj odnośnik do schowka</copy>
+      <about>O programie</about>
       <current_version>Aktualna wersja</current_version>
-      <team>Zespol</team>
+      <team>Zespół</team>
       <website>Oficjalna strona WWW</website>
       <contact>Kontakt</contact>
-      <coded_in>Zaprogramowane w:</coded_in>
+      <coded_in>Zaprogramowane w</coded_in>
       <notes>Notatki</notes>
-      <contribute>Daj cos od siebie:</contribute>
+      <contribute>Daj coś od siebie</contribute>
       <ftpbox_is_free>FTPbox jest darmowy i open source</ftpbox_is_free>
-      <contact_me>Napisz do mnie w kazdej sprawie</contact_me>
+      <contact_me>Napisz do mnie w każdej sprawie</contact_me>
       <copyright>Copyright</copyright>
-      <report_bug>Zglos usterke</report_bug>
-      <request_feature>popros o funkcjonalnosc</request_feature>
-      <donate>wspomoz</donate>
-      <language>Jezyk</language>
-      <open_local>Otworz plik loklany</open_local>
+      <report_bug>Zgloś usterkę</report_bug>
+      <request_feature>poproś o funkcjonalność</request_feature>
+      <donate>wspomoż</donate>
+      <language>Język</language>
+      <open_local>Otwórz plik lokalny</open_local>
       <bandwidth>Pasmo</bandwidth>
-      <sync_freq>Czestosc synchronizacji</sync_freq>
+      <sync_freq>Częstotliwość synchronizacji</sync_freq>
       <sync_when>Synchronizuj pliki zdalne</sync_when>
-      <manually>recznie</manually>
+      <manually>ręcznie</manually>
       <auto>automatycznie co</auto>
       <seconds>sekund</seconds>
-      <speed_limits>Ograniczenie predkosci</speed_limits>
-      <limit_download>Ograniczenie predkosci sciagania</limit_download>
-      <limit_upload>Ograniczenie predkosci wysylania</limit_upload>
-      <no_limits>( ustaw 0 - brak ograniczen )</no_limits>
-      <selective>Wybiorcza synchronizacja</selective>
-      <selective_info>Zdejmij ptaszek przy obiektach, ktorych nie chcesz synchronizawac</selective_info>
+      <speed_limits>Ograniczenie prędkości</speed_limits>
+      <limit_download>Ograniczenie predkości pobierania</limit_download>
+      <limit_upload>Ograniczenie predkości wysyłania</limit_upload>
+      <no_limits>( ustaw 0 - brak ograniczeń )</no_limits>
+      <selective>Wybiórcza synchronizacja</selective>
+      <selective_info>Odznacz, jeśli nie chcesz synchronizować</selective_info>
+      <refresh>Odśwież</refresh>
+      <file_filters>Filtry</file_filters>
+      <ignored_extensions>Ignoruj pliki o rozszerzeniach</ignored_extensions>
+      <remove>Usuń</remove>
+      <also_ignore>Pomiń również</also_ignore>
+      <dotfiles>pliki rozpoczynające się od kropki</dotfiles>
+      <temp_files>Pliki tymczasowe</temp_files>
+      <old_files>Pliki zmienione przed</old_files>
+      <enable_logging>Włącz zapis zdarzeń</enable_logging>
+      <view_log>Pokaż zapis zdarzeń</view_log>
     </main_form>
     <new_account>
       <new_ftp>Nowe konto FTP</new_ftp>
-      <login_details>Szczegoly loginu FTP</login_details>
+      <login_details>Szczegóły loginu FTP</login_details>
       <encryption>Szyfrowanie</encryption>
+      <ask_for_password>Zawsze żądaj wprowadzenia hasła</ask_for_password>
       <add>Dodaj</add>
       <done>Gotowe</done>
     </new_account>
     <paths>
-      <new_paths>Nowe sciezki</new_paths>
-      <add_dir>dodaj nowy folder</add_dir>
-      <select_dir>wybierz folder</select_dir>
-      <full_path>pelna sciezka</full_path>
-      <local_folder>folder lokalny</local_folder>
-      <browse>przegladaj</browse>
+      <new_paths>Nowe ścieżki</new_paths>
+      <add_dir>Dodaj nowy katalog</add_dir>
+      <select_dir>Wybierz katalog</select_dir>
+      <full_path>Pełna ścieżka</full_path>
+      <default_local>Chcę użyć domyślnego katalogu lokalnego</default_local>
+      <custom_local>Chcę wskazać katalog lokalny</custom_local>
+      <local_folder>Katalog lokalny</local_folder>
+      <browse>Przeglądaj</browse>
     </paths>
+    <setup>
+      <authentication>Autoryzacja</authentication>
+      <sync_all_files>Chcę synchronizować wszystkie pliki</sync_all_files>
+      <sync_specific_files>Chcę wybrać, które pliki będą synchornizowane</sync_specific_files>
+      <previous>Cofnij</previous>
+      <next>Dalej</next>
+    </setup>
     <new_version>
       <new_ver>Nowa wersja</new_ver>
-      <update_available>Aktualizacja dostepna</update_available>
+      <update_available>Aktualizacja jest dostępna</update_available>
       <new_v_available>Nowa wersja FTPbox-a jest dostepna</new_v_available>
       <new_version>Nowa wersja</new_version>
       <current_version>Aktualna wersja</current_version>
-      <wanna_download>Sciagnac nowa wersje?</wanna_download>
-      <download>Sciagnij</download>
-      <learn_more>Dowiedz sie wiecej</learn_more>
-      <remind_me_next_time>Przypomnij nastepnym razem</remind_me_next_time>
+      <wanna_download>Pobrać nową wersję?</wanna_download>
+      <download>Uaktualnij teraz</download>
+      <learn_more>Dowiedz się więcej</learn_more>
+      <remind_me_next_time>Przypomnij następnym razem</remind_me_next_time>
     </new_version>
     <tray>
       <tray_and_nots>Zasobnik i powiadomienia</tray_and_nots>
-      <updated>Plik {0} zostal uaktualniony</updated>
-      <created>Plik {0} zostal utworzony</created>
-      <renamed>Plikowi {0} zmieniono nazwe na {1}</renamed>
-      <deleted>Plik {0} zostal usuniety</deleted>
-      <changed>Plik {0} zostal zmodyfikowany</changed>
-      <FilesOrFoldersUpdated>{0} {1} zostaly zaktualizowane</FilesOrFoldersUpdated>
-      <FilesOrFoldersCreated>{0} {1} zostaly utworzone</FilesOrFoldersCreated>
+      <updated>Plik {0} został uaktualniony</updated>
+      <created>Plik {0} został utworzony</created>
+      <renamed>Plikowi {0} zmieniono nazwę na {1}</renamed>
+      <deleted>Plik {0} został usunięty</deleted>
+      <changed>Plik {0} został zmieniony</changed>
+      <FilesOrFoldersUpdated>{0} {1} zostały uaktualnione</FilesOrFoldersUpdated>
+      <FilesOrFoldersCreated>{0} {1} zostały utworzone</FilesOrFoldersCreated>
       <FilesAndFoldersChanged>{0} {1} i {2} {3} zostaly zaktualizowane</FilesAndFoldersChanged>
-      <ItemsDeleted>{0} obiktow zostalo usunietych.</ItemsDeleted>
+      <ItemsDeleted>{0} obiektów zostało usunietych.</ItemsDeleted>
       <file>Plik</file>
       <files>Pliki</files>
-      <folder>Folder</folder>
-      <folders>Foldery</folders>
-      <connecting>FTPbox - Laczenie...</connecting>
-      <reconnecting>FTPbox - Ponowne laczenie...</reconnecting>
+      <folder>Katalog</folder>
+      <folders>Katalogi</folders>
+      <connecting>FTPbox - Łaczenie...</connecting>
+      <reconnecting>FTPbox - Ponowne łaczenie...</reconnecting>
       <listing>FTPbox - Pobieranie listy...</listing>
-      <uploading>Wysylanie {0}</uploading>
-      <downloading>Sciaganie {0}</downloading>
+      <uploading>Wysyłanie {0}</uploading>
+      <downloading>Pobieranie {0}</downloading>
       <ready>FTPbox – Gotowe</ready>
       <synced>FTPbox – Wszystkie pliki zsynchronizowano</synced>
-      <syncing>FTPbox – Synchroniozowanie...</syncing>
-      <offline>FTPbox – offline</offline>
-      <link_copied>Odnosnik skopiowany do schowka</link_copied>
+      <syncing>FTPbox – Synchronizacja...</syncing>
+      <offline>FTPbox – Rozłączony</offline>
+      <link_copied>Odnośnik skopiowany do schowka</link_copied>
       <recent_files>Ostatnie pliki</recent_files>
-      <not_available>Niedostepny</not_available>
-      <start_syncing>Start synchronizacji</start_syncing>
-      <exit>Zamknac</exit>
+      <not_available>Niedostępny</not_available>
+      <start_syncing>Rozpocznij synchronizację plików</start_syncing>
+      <exit>Zakończ</exit>
     </tray>
     <web_interface>
-      <web_int>Interfejs WEB</web_int>
-      <downloading>Interfejs Web bedzie sciagniety.</downloading>
-      <in_a_minute>To zajmie minutke.</in_a_minute>
-      <removing>Usuwanie interfejsu Web.</removing>
+      <web_int>Interfejs przeglądarki (WEB)</web_int>
+      <downloading>Interfejs Web zostanie pobrany.</downloading>
+      <in_a_minute>To zajmie chwilę w zależności od szybkości łącza.</in_a_minute>
+      <removing>Usuwanie interfejsu przeglądarki (WEB).</removing>
       <removed>Interfejs Web zostal usuniety</removed>
       <updating>Aktualizacja interfejsu Web</updating>
       <updated>Interfej Web zostal zaktualizowany.</updated>
-      <setup>Kliknij by przejrzec i ustawic.</setup>
-      <use_webint>Uzyj interfejsu WEB</use_webint>
-      <view>( Otworz w przegladarce. )</view>
+      <setup>Kliknij by przejrzeć i ustawić.</setup>
+      <use_webint>Użyj interfejsu przeglądarki (WEB)</use_webint>
+      <view>( Otwórz w przeglądarce)</view>
     </web_interface>
 	</pl>
   
