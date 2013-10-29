@@ -14,6 +14,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using Starksoft.Net.Ftp;
 using Renci.SshNet;
 using Renci.SshNet.Sftp;
@@ -38,6 +39,8 @@ namespace FTPboxLib
         private SftpClient _sftpc;           // And our SFTP client
 
         private bool _reconnecting;          // true when client is already attempting to reconnect
+
+	    private Timer tKeepAlive;
 
 	    private AccountController controller;
 
@@ -204,7 +207,10 @@ namespace FTPboxLib
 
             if (Settings.IsDebugMode) 
                 LogServerInfo();
-		}
+            
+            // Periodically send NOOP (KeepAlive) to server if a non-zero interval is set            
+            SetKeepAlive();
+        }
 	    
         /// <summary>
         /// Attempt to reconnect to the server. Called when connection has closed.
@@ -239,6 +245,51 @@ namespace FTPboxLib
             else
                 _sftpc.Disconnect();
         }
+
+        /// <summary>
+        /// Keep the connection to the server alive by sending the NOOP command
+        /// </summary>
+        private void SendNoOp()
+        {
+            if (controller.SyncQueue.Running) return;
+
+            try
+            {
+                Console.WriteLine("NOOP");
+                if (FTP)
+                    _ftpc.NoOperation();
+                else
+                    _sftpc.SendKeepAlive();
+            }
+            catch (Exception ex)
+            {
+                Common.LogError(ex);
+                Reconnect();
+            }
+        }
+
+        /// <summary>
+        /// Set a timer that will periodically send the NOOP
+        /// command to the server if a non-zero interval is set
+        /// </summary>
+        public void SetKeepAlive()
+        {
+            // Dispose the existing timer
+            UnsetKeepAlive();
+
+            if (tKeepAlive == null) tKeepAlive = new Timer(state => SendNoOp());
+
+            if (controller.Account.KeepAliveInterval > 0)
+                tKeepAlive.Change(1000 * 10, 1000 * controller.Account.KeepAliveInterval);
+        }
+
+        /// <summary>
+        /// Dispose the existing KeepAlive timer
+        /// </summary>
+	    public void UnsetKeepAlive()
+	    {
+            if (tKeepAlive != null) tKeepAlive.Change(0,0);
+	    }
 
         public void Upload(string localpath, string remotepath)
         {
@@ -696,6 +747,7 @@ namespace FTPboxLib
         public IEnumerable<ClientItem> List(string cpath, bool skipIgnored = true)
         {
             ListingFailed = false;
+            UnsetKeepAlive();
 
             var list = new List<ClientItem>();
             var cd = string.Empty;
@@ -737,6 +789,8 @@ namespace FTPboxLib
 
             foreach (var f in list.Where(x => x.Type == ClientItemType.File || x.Type == ClientItemType.Folder))
                 yield return f;
+
+            SetKeepAlive();
         }
 
         /// <summary>

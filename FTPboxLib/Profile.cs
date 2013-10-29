@@ -117,6 +117,7 @@ namespace FTPboxLib
         public SyncMethod SyncMethod { get; set; }
         public int SyncFrequency { get; set; }
         public string PrivateKeyFile { get; set; }
+        public long KeepAliveInterval = 10;
     }
 
     public class Paths
