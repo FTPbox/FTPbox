@@ -1754,13 +1754,13 @@
       <about>О программе</about>
       <current_version>Текущая версия</current_version>
       <team>Команда</team>
-      <website>Вебсаит</website>
+      <website>Вебсайт</website>
       <contact>Контакт</contact>
       <coded_in>Программировано в</coded_in>
       <notes>Примечания</notes>
       <contribute>Поддержать</contribute>
-      <ftpbox_is_free>FTPbox является свободным и с открытым исходным кодом</ftpbox_is_free>
-      <contact_me>Свяжытесь со мнои если хотите чтото скозать</contact_me>
+      <ftpbox_is_free>FTPbox является свободным ПО с открытым исходным кодом</ftpbox_is_free>
+      <contact_me>Ждём ваших предложений и пожеланий</contact_me>
       <copyright>Copyright</copyright>
       <report_bug>Сообщить о багах</report_bug>
       <request_feature>Запросить функцию</request_feature>
@@ -1769,7 +1769,7 @@
       <open_local>Открыть локальный файл</open_local>
       <bandwidth>Скорость</bandwidth>
       <sync_freq>Время синхронизаций</sync_freq>
-      <sync_when>Синхронизироват фаилы</sync_when>
+      <sync_when>Синхронизировать фаилы</sync_when>
       <manually>вручную</manually>
       <auto>автоматически каждые</auto>
       <seconds>секунд</seconds>
@@ -1777,32 +1777,44 @@
       <limit_download>Лимитировать скачку</limit_download>
       <limit_upload>Лимитировать закачку</limit_upload>
       <no_limits>( 0 - нет лимита )</no_limits>
-      <selective>Выборочная Синхронизация</selective>
+      <selective>Выборочная синхронизация</selective>
       <selective_info>Снимите галочку с файлов которые вы не желаете синхронизировать</selective_info>
       <refresh>Обновить</refresh>
       <file_filters>Фильтры</file_filters>
-      <ignored_extensions>Игнорируемые расширениеn</ignored_extensions>
+      <ignored_extensions>Игнорируемые расширения</ignored_extensions>
       <remove>Удалить</remove>
       <also_ignore>Тоже игнорировать</also_ignore>
-      <dotfiles>дотфаилы</dotfiles>
+      <dotfiles>дотфайлы (.example)</dotfiles>
       <temp_files>Временные файлы</temp_files>
-      <old_files>Файлы модифицированные до</old_files>
+      <old_files>Файлы, изменённые до</old_files>
+      <enable_logging>Включить лог</enable_logging>
+      <view_log>Открыть лог</view_log>
     </main_form>
     <new_account>
-      <new_ftp>Добавить ФТП аккаунт</new_ftp>
-      <login_details>Детали ФТП аккаунта</login_details>
-      <encryption>Шифровка</encryption>
+      <new_ftp>Добавить FTP аккаунт</new_ftp>
+      <login_details>Детали FTP аккаунта</login_details>
+      <encryption>Шифрование</encryption>
+      <ask_for_password>Всегда спрашивать пароль</ask_for_password>
       <add>добавить</add>
       <done>готово</done>
     </new_account>
     <paths>
-      <new_paths>New paths</new_paths>
+      <new_paths>Новые папки</new_paths>
       <add_dir>Добавить новую папку</add_dir>
       <select_dir>выбрать папку</select_dir>
       <full_path>полный путь</full_path>
+      <default_local>Использовать папку по умолчанию</default_local>
+      <custom_local>Выбрать папку</custom_local>
       <local_folder>локальная папка</local_folder>
-      <browse>выбрать</browse>
+      <browse>Обзор</browse>
     </paths>
+    <setup>
+      <authentication>Авторизация</authentication>
+      <sync_all_files>Синхронизировать все файлы</sync_all_files>
+      <sync_specific_files>Выбрать файлы для синхронизации</sync_specific_files>
+      <previous>Назад</previous>
+      <next>Далее</next>
+    </setup>
     <new_version>
       <new_ver>Новая Версия</new_ver>
       <update_available>Доступно обновление</update_available>
@@ -1815,7 +1827,7 @@
       <remind_me_next_time>Не сейчас</remind_me_next_time>
     </new_version>
     <tray>
-      <tray_and_nots>Треи и уведомления</tray_and_nots>
+      <tray_and_nots>Трей и уведомления</tray_and_nots>
       <updated>{0} был обновлен.</updated>
       <created>{0} был создан.</created>
       <renamed>{0} был переименован на {1}</renamed>
