@@ -1844,7 +1844,7 @@ namespace FTPbox.Forms
                         tray.Text = Common.Languages[MessageType.Connecting];                        
                         break;
                     case MessageType.Disconnected:
-                        tray.Icon = Properties.Resources.syncing;
+                        tray.Icon = Properties.Resources.offline1;
                         tray.Text = Common.Languages[MessageType.Disconnected];                        
                         break;
                     case MessageType.Reconnecting:
