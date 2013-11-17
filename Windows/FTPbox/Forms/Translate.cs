@@ -280,8 +280,8 @@ namespace FTPbox.Forms
 
             foreach (DataGridViewRow d in data.Rows)
             {
-                d.Cells[1].Value = Common.Languages.Get(lan + (string)d.Cells[2].Value, "");
-                d.Cells[0].Value = Common.Languages.Get("en" + (string)d.Cells[2].Value, "");
+                d.Cells[1].Value = Common.Languages.Get((string)d.Cells[2].Value, "", lan);
+                d.Cells[0].Value = Common.Languages.Get((string)d.Cells[2].Value, "", "en");
             }
             LanguageSettings.Loaded = true;
         }
