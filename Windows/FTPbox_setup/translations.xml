@@ -197,8 +197,8 @@
       <file_filters>Filter</file_filters>
       <ignored_extensions>Ignorierte Dateiendungen</ignored_extensions>
       <remove>Löschen</remove>
-      <also_ignore>Ignorieren</also_ignore>
-      <dotfiles>dotfiles</dotfiles>
+      <also_ignore>Auch ignorieren</also_ignore>
+      <dotfiles>Dateien mit vorangestelltem Punkt</dotfiles>
       <temp_files>Temporäre Daten</temp_files>
       <old_files>Zuvor geänderte Dateien</old_files>
       <enable_logging>Logging erlauben</enable_logging>
@@ -208,7 +208,7 @@
       <new_ftp>Neuer FTP Account</new_ftp>
       <login_details>FTP Login Details</login_details>
       <encryption>Verschlüsselung</encryption>
-      <ask_for_password>Immer nach dem Passwort fragen</ask_for_password>
+      <ask_for_password>Immer nach Passwort fragen</ask_for_password>
       <add>Hinzufügen</add>
       <done>Fertig</done>
     </new_account>
@@ -217,15 +217,15 @@
       <add_dir>Ein Verzeichnis erstellen</add_dir>
       <select_dir>Vollständigen Ordnerpfad auswählen</select_dir>
       <full_path>Vollständiger Pfad</full_path>
-      <default_local>Standardpfad verwenden</default_local>
-      <custom_local>Eigenen Pfad auswählen</custom_local>
+      <default_local>Ich möchte einen lokalen Standardordner benutzen</default_local>
+      <custom_local>Ich möchte einen lokalen Standardordner wählen</custom_local>
       <local_folder>Lokaler Ordner</local_folder>
       <browse>Durchsuchen</browse>
     </paths>
     <setup>
-      <authentication>Anmeldedaten</authentication>
-      <sync_all_files>Alle Dateien synchronisieren</sync_all_files>
-      <sync_specific_files>Dateien zum Synchronisieren auswählen</sync_specific_files>
+      <authentication>Authentifizieren</authentication>
+      <sync_all_files>Ich möchte alle Dateien synchronisieren</sync_all_files>
+      <sync_specific_files>Ich möchte wählen welche Dateien synchronisiert werden sollen</sync_specific_files>
       <previous>Zurück</previous>
       <next>Vor</next>
     </setup>
