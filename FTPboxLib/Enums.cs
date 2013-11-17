@@ -135,7 +135,7 @@ namespace FTPboxLib
         // Options
         Options, General, Links, WhenRecentFileClicked, OpenUrl, CopyUrl, OpenLocal, Application, ShowNotifications, StartOnStartup, EnableLogging, ViewLog,
         Account, Profile, Add, Remove, Details, WebUi, UseWebUi, ViewInBrowser,
-        Filters, Refresh, IgnoredExtensions, AlsoIgnore, Dotfiles, TempFiles, FilesModifiedBefore,
+        Filters, Refresh, IgnoredExtensions, AlsoIgnore, Dotfiles, TempFiles, FilesModifiedBefore, Configure,
         Bandwidth, SyncFrequency, SyncWhen, AutoEvery, Seconds, Manually, SpeedLimits, DownLimit, UpLimit, NoLimits,
         Language,
         About, TheTeam, Website, Contact, CodedIn, Notes, Contribute, FreeAndAll, GetInTouch, ReportBug, RequestFeature, Donate,

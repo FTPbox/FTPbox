@@ -52,6 +52,7 @@
       <selective>Selective Sync</selective>
       <selective_info>Uncheck the items you don't want to sync</selective_info>
       <refresh>Refresh</refresh>
+	  <configure>Configure</configure>
       <file_filters>Filters</file_filters>
       <ignored_extensions>Ignored Extensions</ignored_extensions>
       <remove>Remove</remove>

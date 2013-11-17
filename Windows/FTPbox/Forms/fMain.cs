@@ -412,10 +412,11 @@ namespace FTPbox.Forms
             rOpenInBrowser.Text = Common.Languages[UiControl.OpenUrl];
             rCopy2Clipboard.Text = Common.Languages[UiControl.CopyUrl];
             rOpenLocal.Text = Common.Languages[UiControl.OpenLocal];
-            //filters
+            //filters tab
             tabFilters.Text = Common.Languages[UiControl.Filters];            
             gFileFilters.Text = Common.Languages[UiControl.Filters];
-            // TODO: configure buttons
+            bConfigureSelectiveSync.Text = Common.Languages[UiControl.Configure];
+            bConfigureExtensions.Text = Common.Languages[UiControl.Configure];
             labSelectiveSync.Text = Common.Languages[UiControl.SelectiveSync];
             labSelectExtensions.Text = Common.Languages[UiControl.IgnoredExtensions];
             labAlsoIgnore.Text = Common.Languages[UiControl.AlsoIgnore];
@@ -1706,8 +1707,7 @@ namespace FTPbox.Forms
             // Inherit manually
             tabControl1.RightToLeftLayout = RightToLeftLayout;
             trayMenu.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
-            ////lSelectiveSync.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
-            ////lSelectiveSync.RightToLeftLayout = RightToLeftLayout;
+
             // Relocate controls where necessary
             cLanguages.Location = RightToLeftLayout ? new Point(267, 19) : new Point(9, 19);
             bTranslate.Location = RightToLeftLayout ? new Point(172, 17) : new Point(191, 17);

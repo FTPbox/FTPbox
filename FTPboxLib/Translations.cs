@@ -209,6 +209,8 @@ namespace FTPboxLib
                         return Get("/new_account/add", "Add");
                     case UiControl.Remove:
                         return Get("/main_form/remove", "Remove");
+                    case UiControl.Details:
+                        return Get("/main_form/details", "Details");
                     case UiControl.WebUi:
                         return Get("/web_interface/web_int", "Web Interface");
                     case UiControl.UseWebUi:
@@ -217,6 +219,8 @@ namespace FTPboxLib
                         return Get("/web_interface/view", "(View in browser)");
                     case UiControl.Filters:
                         return Get("/main_form/file_filters", "Filters");
+                    case UiControl.Configure:
+                        return Get("/main_form/configure", "Configure");
                     case UiControl.Refresh:
                         return Get("/main_form/refresh", "Refresh");
                     case UiControl.IgnoredExtensions:
