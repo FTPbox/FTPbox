@@ -220,7 +220,7 @@ namespace FTPboxLib
                     case UiControl.Refresh:
                         return Get(Settings.General.Language + "/main_form/refresh", "Refresh");
                     case UiControl.IgnoredExtensions:
-                        return Get(Settings.General.Language + "/main_form/ignored_extensions", "Ignored Extensions") + ":";
+                        return Get(Settings.General.Language + "/main_form/ignored_extensions", "Ignored Extensions");
                     case UiControl.AlsoIgnore:
                         return Get(Settings.General.Language + "/main_form/also_ignore", "Also ignore") + ":";
                     case UiControl.Dotfiles:

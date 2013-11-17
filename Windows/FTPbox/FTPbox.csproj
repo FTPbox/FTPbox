@@ -67,11 +67,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\fIgnoredExtensions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\fIgnoredExtensions.Designer.cs">
+      <DependentUpon>fIgnoredExtensions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\fMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\fMain.Designer.cs">
       <DependentUpon>fMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\fSelectiveSync.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\fSelectiveSync.Designer.cs">
+      <DependentUpon>fSelectiveSync.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\newversion.cs">
       <SubType>Form</SubType>
@@ -93,8 +105,14 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\fIgnoredExtensions.resx">
+      <DependentUpon>fIgnoredExtensions.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\fMain.resx">
       <DependentUpon>fMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\fSelectiveSync.resx">
+      <DependentUpon>fSelectiveSync.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\newversion.resx">
       <DependentUpon>newversion.cs</DependentUpon>

@@ -34,7 +34,8 @@ namespace FTPbox.Forms
 
         //Form instances
         private Setup fSetup;
-        Translate ftranslate;
+        private Translate ftranslate;
+        private fSelectiveSync fSelective;
 
         private TrayTextNotificationArgs _lastTrayStatus = new TrayTextNotificationArgs
             {AssossiatedFile = null, MessageType = MessageType.AllSynced};
@@ -70,7 +71,7 @@ namespace FTPbox.Forms
 
             Program.Account.FileLog.FileLogChanged += (o, n) => Load_Recent();
 
-            Program.Account.Client.ConnectionClosed += (o, n) => Log.Write(l.Warning, "Connection closed: {0}", n.Text);
+            Program.Account.Client.ConnectionClosed += (o, n) => Log.Write(l.Warning, "Connection closed: {0}", n.Text ?? string.Empty);
 
             Program.Account.Client.ReconnectingFailed += (o, n) => Log.Write(l.Warning, "Reconnecting failed"); //TODO: Use this...
 
@@ -114,6 +115,7 @@ namespace FTPbox.Forms
             };
             fSetup = new Setup {Tag = this};
             ftranslate = new Translate {Tag = this};
+            fSelective = new fSelectiveSync();
             
             if (!string.IsNullOrEmpty(Settings.General.Language))
                 Set_Language(Settings.General.Language);
@@ -146,8 +148,6 @@ namespace FTPbox.Forms
                     AddContextMenu();
                     RunServer();
                 }
-
-                RefreshListing();
             }
             else
             {
@@ -253,12 +253,9 @@ namespace FTPbox.Forms
             lVersion.Text = Application.ProductVersion.Substring(0, 5) + @" Beta";
 
             //   Filters Tab    //
-
+            
             cIgnoreDotfiles.Checked = Program.Account.IgnoreList.IgnoreDotFiles;
             cIgnoreTempFiles.Checked = Program.Account.IgnoreList.IgnoreTempFiles;
-            lIgnoredExtensions.Clear();
-            foreach (string s in Program.Account.IgnoreList.Extensions) 
-                if (!string.IsNullOrWhiteSpace(s))  lIgnoredExtensions.Items.Add(new ListViewItem(s));
 
             //  Bandwidth tab   //
 
@@ -416,14 +413,11 @@ namespace FTPbox.Forms
             rCopy2Clipboard.Text = Common.Languages[UiControl.CopyUrl];
             rOpenLocal.Text = Common.Languages[UiControl.OpenLocal];
             //filters
-            tabFilters.Text = Common.Languages[UiControl.Filters];
-            gSelectiveSync.Text = Common.Languages[UiControl.SelectiveSync];
-            labSelectFolders.Text = Common.Languages[UiControl.UncheckFiles];
-            bRefresh.Text = Common.Languages[UiControl.Refresh];
+            tabFilters.Text = Common.Languages[UiControl.Filters];            
             gFileFilters.Text = Common.Languages[UiControl.Filters];
+            // TODO: configure buttons
+            labSelectiveSync.Text = Common.Languages[UiControl.SelectiveSync];
             labSelectExtensions.Text = Common.Languages[UiControl.IgnoredExtensions];
-            bAddExt.Text = Common.Languages[UiControl.Add];
-            bRemoveExt.Text = Common.Languages[UiControl.Remove];
             labAlsoIgnore.Text = Common.Languages[UiControl.AlsoIgnore];
             cIgnoreDotfiles.Text = Common.Languages[UiControl.Dotfiles];
             cIgnoreTempFiles.Text = Common.Languages[UiControl.TempFiles];
@@ -1094,91 +1088,6 @@ namespace FTPbox.Forms
 
         #endregion
 
-        #region Filters
-
-        private void RefreshListing()
-        {
-            if (tRefresh != null && tRefresh.IsAlive) return;   
-            tRefresh = new Thread(() =>
-            {
-                var li = new List<ClientItem>(Program.Account.Client.List(".").ToList());
-                if (Program.Account.Client.ListingFailed) goto Finish;
-
-                this.Invoke(new MethodInvoker(() => lSelectiveSync.Nodes.Clear()));
-
-                foreach (ClientItem d in li)
-                    if (d.Type == ClientItemType.Folder)
-                    {
-                        if (d.Name == "webint") continue;
-
-                        TreeNode parent = new TreeNode(d.Name);
-                        this.Invoke(new MethodInvoker(delegate
-                        {
-                            lSelectiveSync.Nodes.Add(parent);
-                            parent.Nodes.Add(new TreeNode("!tempnode!"));
-                        }));
-
-                    }
-                foreach (ClientItem f in li)
-                    if (f.Type == ClientItemType.File)
-                        this.Invoke(new MethodInvoker(() => lSelectiveSync.Nodes.Add(new TreeNode(f.Name))));
-             
-                this.Invoke(new MethodInvoker(EditNodeCheckboxes));
-            Finish:
-                this.Invoke(new MethodInvoker(delegate { bRefresh.Enabled = true; }));
-            });
-            tRefresh.Start();
-        }
-
-        private void CheckSingleRoute(TreeNode tn)
-        {
-            if (tn.Checked && tn.Parent != null)
-                if (!tn.Parent.Checked)
-                {
-                    tn.Parent.Checked = true;
-                    if (Program.Account.IgnoreList.Items.Contains(tn.Parent.FullPath))
-                        Program.Account.IgnoreList.Items.Remove(tn.Parent.FullPath);
-                    CheckSingleRoute(tn.Parent);
-                }
-        }
-
-        /// <summary>
-        /// Uncheck items that have been picked as ignored by the user
-        /// </summary>
-        private void EditNodeCheckboxes()
-        {
-            foreach (TreeNode t in lSelectiveSync.Nodes)
-            {
-                if (!Program.Account.IgnoreList.isInIgnoredFolders(t.FullPath)) t.Checked = true;
-                if (t.Parent != null)
-                    if (!t.Parent.Checked) t.Checked = false;
-
-                foreach (TreeNode tn in t.Nodes)
-                    EditNodeCheckboxesRecursive(tn);
-            }
-        }
-
-        private void EditNodeCheckboxesRecursive(TreeNode t)
-        {
-            t.Checked = Program.Account.IgnoreList.isInIgnoredFolders(t.FullPath);
-            if (t.Parent != null)
-                if (!t.Parent.Checked) t.Checked = false;
-
-            // Log.Write(l.Debug, "Node {0} is checked {1}", t.FullPath, t.Checked);
-
-            foreach (TreeNode tn in t.Nodes)
-                EditNodeCheckboxesRecursive(tn);
-        }
-
-        private bool checking_nodes = false;
-        private void CheckUncheckChildNodes(TreeNode t, bool c)
-        {
-            t.Checked = c;
-            foreach (TreeNode tn in t.Nodes)
-                CheckUncheckChildNodes(tn, c);
-        }
-        #endregion
-
         #region General Tab - Event Handlers
 
         private void rOpenInBrowser_CheckedChanged(object sender, EventArgs e)
@@ -1309,6 +1218,17 @@ namespace FTPbox.Forms
 
         #region Filters Tab - Event Handlers
 
+        private void bConfigureSelectiveSync_Click(object sender, EventArgs e)
+        {
+            fSelective.ShowDialog();
+        }
+
+        private void bConfigureExtensions_Click(object sender, EventArgs e)
+        {
+            var fExtensions = new fIgnoredExtensions();
+            fExtensions.ShowDialog();
+        }
+
         private void cIgnoreTempFiles_CheckedChanged(object sender, EventArgs e)
         {
             Program.Account.IgnoreList.IgnoreTempFiles = cIgnoreTempFiles.Checked;
@@ -1319,48 +1239,6 @@ namespace FTPbox.Forms
         {
             Program.Account.IgnoreList.IgnoreDotFiles = cIgnoreDotfiles.Checked;
             Program.Account.IgnoreList.Save();
-        }
-
-        private void bAddExt_Click(object sender, EventArgs e)
-        {
-            string newext = tNewExt.Text;
-            if (newext.StartsWith(".")) newext = newext.Substring(1);
-
-            if (!Program.Account.IgnoreList.Extensions.Contains(newext))
-                Program.Account.IgnoreList.Extensions.Add(newext);
-            Program.Account.IgnoreList.Save();
-
-            tNewExt.Text = string.Empty;
-            //refresh the list
-            lIgnoredExtensions.Clear();
-            foreach (string s in Program.Account.IgnoreList.Extensions)
-                if (!string.IsNullOrWhiteSpace(s)) lIgnoredExtensions.Items.Add(new ListViewItem(s));
-        }
-
-        private void tNewExt_TextChanged(object sender, EventArgs e)
-        {
-            bAddExt.Enabled = !string.IsNullOrWhiteSpace(tNewExt.Text);
-
-            this.AcceptButton = (string.IsNullOrWhiteSpace(tNewExt.Text)) ? null : bAddExt;
-        }
-
-        private void bRemoveExt_Click(object sender, EventArgs e)
-        {
-            foreach (ListViewItem li in lIgnoredExtensions.SelectedItems)
-                if (!string.IsNullOrWhiteSpace(li.Text))
-                    Program.Account.IgnoreList.Extensions.Remove(li.Text);
-            Program.Account.IgnoreList.Save();
-
-            //refresh the list
-            lIgnoredExtensions.Clear();
-            foreach (string s in Program.Account.IgnoreList.Extensions)
-                if (!string.IsNullOrWhiteSpace(s)) lIgnoredExtensions.Items.Add(new ListViewItem(s));
-        }
-
-        private void lIgnoredExtensions_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            bRemoveExt.Enabled = lIgnoredExtensions.SelectedItems.Count > 0;
-            this.AcceptButton = (lIgnoredExtensions.SelectedItems.Count > 0) ? bRemoveExt : null;
         }
 
         private void cIgnoreOldFiles_CheckedChanged(object sender, EventArgs e)
@@ -1376,103 +1254,6 @@ namespace FTPbox.Forms
             Program.Account.IgnoreList.IgnoreOldFiles = cIgnoreOldFiles.Checked;
             Program.Account.IgnoreList.LastModifiedMinimum = (cIgnoreOldFiles.Checked) ? dtpLastModTime.Value : DateTime.MinValue;
             Program.Account.IgnoreList.Save();
-        }
-
-        private void lSelectiveSync_AfterExpand(object sender, TreeViewEventArgs e)
-        {
-            string path = e.Node.FullPath;
-
-            if (e.Node.Nodes.Count > 0)
-            {
-                int i = e.Node.Index;
-
-                foreach (TreeNode tn in e.Node.Nodes)
-                {
-                    try
-                    {
-                        lSelectiveSync.Nodes[i].Nodes.Remove(tn);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Write(l.Debug, ex.Message);
-                    }
-                }
-            }
-
-            Thread tExpandItem = new Thread(() =>
-            {
-                List<ClientItem> li = new List<ClientItem>();
-                try
-                {
-                    li = Program.Account.Client.List(path).ToList();
-                }
-                catch (Exception ex)
-                {
-                    Common.LogError(ex);
-                    return;
-                }
-
-                foreach (ClientItem d in li)
-                    if (d.Type == ClientItemType.Folder)
-                        this.Invoke(new MethodInvoker(delegate
-                        {
-                            TreeNode parent = new TreeNode(d.Name);
-                            e.Node.Nodes.Add(parent);
-                            parent.Nodes.Add(new TreeNode("!tempnode"));
-                        }));
-
-                foreach (ClientItem f in li)
-                    if (f.Type == ClientItemType.File)
-                        this.Invoke(new MethodInvoker(() => e.Node.Nodes.Add(new TreeNode(f.Name))));
-
-                //EditNodeCheckboxes();
-                foreach (TreeNode tn in e.Node.Nodes)
-                    this.Invoke(new MethodInvoker(delegate
-                    {
-                        tn.Checked = !Program.Account.IgnoreList.isInIgnoredFolders(tn.FullPath);
-                    }));
-            });
-            tExpandItem.Start();
-        }
-
-        private void lSelectiveSync_AfterCheck(object sender, TreeViewEventArgs e)
-        {
-            if (checking_nodes || e.Node.Text == "!tempnode!") return;
-
-            string cpath = Program.Account.GetCommonPath(e.Node.FullPath, false);
-            // Log.Write(l.Debug, "{0} is ignored: {1} already in list: {2}", cpath, !e.Node.Checked, Program.Account.IgnoreList.Items.Contains(cpath));
-
-            if (e.Node.Checked && Program.Account.IgnoreList.Items.Contains(cpath))
-                Program.Account.IgnoreList.Items.Remove(cpath);
-            else if (!e.Node.Checked && !Program.Account.IgnoreList.Items.Contains(cpath))
-                Program.Account.IgnoreList.Items.Add(cpath);
-            Program.Account.IgnoreList.Save();
-
-            checking_nodes = true;
-            CheckUncheckChildNodes(e.Node, e.Node.Checked);
-
-            if (e.Node.Checked && e.Node.Parent != null)
-                if (!e.Node.Parent.Checked)
-                {
-                    e.Node.Parent.Checked = true;
-                    if (Program.Account.IgnoreList.Items.Contains(e.Node.Parent.FullPath))
-                        Program.Account.IgnoreList.Items.Remove(e.Node.Parent.FullPath);
-                    CheckSingleRoute(e.Node.Parent);
-                }
-            Program.Account.IgnoreList.Save();
-            checking_nodes = false;
-        }
-
-        private void lSelectiveSync_AfterCollapse(object sender, TreeViewEventArgs e)
-        {
-            e.Node.Nodes.Clear();
-            e.Node.Nodes.Add(e.Node.Name);
-        }
-
-        private void bRefresh_Click(object sender, EventArgs e)
-        {
-            bRefresh.Enabled = false;
-            RefreshListing();
         }
 
         #endregion 
@@ -1925,8 +1706,8 @@ namespace FTPbox.Forms
             // Inherit manually
             tabControl1.RightToLeftLayout = RightToLeftLayout;
             trayMenu.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
-            lSelectiveSync.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
-            lSelectiveSync.RightToLeftLayout = RightToLeftLayout;
+            ////lSelectiveSync.RightToLeft = RightToLeftLayout ? RightToLeft.Yes : RightToLeft.No;
+            ////lSelectiveSync.RightToLeftLayout = RightToLeftLayout;
             // Relocate controls where necessary
             cLanguages.Location = RightToLeftLayout ? new Point(267, 19) : new Point(9, 19);
             bTranslate.Location = RightToLeftLayout ? new Point(172, 17) : new Point(191, 17);
@@ -1936,7 +1717,10 @@ namespace FTPbox.Forms
             bRemoveAccount.Location = new Point(RightToLeftLayout ? 95 : 380, 10);
             cProfiles.Location = new Point(RightToLeftLayout ? 176 : 103, 11);
 
-            bRefresh.Location = new Point(RightToLeftLayout ? 9 : 352, 19);
+            bConfigureSelectiveSync.Location = new Point(RightToLeftLayout ? 6 : 325, 19);
+            bConfigureExtensions.Location = new Point(RightToLeftLayout ? 6 : 325, 48);
+
+            //bRefresh.Location = new Point(RightToLeftLayout ? 9 : 352, 19);
             nSyncFrequency.Location = RightToLeftLayout ? new Point(359, 94) : new Point(35, 94);
             nDownLimit.Location = RightToLeftLayout ? new Point(359, 51) : new Point(35, 51);
             nUpLimit.Location = RightToLeftLayout ? new Point(359, 110) : new Point(35, 110);
