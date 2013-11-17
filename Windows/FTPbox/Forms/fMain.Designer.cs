@@ -71,6 +71,7 @@
             this.labRemPath = new System.Windows.Forms.Label();
             this.tabFilters = new System.Windows.Forms.TabPage();
             this.gFileFilters = new System.Windows.Forms.GroupBox();
+            this.bConfigureSelectiveSync = new System.Windows.Forms.Button();
             this.bConfigureExtensions = new System.Windows.Forms.Button();
             this.labSelectiveSync = new System.Windows.Forms.Label();
             this.labAlsoIgnore = new System.Windows.Forms.Label();
@@ -129,7 +130,6 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bConfigureSelectiveSync = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.gLanguage.SuspendLayout();
@@ -628,6 +628,16 @@
             this.gFileFilters.TabStop = false;
             this.gFileFilters.Text = "File Filters";
             // 
+            // bConfigureSelectiveSync
+            // 
+            this.bConfigureSelectiveSync.Location = new System.Drawing.Point(325, 19);
+            this.bConfigureSelectiveSync.Name = "bConfigureSelectiveSync";
+            this.bConfigureSelectiveSync.Size = new System.Drawing.Size(107, 23);
+            this.bConfigureSelectiveSync.TabIndex = 13;
+            this.bConfigureSelectiveSync.Text = "Configure";
+            this.bConfigureSelectiveSync.UseVisualStyleBackColor = true;
+            this.bConfigureSelectiveSync.Click += new System.EventHandler(this.bConfigureSelectiveSync_Click);
+            // 
             // bConfigureExtensions
             // 
             this.bConfigureExtensions.Location = new System.Drawing.Point(325, 48);
@@ -726,31 +736,31 @@
             this.gSyncing.Controls.Add(this.cManually);
             this.gSyncing.Location = new System.Drawing.Point(8, 6);
             this.gSyncing.Name = "gSyncing";
-            this.gSyncing.Size = new System.Drawing.Size(447, 134);
+            this.gSyncing.Size = new System.Drawing.Size(447, 124);
             this.gSyncing.TabIndex = 2;
             this.gSyncing.TabStop = false;
             this.gSyncing.Text = "Syncing";
             // 
             // labSeconds
             // 
-            this.labSeconds.Location = new System.Drawing.Point(116, 96);
+            this.labSeconds.Location = new System.Drawing.Point(116, 91);
             this.labSeconds.Name = "labSeconds";
-            this.labSeconds.Size = new System.Drawing.Size(237, 13);
+            this.labSeconds.Size = new System.Drawing.Size(222, 13);
             this.labSeconds.TabIndex = 5;
             this.labSeconds.Text = "seconds";
             // 
             // labSyncWhen
             // 
-            this.labSyncWhen.Location = new System.Drawing.Point(18, 32);
+            this.labSyncWhen.Location = new System.Drawing.Point(6, 22);
             this.labSyncWhen.Name = "labSyncWhen";
-            this.labSyncWhen.Size = new System.Drawing.Size(414, 13);
+            this.labSyncWhen.Size = new System.Drawing.Size(435, 13);
             this.labSyncWhen.TabIndex = 4;
             this.labSyncWhen.Text = "Synchronize remote files:";
             // 
             // nSyncFrequency
             // 
             this.nSyncFrequency.AccessibleName = "synchronization interval in seconds";
-            this.nSyncFrequency.Location = new System.Drawing.Point(35, 94);
+            this.nSyncFrequency.Location = new System.Drawing.Point(35, 89);
             this.nSyncFrequency.Maximum = new decimal(new int[] {
             79228,
             0,
@@ -764,7 +774,7 @@
             // cAuto
             // 
             this.cAuto.AccessibleName = "synchronize automatically";
-            this.cAuto.Location = new System.Drawing.Point(21, 71);
+            this.cAuto.Location = new System.Drawing.Point(22, 66);
             this.cAuto.Name = "cAuto";
             this.cAuto.Size = new System.Drawing.Size(411, 17);
             this.cAuto.TabIndex = 1;
@@ -776,7 +786,7 @@
             // cManually
             // 
             this.cManually.AccessibleName = "synchronize manually";
-            this.cManually.Location = new System.Drawing.Point(21, 48);
+            this.cManually.Location = new System.Drawing.Point(22, 43);
             this.cManually.Name = "cManually";
             this.cManually.Size = new System.Drawing.Size(411, 17);
             this.cManually.TabIndex = 0;
@@ -794,78 +804,78 @@
             this.gLimits.Controls.Add(this.nDownLimit);
             this.gLimits.Controls.Add(this.labUpSpeed);
             this.gLimits.Controls.Add(this.labDownSpeed);
-            this.gLimits.Location = new System.Drawing.Point(8, 146);
+            this.gLimits.Location = new System.Drawing.Point(8, 136);
             this.gLimits.Name = "gLimits";
-            this.gLimits.Size = new System.Drawing.Size(447, 169);
+            this.gLimits.Size = new System.Drawing.Size(447, 158);
             this.gLimits.TabIndex = 1;
             this.gLimits.TabStop = false;
             this.gLimits.Text = "Speed Limits";
             // 
             // labNoLimits
             // 
-            this.labNoLimits.Location = new System.Drawing.Point(18, 142);
+            this.labNoLimits.Location = new System.Drawing.Point(22, 132);
             this.labNoLimits.Name = "labNoLimits";
-            this.labNoLimits.Size = new System.Drawing.Size(414, 13);
+            this.labNoLimits.Size = new System.Drawing.Size(411, 13);
             this.labNoLimits.TabIndex = 14;
             this.labNoLimits.Text = "( set to 0 for no limits )";
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(109, 112);
+            this.label4.Location = new System.Drawing.Point(119, 102);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(244, 13);
+            this.label4.Size = new System.Drawing.Size(219, 13);
             this.label4.TabIndex = 13;
             this.label4.Text = "kb/s";
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(109, 53);
+            this.label3.Location = new System.Drawing.Point(119, 48);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(244, 13);
+            this.label3.Size = new System.Drawing.Size(219, 13);
             this.label3.TabIndex = 12;
             this.label3.Text = "kb/s";
             // 
             // nUpLimit
             // 
             this.nUpLimit.AccessibleName = "upload speed limit";
-            this.nUpLimit.Location = new System.Drawing.Point(35, 110);
+            this.nUpLimit.Location = new System.Drawing.Point(35, 100);
             this.nUpLimit.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
             this.nUpLimit.Name = "nUpLimit";
-            this.nUpLimit.Size = new System.Drawing.Size(68, 20);
+            this.nUpLimit.Size = new System.Drawing.Size(75, 20);
             this.nUpLimit.TabIndex = 9;
             this.nUpLimit.ValueChanged += new System.EventHandler(this.nUpLimit_ValueChanged);
             // 
             // nDownLimit
             // 
             this.nDownLimit.AccessibleName = "download speed limit";
-            this.nDownLimit.Location = new System.Drawing.Point(35, 51);
+            this.nDownLimit.Location = new System.Drawing.Point(35, 45);
             this.nDownLimit.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
             this.nDownLimit.Name = "nDownLimit";
-            this.nDownLimit.Size = new System.Drawing.Size(68, 20);
+            this.nDownLimit.Size = new System.Drawing.Size(75, 20);
             this.nDownLimit.TabIndex = 6;
             this.nDownLimit.ValueChanged += new System.EventHandler(this.nDownLimit_ValueChanged);
             // 
             // labUpSpeed
             // 
-            this.labUpSpeed.Location = new System.Drawing.Point(18, 84);
+            this.labUpSpeed.Location = new System.Drawing.Point(9, 77);
             this.labUpSpeed.Name = "labUpSpeed";
-            this.labUpSpeed.Size = new System.Drawing.Size(414, 13);
+            this.labUpSpeed.Size = new System.Drawing.Size(432, 13);
             this.labUpSpeed.TabIndex = 6;
             this.labUpSpeed.Text = "Limit Upload Speed:";
             // 
             // labDownSpeed
             // 
-            this.labDownSpeed.Location = new System.Drawing.Point(18, 25);
+            this.labDownSpeed.Location = new System.Drawing.Point(6, 22);
             this.labDownSpeed.Name = "labDownSpeed";
-            this.labDownSpeed.Size = new System.Drawing.Size(414, 13);
+            this.labDownSpeed.Size = new System.Drawing.Size(435, 13);
             this.labDownSpeed.TabIndex = 3;
             this.labDownSpeed.Text = "Limit Download Speed:";
             // 
@@ -1216,16 +1226,6 @@
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-            // 
-            // bConfigureSelectiveSync
-            // 
-            this.bConfigureSelectiveSync.Location = new System.Drawing.Point(325, 19);
-            this.bConfigureSelectiveSync.Name = "bConfigureSelectiveSync";
-            this.bConfigureSelectiveSync.Size = new System.Drawing.Size(107, 23);
-            this.bConfigureSelectiveSync.TabIndex = 13;
-            this.bConfigureSelectiveSync.Text = "Configure";
-            this.bConfigureSelectiveSync.UseVisualStyleBackColor = true;
-            this.bConfigureSelectiveSync.Click += new System.EventHandler(this.bConfigureSelectiveSync_Click);
             // 
             // fMain
             // 

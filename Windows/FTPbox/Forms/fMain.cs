@@ -1721,9 +1721,9 @@ namespace FTPbox.Forms
             bConfigureExtensions.Location = new Point(RightToLeftLayout ? 6 : 325, 48);
 
             //bRefresh.Location = new Point(RightToLeftLayout ? 9 : 352, 19);
-            nSyncFrequency.Location = RightToLeftLayout ? new Point(359, 94) : new Point(35, 94);
-            nDownLimit.Location = RightToLeftLayout ? new Point(359, 51) : new Point(35, 51);
-            nUpLimit.Location = RightToLeftLayout ? new Point(359, 110) : new Point(35, 110);
+            nSyncFrequency.Location = RightToLeftLayout ? new Point(344, 89) : new Point(35, 89);
+            nDownLimit.Location = RightToLeftLayout ? new Point(344, 45) : new Point(35, 45);
+            nUpLimit.Location = RightToLeftLayout ? new Point(344, 100) : new Point(35, 100);
 
             lVersion.Location = RightToLeftLayout ? new Point(100, 21) : new Point(272, 21);
             linkLabel3.Location = RightToLeftLayout ? new Point(100, 44) : new Point(272, 44);
