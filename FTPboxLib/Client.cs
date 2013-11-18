@@ -7,7 +7,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 /* Client.cs
- * A client that combines both the FTP and SFTP library.
+ * The client class handles communication with the server, combining the FTP and SFTP libraries.
  */
 
 // #define __MonoCs__

@@ -6,8 +6,8 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program. 
  * If not, see <http://www.gnu.org/licenses/>.
  */
-/*IgnoreList.cs
- * Used to list the folders that get ignored or the file extensions thet get synced.
+/* IgnoreList.cs
+ * Identify ignored items based on the user's filter preferences
  */
 
 using System;

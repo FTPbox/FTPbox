@@ -7,7 +7,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 /* FileLog.cs
- * Used as a list to temporarily store the log files, before saving them to the config file
+ * Manage (read/write) the File/Folder Log
  */
 
 using System;

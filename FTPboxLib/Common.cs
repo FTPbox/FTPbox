@@ -7,7 +7,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 /* Common.cs
- * Commonly used functions are called from this class.
+ * Commonly used methods/properties that are not profile-specific.
  */
 
 using System;

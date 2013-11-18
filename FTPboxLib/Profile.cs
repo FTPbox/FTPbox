@@ -7,7 +7,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 /* Profile.cs
- * A static class to store user's account info and other preferences
+ * A class to store a single profile's information
  */
 
 using System;

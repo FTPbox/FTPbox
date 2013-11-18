@@ -7,8 +7,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 /* Settings.cs
-* Class used to read from / write to the config file
-*/
+ * Class used to load/save user preferences from/to the config files
+ */
 
 using System;
 using System.Collections.Generic;

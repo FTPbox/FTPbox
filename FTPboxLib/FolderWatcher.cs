@@ -7,8 +7,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 /* FolderWatcher.cs
- * Used to listen for changes in the local folder and add any changes to the SyncQueue
-*/
+ * Watch for changes in the local folder and add any changes to the SyncQueue
+ */
 
 // #define __MonoCs__
 
