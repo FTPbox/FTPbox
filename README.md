@@ -22,7 +22,7 @@ Synchronize your files with your own server, via FTP. Learn more on [ftpbox.org]
 
 FTPbox is licensed under the [General Public License v3][gpl]. See [LICENSE][license] for the full text.
 
-### Credits
+### Acknowledgements
 
 FTPbox uses the following awesome libraries:
 - [Starksoft FTP][starksoft] : The FTP library
@@ -58,7 +58,7 @@ See [Translating](https://github.com/FTPbox/FTPbox/wiki/Translating)
 
 ### Donate
 
-You can show the project some love by making a donation! You'll find the paypal donate button in the [About][abt] page.
+You can show the project some love by making a donation! You can find out how to donate from the [About][abt] page.
 
 [website]: http://ftpbox.org
 [webUI]: https://github.com/FTPbox/Web-Interface

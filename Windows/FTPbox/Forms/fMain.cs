@@ -389,7 +389,7 @@ namespace FTPbox.Forms
             gAccount.Text = "FTP " + Common.Languages[UiControl.Account];
             labHost.Text = Common.Languages[UiControl.Host];
             labUN.Text = Common.Languages[UiControl.Username];
-            labPort.Text = Common.Languages[UiControl.Password];
+            labPort.Text = Common.Languages[UiControl.Port];
             labMode.Text = Common.Languages[UiControl.Protocol];
             gApp.Text = Common.Languages[UiControl.Application];
             gWebInt.Text = Common.Languages[UiControl.WebUi];
