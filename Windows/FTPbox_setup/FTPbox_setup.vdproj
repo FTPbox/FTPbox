@@ -40,13 +40,13 @@
         "Entry"
         {
         "MsmKey" = "8:_29A4944BAF5E2FBD24FF3EF210C9541B"
-        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
+        "OwnerKey" = "8:_501FEBDA4AB44963BC62217164703C1C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_29A4944BAF5E2FBD24FF3EF210C9541B"
-        "OwnerKey" = "8:_501FEBDA4AB44963BC62217164703C1C"
+        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -136,49 +136,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A5BDDDAF0A5C1DDE259B33C500918545"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_79E027320435F9386BD88D1BCD24C2BC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_29A4944BAF5E2FBD24FF3EF210C9541B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_49B3F435DB37C06B11FBC6B80EE5CD32"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_711A399CE7394DEE73EF06FD1E6A4B31"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C5C6DDEE5A218FF1E4463CF6EE7E9A0E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C49C32279B13A862C77237DAE722CBB3"
+        "OwnerKey" = "8:_501FEBDA4AB44963BC62217164703C1C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -190,7 +148,49 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_501FEBDA4AB44963BC62217164703C1C"
+        "OwnerKey" = "8:_C49C32279B13A862C77237DAE722CBB3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C5C6DDEE5A218FF1E4463CF6EE7E9A0E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_711A399CE7394DEE73EF06FD1E6A4B31"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_49B3F435DB37C06B11FBC6B80EE5CD32"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_29A4944BAF5E2FBD24FF3EF210C9541B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_79E027320435F9386BD88D1BCD24C2BC"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A5BDDDAF0A5C1DDE259B33C500918545"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -685,15 +685,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FTPbox"
-        "ProductCode" = "8:{2F8F45B8-EFBE-44D0-837D-B31B9FF31E92}"
-        "PackageCode" = "8:{238AD946-9BBE-4167-81F6-63B87B0CB241}"
+        "ProductCode" = "8:{30B1A01A-F28E-45A5-8F80-090EB60E00ED}"
+        "PackageCode" = "8:{6078E5AC-ABB7-4E6B-AEFD-2BD6A21CD45F}"
         "UpgradeCode" = "8:{C3AC21D9-1CD1-40EC-A4F8-F482D3922829}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.5.1"
+        "ProductVersion" = "8:2.5.2"
         "Manufacturer" = "8:ftpbox.org"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:ftpbox.org"
