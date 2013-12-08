@@ -39,21 +39,9 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
-    <Reference Include="Ionic.Zip.Reduced">
-      <HintPath>.\Ionic.Zip.Reduced.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json">
-      <HintPath>.\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Renci.SshNet">
-      <HintPath>.\Renci.SshNet.dll</HintPath>
-    </Reference>
-    <Reference Include="Starksoft.Net.Ftp">
-      <HintPath>.\Starksoft.Net.Ftp.dll</HintPath>
-    </Reference>
-    <Reference Include="Starksoft.Net.Proxy">
-      <HintPath>.\Starksoft.Net.Proxy.dll</HintPath>
+      <HintPath>..\..\..\..\FTPboxLib\FTPboxLib\FTPboxLib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -147,22 +135,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Icons\Box.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Icons\ftpBox.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Icons\synced.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\project-support.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\btn_donate_SM.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Icons\offline.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\syncing.ico" />
@@ -177,12 +153,6 @@
     <Content Include="regular_125.ico" />
     <None Include="Resources\AS.ico" />
     <None Include="Resources\ftpboxnew.ico" />
-    <Content Include="Resources\Icons\done.ico" />
-    <Content Include="Resources\Icons\main125.ico" />
-    <Content Include="Resources\Icons\mBox.ico" />
-    <None Include="Resources\Icons\refresh.ico" />
-    <None Include="Resources\Icons\offline60.ico" />
-    <None Include="Resources\Icons\main.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\FTPboxLib\FTPboxLib.csproj">
