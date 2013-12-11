@@ -13,9 +13,13 @@
 // #define __MonoCs__
 
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.FtpClient;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using Starksoft.Net.Ftp;
 using Renci.SshNet;
 using Renci.SshNet.Sftp;
 using System.Collections.Generic;
@@ -30,7 +34,8 @@ namespace FTPboxLib
     {
         public Client(AccountController account)
         {
-            this.controller = account;            
+            this.controller = account;
+            this.Certificates = new X509Certificate2Collection();
         }
 
         #region Private Fields
@@ -39,6 +44,8 @@ namespace FTPboxLib
         private SftpClient _sftpc;           // And our SFTP client
 
         private bool _reconnecting;          // true when client is already attempting to reconnect
+
+	    private X509Certificate2Collection Certificates;
 
 	    private Timer tKeepAlive;
 
@@ -69,84 +76,70 @@ namespace FTPboxLib
             
 			if (FTP)
 			{
-                _ftpc = new FtpClient(controller.Account.Host, controller.Account.Port);
-                _ftpc.ConnectionClosed += (o, e) =>
-                {                    
-                    Notifications.ChangeTrayText(MessageType.Nothing);
-                    if (ConnectionClosed != null) ConnectionClosed(null, new ConnectionClosedEventArgs { Text = _ftpc.LastResponse.Text });
-                    Reconnect();
-                };
+			    _ftpc = new FtpClient { Host = controller.Account.Host, Port = controller.Account.Port };
 
+                // Add accepted certificates
+                _ftpc.ClientCertificates.AddRange(Certificates);
+                
                 if (controller.Account.Protocol == FtpProtocol.FTPS)
                 {
-                    _ftpc.ValidateServerCertificate += (sender, x) =>
+                    _ftpc.ValidateCertificate += (sender, x) =>
                     {
-                        // if ValidateCertificate handler isn't set, accept the certificate and move on
-                        if (ValidateCertificate == null || Settings.TrustedCertificates.Contains(x.Certificate.Thumbprint))
+                        var fingerPrint = new X509Certificate2(x.Certificate).Thumbprint;
+                        
+                        if (_ftpc.ClientCertificates.Count <= 0 && x.PolicyErrors != SslPolicyErrors.None)
                         {
-                            Log.Write(l.Client, "Trusted: {0}", x.Certificate.Thumbprint);
-                            x.IsCertificateValid = true;
+                            Certificates.Add(x.Certificate);
+                            x.Accept = false;
+                            return;
+                        }
+
+                        // if ValidateCertificate handler isn't set, accept the certificate and move on
+                        if (ValidateCertificate == null || Settings.TrustedCertificates.Contains(fingerPrint))
+                        {
+                            Log.Write(l.Client, "Trusted: {0}", fingerPrint);
+                            x.Accept = true;
                             return;
                         }
 
                         var e = new ValidateCertificateEventArgs
                         {
-                            Fingerprint = x.Certificate.Thumbprint,
-                            SerialNumber = x.Certificate.SerialNumber,
-                            Algorithm = x.Certificate.SignatureAlgorithm.FriendlyName,
-                            ValidFrom = x.Certificate.NotBefore.ToString("MM/dd/yy"),
-                            ValidTo = x.Certificate.NotAfter.ToString("MM/dd/yy"),
-                            Issuer = x.Certificate.IssuerName.Name
+                            Fingerprint = fingerPrint,
+                            SerialNumber = x.Certificate.GetSerialNumberString(),
+                            Algorithm = x.Certificate.GetKeyAlgorithmParametersString(),
+                            ValidFrom = x.Certificate.GetEffectiveDateString(),
+                            ValidTo = x.Certificate.GetExpirationDateString(),
+                            Issuer = x.Certificate.Issuer
                         };
-
+                        // Prompt user to validate
                         ValidateCertificate(null, e);
-                        x.IsCertificateValid = e.IsTrusted;
+                        x.Accept = e.IsTrusted;
                     };
-                     
+                    
                     // Change Security Protocol
-                    if (controller.Account.FtpsMethod == FtpsMethod.Explicit) 
-                        _ftpc.SecurityProtocol = FtpSecurityProtocol.Tls1OrSsl3Explicit;
+                    if (controller.Account.FtpsMethod == FtpsMethod.Explicit)
+                        _ftpc.EncryptionMode = FtpEncryptionMode.Explicit;
                     else if (controller.Account.FtpsMethod == FtpsMethod.Implicit)
-                        _ftpc.SecurityProtocol = FtpSecurityProtocol.Tls1OrSsl3Implicit;
+                        _ftpc.EncryptionMode = FtpEncryptionMode.Implicit;
                 }
+
+                _ftpc.Credentials = new NetworkCredential(controller.Account.Username, controller.Account.Password);			    
 
                 try
                 {
-                    _ftpc.Open(controller.Account.Username, controller.Account.Password);                    
+                    _ftpc.Connect();
                 }
-                catch (Exception)
+                catch (Exception exc)
                 {
-                    if (controller.Account.FtpsMethod == FtpsMethod.None)
+                    // Since the ClientCertificates are added when accepted in ValidateCertificate, the first 
+                    // attempt to connect will fail with an AuthenticationException. If this is the case, a 
+                    // re-connect is attempted, this time with the certificates properly set.
+                    // This is a workaround to avoid storing Certificate files locally...
+                    if (exc is System.Security.Authentication.AuthenticationException
+                        && _ftpc.ClientCertificates.Count <= 0)
+                        Connect();
+                    else
                         throw;
-                    bool connected = false;
-                    // Try connecting with the other available Security Protocols
-                    foreach (FtpSecurityProtocol p in Enum.GetValues(typeof(FtpSecurityProtocol)))
-                    {
-                        if ((controller.Account.FtpsMethod == FtpsMethod.Explicit && p.ToString().Contains("Explicit"))
-                            || (controller.Account.FtpsMethod == FtpsMethod.Implicit && p.ToString().Contains("Implicit")))
-                        {
-                            Log.Write(l.Debug, "Testing with {0}", p.ToString());
-                            
-                            try {
-                                _ftpc.Close();
-                                _ftpc.SecurityProtocol = p;
-                                _ftpc.Open(controller.Account.Username, controller.Account.Password);
-                            }
-                            catch (Exception exe){
-                                Log.Write(l.Warning, "Unable to connect: {0}", exe.GetType().ToString());
-                                continue;
-                            }
-                            connected = true;
-                            controller.Account.FtpSecurityProtocol = p;
-                            break;
-                        }
-                    }
-                    
-                    if (!connected)
-                    {
-                        Notifications.ChangeTrayText(MessageType.Nothing);
-                        throw;
-                    }
                 }
 			}
 			else // SFTP
@@ -178,6 +171,7 @@ namespace FTPboxLib
                         Key = x.HostKeyName,
                         KeySize = x.KeyLength.ToString()
                     };
+                    // Prompt user to validate
                     ValidateCertificate(null, e);
                     x.CanTrust = e.IsTrusted;
                 };
@@ -241,7 +235,7 @@ namespace FTPboxLib
         public void Disconnect()
         {
             if (FTP)
-                _ftpc.Close();
+                _ftpc.Disconnect();
             else
                 _sftpc.Disconnect();
         }
@@ -257,7 +251,7 @@ namespace FTPboxLib
             {
                 Console.WriteLine("NOOP");
                 if (FTP)
-                    _ftpc.NoOperation();
+                    _ftpc.Execute("NOOP");
                 else
                     _sftpc.SendKeepAlive();
             }
@@ -294,7 +288,24 @@ namespace FTPboxLib
         public void Upload(string localpath, string remotepath)
         {
             if (FTP)
-                _ftpc.PutFile(localpath, remotepath, FileAction.Create);
+                using (Stream file = File.OpenRead(localpath), 
+                               rem = _ftpc.OpenWrite(remotepath))
+                {
+                    var buf = new byte[8192];
+                    int read;
+                    long total = 0;
+
+
+                    while ((read = file.Read(buf, 0, buf.Length)) > 0)
+                    {
+                        rem.Write(buf, 0, read);
+                        total += read;
+
+                        Console.WriteLine("{0}/{1} {2:p}",
+                            total, file.Length,
+                            (double)total / (double)file.Length);
+                    }
+                }
             else
                 using (var file = File.OpenRead(localpath))
                     _sftpc.UploadFile(file, remotepath, true);
@@ -318,28 +329,21 @@ namespace FTPboxLib
                 // upload to a temp file...
                 if (FTP)
                 {
-                    EventHandler<TransferProgressEventArgs> action = (o, e) =>
+                    using (Stream file = File.OpenRead(i.LocalPath), rem = _ftpc.OpenWrite(temp))
                     {
-                        _transfered += e.BytesTransferred;
-                        ReportTransferProgress(new TransferProgressArgs(e.BytesTransferred, _transfered, i, _startedOn));
-                    };
+                        var buf = new byte[8192];
+                        int read;
 
-                    _ftpc.TransferProgress += action;
+                        while ((read = file.Read(buf, 0, buf.Length)) > 0)
+                        {
+                            rem.Write(buf, 0, read);
+                            _transfered += read;
 
-                    if (i.PathToFile.PathHasSpace())
-                    {
-                        string cd = WorkingDirectory;
-                        _ftpc.ChangeDirectoryMultiPath(i.PathToFile);
-                        _ftpc.PutFile(i.LocalPath, Common._name(temp), FileAction.Create);
-                        while (WorkingDirectory != cd)
-                            _ftpc.ChangeDirectoryMultiPath("..");
+                            ReportTransferProgress(new TransferProgressArgs(read, _transfered, i, _startedOn));
+
+                            //TODO: Limit transfer rate
+                        }
                     }
-                    else
-                        _ftpc.PutFile(i.LocalPath, temp, FileAction.Create);
-                    
-                    // Unsubscribe
-                    _ftpc.TransferProgress -= action;
-
                 }
                 else
                     using (var file = File.OpenRead(i.LocalPath))
@@ -374,23 +378,20 @@ namespace FTPboxLib
         public void Download(string cpath, string lpath)
         {
             if (FTP)
-                _ftpc.GetFile(cpath, lpath, FileAction.Create);
+            {
+                using (Stream file = File.OpenWrite(lpath), rem = _ftpc.OpenRead(cpath))
+                {
+                    var buf = new byte[8192];
+                    int read;
+
+                    while ((read = rem.Read(buf, 0, buf.Length)) > 0)
+                        file.Write(buf, 0, read);
+                }
+            }
             else
                 using (var f = new FileStream(lpath, FileMode.Create, FileAccess.ReadWrite))
                     _sftpc.DownloadFile(cpath, f);
         }
-
-	    public void DownloadAsync(string cpath, string lpath)
-	    {
-            if (FTP)
-            {
-                _ftpc.GetFileAsyncCompleted += (sender, args) => DownloadComplete.SafeInvoke(sender, args);
-                _ftpc.GetFileAsync(cpath, lpath, FileAction.Create);
-            }
-            else
-                using (var f = new FileStream(lpath, FileMode.Create, FileAccess.ReadWrite))
-                    _sftpc.BeginDownloadFile(cpath, f, ar => DownloadComplete.SafeInvoke(_sftpc, EventArgs.Empty), state: null);	        
-	    }
 
         /// <summary>
         /// Download to a temporary file. 
@@ -410,37 +411,27 @@ namespace FTPboxLib
                 // download to a temp file...
                 if (FTP)
                 {
-                    EventHandler<TransferProgressEventArgs> action = (o, e) =>
+                    using (Stream file = File.OpenWrite(temp), rem = _ftpc.OpenRead(i.CommonPath))
                     {
-                        _transfered += e.BytesTransferred;
-                        ReportTransferProgress(new TransferProgressArgs(e.BytesTransferred, _transfered, i, _startedOn));
-                    };
-                    
-                    _ftpc.TransferProgress += action;
+                        var buf = new byte[8192];
+                        int read;                        
 
-                    if (i.PathToFile.PathHasSpace())
-                    {
-                        string cd = WorkingDirectory;
-                        if (!cd.Equals(i.PathToFile))
+                        while ((read = rem.Read(buf, 0, buf.Length)) > 0)
                         {
-                            string path = i.PathToFile.StartsWithButNotEqual(cd + "/") ? i.PathToFile.Substring(cd.Length + 1) : i.PathToFile;
-                            _ftpc.ChangeDirectoryMultiPath(path);
-                        }                        
-                        _ftpc.GetFile(Common._name(i.CommonPath), temp, FileAction.Create);
-                        while (WorkingDirectory != cd)
-                            _ftpc.ChangeDirectoryMultiPath("..");
-                    }
-                    else
-                        _ftpc.GetFile(i.CommonPath, temp, FileAction.Create);                    
+                            file.Write(buf, 0, read);
+                            _transfered += read;
+                            
+                            ReportTransferProgress(new TransferProgressArgs(read, _transfered, i, _startedOn));
 
-                    // Unsubscribe
-                    _ftpc.TransferProgress -= action;
+                            //TODO: Limit transfer rate
+                        }
+                    }
                 }
                 else
                     using (var f = new FileStream(temp, FileMode.Create, FileAccess.ReadWrite))
                         _sftpc.DownloadFile(i.CommonPath, f,
                             (d) =>
-                                {
+                                {                                    
                                     ReportTransferProgress(new TransferProgressArgs((long) d-_transfered, (long) d, i, _startedOn));
                                     _transfered = (long)d;
                                 });
@@ -489,7 +480,7 @@ namespace FTPboxLib
             try
             {
                 if (FTP)
-                    _ftpc.MakeDirectory(cpath);
+                    _ftpc.CreateDirectory(cpath);
                 else
                     _sftpc.CreateDirectory(cpath);
             }
@@ -576,7 +567,7 @@ namespace FTPboxLib
         public void LogServerInfo()
         {
             Log.Write(l.Client, "////////////////////Server Info///////////////////");         
-            if (controller.Account.Protocol == FtpProtocol.SFTP)
+            if (!FTP)
             {
                 Log.Write(l.Client, "Protocol Version: {0}", _sftpc.ProtocolVersion);
                 Log.Write(l.Client, "Client Compression Algorithm: {0}", _sftpc.ConnectionInfo.CurrentClientCompressionAlgorithm);
@@ -586,10 +577,9 @@ namespace FTPboxLib
             }
             else
             {
-                Log.Write(l.Client, "Transfer Mode: {0}", _ftpc.DataTransferMode.ToString());
-                Log.Write(l.Client, "Transfer Type: {0}", _ftpc.FileTransferType.ToString());
-                Log.Write(l.Client, "Compression Enabled: {0}", _ftpc.IsCompressionEnabled);
-                Log.Write(l.Client, "Character Encoding: {0}", _ftpc.CharacterEncoding);
+                Log.Write(l.Client, "System type: {0}", _ftpc.SystemType);
+                Log.Write(l.Client, "Encryption Mode: {0}", _ftpc.EncryptionMode);                
+                Log.Write(l.Client, "Character Encoding: {0}", _ftpc.Encoding);
             }
 
             Log.Write(l.Client, "//////////////////////////////////////////////////");
@@ -620,7 +610,7 @@ namespace FTPboxLib
         public bool Exists(string cpath)
         {
             if (FTP)
-                return _ftpc.Exists(cpath);
+                return _ftpc.FileExists(cpath) || _ftpc.DirectoryExists(cpath);
             else
                 return _sftpc.Exists(cpath);
         }
@@ -634,31 +624,12 @@ namespace FTPboxLib
         {
             if (string.IsNullOrWhiteSpace(path)) return DateTime.MinValue;
 
-            if (path.StartsWith("/")) path = path.Substring(1);
-            var cd = string.Empty;
+            if (path.StartsWith("/")) path = path.Substring(1);            
             var dt = DateTime.MinValue;
 
             try
             {
-                if (FTP && path != Common._name(path))
-                {
-                    var parent = path.Substring(0, path.Length - Common._name(path).Length);
-                    if (parent.PathHasSpace())
-                    {
-                        // Fix for folders that contain spaces: The client will cd inside any 
-                        // such folder and request a file/folder listing of the current directory
-                        cd = WorkingDirectory;
-                        _ftpc.ChangeDirectoryMultiPath(parent);
-                        path = Common._name(path);
-                    }
-                }
-
-                dt = (controller.Account.Protocol != FtpProtocol.SFTP) ? _ftpc.GetFileDateTime(path, true) : _sftpc.GetLastWriteTime(path);
-
-                // If we changed directory, we should go back...
-                if (FTP && cd != string.Empty)
-                    while (WorkingDirectory != cd)
-                        _ftpc.ChangeDirectoryMultiPath("..");
+                dt = (FTP) ? _ftpc.GetModifiedTime(path) : _sftpc.GetLastWriteTime(path);
             }
             catch (Exception ex)
             {
@@ -666,7 +637,7 @@ namespace FTPboxLib
                 Common.LogError(ex);
             }
 
-            if (controller.Account.Protocol == FtpProtocol.SFTP)
+            if (!FTP)
                 Log.Write(l.Client, "Got LWT: {0} UTC: {1}", dt, _sftpc.GetLastAccessTimeUtc(path));
 
             return dt;
@@ -681,11 +652,11 @@ namespace FTPboxLib
             return ClientItemType.Other;
         }
 
-        private ClientItemType _ItemTypeOf(FtpItemType f)
+        private ClientItemType _ItemTypeOf(FtpFileSystemObjectType f)
         {
-            if (f == FtpItemType.File)
+            if (f == FtpFileSystemObjectType.File)
                 return ClientItemType.File;
-            if (f == FtpItemType.Directory)
+            if (f == FtpFileSystemObjectType.Directory)
                 return ClientItemType.Folder;
             return ClientItemType.Other;
         }
@@ -718,21 +689,11 @@ namespace FTPboxLib
 			set 
 			{
 				if (FTP)
-					_ftpc.ChangeDirectory(value);
+					_ftpc.SetWorkingDirectory(value);
 				else
 					_sftpc.ChangeDirectory(value);
                 Log.Write(l.Client, "cd {0}", value);
 			}
-        }
-
-        public int MaxDownloadSpeed
-        {
-            set { _ftpc.MaxDownloadSpeed = value; }
-        }
-
-        public int MaxUploadSpeed
-        {
-            set { _ftpc.MaxUploadSpeed = value; }
         }
 
 	    #endregion
@@ -750,24 +711,11 @@ namespace FTPboxLib
             UnsetKeepAlive();
 
             var list = new List<ClientItem>();
-            var cd = string.Empty;
-            // Fix for folders that contain spaces: The client will cd inside any 
-            // such folder and request a file/folder listing of the current directory
-            if (FTP && cpath.PathHasSpace())
-            {
-                cd = WorkingDirectory;
-                if (!cd.Equals(cpath))
-                {
-                    string path = cpath.StartsWithButNotEqual(cd + "/") ? cpath.Substring(cd.Length + 1) : cpath;
-                    Log.Write(l.Client, "changing dir to: {0} from wd: {1}", cpath, cd);
-                    cpath = ".";
-                    _ftpc.ChangeDirectoryMultiPath(path);
-                }
-            }
+
             try
             {
                 if (FTP)
-                    list = Array.ConvertAll(new List<FtpItem>(_ftpc.GetDirList(cpath)).ToArray(), ConvertItem).ToList();
+                    list = Array.ConvertAll(new List<FtpListItem>(_ftpc.GetListing(cpath)).ToArray(), ConvertItem).ToList();
                 else
                     list = Array.ConvertAll(new List<SftpFile>(_sftpc.ListDirectory(cpath)).ToArray(), ConvertItem).ToList();
             }
@@ -781,11 +729,6 @@ namespace FTPboxLib
             list.RemoveAll(x => x.Name == "." || x.Name == "..");
             if (skipIgnored)
                 list.RemoveAll(x => x.FullPath.Contains("webint"));
-
-            // If we changed directory, we should go back...
-            if (FTP && cpath == "." && cd != string.Empty)
-                while (WorkingDirectory != cd)
-                    _ftpc.ChangeDirectoryMultiPath("..");
 
             foreach (var f in list.Where(x => x.Type == ClientItemType.File || x.Type == ClientItemType.Folder))
                 yield return f;
@@ -842,9 +785,9 @@ namespace FTPboxLib
         /// <summary>
         /// Convert an FtpItem to a ClientItem
         /// </summary>
-        private ClientItem ConvertItem(FtpItem f)
+        private ClientItem ConvertItem(FtpListItem f)
         {
-            var fullPath = f.FullPath;
+            var fullPath = f.FullName;
             if (fullPath.StartsWith("./"))
             {
                 var cwd = WorkingDirectory;
@@ -859,7 +802,7 @@ namespace FTPboxLib
                 {
                     Name = f.Name,
                     FullPath = fullPath,
-                    Type = _ItemTypeOf(f.ItemType),
+                    Type = _ItemTypeOf(f.Type),
                     Size = f.Size,
                     LastWriteTime = f.Modified
                 };

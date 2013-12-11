@@ -13,7 +13,6 @@
 using System;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using Starksoft.Net.Ftp;
 
 namespace FTPboxLib
 {
@@ -113,7 +112,6 @@ namespace FTPboxLib
         public int Port { get; set; }
         public FtpProtocol Protocol { get; set; }
         public FtpsMethod FtpsMethod { get; set; }
-        public FtpSecurityProtocol FtpSecurityProtocol { get; set; }
         public SyncMethod SyncMethod { get; set; }
         public int SyncFrequency { get; set; }
         public string PrivateKeyFile { get; set; }

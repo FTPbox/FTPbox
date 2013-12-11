@@ -75,8 +75,8 @@ namespace FTPbox
         {
             get
             {
-                string[] dlls = { "FTPboxLib.dll", "Starksoft.Net.Ftp.dll", "Starksoft.Net.Proxy.dll", 
-                                    "Renci.SshNet.dll", "Ionic.Zip.Reduced.dll", "Newtonsoft.Json.dll"};
+                string[] dlls = { "FTPboxLib.dll", "System.Net.FtpClient.dll", "Renci.SshNet.dll", 
+                                    "Ionic.Zip.Reduced.dll", "Newtonsoft.Json.dll" };
 
                 return dlls.All(s => File.Exists(Path.Combine(Application.StartupPath, s)));
             }
@@ -87,7 +87,7 @@ namespace FTPbox
         /// </summary>
         private static void KillUnecessaryDLLs()
         {
-            string[] all = { "DiffieHellman.dll", "Org.Mentalis.Security.dll", "Tamir.SharpSSH.dll", "appinfo.ini", "updater.exe" };
+            string[] all = { "Starksoft.Net.Ftp.dll", "Starksoft.Net.Proxy.dll", "DiffieHellman.dll", "Org.Mentalis.Security.dll", "Tamir.SharpSSH.dll", "appinfo.ini", "updater.exe" };
 
             foreach (string s in all)
             {

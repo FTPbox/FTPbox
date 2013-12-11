@@ -1308,7 +1308,6 @@ namespace FTPbox.Forms
             try
             {
                 Settings.General.DownloadLimit = Convert.ToInt32(nDownLimit.Value);
-                Program.Account.Client.MaxDownloadSpeed = Convert.ToInt32(nDownLimit.Value);
                 Settings.SaveGeneral();
             }
             catch { }
@@ -1319,7 +1318,6 @@ namespace FTPbox.Forms
             try
             {
                 Settings.General.UploadLimit = Convert.ToInt32(nUpLimit.Value);
-                Program.Account.Client.MaxUploadSpeed = Convert.ToInt32(nUpLimit.Value);
                 Settings.SaveGeneral();
             }
             catch { }
