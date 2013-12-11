@@ -88,14 +88,20 @@ namespace FTPbox.Forms
                 };
             Program.Account.WebInterface.InterfaceRemoved += (o, n) =>
                 {
-                    chkWebInt.Enabled = true;
-                    labViewInBrowser.Enabled = false;
+                    this.Invoke(new MethodInvoker(() =>
+                    {
+                        chkWebInt.Enabled = true;
+                        labViewInBrowser.Enabled = false;
+                    }));
                     link = string.Empty;
                 };
             Program.Account.WebInterface.InterfaceUploaded += (o, n) =>
                 {
-                    chkWebInt.Enabled = true;
-                    labViewInBrowser.Enabled = true;
+                    this.Invoke(new MethodInvoker(() =>
+                    {
+                        chkWebInt.Enabled = true;
+                        labViewInBrowser.Enabled = true;
+                    }));
                     link = Program.Account.WebInterfaceLink;
                 };
 
