@@ -341,7 +341,7 @@ namespace FTPboxLib
 
                             ReportTransferProgress(new TransferProgressArgs(read, _transfered, i, _startedOn));
 
-                            //TODO: Limit transfer rate
+                            ThrottleTransfer(Settings.General.UploadLimit, _transfered, _startedOn);
                         }
                     }
                 }
@@ -423,7 +423,7 @@ namespace FTPboxLib
                             
                             ReportTransferProgress(new TransferProgressArgs(read, _transfered, i, _startedOn));
 
-                            //TODO: Limit transfer rate
+                            ThrottleTransfer(Settings.General.DownloadLimit, _transfered, _startedOn);
                         }
                     }
                 }
@@ -516,7 +516,7 @@ namespace FTPboxLib
             // List is reversed to delete an files before their parent folders
             foreach (var i in ListRecursive(path, skipIgnored).Reverse())
             {
-                Console.Write("\r Creating: {0,50}", i.FullPath);
+                Console.Write("\r Removing: {0,50}", i.FullPath);
                 if (i.Type == ClientItemType.File)
                     Remove(i.FullPath);
                 else
@@ -558,6 +558,27 @@ namespace FTPboxLib
                 if (!isConnected) Log.Write(l.Warning, "Client not connected!");
                 Common.LogError(ex);
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Throttle the file transfer if speed limits apply.
+        /// </summary>
+        /// <param name="limit">The download or upload rate to limit to, in kB/s.</param>
+        /// <param name="transfered">bytes already transferred.</param>
+        /// <param name="startedOn">when did the transfer start.</param>
+        private void ThrottleTransfer(int limit, long transfered, DateTime startedOn)
+        {
+            var elapsed = DateTime.Now.Subtract(startedOn);
+            var rate = (int)(elapsed.TotalSeconds < 1 ? transfered : transfered / elapsed.TotalSeconds);
+            if (limit > 0 && rate > 1000 * limit)
+            {
+                double millisecDelay = (transfered / limit - elapsed.Milliseconds);
+
+                if (millisecDelay > Int32.MaxValue)
+                    millisecDelay = Int32.MaxValue;
+
+                Thread.Sleep((int)millisecDelay);
             }
         }
 

@@ -93,7 +93,7 @@ namespace FTPboxLib
                var f = rate <= 1024 ? "bytes" : "kb";
                if (rate > 1024) rate /= 1024;
 
-               Console.Write("\r Transferred {0}/{1} bytes @ {2} {3}/s", TotalTransferred, Item.Item.Size, rate, f );
+               Console.Write("\r Transferred {0:p} bytes @ {1} {2}/s", (double)TotalTransferred / (double)Item.Item.Size, rate, f);
 
                return string.Format("{0} {1}/s", rate, f);
            }
