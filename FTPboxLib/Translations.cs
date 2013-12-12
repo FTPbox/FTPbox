@@ -122,15 +122,15 @@ namespace FTPboxLib
                 switch (ca)
                 {
                     case ChangeAction.created:
-                        return string.Format("{0} {1}", fileorfolder, this[MessageType.ItemCreated]);
+                        return string.Format(this[MessageType.ItemCreated], fileorfolder);
                     case ChangeAction.deleted:
-                        return string.Format("{0} {1}", fileorfolder, this[MessageType.ItemDeleted]);
+                        return string.Format(this[MessageType.ItemDeleted], fileorfolder);
                     case ChangeAction.renamed:
                         return this[MessageType.ItemRenamed];
                     case ChangeAction.changed:
-                        return string.Format("{0} {1}", fileorfolder, this[MessageType.ItemChanged]);
+                        return string.Format(this[MessageType.ItemChanged], fileorfolder);
                     default:
-                        return string.Format("{0} {1}", fileorfolder, this[MessageType.ItemUpdated]);
+                        return string.Format(this[MessageType.ItemUpdated], fileorfolder);
                 }
             }
         }

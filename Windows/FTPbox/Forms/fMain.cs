@@ -65,7 +65,7 @@ namespace FTPbox.Forms
             Notifications.NotificationReady += (o, n) =>
                 {
                     link = Program.Account.LinkToRecent();
-                    tray.ShowBalloonTip(100, "FTPbox", n.Text, ToolTipIcon.Info);
+                    tray.ShowBalloonTip(100, n.Title, n.Text, ToolTipIcon.Info);
                 };
 
 

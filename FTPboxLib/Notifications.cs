@@ -30,9 +30,8 @@ namespace FTPboxLib
 			if (!Settings.General.Notifications) return;
 
             name = Common._name(name);
-            string body = string.Format(Common.Languages[ca, file], name);
 
-            InvokeNotificationReady(null, new NotificationArgs { Text = body });
+            InvokeNotificationReady(null, new NotificationArgs { Title = Common.Languages[ca, file], Text = name });
 		}
 
         /// <summary>
