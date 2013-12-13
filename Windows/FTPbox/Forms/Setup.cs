@@ -523,6 +523,14 @@ namespace FTPbox.Forms
         {
             if (e.CloseReason == CloseReason.UserClosing || e.CloseReason == CloseReason.WindowsShutDown || e.CloseReason == CloseReason.TaskManagerClosing)
             {
+                // If this in an abandoned new-account form, switch default profile to
+                // the last profile the user set up.
+                if (Settings.General.DefaultProfile > 0 && !JustPassword)
+                {
+                    Settings.General.DefaultProfile--;
+                    Settings.SaveGeneral();
+                }
+                
                 ((fMain)Tag).ExitedFromTray = true;
                 ((fMain)Tag).KillTheProcess();
             }
