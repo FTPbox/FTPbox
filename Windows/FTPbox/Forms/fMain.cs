@@ -39,7 +39,8 @@ namespace FTPbox.Forms
 
         private TrayTextNotificationArgs _lastTrayStatus = new TrayTextNotificationArgs
             {AssossiatedFile = null, MessageType = MessageType.AllSynced};
-        private Thread tRefresh;
+        
+        private System.Threading.Timer tRetry;
 
         //Links
         public string link = string.Empty;                  //The web link of the last-changed file
@@ -139,15 +140,22 @@ namespace FTPbox.Forms
         private void StartUpWork()
         {
             Log.Write(l.Debug, "Internet connection available: {0}", ConnectedToInternet().ToString());
+            OfflineMode = false;
+
             if (ConnectedToInternet())
             {
                 CheckAccount();
-                //UpdateDetails();
+                
+                this.Invoke(new MethodInvoker(UpdateDetails));
+
+                if (OfflineMode) return;
+
                 Log.Write(l.Debug, "Account: OK");
+
                 CheckPaths();
                 Log.Write(l.Debug, "Paths: OK");
 
-                UpdateDetails();
+                this.Invoke(new MethodInvoker(UpdateDetails));
 
                 if (!Settings.IsNoMenusMode)
                 {
@@ -183,18 +191,22 @@ namespace FTPbox.Forms
                 {
                     Program.Account.Client.Connect();
 
-                    this.ShowInTaskbar = false;
-                    this.Hide();
-                    this.ShowInTaskbar = true;                    
+                    this.Invoke(new MethodInvoker(() =>
+                    {
+                        this.ShowInTaskbar = false;
+                        this.Hide();
+                        this.ShowInTaskbar = true;
+                    }));
                 }
                 catch (Exception ex)
                 {
-                    Log.Write(l.Info, "Will open New FTP form");
+                    Log.Write(l.Warning, "Connecting failed, will retry in 30 seconds...");
                     Common.LogError(ex);
-                    fSetup.ShowDialog();
-                    Log.Write(l.Info, "Done");
 
-                    this.Show();
+                    OfflineMode = true;
+                    SetTray(null, new TrayTextNotificationArgs { MessageType = MessageType.Offline });
+
+                    tRetry = new System.Threading.Timer(state => this.StartUpWork(), null, 30000, 0);                    
                 }
         }
         
@@ -225,12 +237,7 @@ namespace FTPbox.Forms
         /// </summary>
         public void UpdateDetails()
         {
-            Log.Write(l.Debug, "Updating the form details");
-
-            bool e = Program.Account.WebInterface.Exists;
-            chkWebInt.Checked = e;
-            labViewInBrowser.Enabled = e;
-            changedfromcheck = false;
+            Log.Write(l.Debug, "Updating the form details");            
 
             chkStartUp.Checked = CheckStartup();
 
@@ -284,6 +291,17 @@ namespace FTPbox.Forms
                 gLimits.Visible = false;
 
             Set_Language(Settings.General.Language);
+
+            // Disable the following in offline mode
+            chkWebInt.Enabled = !OfflineMode;
+            SyncToolStripMenuItem.Enabled = !OfflineMode;
+
+            if (OfflineMode || !gotpaths) return;
+
+            bool e = Program.Account.WebInterface.Exists;
+            chkWebInt.Checked = e;
+            labViewInBrowser.Enabled = e;
+            changedfromcheck = false;
 
             Program.Account.FolderWatcher.Setup();
 
@@ -1138,6 +1156,8 @@ namespace FTPbox.Forms
 
         private void chkWebInt_CheckedChanged(object sender, EventArgs e)
         {
+            if (!Program.Account.Client.isConnected) return; 
+            
             if (!changedfromcheck)
             {
                 if (chkWebInt.Checked)
@@ -1370,6 +1390,8 @@ namespace FTPbox.Forms
 
         private void SyncToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!Program.Account.Client.isConnected) return;
+
             StartRemoteSync(".");
         }
 
