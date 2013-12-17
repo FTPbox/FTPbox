@@ -260,6 +260,7 @@ namespace FTPbox.Forms
             else
                 rOpenLocal.Checked = true;
 
+            cProfiles.Items.Clear();
             cProfiles.Items.AddRange(Settings.ProfileTitles);
             cProfiles.SelectedIndex = Settings.General.DefaultProfile;
 
