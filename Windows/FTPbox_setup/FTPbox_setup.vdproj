@@ -27,25 +27,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_231F280B5764E3735C4853E2CFD9F4C9"
-        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
+        "MsmKey" = "8:_202F3727FEB307EA72FAD770900F27D0"
+        "OwnerKey" = "8:_70E218FFCC4559A3F77F69678119E851"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_29A4944BAF5E2FBD24FF3EF210C9541B"
-        "OwnerKey" = "8:_231F280B5764E3735C4853E2CFD9F4C9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_29A4944BAF5E2FBD24FF3EF210C9541B"
-        "OwnerKey" = "8:_501FEBDA4AB44963BC62217164703C1C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_29A4944BAF5E2FBD24FF3EF210C9541B"
+        "MsmKey" = "8:_202F3727FEB307EA72FAD770900F27D0"
         "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -57,20 +45,20 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_3339D7A6312B3ABAC3F7416E7C63F5F8"
+        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3339D7A6312B3ABAC3F7416E7C63F5F8"
+        "OwnerKey" = "8:_70E218FFCC4559A3F77F69678119E851"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_403680D83347408BA7D4A4A78AEB584F"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_49B3F435DB37C06B11FBC6B80EE5CD32"
-        "OwnerKey" = "8:_231F280B5764E3735C4853E2CFD9F4C9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_49B3F435DB37C06B11FBC6B80EE5CD32"
-        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -87,37 +75,37 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_711A399CE7394DEE73EF06FD1E6A4B31"
-        "OwnerKey" = "8:_231F280B5764E3735C4853E2CFD9F4C9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_711A399CE7394DEE73EF06FD1E6A4B31"
+        "MsmKey" = "8:_70E218FFCC4559A3F77F69678119E851"
         "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_C49C32279B13A862C77237DAE722CBB3"
-        "OwnerKey" = "8:_231F280B5764E3735C4853E2CFD9F4C9"
+        "MsmKey" = "8:_75F8749880D0817EFFABD0C93B5F717A"
+        "OwnerKey" = "8:_70E218FFCC4559A3F77F69678119E851"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_C49C32279B13A862C77237DAE722CBB3"
+        "MsmKey" = "8:_75F8749880D0817EFFABD0C93B5F717A"
         "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_C5C6DDEE5A218FF1E4463CF6EE7E9A0E"
-        "OwnerKey" = "8:_C49C32279B13A862C77237DAE722CBB3"
+        "MsmKey" = "8:_986DF24C806FE4D125E632FFB34EE797"
+        "OwnerKey" = "8:_70E218FFCC4559A3F77F69678119E851"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_C5C6DDEE5A218FF1E4463CF6EE7E9A0E"
+        "MsmKey" = "8:_986DF24C806FE4D125E632FFB34EE797"
+        "OwnerKey" = "8:_501FEBDA4AB44963BC62217164703C1C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_986DF24C806FE4D125E632FFB34EE797"
         "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -142,43 +130,37 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_231F280B5764E3735C4853E2CFD9F4C9"
+        "OwnerKey" = "8:_70E218FFCC4559A3F77F69678119E851"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C49C32279B13A862C77237DAE722CBB3"
+        "OwnerKey" = "8:_75F8749880D0817EFFABD0C93B5F717A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C5C6DDEE5A218FF1E4463CF6EE7E9A0E"
+        "OwnerKey" = "8:_202F3727FEB307EA72FAD770900F27D0"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_711A399CE7394DEE73EF06FD1E6A4B31"
+        "OwnerKey" = "8:_986DF24C806FE4D125E632FFB34EE797"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_49B3F435DB37C06B11FBC6B80EE5CD32"
+        "OwnerKey" = "8:_3339D7A6312B3ABAC3F7416E7C63F5F8"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_29A4944BAF5E2FBD24FF3EF210C9541B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_79E027320435F9386BD88D1BCD24C2BC"
+        "OwnerKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -190,7 +172,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
+        "OwnerKey" = "8:_79E027320435F9386BD88D1BCD24C2BC"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -338,15 +320,20 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_231F280B5764E3735C4853E2CFD9F4C9"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_202F3727FEB307EA72FAD770900F27D0"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:FTPboxLib, Version=2.4.6.1, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Renci.SshNet, Version=2013.4.7.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_202F3727FEB307EA72FAD770900F27D0"
+                    {
+                    "Name" = "8:Renci.SshNet.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
-            "SourcePath" = "8:FTPboxLib.dll"
+            "SourcePath" = "8:Renci.SshNet.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
@@ -364,15 +351,20 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_29A4944BAF5E2FBD24FF3EF210C9541B"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3339D7A6312B3ABAC3F7416E7C63F5F8"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_3339D7A6312B3ABAC3F7416E7C63F5F8"
+                    {
+                    "Name" = "8:Newtonsoft.Json.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
-            "SourcePath" = "8:Ionic.Zip.Reduced.dll"
+            "SourcePath" = "8:Newtonsoft.Json.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
@@ -408,32 +400,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_49B3F435DB37C06B11FBC6B80EE5CD32"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                }
-            "SourcePath" = "8:Newtonsoft.Json.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_501FEBDA4AB44963BC62217164703C1C"
@@ -487,15 +453,20 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_711A399CE7394DEE73EF06FD1E6A4B31"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_70E218FFCC4559A3F77F69678119E851"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Renci.SshNet, Version=2013.4.7.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:FTPboxLib, Version=2.5.3.1, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_70E218FFCC4559A3F77F69678119E851"
+                    {
+                    "Name" = "8:FTPboxLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
-            "SourcePath" = "8:Renci.SshNet.dll"
+            "SourcePath" = "8:FTPboxLib.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
@@ -513,15 +484,20 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C49C32279B13A862C77237DAE722CBB3"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_75F8749880D0817EFFABD0C93B5F717A"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Starksoft.Net.Ftp, Version=1.0.158.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:System.Net.FtpClient, Version=1.0.5064.19175, Culture=neutral, PublicKeyToken=fa4be07daa57c2b7, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_75F8749880D0817EFFABD0C93B5F717A"
+                    {
+                    "Name" = "8:System.Net.FtpClient.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
-            "SourcePath" = "8:Starksoft.Net.Ftp.dll"
+            "SourcePath" = "8:System.Net.FtpClient.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
@@ -539,15 +515,20 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C5C6DDEE5A218FF1E4463CF6EE7E9A0E"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_986DF24C806FE4D125E632FFB34EE797"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Starksoft.Net.Proxy, Version=1.0.131.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_986DF24C806FE4D125E632FFB34EE797"
+                    {
+                    "Name" = "8:Ionic.Zip.Reduced.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
-            "SourcePath" = "8:Starksoft.Net.Proxy.dll"
+            "SourcePath" = "8:Ionic.Zip.Reduced.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"
@@ -685,15 +666,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FTPbox"
-        "ProductCode" = "8:{30B1A01A-F28E-45A5-8F80-090EB60E00ED}"
-        "PackageCode" = "8:{6078E5AC-ABB7-4E6B-AEFD-2BD6A21CD45F}"
+        "ProductCode" = "8:{E4EC58D5-2A3E-4D04-A9FC-7101D986A7A4}"
+        "PackageCode" = "8:{E53F709A-9D03-407A-B164-726128FD6FC1}"
         "UpgradeCode" = "8:{C3AC21D9-1CD1-40EC-A4F8-F482D3922829}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.5.2"
+        "ProductVersion" = "8:2.5.3"
         "Manufacturer" = "8:ftpbox.org"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:ftpbox.org"
