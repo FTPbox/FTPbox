@@ -25,7 +25,7 @@ FTPbox is licensed under the [General Public License v3][gpl]. See [LICENSE][lic
 ### Acknowledgements
 
 FTPbox uses the following awesome libraries:
-- [Starksoft FTP][starksoft] : The FTP library
+- [System.Net.FtpClient][netftp] : The FTP library
 - [SSH.NET][sshnet] : The SFTP library
 - [Json.NET][jsonnet] : The json library used for the configuration file
 - [DotNetZip][dotnetzip] : The library used for unzipping archives
@@ -66,7 +66,7 @@ You can show the project some love by making a donation! You can find out how to
 [license]: https://github.com/FTPbox/FTPbox/blob/master/LICENSE
 [todo]: https://trello.com/board/ftpbox/515afda9a23fa0b412001067
 [abt]: http://ftpbox.org/about/
-[starksoft]: http://biko.codeplex.com/
+[netftp]: http://netftp.codeplex.com/
 [sshnet]: http://sshnet.codeplex.com/
 [jsonnet]: http://json.codeplex.com/
 [dotnetzip]: http://dotnetzip.codeplex.com/
