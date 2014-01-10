@@ -320,8 +320,21 @@ namespace FTPboxLib
         /// <returns>TransferStatus.Success on success, TransferStatus.Success on failure</returns>
         public TransferStatus SafeUpload(SyncQueueItem i)
         {
+            // is this the first time we check the files?
+            if (controller.FileLog.isEmpty())
+            {
+                //TODO: allow user to select if the following should happen
+                // skip synchronization if the file already exists and has the exact same size
+                if (this.Exists(i.CommonPath) && SizeOf(i.CommonPath) == i.Item.Size)
+                {
+                    Log.Write(l.Client, "File seems to be already synced (skipping): {0}", i.CommonPath);
+                    return TransferStatus.Success;
+                }
+            }
+
             Notifications.ChangeTrayText(MessageType.Uploading, i.Item.Name);
             string temp = Common._tempName(i.CommonPath);
+
             try
             {
                 var _startedOn = DateTime.Now;

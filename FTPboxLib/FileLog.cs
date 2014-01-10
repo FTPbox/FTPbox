@@ -140,6 +140,11 @@ namespace FTPboxLib
             return ret;
         }
 
+        public bool isEmpty()
+        {
+            return Files.Count == 0 && Folders.Count == 0;
+        }
+
 	    #endregion
 
     }
