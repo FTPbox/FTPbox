@@ -3329,6 +3329,7 @@
       <application>Aplicação</application>
       <start_on_startup>Iniciar no arranque</start_on_startup>
       <show_nots>Mostrar notificações</show_nots>
+      <profile>Perfil</profile>
       <details>Detalhes</details>
       <links>Endereços</links>
       <remote_path>Pasta Remota</remote_path>
@@ -3366,6 +3367,7 @@
       <selective>Sincronização selectiva</selective>
       <selective_info>Desmarcar itens que não se deseja sincronizar</selective_info>
       <refresh>Actualizar</refresh>
+      <configure>Configurar</configure>
       <file_filters>Filtros</file_filters>
       <ignored_extensions>Extensões Ignoradas</ignored_extensions>
       <remove>Remover</remove>
@@ -3373,22 +3375,34 @@
       <dotfiles>Ficheiros dot</dotfiles>
       <temp_files>Ficheiros temporários</temp_files>
       <old_files>Ficheiros modificados antes de </old_files>
+      <enable_logging>Permitir histórico</enable_logging>
+      <view_log>Visualizar histórico</view_log>
     </main_form>
     <new_account>
       <new_ftp>Nova conta FTP</new_ftp>
       <login_details>Detalhes de FTP para o login</login_details>
       <encryption>Encripitação</encryption>
+      <ask_for_password>Pedir sempre a palavra passe</ask_for_password>
       <add>Adicionar</add>
       <done>Concluído</done>
     </new_account>
     <paths>
-      <new_paths>Novas pastas</new_paths>
+      <new_paths>Novos caminhos</new_paths>
       <add_dir>Adicione um novo directório</add_dir>
       <select_dir>Seleccione um directório</select_dir>
       <full_path>Pasta completa</full_path>
+      <default_local>Pretendo utilizar a pasta local sugerida</default_local>
+      <custom_local>Pretendo selecionar uma pasta local</custom_local>
       <local_folder>Pasta local</local_folder>
-      <browse>Procure</browse>
+      <browse>Visualizar</browse>
     </paths>
+    <setup>
+      <authentication>Autenticação</authentication>
+      <sync_all_files>Pretendo sincronizar todos os ficheiros</sync_all_files>
+      <sync_specific_files>Pretendo selecionar os ficheiros que serão sincronizados</sync_specific_files>
+      <previous>Anterior</previous>
+      <next>Seguinte</next>
+    </setup>
     <new_version>
       <new_ver>Nova Versão</new_ver>
       <update_available>Actualização disponível</update_available>
