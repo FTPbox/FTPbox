@@ -241,15 +241,6 @@ namespace FTPbox.Forms
 
             chkStartUp.Checked = CheckStartup();
 
-            lHost.Text = Program.Account.Account.Host;
-            lUsername.Text = Program.Account.Account.Username;
-            lPort.Text = Program.Account.Account.Port.ToString();
-            lMode.Text = (Program.Account.Account.Protocol != FtpProtocol.SFTP) ? "FTP" : "SFTP";
-
-            lLocPath.Text = Program.Account.Paths.Local;
-            lRemPath.Text = Program.Account.Paths.Remote;
-            tParent.Text = Program.Account.Paths.Parent;
-
             chkShowNots.Checked = Settings.General.Notifications;
             chkEnableLogging.Checked = Settings.General.EnableLogging;
 
@@ -410,33 +401,28 @@ namespace FTPbox.Forms
             this.Text = "FTPbox | " + Common.Languages[UiControl.Options];
             //general tab
             tabGeneral.Text = Common.Languages[UiControl.General];
-            tabAccount.Text = Common.Languages[UiControl.Account];
-            gAccount.Text = "FTP " + Common.Languages[UiControl.Account];
-            labHost.Text = Common.Languages[UiControl.Host];
-            labUN.Text = Common.Languages[UiControl.Username];
-            labPort.Text = Common.Languages[UiControl.Port];
-            labMode.Text = Common.Languages[UiControl.Protocol];
-            gApp.Text = Common.Languages[UiControl.Application];
-            gWebInt.Text = Common.Languages[UiControl.WebUi];
-            chkWebInt.Text = Common.Languages[UiControl.UseWebUi];
-            labViewInBrowser.Text = Common.Languages[UiControl.ViewInBrowser];
-            chkShowNots.Text = Common.Languages[UiControl.ShowNotifications];
-            chkStartUp.Text = Common.Languages[UiControl.StartOnStartup];
-            chkEnableLogging.Text = Common.Languages[UiControl.EnableLogging];
-            bBrowseLogs.Text = Common.Languages[UiControl.ViewLog];
-            //account tab
-            lProfile.Text = Common.Languages[UiControl.Profile];
-            gDetails.Text = Common.Languages[UiControl.Details];
-            labRemPath.Text = Common.Languages[UiControl.RemotePath] + ":";
-            labLocPath.Text = Common.Languages[UiControl.LocalFolder] + ":";
-            bAddAccount.Text = Common.Languages[UiControl.Add];
-            bRemoveAccount.Text = Common.Languages[UiControl.Remove];
             gLinks.Text = Common.Languages[UiControl.Links];
-            labFullPath.Text = Common.Languages[UiControl.FullAccountPath];
             labLinkClicked.Text = Common.Languages[UiControl.WhenRecentFileClicked];
             rOpenInBrowser.Text = Common.Languages[UiControl.OpenUrl];
             rCopy2Clipboard.Text = Common.Languages[UiControl.CopyUrl];
             rOpenLocal.Text = Common.Languages[UiControl.OpenLocal];
+                        
+            gApp.Text = Common.Languages[UiControl.Application];                        
+            chkShowNots.Text = Common.Languages[UiControl.ShowNotifications];
+            chkStartUp.Text = Common.Languages[UiControl.StartOnStartup];
+            chkEnableLogging.Text = Common.Languages[UiControl.EnableLogging];
+            bBrowseLogs.Text = Common.Languages[UiControl.ViewLog];
+
+            //account tab
+            tabAccount.Text = Common.Languages[UiControl.Account];
+            gAccount.Text = Common.Languages[UiControl.Profile];
+            bAddAccount.Text = Common.Languages[UiControl.Add];
+            bRemoveAccount.Text = Common.Languages[UiControl.Remove];
+            labAccount.Text = Common.Languages[UiControl.Account];
+            bConfigureAccount.Text = Common.Languages[UiControl.Details];
+            chkWebInt.Text = Common.Languages[UiControl.UseWebUi];
+            labViewInBrowser.Text = Common.Languages[UiControl.ViewInBrowser];
+
             //filters tab
             tabFilters.Text = Common.Languages[UiControl.Filters];            
             gFileFilters.Text = Common.Languages[UiControl.Filters];
@@ -483,23 +469,18 @@ namespace FTPbox.Forms
             SyncToolStripMenuItem.Text = Common.Languages[UiControl.StartSync];
             exitToolStripMenuItem.Text = Common.Languages[UiControl.Exit];
 
-            for (int i = 0; i < 5; i++)
-            {
-                if (trayMenu.InvokeRequired)
-                {
-                    trayMenu.Invoke(new MethodInvoker(delegate
-                    {
-                        foreach (ToolStripItem t in recentFilesToolStripMenuItem.DropDownItems)
-                            if (!t.Enabled)
-                                t.Text = Common.Languages[MessageType.NotAvailable];
-                    }));
-                }
-                else
+            if (trayMenu.InvokeRequired)
+                trayMenu.Invoke(new MethodInvoker(delegate
                 {
                     foreach (ToolStripItem t in recentFilesToolStripMenuItem.DropDownItems)
                         if (!t.Enabled)
                             t.Text = Common.Languages[MessageType.NotAvailable];
-                }
+                }));
+            else
+            {
+                foreach (ToolStripItem t in recentFilesToolStripMenuItem.DropDownItems)
+                    if (!t.Enabled)
+                        t.Text = Common.Languages[MessageType.NotAvailable];
             }
 
             SetTray(null, _lastTrayStatus);
@@ -1143,12 +1124,6 @@ namespace FTPbox.Forms
             }
         }
 
-        private void tParent_TextChanged(object sender, EventArgs e)
-        {
-            Program.Account.Paths.Parent = tParent.Text;
-            Settings.SaveProfile();
-        }
-
         private void chkShowNots_CheckedChanged(object sender, EventArgs e)
         {
             Settings.General.Notifications = chkShowNots.Checked;
@@ -1240,6 +1215,11 @@ namespace FTPbox.Forms
             }
             else
                 cProfiles.SelectedIndex = Settings.General.DefaultProfile;
+        }
+
+        private void bConfigureAccount_Click(object sender, EventArgs e)
+        {
+            new fAccountDetails().ShowDialog();
         }
 
         #endregion
@@ -1742,7 +1722,8 @@ namespace FTPbox.Forms
 
             bAddAccount.Location = new Point(RightToLeftLayout ? 14 : 299, 10);
             bRemoveAccount.Location = new Point(RightToLeftLayout ? 95 : 380, 10);
-            cProfiles.Location = new Point(RightToLeftLayout ? 176 : 103, 11);
+            cProfiles.Location = new Point(RightToLeftLayout ? 170 : 8, 11);
+            bConfigureAccount.Location = new Point(RightToLeftLayout ? 6 : 325, 16);
 
             bConfigureSelectiveSync.Location = new Point(RightToLeftLayout ? 6 : 325, 19);
             bConfigureExtensions.Location = new Point(RightToLeftLayout ? 6 : 325, 48);

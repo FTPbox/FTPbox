@@ -46,29 +46,14 @@
             this.chkShowNots = new System.Windows.Forms.CheckBox();
             this.chkStartUp = new System.Windows.Forms.CheckBox();
             this.tabAccount = new System.Windows.Forms.TabPage();
-            this.gWebInt = new System.Windows.Forms.GroupBox();
-            this.labViewInBrowser = new System.Windows.Forms.LinkLabel();
-            this.chkWebInt = new System.Windows.Forms.CheckBox();
             this.bRemoveAccount = new System.Windows.Forms.Button();
             this.bAddAccount = new System.Windows.Forms.Button();
             this.cProfiles = new System.Windows.Forms.ComboBox();
-            this.lProfile = new System.Windows.Forms.Label();
             this.gAccount = new System.Windows.Forms.GroupBox();
-            this.lMode = new System.Windows.Forms.Label();
-            this.labMode = new System.Windows.Forms.Label();
-            this.lPort = new System.Windows.Forms.Label();
-            this.lHost = new System.Windows.Forms.Label();
-            this.lUsername = new System.Windows.Forms.Label();
-            this.labPort = new System.Windows.Forms.Label();
-            this.labUN = new System.Windows.Forms.Label();
-            this.labHost = new System.Windows.Forms.Label();
-            this.gDetails = new System.Windows.Forms.GroupBox();
-            this.tParent = new System.Windows.Forms.TextBox();
-            this.labFullPath = new System.Windows.Forms.Label();
-            this.lLocPath = new System.Windows.Forms.Label();
-            this.lRemPath = new System.Windows.Forms.Label();
-            this.labLocPath = new System.Windows.Forms.Label();
-            this.labRemPath = new System.Windows.Forms.Label();
+            this.labViewInBrowser = new System.Windows.Forms.LinkLabel();
+            this.chkWebInt = new System.Windows.Forms.CheckBox();
+            this.bConfigureAccount = new System.Windows.Forms.Button();
+            this.labAccount = new System.Windows.Forms.Label();
             this.tabFilters = new System.Windows.Forms.TabPage();
             this.gFileFilters = new System.Windows.Forms.GroupBox();
             this.bConfigureSelectiveSync = new System.Windows.Forms.Button();
@@ -136,9 +121,7 @@
             this.gLinks.SuspendLayout();
             this.gApp.SuspendLayout();
             this.tabAccount.SuspendLayout();
-            this.gWebInt.SuspendLayout();
             this.gAccount.SuspendLayout();
-            this.gDetails.SuspendLayout();
             this.tabFilters.SuspendLayout();
             this.gFileFilters.SuspendLayout();
             this.tabBandwidth.SuspendLayout();
@@ -342,13 +325,10 @@
             // tabAccount
             // 
             this.tabAccount.AccessibleDescription = "";
-            this.tabAccount.Controls.Add(this.gWebInt);
             this.tabAccount.Controls.Add(this.bRemoveAccount);
             this.tabAccount.Controls.Add(this.bAddAccount);
             this.tabAccount.Controls.Add(this.cProfiles);
-            this.tabAccount.Controls.Add(this.lProfile);
             this.tabAccount.Controls.Add(this.gAccount);
-            this.tabAccount.Controls.Add(this.gDetails);
             this.tabAccount.Location = new System.Drawing.Point(4, 22);
             this.tabAccount.Name = "tabAccount";
             this.tabAccount.Padding = new System.Windows.Forms.Padding(3);
@@ -356,45 +336,6 @@
             this.tabAccount.TabIndex = 1;
             this.tabAccount.Text = "Account";
             this.tabAccount.UseVisualStyleBackColor = true;
-            // 
-            // gWebInt
-            // 
-            this.gWebInt.AccessibleDescription = "";
-            this.gWebInt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gWebInt.Controls.Add(this.labViewInBrowser);
-            this.gWebInt.Controls.Add(this.chkWebInt);
-            this.gWebInt.Location = new System.Drawing.Point(8, 294);
-            this.gWebInt.Name = "gWebInt";
-            this.gWebInt.Size = new System.Drawing.Size(447, 57);
-            this.gWebInt.TabIndex = 18;
-            this.gWebInt.TabStop = false;
-            this.gWebInt.Text = "Web Interface";
-            // 
-            // labViewInBrowser
-            // 
-            this.labViewInBrowser.AccessibleDescription = "opens the web interface in browser";
-            this.labViewInBrowser.AccessibleName = "View in browser";
-            this.labViewInBrowser.AutoSize = true;
-            this.labViewInBrowser.Location = new System.Drawing.Point(188, 25);
-            this.labViewInBrowser.Name = "labViewInBrowser";
-            this.labViewInBrowser.Size = new System.Drawing.Size(87, 13);
-            this.labViewInBrowser.TabIndex = 5;
-            this.labViewInBrowser.TabStop = true;
-            this.labViewInBrowser.Text = "(View in browser)";
-            this.labViewInBrowser.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labViewInBrowser_LinkClicked);
-            // 
-            // chkWebInt
-            // 
-            this.chkWebInt.AccessibleDescription = "";
-            this.chkWebInt.AccessibleName = "use the web interface?";
-            this.chkWebInt.Location = new System.Drawing.Point(9, 24);
-            this.chkWebInt.Name = "chkWebInt";
-            this.chkWebInt.Size = new System.Drawing.Size(434, 17);
-            this.chkWebInt.TabIndex = 4;
-            this.chkWebInt.Text = "Use the web interface";
-            this.chkWebInt.UseVisualStyleBackColor = true;
-            this.chkWebInt.CheckedChanged += new System.EventHandler(this.chkWebInt_CheckedChanged);
             // 
             // bRemoveAccount
             // 
@@ -422,182 +363,70 @@
             this.cProfiles.AccessibleName = "Profiles";
             this.cProfiles.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cProfiles.FormattingEnabled = true;
-            this.cProfiles.Location = new System.Drawing.Point(103, 11);
+            this.cProfiles.Location = new System.Drawing.Point(8, 11);
             this.cProfiles.Name = "cProfiles";
-            this.cProfiles.Size = new System.Drawing.Size(190, 21);
+            this.cProfiles.Size = new System.Drawing.Size(285, 21);
             this.cProfiles.TabIndex = 15;
             this.cProfiles.SelectedIndexChanged += new System.EventHandler(this.cProfiles_SelectedIndexChanged);
-            // 
-            // lProfile
-            // 
-            this.lProfile.AccessibleDescription = "";
-            this.lProfile.Location = new System.Drawing.Point(14, 14);
-            this.lProfile.Name = "lProfile";
-            this.lProfile.Size = new System.Drawing.Size(441, 13);
-            this.lProfile.TabIndex = 14;
-            this.lProfile.Text = "Profile:";
             // 
             // gAccount
             // 
             this.gAccount.AccessibleDescription = "";
             this.gAccount.AccessibleName = "";
-            this.gAccount.Controls.Add(this.lMode);
-            this.gAccount.Controls.Add(this.labMode);
-            this.gAccount.Controls.Add(this.lPort);
-            this.gAccount.Controls.Add(this.lHost);
-            this.gAccount.Controls.Add(this.lUsername);
-            this.gAccount.Controls.Add(this.labPort);
-            this.gAccount.Controls.Add(this.labUN);
-            this.gAccount.Controls.Add(this.labHost);
-            this.gAccount.Location = new System.Drawing.Point(8, 38);
+            this.gAccount.Controls.Add(this.labViewInBrowser);
+            this.gAccount.Controls.Add(this.chkWebInt);
+            this.gAccount.Controls.Add(this.bConfigureAccount);
+            this.gAccount.Controls.Add(this.labAccount);
+            this.gAccount.Location = new System.Drawing.Point(8, 50);
             this.gAccount.Name = "gAccount";
-            this.gAccount.Size = new System.Drawing.Size(447, 102);
+            this.gAccount.Size = new System.Drawing.Size(447, 77);
             this.gAccount.TabIndex = 3;
             this.gAccount.TabStop = false;
-            this.gAccount.Text = "FTP Account";
+            this.gAccount.Text = "Profile";
             // 
-            // lMode
+            // labViewInBrowser
             // 
-            this.lMode.AccessibleDescription = "";
-            this.lMode.Location = new System.Drawing.Point(92, 75);
-            this.lMode.Name = "lMode";
-            this.lMode.Size = new System.Drawing.Size(274, 13);
-            this.lMode.TabIndex = 13;
-            this.lMode.Text = "N/A";
+            this.labViewInBrowser.AccessibleDescription = "opens the web interface in browser";
+            this.labViewInBrowser.AccessibleName = "View in browser";
+            this.labViewInBrowser.AutoSize = true;
+            this.labViewInBrowser.Location = new System.Drawing.Point(186, 46);
+            this.labViewInBrowser.Name = "labViewInBrowser";
+            this.labViewInBrowser.Size = new System.Drawing.Size(87, 13);
+            this.labViewInBrowser.TabIndex = 16;
+            this.labViewInBrowser.TabStop = true;
+            this.labViewInBrowser.Text = "(View in browser)";
+            this.labViewInBrowser.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labViewInBrowser_LinkClicked);
             // 
-            // labMode
+            // chkWebInt
             // 
-            this.labMode.AccessibleDescription = "";
-            this.labMode.Location = new System.Drawing.Point(6, 75);
-            this.labMode.Name = "labMode";
-            this.labMode.Size = new System.Drawing.Size(435, 13);
-            this.labMode.TabIndex = 12;
-            this.labMode.Text = "Mode:";
+            this.chkWebInt.AccessibleDescription = "";
+            this.chkWebInt.AccessibleName = "use the web interface?";
+            this.chkWebInt.Location = new System.Drawing.Point(8, 45);
+            this.chkWebInt.Name = "chkWebInt";
+            this.chkWebInt.Size = new System.Drawing.Size(433, 17);
+            this.chkWebInt.TabIndex = 15;
+            this.chkWebInt.Text = "Use the web interface";
+            this.chkWebInt.UseVisualStyleBackColor = true;
+            this.chkWebInt.CheckedChanged += new System.EventHandler(this.chkWebInt_CheckedChanged);
             // 
-            // lPort
+            // bConfigureAccount
             // 
-            this.lPort.AccessibleDescription = "";
-            this.lPort.Location = new System.Drawing.Point(92, 57);
-            this.lPort.Name = "lPort";
-            this.lPort.Size = new System.Drawing.Size(274, 13);
-            this.lPort.TabIndex = 10;
-            this.lPort.Text = "N/A";
+            this.bConfigureAccount.Location = new System.Drawing.Point(325, 16);
+            this.bConfigureAccount.Name = "bConfigureAccount";
+            this.bConfigureAccount.Size = new System.Drawing.Size(107, 23);
+            this.bConfigureAccount.TabIndex = 14;
+            this.bConfigureAccount.Text = "Details";
+            this.bConfigureAccount.UseVisualStyleBackColor = true;
+            this.bConfigureAccount.Click += new System.EventHandler(this.bConfigureAccount_Click);
             // 
-            // lHost
+            // labAccount
             // 
-            this.lHost.AccessibleDescription = "";
-            this.lHost.Location = new System.Drawing.Point(92, 21);
-            this.lHost.Name = "lHost";
-            this.lHost.Size = new System.Drawing.Size(274, 13);
-            this.lHost.TabIndex = 9;
-            this.lHost.Text = "N/A";
-            // 
-            // lUsername
-            // 
-            this.lUsername.AccessibleDescription = "";
-            this.lUsername.Location = new System.Drawing.Point(92, 39);
-            this.lUsername.Name = "lUsername";
-            this.lUsername.Size = new System.Drawing.Size(274, 13);
-            this.lUsername.TabIndex = 8;
-            this.lUsername.Text = "N/A";
-            // 
-            // labPort
-            // 
-            this.labPort.AccessibleDescription = "";
-            this.labPort.Location = new System.Drawing.Point(6, 57);
-            this.labPort.Name = "labPort";
-            this.labPort.Size = new System.Drawing.Size(435, 13);
-            this.labPort.TabIndex = 6;
-            this.labPort.Text = "Port:";
-            // 
-            // labUN
-            // 
-            this.labUN.AccessibleDescription = "";
-            this.labUN.Location = new System.Drawing.Point(6, 39);
-            this.labUN.Name = "labUN";
-            this.labUN.Size = new System.Drawing.Size(435, 13);
-            this.labUN.TabIndex = 5;
-            this.labUN.Text = "Username:";
-            // 
-            // labHost
-            // 
-            this.labHost.AccessibleDescription = "";
-            this.labHost.Location = new System.Drawing.Point(6, 21);
-            this.labHost.Name = "labHost";
-            this.labHost.Size = new System.Drawing.Size(435, 13);
-            this.labHost.TabIndex = 4;
-            this.labHost.Text = "Host:";
-            // 
-            // gDetails
-            // 
-            this.gDetails.AccessibleDescription = "";
-            this.gDetails.Controls.Add(this.tParent);
-            this.gDetails.Controls.Add(this.labFullPath);
-            this.gDetails.Controls.Add(this.lLocPath);
-            this.gDetails.Controls.Add(this.lRemPath);
-            this.gDetails.Controls.Add(this.labLocPath);
-            this.gDetails.Controls.Add(this.labRemPath);
-            this.gDetails.Location = new System.Drawing.Point(8, 146);
-            this.gDetails.Name = "gDetails";
-            this.gDetails.Size = new System.Drawing.Size(447, 142);
-            this.gDetails.TabIndex = 0;
-            this.gDetails.TabStop = false;
-            this.gDetails.Text = "Details";
-            // 
-            // tParent
-            // 
-            this.tParent.AccessibleDescription = "";
-            this.tParent.AccessibleName = "account\'s http path";
-            this.tParent.Location = new System.Drawing.Point(29, 109);
-            this.tParent.Name = "tParent";
-            this.tParent.Size = new System.Drawing.Size(400, 20);
-            this.tParent.TabIndex = 7;
-            this.tParent.TextChanged += new System.EventHandler(this.tParent_TextChanged);
-            // 
-            // labFullPath
-            // 
-            this.labFullPath.AccessibleDescription = "";
-            this.labFullPath.Location = new System.Drawing.Point(6, 93);
-            this.labFullPath.Name = "labFullPath";
-            this.labFullPath.Size = new System.Drawing.Size(437, 13);
-            this.labFullPath.TabIndex = 8;
-            this.labFullPath.Text = "Account\'s full path:";
-            // 
-            // lLocPath
-            // 
-            this.lLocPath.AccessibleDescription = "";
-            this.lLocPath.Location = new System.Drawing.Point(26, 75);
-            this.lLocPath.Name = "lLocPath";
-            this.lLocPath.Size = new System.Drawing.Size(397, 13);
-            this.lLocPath.TabIndex = 6;
-            this.lLocPath.Text = "N/A";
-            // 
-            // lRemPath
-            // 
-            this.lRemPath.AccessibleDescription = "";
-            this.lRemPath.Location = new System.Drawing.Point(26, 37);
-            this.lRemPath.Name = "lRemPath";
-            this.lRemPath.Size = new System.Drawing.Size(397, 13);
-            this.lRemPath.TabIndex = 5;
-            this.lRemPath.Text = "N/A";
-            // 
-            // labLocPath
-            // 
-            this.labLocPath.AccessibleDescription = "";
-            this.labLocPath.Location = new System.Drawing.Point(6, 55);
-            this.labLocPath.Name = "labLocPath";
-            this.labLocPath.Size = new System.Drawing.Size(435, 13);
-            this.labLocPath.TabIndex = 1;
-            this.labLocPath.Text = "Local Path:";
-            // 
-            // labRemPath
-            // 
-            this.labRemPath.AccessibleDescription = "";
-            this.labRemPath.Location = new System.Drawing.Point(6, 19);
-            this.labRemPath.Name = "labRemPath";
-            this.labRemPath.Size = new System.Drawing.Size(435, 13);
-            this.labRemPath.TabIndex = 0;
-            this.labRemPath.Text = "Remote Path:";
+            this.labAccount.AccessibleDescription = "";
+            this.labAccount.Location = new System.Drawing.Point(6, 21);
+            this.labAccount.Name = "labAccount";
+            this.labAccount.Size = new System.Drawing.Size(435, 13);
+            this.labAccount.TabIndex = 4;
+            this.labAccount.Text = "Account:";
             // 
             // tabFilters
             // 
@@ -1249,11 +1078,8 @@
             this.gLinks.ResumeLayout(false);
             this.gApp.ResumeLayout(false);
             this.tabAccount.ResumeLayout(false);
-            this.gWebInt.ResumeLayout(false);
-            this.gWebInt.PerformLayout();
             this.gAccount.ResumeLayout(false);
-            this.gDetails.ResumeLayout(false);
-            this.gDetails.PerformLayout();
+            this.gAccount.PerformLayout();
             this.tabFilters.ResumeLayout(false);
             this.gFileFilters.ResumeLayout(false);
             this.tabBandwidth.ResumeLayout(false);
@@ -1281,11 +1107,6 @@
         private System.Windows.Forms.CheckBox chkShowNots;
         private System.Windows.Forms.CheckBox chkStartUp;
         private System.Windows.Forms.TabPage tabAccount;
-        private System.Windows.Forms.GroupBox gDetails;
-        private System.Windows.Forms.Label lLocPath;
-        private System.Windows.Forms.Label lRemPath;
-        private System.Windows.Forms.Label labLocPath;
-        private System.Windows.Forms.Label labRemPath;
         private System.Windows.Forms.TabPage tabAbout;
         private System.Windows.Forms.Label labSupportMail;
         private System.Windows.Forms.LinkLabel linkLabel4;
@@ -1325,14 +1146,7 @@
         private System.Windows.Forms.RadioButton rCopy2Clipboard;
         private System.Windows.Forms.RadioButton rOpenInBrowser;
         private System.Windows.Forms.GroupBox gAccount;
-        private System.Windows.Forms.Label lMode;
-        private System.Windows.Forms.Label labMode;
-        private System.Windows.Forms.Label lPort;
-        private System.Windows.Forms.Label lHost;
-        private System.Windows.Forms.Label lUsername;
-        private System.Windows.Forms.Label labPort;
-        private System.Windows.Forms.Label labUN;
-        private System.Windows.Forms.Label labHost;
+        private System.Windows.Forms.Label labAccount;
         private System.Windows.Forms.GroupBox gLimits;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
@@ -1359,23 +1173,20 @@
         private System.Windows.Forms.Label labAlsoIgnore;
         private System.Windows.Forms.CheckBox cIgnoreOldFiles;
         private System.Windows.Forms.DateTimePicker dtpLastModTime;
-        private System.Windows.Forms.Label lProfile;
         private System.Windows.Forms.Label labLinkClicked;
         private System.Windows.Forms.ComboBox cProfiles;
         private System.Windows.Forms.CheckBox chkEnableLogging;
         private System.Windows.Forms.Button bBrowseLogs;
         private System.Windows.Forms.Button bAddAccount;
         private System.Windows.Forms.Button bRemoveAccount;
-        private System.Windows.Forms.GroupBox gWebInt;
-        private System.Windows.Forms.LinkLabel labViewInBrowser;
-        private System.Windows.Forms.CheckBox chkWebInt;
-        private System.Windows.Forms.TextBox tParent;
-        private System.Windows.Forms.Label labFullPath;
         private System.Windows.Forms.GroupBox gLanguage;
         private System.Windows.Forms.ComboBox cLanguages;
         private System.Windows.Forms.Button bTranslate;
         private System.Windows.Forms.Button bConfigureExtensions;
         private System.Windows.Forms.Label labSelectiveSync;
         private System.Windows.Forms.Button bConfigureSelectiveSync;
+        private System.Windows.Forms.Button bConfigureAccount;
+        private System.Windows.Forms.LinkLabel labViewInBrowser;
+        private System.Windows.Forms.CheckBox chkWebInt;
     }
 }

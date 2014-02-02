@@ -216,7 +216,7 @@ namespace FTPboxLib
                     case UiControl.Account:
                         return Get("/main_form/account", "Account");
                     case UiControl.Profile:
-                        return Get("/main_form/profile", "Profile") + ":";
+                        return Get("/main_form/profile", "Profile");
                     case UiControl.Add:
                         return Get("/new_account/add", "Add");
                     case UiControl.Remove:

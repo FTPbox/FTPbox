@@ -44,10 +44,18 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\fAccountDetails.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\fAccountDetails.Designer.cs">
+      <DependentUpon>fAccountDetails.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\fIgnoredExtensions.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,6 +94,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\fAccountDetails.resx">
+      <DependentUpon>fAccountDetails.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\fIgnoredExtensions.resx">
       <DependentUpon>fIgnoredExtensions.cs</DependentUpon>
     </EmbeddedResource>
