@@ -2461,6 +2461,7 @@
       <application>应用程序</application>
       <start_on_startup>系统启动时启动</start_on_startup>
       <show_nots>显示通知</show_nots>
+      <profile>站点管理</profile>
       <details>详细信息</details>
       <links>链接</links>
       <remote_path>远程路径</remote_path>
@@ -2471,10 +2472,10 @@
       <copy>复制链接至剪贴板 </copy>
       <about>关于</about>
       <current_version>当前版本</current_version>
-      <team>小组</team>
+      <team>开发小组</team>
       <website>官方网址</website>
-      <contact>联系</contact>
-      <coded_in>编码 </coded_in>
+      <contact>联系我们</contact>
+      <coded_in>开发代码</coded_in>
       <notes>注解</notes>
       <contribute>贡献</contribute>
       <ftpbox_is_free>FTPbox是免费和开放源码</ftpbox_is_free>
@@ -2483,7 +2484,7 @@
       <report_bug>错误报告</report_bug>
       <request_feature>请求功能</request_feature>
       <donate>捐赠</donate>
-      <language>语</language>
+      <language>语言</language>
       <open_local>打开本地文件</open_local>
       <bandwidth>带宽</bandwidth>
       <sync_freq>同步频率</sync_freq>
@@ -2496,12 +2497,24 @@
       <limit_upload>上载限速</limit_upload>
       <no_limits>（设置0为无限制）</no_limits>
       <selective>选择性同步</selective>
-      <selective_info>取消选中你不想同步的项目</selective_info>
+      <selective_info>选中需要同步的项目</selective_info>
+      <refresh>刷新</refresh>
+      <configure>配置</configure>
+      <file_filters>同步</file_filters>
+      <ignored_extensions>传输排除(通过后缀名)</ignored_extensions>
+      <remove>移除</remove>
+      <also_ignore>排除特殊文件</also_ignore>
+      <dotfiles>隐藏文件</dotfiles>
+      <temp_files>缓存文件</temp_files>
+      <old_files>文件已被修改</old_files>
+      <enable_logging>开启日志记录</enable_logging>
+      <view_log>查看日志</view_log>
     </main_form>
     <new_account>
       <new_ftp>新的FTP帐户</new_ftp>
       <login_details>FTP登录详情</login_details>
       <encryption>加密</encryption>
+      <ask_for_password>每次询问密码</ask_for_password>
       <add>增加</add>
       <done>完成</done>
     </new_account>
@@ -2510,9 +2523,18 @@
       <add_dir>添加新的目录 </add_dir>
       <select_dir>选择目录 </select_dir>
       <full_path>完整路径 </full_path>
+      <default_local>使用本地默认目录</default_local>
+      <custom_local>手动选择本地目录</custom_local>
       <local_folder>本地文件夹</local_folder>
       <browse>浏览</browse>
     </paths>
+    <setup>
+      <authentication>认证</authentication>
+      <sync_all_files>同步所有文件夹</sync_all_files>
+      <sync_specific_files>选择要同步的文件夹</sync_specific_files>
+      <previous>上一步</previous>
+      <next>下一步</next>
+    </setup>
     <new_version>
       <new_ver>新版本</new_ver>
       <update_available>有可用更新</update_available>
@@ -2552,7 +2574,7 @@
       <recent_files>最近的文件</recent_files>
       <not_available>最近的文件</not_available>
       <start_syncing>不提供</start_syncing>
-      <exit>走</exit>
+      <exit>退出</exit>
     </tray>
     <web_interface>
       <web_int>网页界面</web_int>
