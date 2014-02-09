@@ -28,7 +28,7 @@ namespace FTPboxLib
 
         // All available languages and their shortcodes
         public static readonly Dictionary<string, string> LanguageList = new Dictionary<string, string> { 
-                { "en", "English" }, { "es", "Spanish" }, { "de", "German" }, { "fr", "French" }, { "nl", "Dutch" }, { "el", "Greek" }, { "it", "Italian" }, { "tr", "Turkish" }, { "pt-BR", "Brazilian Portuguese" }, { "fo", "Faroese" }, { "sv", "Swedish" }, { "sq", "Albanian" }, { "ro", "Romanian" }, { "ko", "Korean" }, { "ru", "Russian" }, { "ja", "Japanese" }, { "no", "Norwegian" }, { "hu", "Hungarian" }, { "vi", "Vietnamese" }, { "zh_HANS", "Chinese, Simplified" }, { "zh_HANT", "Chinese, Traditional" }, { "lt", "Lithuanian" }, { "da", "Dansk" }, { "pl", "Polish" }, { "hr", "Croatian" }, { "sk", "Slovak" }, { "pt", "Portuguese" }, { "gl", "Galego" }, { "th", "Thai" }, { "sl", "Slovenian" }, { "cs", "Czech" }, { "he", "Hebrew" }, { "sr", "Serbian" }, { "src", "Serbian, Cyrillic" }, { "eu", "Basque" }
+                { "en", "English" }, { "es", "Spanish" }, { "de", "German" }, { "fr", "French" }, { "nl", "Dutch" }, { "el", "Greek" }, { "it", "Italian" }, { "tr", "Turkish" }, { "pt-BR", "Brazilian Portuguese" }, { "fo", "Faroese" }, { "sv", "Swedish" }, { "sq", "Albanian" }, { "ro", "Romanian" }, { "ko", "Korean" }, { "ru", "Russian" }, { "ja", "Japanese" }, { "no", "Norwegian" }, { "hu", "Hungarian" }, { "vi", "Vietnamese" }, { "zh_HANS", "Chinese, Simplified" }, { "zh_HANT", "Chinese, Traditional" }, { "lt", "Lithuanian" }, { "da", "Dansk" }, { "pl", "Polish" }, { "hr", "Croatian" }, { "sk", "Slovak" }, { "pt", "Portuguese" }, { "gl", "Galego" }, { "th", "Thai" }, { "sl", "Slovenian" }, { "cs", "Czech" }, { "he", "Hebrew" }, { "sr", "Serbian" }, { "src", "Serbian, Cyrillic" }, { "eu", "Basque" }, { "ar", "Arabic" }
             }.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
 
@@ -227,6 +227,14 @@ namespace FTPboxLib
                 return string.IsNullOrWhiteSpace(Settings.General.Language) 
                     ? LanguageList.Keys.ToList().IndexOf("en") : LanguageList.Keys.ToList().IndexOf(Settings.General.Language); 
             }
+        }
+
+        /// <summary>
+        /// Languages that are written from right to left
+        /// </summary>
+        public static string[] RtlLanguages
+        {
+            get { return new[] { "he", "ar" }; }
         }
 
         #endregion

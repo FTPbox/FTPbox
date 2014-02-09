@@ -486,7 +486,7 @@ namespace FTPbox.Forms
             SetTray(null, _lastTrayStatus);
 
             // Is this a right-to-left language?
-            RightToLeftLayout = new[] { "he" }.Contains(lan);
+            RightToLeftLayout = Common.RtlLanguages.Contains(lan);
 
             // Save
             Settings.General.Language = lan;

@@ -4383,4 +4383,148 @@
       <view>(Nabigatzailean ikusi)</view>
     </web_interface>
   </eu>
+
+  <ar>
+    <main_form>
+      <options>الخيارات</options>
+      <general>عام</general>
+      <host>المضيف</host>
+      <port>المنفذ</port>
+      <username>المستخدم</username>
+      <password>كلمة السر</password>
+      <mode>بروتوكول</mode>
+      <change>تغيير</change>
+      <account>حساب</account>
+      <application>برنامج</application>
+      <start_on_startup>شغّل مع بدء النظام</start_on_startup>
+      <show_nots>أظهر ملاحظات</show_nots>
+      <profile>الملف</profile>
+      <details>تفاصيل</details>
+      <links>روابط</links>
+      <remote_path>المسار- عن بعد</remote_path>
+      <local_path>المسار المحلّي</local_path>
+      <account_full_path>مسار الحساب الكامل</account_full_path>
+      <when_not_clicked>عندما لا تضغط</when_not_clicked>
+      <open_in_browser>إفتح في المتصفّح</open_in_browser>
+      <copy>نسخ</copy>
+      <about>حول</about>
+      <current_version>النسخة الحاليّة</current_version>
+      <team>الفريق</team>
+      <website>الموقع</website>
+      <contact>إتّصل بنا</contact>
+      <coded_in>تمّت البرمجة في</coded_in>
+      <notes>ملاحظات</notes>
+      <contribute>تبرّع</contribute>
+      <ftpbox_is_free>FTPbox مجّانيّة</ftpbox_is_free>
+      <contact_me>إتّصل بي</contact_me>
+      <copyright>حقوق الطبع</copyright>
+      <report_bug>بلّغ عن خلل</report_bug>
+      <request_feature>أطلب ميّزة</request_feature>
+      <donate>تبرّع</donate>
+      <language>العربيّة</language>
+      <open_local>إفتح في المحلّي</open_local>
+      <bandwidth>عرض النطاق التردّدي</bandwidth>
+      <sync_freq>تواتر الحتلنة</sync_freq>
+      <sync_when>حتلن عندما</sync_when>
+      <manually>يدويّاً</manually>
+      <auto>آليّاً</auto>
+      <seconds>ثواني</seconds>
+      <speed_limits>حدود السرعة</speed_limits>
+      <limit_download>حدود التنزيل</limit_download>
+      <limit_upload>حدود الرفع</limit_upload>
+      <no_limits>بلا حدود</no_limits>
+      <selective>اختياريّ</selective>
+      <selective_info>معلومات الإختيار</selective_info>
+      <refresh>التحديث</refresh>
+	  <configure>صحح</configure>
+      <file_filters>تصفية الملفات</file_filters>
+      <ignored_extensions>تجاهل نهاية الملفات التالية</ignored_extensions>
+      <remove>حذف</remove>
+      <also_ignore>تجاهل أيضاً</also_ignore>
+      <dotfiles>الملفات التي تبدأ بنقطة</dotfiles>
+      <temp_files>ملفات مؤقّتة</temp_files>
+      <old_files>ملفات قديمة</old_files>
+      <enable_logging>تمكين السجلّات</enable_logging>
+      <view_log>عرض السجلّات</view_log>
+    </main_form>
+    <new_account>
+      <new_ftp>حساب ftp جديد</new_ftp>
+      <login_details>تفاصيل الدخول</login_details>
+      <encryption>التشفير</encryption>
+      <ask_for_password>إسأل عن كلمة السّر</ask_for_password>
+      <add>أضف</add>
+      <done>جاهز</done>
+    </new_account>
+    <paths>
+      <new_paths>مسارات جديدة</new_paths>
+      <add_dir>أضف مجلّد</add_dir>
+      <select_dir>إختر مجلّد</select_dir>
+      <full_path>مسار كامل</full_path>
+      <default_local>المسار الإفتراضي</default_local>
+      <custom_local>تعديل المسار</custom_local>
+      <local_folder>مجلّد محلّي</local_folder>
+      <browse>تصفّح</browse>
+    </paths>
+    <setup>
+      <authentication>التوثيق</authentication>
+      <sync_all_files>حتلنة كلّ الملفات</sync_all_files>
+      <sync_specific_files>حتلنة ملفّات معيّنة</sync_specific_files>
+      <previous>السابق</previous>
+      <next>التالي</next>
+    </setup>
+    <new_version>
+      <new_ver>إصدار جديد</new_ver>
+      <update_available>حتلنة متوفّرة</update_available>
+      <new_v_available>إصدار جديد متوفّر</new_v_available>
+      <new_version>إصدار جديد</new_version>
+      <current_version>الإصدار الحالي</current_version>
+      <wanna_download>هل تريد التنزيل</wanna_download>
+      <download>تنزيل</download>
+      <learn_more>تعلّم أكثر</learn_more>
+      <remind_me_next_time>ذكّرني في المرّة القادمة</remind_me_next_time>
+    </new_version>
+    <tray>
+      <tray_and_nots>الملاحظات والتنبيهات</tray_and_nots>
+      <updated>تمّ التعديل</updated>
+      <created>تمّ الإنشاء</created>
+      <renamed>تمّت التسمية</renamed>
+      <deleted>تمّ الحذف</deleted>
+      <changed>تمّ التغيير</changed>
+      <FilesOrFoldersUpdated>تمّ حتلنة ملفّ أو مجلّد</FilesOrFoldersUpdated>
+      <FilesOrFoldersCreated>تمّ إنشاء ملفّ أو مجلّد</FilesOrFoldersCreated>
+      <FilesAndFoldersChanged>تمّ تغيير الملفات والمجلّدات</FilesAndFoldersChanged>
+      <ItemsDeleted>تمّ حذف الملفّات</ItemsDeleted>
+      <file>ملف</file>
+      <files>ملفّات</files>
+      <folder>مجلّد</folder>
+      <folders>مجلّدات</folders>
+      <connecting>يتمّ الإتّصال</connecting>
+      <reconnecting>يتمّ الإتّصال مجدّداً</reconnecting>
+      <listing>عرض في قوائم</listing>
+      <uploading>يتمّ رفع</uploading>
+      <downloading>يتمّ تنزيل</downloading>
+      <ready>جاهز</ready>
+      <synced>تمّ حتلنة الملفات</synced>
+      <syncing>يتمّ حتلنة</syncing>
+      <offline>غير متّصل</offline>
+      <link_copied>نسخ الروابط</link_copied>
+      <recent_files>الملفات الحديثة</recent_files>
+      <not_available>غير متوفّر</not_available>
+      <start_syncing>إبدأ الحتلنة</start_syncing>
+      <exit>الخروج</exit>
+    </tray>
+    <web_interface>
+      <web_int>المتصفّح</web_int>
+      <downloading>التنزيل جاري</downloading>
+      <in_a_minute>خلال دقيقة</in_a_minute>
+      <removing>يتمّ حذف</removing>
+      <removed>تمّ حذف</removed>
+      <updating>يتم حتلنة</updating>
+      <updated>تمّ حتلنة</updated>
+      <setup>التشغيل</setup>
+      <use_webint>استعمل المتصفّح</use_webint>
+      <view>عرض</view>
+    </web_interface>
+  </ar>
+  
 </translations>

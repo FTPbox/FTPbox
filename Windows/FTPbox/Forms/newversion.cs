@@ -90,7 +90,7 @@ namespace FTPbox
             bClose.Text = Common.Languages[UiControl.RemindLater];
 
             // Is this a right-to-left language?
-            RightToLeftLayout = new[] { "he" }.Contains(lan);
+            RightToLeftLayout = Common.RtlLanguages.Contains(lan);
         }
 
         private void newversion_RightToLeftLayoutChanged(object sender, EventArgs e)
