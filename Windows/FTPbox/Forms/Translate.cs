@@ -46,7 +46,7 @@ namespace FTPbox.Forms
                 {
                     LanguageSettings.Language = tLanguage.Text;
                     LanguageSettings.ShortCode = tShortCode.Text;
-                    LoadData();
+                    LoadData(null);
                 }
                 else
                     MessageBox.Show("Please fill in both the language and the short code before you continue.", "FTPbox - Fields Empty", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
@@ -138,7 +138,7 @@ namespace FTPbox.Forms
             }
         }
 
-        private void LoadData()
+        private void LoadData(string lan)
         {
             data.Rows.Add(126);
 
@@ -271,18 +271,12 @@ namespace FTPbox.Forms
             
             foreach (DataGridViewRow r in data.Rows)
                 r.Resizable = DataGridViewTriState.False;
-            
-            LanguageSettings.Loaded = true;
-        }
-
-        private void LoadData(string lan)
-        {
-            LoadData();
 
             foreach (DataGridViewRow d in data.Rows)
             {
-                d.Cells[1].Value = Common.Languages.Get((string)d.Cells[2].Value, "", lan);
                 d.Cells[0].Value = Common.Languages.Get((string)d.Cells[2].Value, "", "en");
+                if (lan != null)
+                    d.Cells[1].Value = Common.Languages.Get((string)d.Cells[2].Value, "", lan);
             }
             LanguageSettings.Loaded = true;
         }
