@@ -12,6 +12,7 @@
 
 // #define __MonoCs__
 
+using System;
 using System.IO;
 
 namespace FTPboxLib
@@ -23,7 +24,7 @@ namespace FTPboxLib
 
         private AccountController controller;
 
-        public FolderWatcher (AccountController account)
+        public FolderWatcher(AccountController account)
         {
             this.controller = account;
         }
@@ -92,40 +93,47 @@ namespace FTPboxLib
         /// <param name="e"></param>
         private void FileChanged(object source, FileSystemEventArgs e)
         {
-            string cpath = controller.GetCommonPath(e.FullPath, true);
-            if (!controller.ItemGetsSynced(cpath) || !File.Exists(e.FullPath)) return;
-
-            int retries = 0;
-            while (true)
+            try
             {
-                if (!Common.FileIsUsed(e.FullPath)) break;
-                // Exit after 5 retries
-                if (retries > 5) return;
-                // Sleep for half a second, then check again
-                System.Threading.Thread.Sleep(500);
-                retries++;
-            }
+                string cpath = controller.GetCommonPath(e.FullPath, true);
+                if (!controller.ItemGetsSynced(cpath) || !File.Exists(e.FullPath)) return;
 
-        #if __MonoCs__
+                int retries = 0;
+                while (true)
+                {
+                    if (!Common.FileIsUsed(e.FullPath)) break;
+                    // Exit after 5 retries
+                    if (retries > 5) return;
+                    // Sleep for half a second, then check again
+                    System.Threading.Thread.Sleep(500);
+                    retries++;
+                }
+
+#if __MonoCs__
             // Ignore temp files on linux
             if (Common._name(cpath).StartsWith(".goutputstream-") || Common._name(cpath).EndsWith("~")) return;
-        #endif
+#endif
 
-            var fli = new FileInfo(e.FullPath);
+                var fli = new FileInfo(e.FullPath);
 
-            controller.SyncQueue.Add(new SyncQueueItem(controller)
-            {
-                Item = new ClientItem
+                controller.SyncQueue.Add(new SyncQueueItem(controller)
                 {
-                    Name = e.Name,
-                    FullPath = e.FullPath,
-                    Type = ClientItemType.File,
-                    Size = fli.Length,
-                    LastWriteTime = fli.LastWriteTime
-                },
-                SyncTo = SyncTo.Remote,
-                ActionType = e.ChangeType == WatcherChangeTypes.Changed ? ChangeAction.changed : ChangeAction.created
-            });
+                    Item = new ClientItem
+                    {
+                        Name = e.Name,
+                        FullPath = e.FullPath,
+                        Type = ClientItemType.File,
+                        Size = fli.Length,
+                        LastWriteTime = fli.LastWriteTime
+                    },
+                    SyncTo = SyncTo.Remote,
+                    ActionType = e.ChangeType == WatcherChangeTypes.Changed ? ChangeAction.changed : ChangeAction.created
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Write(l.Error, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -135,26 +143,33 @@ namespace FTPboxLib
         /// <param name="e"></param>
         private void FolderChanged(object source, FileSystemEventArgs e)
         {
-            string cpath = controller.GetCommonPath(e.FullPath, true);
-            if (!controller.ItemGetsSynced(cpath) || !Directory.Exists(e.FullPath)) return;
-        #if __MonoCs__
+            try
+            {
+                string cpath = controller.GetCommonPath(e.FullPath, true);
+                if (!controller.ItemGetsSynced(cpath) || !Directory.Exists(e.FullPath)) return;
+#if __MonoCs__
             // Ignore temp files on linux
             if (Common._name(cpath).StartsWith(".goutputstream-") || Common._name(cpath).EndsWith("~")) return;
-        #endif
+#endif
 
-            controller.SyncQueue.Add(new SyncQueueItem(controller)
-            {
-                Item = new ClientItem
+                controller.SyncQueue.Add(new SyncQueueItem(controller)
                 {
-                    Name = e.Name,
-                    FullPath = e.FullPath,
-                    Type = ClientItemType.Folder,
-                    Size = 0x0,
-                    LastWriteTime = File.GetLastWriteTime(e.FullPath)
-                },
-                SyncTo = SyncTo.Remote,
-                ActionType = ChangeAction.changed
-            });
+                    Item = new ClientItem
+                    {
+                        Name = e.Name,
+                        FullPath = e.FullPath,
+                        Type = ClientItemType.Folder,
+                        Size = 0x0,
+                        LastWriteTime = File.GetLastWriteTime(e.FullPath)
+                    },
+                    SyncTo = SyncTo.Remote,
+                    ActionType = ChangeAction.changed
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Write(l.Error, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -164,25 +179,32 @@ namespace FTPboxLib
         /// <param name="e"></param>
         private void OnDeleted(object source, FileSystemEventArgs e)
         {
-            string cpath = controller.GetCommonPath(e.FullPath, true);
-            if (!controller.ItemGetsSynced(cpath)) return;
-        #if __MonoCs__
+            try
+            {
+                string cpath = controller.GetCommonPath(e.FullPath, true);
+                if (!controller.ItemGetsSynced(cpath)) return;
+#if __MonoCs__
             // Ignore temp files on linux
             if (Common._name(cpath).StartsWith(".goutputstream-") || Common._name(cpath).EndsWith("~")) return;
-        #endif
-            controller.SyncQueue.Add(new SyncQueueItem(controller)
-            {
-                Item = new ClientItem
+#endif
+                controller.SyncQueue.Add(new SyncQueueItem(controller)
                 {
-                    Name = e.Name,
-                    FullPath = e.FullPath,
-                    Type = Common.PathIsFile(e.FullPath) ? ClientItemType.File : ClientItemType.Folder,
-                    Size = 0x0,
-                    LastWriteTime = File.GetLastWriteTime(e.FullPath)
-                },
-                SyncTo = SyncTo.Remote,
-                ActionType = ChangeAction.deleted
-            });
+                    Item = new ClientItem
+                    {
+                        Name = e.Name,
+                        FullPath = e.FullPath,
+                        Type = Common.PathIsFile(e.FullPath) ? ClientItemType.File : ClientItemType.Folder,
+                        Size = 0x0,
+                        LastWriteTime = File.GetLastWriteTime(e.FullPath)
+                    },
+                    SyncTo = SyncTo.Remote,
+                    ActionType = ChangeAction.deleted
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Write(l.Error, ex.ToString());
+            }
         }
 
         /// <summary>
@@ -190,26 +212,33 @@ namespace FTPboxLib
         /// </summary>
         private void OnRenamed(object source, RenamedEventArgs e)
         {
-            Log.Write(l.Debug, "Item {0} was renamed", e.OldName);
-            if (!controller.ItemGetsSynced(controller.GetCommonPath(e.FullPath, true)) || !controller.ItemGetsSynced(controller.GetCommonPath(e.OldFullPath, true)))
-                return;
-
-            controller.SyncQueue.Add(new SyncQueueItem(controller)
+            try
             {
-                Item = new ClientItem
+                Log.Write(l.Debug, "Item {0} was renamed", e.OldName);
+                if (!controller.ItemGetsSynced(controller.GetCommonPath(e.FullPath, true)) || !controller.ItemGetsSynced(controller.GetCommonPath(e.OldFullPath, true)))
+                    return;
+
+                controller.SyncQueue.Add(new SyncQueueItem(controller)
                 {
-                    Name = e.Name,
-                    FullPath = e.OldFullPath,
-                    NewFullPath = e.FullPath,
-                    Type = Common.PathIsFile(e.FullPath) ? ClientItemType.File : ClientItemType.Folder,
-                    Size = Common.PathIsFile(e.FullPath) ? new FileInfo(e.FullPath).Length : 0x0,
-                    LastWriteTime = File.GetLastWriteTime(e.FullPath)
-                },
-                SyncTo = SyncTo.Remote,
-                ActionType = ChangeAction.renamed
-            });
+                    Item = new ClientItem
+                    {
+                        Name = e.Name,
+                        FullPath = e.OldFullPath,
+                        NewFullPath = e.FullPath,
+                        Type = Common.PathIsFile(e.FullPath) ? ClientItemType.File : ClientItemType.Folder,
+                        Size = Common.PathIsFile(e.FullPath) ? new FileInfo(e.FullPath).Length : 0x0,
+                        LastWriteTime = File.GetLastWriteTime(e.FullPath)
+                    },
+                    SyncTo = SyncTo.Remote,
+                    ActionType = ChangeAction.renamed
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Write(l.Error, ex.ToString());
+            }
         }
-        
+
         #endregion
     }
 }
