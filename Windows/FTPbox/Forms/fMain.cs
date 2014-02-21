@@ -129,7 +129,7 @@ namespace FTPbox.Forms
             
             StartUpWork();
 
-            CheckForUpdate();
+            //CheckForUpdate();
         }
 
         /// <summary>
