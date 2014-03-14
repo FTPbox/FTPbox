@@ -149,22 +149,32 @@ namespace FTPboxLib
         #region Methods
 
         /// <summary>
-        /// Whether the specified path should be synced. Used in selective sync and to avoid syncing the webUI folder, temp files and invalid file/folder-names.
+        /// Whether the specified path should be synced. Used to filter out
+        /// the webUI folder, server files, invalid file/folder-names and
+        /// any user-specified ignored files.
         /// </summary>
-        public bool ItemGetsSynced(string name)
+        public bool ItemGetsSynced(string cpath)
         {
-            if (name.EndsWith("/"))
-                name = name.Substring(0, name.Length - 1);
-            string aName = Common._name(name);
+            if (cpath.EndsWith("/"))
+                cpath = cpath.Substring(0, cpath.Length - 1);
+            string aName = Common._name(cpath);
 
-            bool b = !(IgnoreList.IsIgnored(name)
-                || name.Contains("webint") || name.EndsWith(".") || name.EndsWith("..")                 //web interface, current and parent folders are ignored
+            bool b = !(IgnoreList.IsIgnored(cpath)
+                || cpath.Contains("webint") || aName == "." || aName == ".."                            //web interface, current and parent folders are ignored
                 || aName == ".ftpquota" || aName == "error_log" || aName.StartsWith(".bash")            //server files are ignored
                 || !Common.IsAllowedFilename(aName)                                                     //checks characters not allowed in windows file/folder names
                 || aName.StartsWith("~ftpb_")                                                           //FTPbox-generated temporary files are ignored
                 );
 
             return b;
+        }
+
+        public bool ItemGetsSynced(string path, bool isLocal)
+        {
+            // Get the common path from the full path
+            string cpath = GetCommonPath(path, isLocal);
+            
+            return ItemGetsSynced(cpath);
         }
 
         /// <summary>

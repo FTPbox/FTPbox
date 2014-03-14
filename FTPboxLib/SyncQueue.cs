@@ -325,8 +325,7 @@ namespace FTPboxLib
             var di = new DirectoryInfo(folder.LocalPath);
             foreach (var d in di.GetDirectories("*", SearchOption.AllDirectories).Where(x => !RemoteFilesList.Contains(controller.GetCommonPath(x.FullName, true))))
             {
-                string cpath = controller.GetCommonPath(d.FullName, true);
-                if (!controller.ItemGetsSynced(cpath)) continue;
+                if (!controller.ItemGetsSynced(d.FullName, true)) continue;
 
                 // TODO: Base add instead?
                 Add(new SyncQueueItem (controller)

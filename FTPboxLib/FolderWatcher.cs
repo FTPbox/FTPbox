@@ -92,8 +92,7 @@ namespace FTPboxLib
         /// <param name="e"></param>
         private void FileChanged(object source, FileSystemEventArgs e)
         {
-            string cpath = controller.GetCommonPath(e.FullPath, true);
-            if (!controller.ItemGetsSynced(cpath) || !File.Exists(e.FullPath)) return;
+            if (!controller.ItemGetsSynced(e.FullPath, true) || !File.Exists(e.FullPath)) return;
 
             int retries = 0;
             while (true)
@@ -135,8 +134,7 @@ namespace FTPboxLib
         /// <param name="e"></param>
         private void FolderChanged(object source, FileSystemEventArgs e)
         {
-            string cpath = controller.GetCommonPath(e.FullPath, true);
-            if (!controller.ItemGetsSynced(cpath) || !Directory.Exists(e.FullPath)) return;
+            if (!controller.ItemGetsSynced(e.FullPath, true) || !Directory.Exists(e.FullPath)) return;
         #if __MonoCs__
             // Ignore temp files on linux
             if (Common._name(cpath).StartsWith(".goutputstream-") || Common._name(cpath).EndsWith("~")) return;
@@ -164,8 +162,7 @@ namespace FTPboxLib
         /// <param name="e"></param>
         private void OnDeleted(object source, FileSystemEventArgs e)
         {
-            string cpath = controller.GetCommonPath(e.FullPath, true);
-            if (!controller.ItemGetsSynced(cpath)) return;
+            if (!controller.ItemGetsSynced(e.FullPath, true)) return;
         #if __MonoCs__
             // Ignore temp files on linux
             if (Common._name(cpath).StartsWith(".goutputstream-") || Common._name(cpath).EndsWith("~")) return;
@@ -191,7 +188,7 @@ namespace FTPboxLib
         private void OnRenamed(object source, RenamedEventArgs e)
         {
             Log.Write(l.Debug, "Item {0} was renamed", e.OldName);
-            if (!controller.ItemGetsSynced(controller.GetCommonPath(e.FullPath, true)) || !controller.ItemGetsSynced(controller.GetCommonPath(e.OldFullPath, true)))
+            if (!controller.ItemGetsSynced(e.FullPath, true) || !controller.ItemGetsSynced(e.OldFullPath, true))
                 return;
 
             controller.SyncQueue.Add(new SyncQueueItem(controller)

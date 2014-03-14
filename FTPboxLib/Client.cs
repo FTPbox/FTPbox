@@ -677,6 +677,9 @@ namespace FTPboxLib
             return dt;
         }
 
+        /// <summary>
+        /// Convert SftpFile to ClientItemType
+        /// </summary>
         private ClientItemType _ItemTypeOf(SftpFile f)
         {
             if (f.IsDirectory)
@@ -686,6 +689,9 @@ namespace FTPboxLib
             return ClientItemType.Other;
         }
 
+        /// <summary>
+        /// Convert FtpFileSystemObjectType to ClientItemType
+        /// </summary>
         private ClientItemType _ItemTypeOf(FtpFileSystemObjectType f)
         {
             if (f == FtpFileSystemObjectType.File)
@@ -764,7 +770,7 @@ namespace FTPboxLib
             if (skipIgnored)
                 list.RemoveAll(x => x.FullPath.Contains("webint"));
 
-            foreach (var f in list.Where(x => x.Type == ClientItemType.File || x.Type == ClientItemType.Folder))
+            foreach (var f in list.Where(x => x.Type != ClientItemType.Other))
                 yield return f;
 
             SetKeepAlive();
@@ -781,7 +787,7 @@ namespace FTPboxLib
             if (ListingFailed) yield break;
 
             if (skipIgnored)
-                list.RemoveAll(x => !controller.ItemGetsSynced(controller.GetCommonPath(x.FullPath, false)));
+                list.RemoveAll(x => !controller.ItemGetsSynced(x.FullPath, false));
             
             foreach (var f in list.Where(x => x.Type == ClientItemType.File)) 
                 yield return f;
@@ -806,7 +812,7 @@ namespace FTPboxLib
             if (ListingFailed) yield break;
 
             if (skipIgnored)
-                list.RemoveAll(x => !controller.ItemGetsSynced(controller.GetCommonPath(x.FullPath, false)));
+                list.RemoveAll(x => !controller.ItemGetsSynced(x.FullPath, false));
 
             foreach (var f in list.Where(x => x.Type == ClientItemType.File))
                 yield return f;
