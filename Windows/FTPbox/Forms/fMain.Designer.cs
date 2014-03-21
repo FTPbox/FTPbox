@@ -115,6 +115,10 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rBothWaySync = new System.Windows.Forms.RadioButton();
+            this.labWayOfSync = new System.Windows.Forms.Label();
+            this.rRemoteToLocalOnly = new System.Windows.Forms.RadioButton();
+            this.rLocalToRemoteOnly = new System.Windows.Forms.RadioButton();
             this.tabControl1.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.gLanguage.SuspendLayout();
@@ -373,13 +377,17 @@
             // 
             this.gAccount.AccessibleDescription = "";
             this.gAccount.AccessibleName = "";
+            this.gAccount.Controls.Add(this.rBothWaySync);
+            this.gAccount.Controls.Add(this.labWayOfSync);
+            this.gAccount.Controls.Add(this.rRemoteToLocalOnly);
+            this.gAccount.Controls.Add(this.rLocalToRemoteOnly);
             this.gAccount.Controls.Add(this.labViewInBrowser);
             this.gAccount.Controls.Add(this.chkWebInt);
             this.gAccount.Controls.Add(this.bConfigureAccount);
             this.gAccount.Controls.Add(this.labAccount);
             this.gAccount.Location = new System.Drawing.Point(8, 50);
             this.gAccount.Name = "gAccount";
-            this.gAccount.Size = new System.Drawing.Size(447, 77);
+            this.gAccount.Size = new System.Drawing.Size(447, 164);
             this.gAccount.TabIndex = 3;
             this.gAccount.TabStop = false;
             this.gAccount.Text = "Profile";
@@ -1056,6 +1064,53 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // rBothWaySync
+            // 
+            this.rBothWaySync.AccessibleDescription = "";
+            this.rBothWaySync.AccessibleName = "open the local file";
+            this.rBothWaySync.Checked = true;
+            this.rBothWaySync.Location = new System.Drawing.Point(21, 136);
+            this.rBothWaySync.Name = "rBothWaySync";
+            this.rBothWaySync.Size = new System.Drawing.Size(408, 17);
+            this.rBothWaySync.TabIndex = 21;
+            this.rBothWaySync.TabStop = true;
+            this.rBothWaySync.Text = "Both ways";
+            this.rBothWaySync.UseVisualStyleBackColor = true;
+            this.rBothWaySync.CheckedChanged += new System.EventHandler(this.rWayOfSync_CheckedChanged);
+            // 
+            // labWayOfSync
+            // 
+            this.labWayOfSync.AccessibleDescription = "";
+            this.labWayOfSync.Location = new System.Drawing.Point(8, 69);
+            this.labWayOfSync.Name = "labWayOfSync";
+            this.labWayOfSync.Size = new System.Drawing.Size(437, 13);
+            this.labWayOfSync.TabIndex = 22;
+            this.labWayOfSync.Text = "Way of synchronization:";
+            // 
+            // rRemoteToLocalOnly
+            // 
+            this.rRemoteToLocalOnly.AccessibleDescription = "";
+            this.rRemoteToLocalOnly.AccessibleName = "copy link to clipboard";
+            this.rRemoteToLocalOnly.Location = new System.Drawing.Point(21, 113);
+            this.rRemoteToLocalOnly.Name = "rRemoteToLocalOnly";
+            this.rRemoteToLocalOnly.Size = new System.Drawing.Size(408, 17);
+            this.rRemoteToLocalOnly.TabIndex = 20;
+            this.rRemoteToLocalOnly.Text = "Remote to local only";
+            this.rRemoteToLocalOnly.UseVisualStyleBackColor = true;
+            this.rRemoteToLocalOnly.CheckedChanged += new System.EventHandler(this.rWayOfSync_CheckedChanged);
+            // 
+            // rLocalToRemoteOnly
+            // 
+            this.rLocalToRemoteOnly.AccessibleDescription = "";
+            this.rLocalToRemoteOnly.AccessibleName = "open link in default browser";
+            this.rLocalToRemoteOnly.Location = new System.Drawing.Point(21, 90);
+            this.rLocalToRemoteOnly.Name = "rLocalToRemoteOnly";
+            this.rLocalToRemoteOnly.Size = new System.Drawing.Size(408, 17);
+            this.rLocalToRemoteOnly.TabIndex = 19;
+            this.rLocalToRemoteOnly.Text = "Local to remote only";
+            this.rLocalToRemoteOnly.UseVisualStyleBackColor = true;
+            this.rLocalToRemoteOnly.CheckedChanged += new System.EventHandler(this.rWayOfSync_CheckedChanged);
+            // 
             // fMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1188,5 +1243,9 @@
         private System.Windows.Forms.Button bConfigureAccount;
         private System.Windows.Forms.LinkLabel labViewInBrowser;
         private System.Windows.Forms.CheckBox chkWebInt;
+        private System.Windows.Forms.RadioButton rBothWaySync;
+        private System.Windows.Forms.Label labWayOfSync;
+        private System.Windows.Forms.RadioButton rRemoteToLocalOnly;
+        private System.Windows.Forms.RadioButton rLocalToRemoteOnly;
     }
 }

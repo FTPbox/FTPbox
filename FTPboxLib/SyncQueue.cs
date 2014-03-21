@@ -140,6 +140,13 @@ namespace FTPboxLib
 
             foreach (var item in Items)
             {
+                if ((controller.Account.SyncDirection == SyncDirection.Local && item.SyncTo == SyncTo.Remote) ||
+                    (controller.Account.SyncDirection == SyncDirection.Remote && item.SyncTo == SyncTo.Local))
+                {
+                    item.SkipNotification = true;
+                    RemoveLast(StatusType.Skipped);
+                    continue;
+                }
                 // do stuff here
                 switch (item.ActionType)
                 {

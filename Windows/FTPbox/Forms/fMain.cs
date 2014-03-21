@@ -251,9 +251,20 @@ namespace FTPbox.Forms
             else
                 rOpenLocal.Checked = true;
 
+            //  Account Tab     //
+            
             cProfiles.Items.Clear();
             cProfiles.Items.AddRange(Settings.ProfileTitles);
             cProfiles.SelectedIndex = Settings.General.DefaultProfile;
+
+            if (Program.Account.Account.SyncDirection == SyncDirection.Both)
+                rBothWaySync.Checked = true;
+            else if (Program.Account.Account.SyncDirection == SyncDirection.Remote)
+                rLocalToRemoteOnly.Checked = true;
+            else
+                rRemoteToLocalOnly.Checked = true;
+
+            //  About Tab       //
 
             lVersion.Text = Application.ProductVersion.Substring(0, 5) + @" Beta";
 
@@ -1220,6 +1231,18 @@ namespace FTPbox.Forms
         private void bConfigureAccount_Click(object sender, EventArgs e)
         {
             new fAccountDetails().ShowDialog();
+        }
+
+        private void rWayOfSync_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rLocalToRemoteOnly.Checked)
+                Program.Account.Account.SyncDirection = SyncDirection.Remote;
+            else if (rRemoteToLocalOnly.Checked)
+                Program.Account.Account.SyncDirection = SyncDirection.Local;
+            else if (rBothWaySync.Checked)
+                Program.Account.Account.SyncDirection = SyncDirection.Both;
+            // Save changes
+            Settings.SaveProfile();
         }
 
         #endregion

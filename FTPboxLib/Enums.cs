@@ -98,7 +98,8 @@ namespace FTPboxLib
     {
         Success,
         Failure,
-        Waiting
+        Waiting,
+        Skipped
     }
 
     public enum TransferStatus
@@ -112,6 +113,13 @@ namespace FTPboxLib
     {
         Remote,
         Local
+    }
+
+    public enum SyncDirection
+    {
+        Remote,
+        Local,
+        Both
     }
 
     public enum WebUiAction

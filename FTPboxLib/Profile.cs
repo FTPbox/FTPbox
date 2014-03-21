@@ -116,6 +116,7 @@ namespace FTPboxLib
         public int SyncFrequency { get; set; }
         public string PrivateKeyFile { get; set; }
         public long KeepAliveInterval = 10;
+        public SyncDirection SyncDirection = SyncDirection.Both;
     }
 
     public class Paths
