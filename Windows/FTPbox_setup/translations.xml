@@ -429,6 +429,7 @@
       <application>Application</application>
       <start_on_startup>Lancer au démarage du système</start_on_startup>
       <show_nots>Afficher les notifications</show_nots>
+      <profile>Profil</profile>
       <details>Détails</details>
       <links>Liens</links>
       <remote_path>Chemin distant</remote_path>
@@ -465,19 +466,23 @@
       <no_limits>( définir à 0 pour illimité )</no_limits>
       <selective>Synchronisation sélective</selective>
       <selective_info>Décochez les éléments que vous ne souhaitez pas synchroniser</selective_info>
-      <refresh>Rafraichir</refresh>
-      <file_filters>Tris Sync.</file_filters>
-      <ignored_extensions>Ignorés les extensions suivantes</ignored_extensions>
+      <refresh>Rafraîchir</refresh>
+      <configure>Configurer</configure>
+      <file_filters>Filtres</file_filters>
+      <ignored_extensions>Ignorer les extensions suivantes</ignored_extensions>
       <remove>Retirer</remove>
-      <also_ignore>Ignorés seulement</also_ignore>
-      <dotfiles>Fichiers cachés ( ._ ),systèmes</dotfiles>
+      <also_ignore>Ignorer seulement</also_ignore>
+      <dotfiles>Fichiers cachés ( ._ ), fichiers systèmes</dotfiles>
       <temp_files>Fichiers temporaires</temp_files>
       <old_files>Fichiers modifiés avant</old_files>
+      <enable_logging>Activer les logs</enable_logging>
+      <view_log>Afficher les logs</view_log>
     </main_form>
     <new_account>
       <new_ftp>Nouveau compte FTP</new_ftp>
       <login_details>Paramètres FTP</login_details>
       <encryption>Chiffrement</encryption>
+      <ask_for_password>Toujours demander le mot de passe</ask_for_password>
       <add>Ajouter</add>
       <done>Terminer</done>
     </new_account>
@@ -486,9 +491,18 @@
       <add_dir>Ajouter un nouveau répertoire</add_dir>
       <select_dir>Sélectionner un répertoire</select_dir>
       <full_path>Chemin complet</full_path>
+      <default_local>Je veux utiliser le répertoir local par défaut</default_local>
+      <custom_local>Je veux choisir un répertoir local</custom_local>
       <local_folder>Répertoire local</local_folder>
       <browse>Parcourir</browse>
     </paths>
+    <setup>
+      <authentication>Authentification</authentication>
+      <sync_all_files>Je veux synchroniser tous les fichiers</sync_all_files>
+      <sync_specific_files>Je veux sélectionner les fichiers à synchroniser</sync_specific_files>
+      <previous>Précédent</previous>
+      <next>Suivant</next>
+    </setup>
     <new_version>
       <new_ver>Nouvelle version</new_ver>
       <update_available>Mise à jour disponible</update_available>
