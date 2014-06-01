@@ -662,7 +662,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(219, 13);
             this.label4.TabIndex = 13;
-            this.label4.Text = "kb/s";
+            this.label4.Text = "KB/s";
             // 
             // label3
             // 
@@ -670,7 +670,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(219, 13);
             this.label3.TabIndex = 12;
-            this.label3.Text = "kb/s";
+            this.label3.Text = "KB/s";
             // 
             // nUpLimit
             // 
