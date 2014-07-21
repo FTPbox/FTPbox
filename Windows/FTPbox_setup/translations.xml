@@ -3368,40 +3368,40 @@
       <profile>Perfil</profile>
       <details>Detalhes</details>
       <links>Endereços</links>
-      <remote_path>Pasta Remota</remote_path>
-      <local_path>Pasta Local</local_path>
-      <account_full_path>Pasta completa da conta</account_full_path>
+      <remote_path>Caminho Remota</remote_path>
+      <local_path>Caminho Local</local_path>
+      <account_full_path>Caminho completo da conta</account_full_path>
       <when_not_clicked>Quando uma notificação na barra de tarefas ou um ficheiro recente é clicado</when_not_clicked>
-      <open_in_browser>Abrir endereço no browser predefinido</open_in_browser>
-      <copy>Copiar endereço para o clipboard</copy>
+      <open_in_browser>Abrir ligação no browser predefinido</open_in_browser>
+      <copy>Copiar ligação para o clipboard</copy>
       <about>Sobre</about>
       <current_version>Versão actual</current_version>
       <team>A equipa</team>
-      <website>Website oficial</website>
+      <website>Sítio oficial</website>
       <contact>Contacto</contact>
-      <coded_in>Codificado em</coded_in>
+      <coded_in>Programado em</coded_in>
       <notes>Notas</notes>
       <contribute>Contibuir</contribute>
-      <ftpbox_is_free>FTPbox é grátis e é de código aberto</ftpbox_is_free>
+      <ftpbox_is_free>FTPbox é livre e é de código aberto</ftpbox_is_free>
       <contact_me>Sinta-se à vontade para me contactar para qualquer coisa</contact_me>
-      <copyright>Direitos de Autor/Copyright</copyright>
-      <report_bug>Reportar erro(bug)</report_bug>
-      <request_feature>Peça uma funcionalidade</request_feature>
-      <donate>Faça uma doação</donate>
+      <copyright>Direitos de Autor</copyright>
+      <report_bug>Reportar um erro (bug)</report_bug>
+      <request_feature>Pedir uma funcionalidade</request_feature>
+      <donate>Fazer uma doação</donate>
       <language>Idioma</language>
       <open_local>Abrir ficheiro local</open_local>
       <bandwidth>Largura de Banda</bandwidth>
-      <sync_freq>Frequência</sync_freq>
+      <sync_freq>Frequência de sincronização</sync_freq>
       <sync_when>Sincronizar ficheiros remotos</sync_when>
-      <manually>manualmente</manually>
+      <manually>Manualmente</manually>
       <auto>automaticamente cada</auto>
       <seconds>segundos</seconds>
       <speed_limits>Limites de velocidade</speed_limits>
-      <limit_download>Limite de velocidade de transferência</limit_download>
+      <limit_download>Limite de velocidade de descarregamento</limit_download>
       <limit_upload>Limite de velocidade de envio</limit_upload>
-      <no_limits>(indique 0 para não haver limite)</no_limits>
+      <no_limits>(coloque 0 para não haver limite)</no_limits>
       <selective>Sincronização selectiva</selective>
-      <selective_info>Desmarcar itens que não se deseja sincronizar</selective_info>
+      <selective_info>Desmarcar itens que não deseja sincronizar</selective_info>
       <refresh>Actualizar</refresh>
       <configure>Configurar</configure>
       <file_filters>Filtros</file_filters>
@@ -3411,8 +3411,8 @@
       <dotfiles>Ficheiros dot</dotfiles>
       <temp_files>Ficheiros temporários</temp_files>
       <old_files>Ficheiros modificados antes de </old_files>
-      <enable_logging>Permitir histórico</enable_logging>
-      <view_log>Visualizar histórico</view_log>
+      <enable_logging>Activar registo</enable_logging>
+      <view_log>Ver registo</view_log>
     </main_form>
     <new_account>
       <new_ftp>Nova conta FTP</new_ftp>
@@ -3424,13 +3424,13 @@
     </new_account>
     <paths>
       <new_paths>Novos caminhos</new_paths>
-      <add_dir>Adicione um novo directório</add_dir>
-      <select_dir>Seleccione um directório</select_dir>
-      <full_path>Pasta completa</full_path>
+      <add_dir>Adicionar novo directório</add_dir>
+      <select_dir>Seleccionar directório</select_dir>
+      <full_path>Caminho completo</full_path>
       <default_local>Pretendo utilizar a pasta local sugerida</default_local>
       <custom_local>Pretendo selecionar uma pasta local</custom_local>
       <local_folder>Pasta local</local_folder>
-      <browse>Visualizar</browse>
+      <browse>Navegar</browse>
     </paths>
     <setup>
       <authentication>Autenticação</authentication>
@@ -3442,21 +3442,21 @@
     <new_version>
       <new_ver>Nova Versão</new_ver>
       <update_available>Actualização disponível</update_available>
-      <new_v_available>Nova versão do FTPbox está disponível</new_v_available>
+      <new_v_available>Uma nova versão do FTPbox está disponível</new_v_available>
       <new_version>Nova versão</new_version>
       <current_version>Versão actual</current_version>
-      <wanna_download>Deseja realemente fazer a transferência da nova versão agora?</wanna_download>
-      <download>Transferência</download>
-      <learn_more>Leia mais</learn_more>
-      <remind_me_next_time>Lembre-me na próxima vez</remind_me_next_time>
+      <wanna_download>Deseja realmente transferir agora a nova versão?</wanna_download>
+      <download>Actualizar agora</download>
+      <learn_more>Ler mais</learn_more>
+      <remind_me_next_time>Lembar-me da próxima vez</remind_me_next_time>
     </new_version>
     <tray>
       <tray_and_nots>Barra de Tarefas e Notificações</tray_and_nots>
-      <updated>Ficheiro {0} foi actualizado</updated>
-      <created>Ficheiro {0} foi criado</created>
-      <renamed>O nome do ficheiro {0} foi mudado para {1}</renamed>
-      <deleted>Ficheiro {0} foi eliminado</deleted>
-      <changed>Ficheiro {0} foi modificado</changed>
+      <updated>{0} ficheiro(s) foi(ram) actualizado(s).</updated>
+      <created>{0} ficheiro(s) criado(s).</created>
+      <renamed>O nome do ficheiro {0} foi alterado para {1}.</renamed>
+      <deleted>{0} foi(ram) eliminado(s).</deleted>
+      <changed>Ficheiro {0} foi modificado.</changed>
       <FilesOrFoldersUpdated>{0} {1} foram actualizados</FilesOrFoldersUpdated>
       <FilesOrFoldersCreated>{0} {1} foram criados</FilesOrFoldersCreated>
       <FilesAndFoldersChanged>{0} {1} e {2} {3} foram actualizados</FilesAndFoldersChanged>
@@ -3465,16 +3465,16 @@
       <files>Ficheiros</files>
       <folder>Pasta</folder>
       <folders>Pastas</folders>
-      <connecting>A ligar...</connecting>
-      <reconnecting>A re-ligar...</reconnecting>
-      <listing>A listar...</listing>
+      <connecting>FTPBox - A ligar...</connecting>
+      <reconnecting>FTPBox - A re-ligar...</reconnecting>
+      <listing>FTPBox - A listar...</listing>
       <uploading>A enviar {0}</uploading>
-      <downloading>A transferir {0}</downloading>
-      <ready>Pronto</ready>
+      <downloading>A descarregar {0}</downloading>
+      <ready>FTPBox - Pronto</ready>
       <synced>FTPbox - Todos os ficheiros foram sincronizados</synced>
       <syncing>FTPbox - A sincronizar</syncing>
       <offline>FTPbox - Desligado</offline>
-      <link_copied>Endereço copiado para o clipboard</link_copied>
+      <link_copied>Ligação copiado para o clipboard</link_copied>
       <recent_files>Ficheiros Recentes</recent_files>
       <not_available>Não Disponível</not_available>
       <start_syncing>Iniciar Sincronização</start_syncing>
@@ -3482,14 +3482,14 @@
     </tray>
     <web_interface>
       <web_int>Interface Web</web_int>
-      <downloading>A Interface Web será transferida</downloading>
+      <downloading>A Interface Web será transferida.</downloading>
       <in_a_minute>Deve demorar cerca de um minuto.</in_a_minute>
-      <removing>A remover a Interface Web</removing>
+      <removing>A remover a Interface Web...</removing>
       <removed>Interface Web foi removida</removed>
       <updating>A actualizar a interface web...</updating>
-      <updated>Interface web foi actualizada</updated>
+      <updated>Interface web foi actualizada.</updated>
       <setup>Clique aqui para ver e configurar!</setup>
-      <use_webint>Usar a interface web</use_webint>
+      <use_webint>Utilizar a interface web</use_webint>
       <view>(Ver no navegador)</view>
     </web_interface>
   </pt>
