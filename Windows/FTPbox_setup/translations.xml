@@ -337,6 +337,7 @@
       <selective>Sincronización selectiva</selective>
       <selective_info>deselecciona los archivos que no deseas sincronizar</selective_info>
       <refresh>Refrescar</refresh>
+      <configure>Configurar</configure>
       <file_filters>Filtros</file_filters>
       <ignored_extensions>Extensiones de archivo ignoradas</ignored_extensions>
       <remove>Remover</remove>
@@ -344,30 +345,42 @@
       <dotfiles>Archivos que comienzen con un punto</dotfiles>
       <temp_files>Archivos temporales</temp_files>
       <old_files>Archivos modificados antes de</old_files>
+      <enable_logging>Habilitar registro</enable_logging>
+      <view_log>Ver registro</view_log>
     </main_form>
     <new_account>
       <new_ftp>Nueva cuenta FTP</new_ftp>
       <login_details>Datos de la cuenta FTP</login_details>
       <encryption>Cifrado</encryption>
+      <ask_for_password>Preguntar siempre la contraseña</ask_for_password>
       <add>Añadir</add>
       <done>Listo</done>
     </new_account>
     <paths>
-      <new_paths>Nueva dirección</new_paths>
+      <new_paths>Nueva ruta</new_paths>
       <add_dir>Añade un nuevo directorio</add_dir>
-      <select_dir>Selecciona la dirección</select_dir>
+      <select_dir>Selecciona el directorio</select_dir>
       <full_path>Dirección completa</full_path>
+      <default_local>Desea usar la carpeta local por defecto</default_local>
+      <custom_local>Desea seleccionar una carpeta local</custom_local>
       <local_folder>Carpeta local</local_folder>
       <browse>Explorar</browse>
     </paths>
+    <setup>
+      <authentication>Autentificación</authentication>
+      <sync_all_files>Deseo sincronizar todos los archivos</sync_all_files>
+      <sync_specific_files>Deseo seleccionar que archivos deben ser sincronizados</sync_specific_files>
+      <previous>Anterior</previous>
+      <next>Siguiente</next>
+    </setup>
     <new_version>
       <new_ver>Nueva versión</new_ver>
       <update_available>Actualización disponible</update_available>
       <new_v_available>Una nueva versión de FTPbox está disponible</new_v_available>
       <new_version>Nueva versión</new_version>
       <current_version>Versión actual</current_version>
-      <wanna_download>¿Deseas descargar la nueva versión ahora</wanna_download>
-      <download>Descargar</download>
+      <wanna_download>¿Deseas descargar la nueva versión ahora?</wanna_download>
+      <download>Actualizar Ahora</download>
       <learn_more>Conoce más</learn_more>
       <remind_me_next_time>Recuerdame la próxima vez</remind_me_next_time>
     </new_version>
