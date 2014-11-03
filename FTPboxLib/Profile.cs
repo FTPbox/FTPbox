@@ -117,6 +117,7 @@ namespace FTPboxLib
         public string PrivateKeyFile { get; set; }
         public long KeepAliveInterval = 10;
         public SyncDirection SyncDirection = SyncDirection.Both;
+        public string TempFilePrefix = "~ftpb_";
     }
 
     public class Paths

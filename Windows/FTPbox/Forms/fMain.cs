@@ -264,6 +264,8 @@ namespace FTPbox.Forms
             else
                 rRemoteToLocalOnly.Checked = true;
 
+            tTempPrefix.Text = Program.Account.Account.TempFilePrefix;
+
             //  About Tab       //
 
             lVersion.Text = Application.ProductVersion.Substring(0, 5) + @" Beta";
@@ -1243,6 +1245,24 @@ namespace FTPbox.Forms
                 Program.Account.Account.SyncDirection = SyncDirection.Both;
             // Save changes
             Settings.SaveProfile();
+        }
+
+        private void tTempPrefix_TextChanged(object sender, EventArgs e)
+        {
+            var val = tTempPrefix.Text;
+            if (string.IsNullOrWhiteSpace(val) || !Common.IsAllowedFilename(val))
+                return;
+            // Save new prefix
+            Program.Account.Account.TempFilePrefix = val;
+            Settings.SaveProfile();
+        }
+
+        private void tTempPrefix_Leave(object sender, EventArgs e)
+        {
+            var val = tTempPrefix.Text;
+            // Reset if the inserted value is empty or not allowed
+            if (string.IsNullOrWhiteSpace(val) || !Common.IsAllowedFilename(val))
+                tTempPrefix.Text = Program.Account.Account.TempFilePrefix;
         }
 
         #endregion

@@ -333,7 +333,7 @@ namespace FTPboxLib
             }
 
             Notifications.ChangeTrayText(MessageType.Uploading, i.Item.Name);
-            string temp = Common._tempName(i.CommonPath);
+            string temp = Common._tempName(i.CommonPath, controller.Account.TempFilePrefix);
 
             try
             {
@@ -416,7 +416,7 @@ namespace FTPboxLib
         public TransferStatus SafeDownload(SyncQueueItem i)
         {
             Notifications.ChangeTrayText(MessageType.Downloading, i.Item.Name);
-            string temp = Common._tempLocal(i.LocalPath);
+            string temp = Common._tempLocal(i.LocalPath, controller.Account.TempFilePrefix);
             try
             {
                 var _startedOn = DateTime.Now;

@@ -87,32 +87,34 @@ namespace FTPboxLib
         }
 
         /// <summary>
-        /// Puts ~ftpb_ to the beginning of the filename in the given item's path
+        /// Puts the temp prefix to the beginning of the filename in the given item's path
         /// </summary>
         /// <param name="cpath">the given item's common path</param>
+        /// <param name="prefix">the prefix of temp files as configured for this account</param>
         /// <returns>Temporary path to item</returns>
-        public static string _tempName(string cpath)
+        public static string _tempName(string cpath, string prefix)
         {
             if (!cpath.Contains("/") && !cpath.Contains(@"\"))
-                return String.Format("~ftpb_{0}", cpath);
+                return String.Format("{0}{1}", prefix, cpath);
 
             string parent = cpath.Substring(0, cpath.LastIndexOf("/"));
-            string temp_name = String.Format("~ftpb_{0}", _name(cpath));
+            string temp_name = String.Format("{0}{1}", prefix, _name(cpath));
 
             return String.Format("{0}/{1}", parent, temp_name);
         }
 
         /// <summary>
-        /// Puts ~ftpb_ to the beginning of the filename in the given item's local path
+        /// Puts the temp prefix to the beginning of the filename in the given item's local path
         /// </summary>
         /// <param name="lpath">the given item's local path</param>
+        /// <param name="prefix">the prefix of temp files as configured for this account</param>
         /// <returns>Temporary local path to item</returns>
-        public static string _tempLocal(string lpath)
+        public static string _tempLocal(string lpath, string prefix)
         {
             lpath = lpath.ReplaceSlashes();
             string parent = lpath.Substring(0, lpath.LastIndexOf("/"));            
 
-            return String.Format("{0}/~ftpb_{1}", parent, _name(lpath));
+            return String.Format("{0}/{1}{2}", parent, prefix, _name(lpath));
         }
 
         /// <summary>
