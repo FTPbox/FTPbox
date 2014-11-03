@@ -585,6 +585,7 @@
       <application>Applicatie</application>
       <start_on_startup>Start wanneer het systeem opstart</start_on_startup>
       <show_nots>Toon notificaties</show_nots>
+      <profile>Profiel</profile>
       <details>Details</details>
       <links>Links</links>
       <remote_path>Extern pad</remote_path>
@@ -596,8 +597,8 @@
       <about>Over</about>
       <current_version>Huidige versie</current_version>
       <team>Het team</team>
-      <website>officiele website</website>
-      <contact>contact</contact>
+      <website>Officiële website</website>
+      <contact>Contact</contact>
       <coded_in>Geprogrammeerd in</coded_in>
       <notes>Notities</notes>
       <contribute>Contributies</contribute>
@@ -615,17 +616,29 @@
       <manually>handmatig</manually>
       <auto>automatisch iedere</auto>
       <seconds>seconden</seconds>
-      <speed_limits>Snelheid Limieten</speed_limits>
+      <speed_limits>Snelheidslimieten</speed_limits>
       <limit_download>Limiet Download Snelheid</limit_download>
       <limit_upload>Limiet Upload Snelheid</limit_upload>
       <no_limits>( kies 0 voor geen limiet )</no_limits>
       <selective>Selectieve Synchronisatie</selective>
       <selective_info>Vink de items aan die gesynchroniseerd moeten worden</selective_info>
+      <refresh>Vernieuwen</refresh>
+      <configure>Configureren</configure>
+      <file_filters>Filters</file_filters>
+      <ignored_extensions>Genegeerde extensies</ignored_extensions>
+      <remove>Verwijder</remove>
+      <also_ignore>Negeer ook</also_ignore>
+      <dotfiles>dotbestanden</dotfiles>
+      <temp_files>Tijdelijke bestanden</temp_files>
+      <old_files>Bestanden gewijzigd voor</old_files>
+      <enable_logging>Schakel loggen in</enable_logging>
+      <view_log>Bekijk log</view_log>
     </main_form>
     <new_account>
       <new_ftp>Nieuwe FTP account</new_ftp>
       <login_details>FTP inlog details</login_details>
       <encryption>Encryptie</encryption>
+      <ask_for_password>Vraag altijd om wachtwoord</ask_for_password>
       <add>Voeg toe</add>
       <done>Gereed</done>
     </new_account>
@@ -634,9 +647,18 @@
       <add_dir>voeg een map toe</add_dir>
       <select_dir>selecteer een map</select_dir>
       <full_path>volledig pad</full_path>
+      <default_local>Ik wil de default lokale folder gebruiken</default_local>
+      <custom_local>Ik wil zelf een lokale folder kiezen</custom_local>
       <local_folder>lokale map</local_folder>
       <browse>Zoeken</browse>
     </paths>
+    <setup>
+      <authentication>Authenticatie</authentication>
+      <sync_all_files>Ik wil alle bestanden synchroniseren</sync_all_files>
+      <sync_specific_files>Ik wil kiezen welke bestanden gesynchroniseerd worden</sync_specific_files>
+      <previous>Vorige</previous>
+      <next>Volgende</next>
+    </setup>
     <new_version>
       <new_ver>Nieuwe versie</new_ver>
       <update_available>Update beschikbaar</update_available>
@@ -658,7 +680,7 @@
       <FilesOrFoldersUpdated>{0} {1} zijn bijgewerkt</FilesOrFoldersUpdated>
       <FilesOrFoldersCreated>{0} {1} zijn aangemaakt</FilesOrFoldersCreated>
       <FilesAndFoldersChanged>{0} {1} en {2} {3} zijn bijgewerkt</FilesAndFoldersChanged>
-      <ItemsDeleted>{0} objecten zijn verwijdert.</ItemsDeleted>
+      <ItemsDeleted>{0} objecten zijn verwijderd.</ItemsDeleted>
       <file>Bestand</file>
       <files>Bestanden</files>
       <folder>Map</folder>
@@ -681,13 +703,13 @@
     <web_interface>
       <web_int>Web interface</web_int>
       <downloading>Het Web Interface wordt gedownload.</downloading>
-      <in_a_minute>Dit zal wat tijd nemen.</in_a_minute>
+      <in_a_minute>Een minuut geduld alstublieft.</in_a_minute>
       <removing>Web Interface aan het verwijderen...</removing>
-      <removed>Het Web interface is verwijdert</removed>
+      <removed>De Web interface is verwijderd</removed>
       <updating>Web interface aan het updaten...</updating>
-      <updated>Het Web Interface is geüpdatet</updated>
+      <updated>De Web Interface is geüpdatet</updated>
       <setup>Klik hier om het te bekijken en op te zetten</setup>
-      <use_webint>Gebruik het web interface</use_webint>
+      <use_webint>Gebruik de web interface</use_webint>
       <view>(Bekijk in browser)</view>
     </web_interface>
   </nl>
