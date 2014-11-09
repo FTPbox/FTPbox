@@ -11,7 +11,9 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Xml;
+using System.Linq;
 
 namespace FTPboxLib
 {
@@ -334,6 +336,16 @@ namespace FTPboxLib
             XmlNode xmlNode = xmlDocument.SelectSingleNode(path);
             if (xmlNode != null) { return xmlNode.InnerText.Replace("_and", "&"); }
             else { return defaultValue; }
+        }
+
+        /// <summary>
+        /// Returns a list of all paths to nodes that contain translation strings
+        /// </summary>
+        public List<string> GetPaths()
+        {
+            return xmlDocument.SelectNodes("translations/en/*/*").Cast<XmlNode>()
+                .Select(x => string.Format("/{0}/{1}", x.ParentNode.Name, x.Name))
+                .ToList();
         }
         
         #endregion
