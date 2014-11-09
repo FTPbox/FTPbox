@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Setup));
             this.cAskForPass = new System.Windows.Forms.CheckBox();
             this.gLoginDetails = new System.Windows.Forms.GroupBox();
+            this.labKeyPath = new System.Windows.Forms.Label();
             this.labColon = new System.Windows.Forms.Label();
             this.cEncryption = new System.Windows.Forms.ComboBox();
             this.cMode = new System.Windows.Forms.ComboBox();
@@ -61,7 +62,6 @@
             this.gLanguage = new System.Windows.Forms.GroupBox();
             this.labSelectLanguage = new System.Windows.Forms.Label();
             this.cLanguages = new System.Windows.Forms.ComboBox();
-            this.labKeyPath = new System.Windows.Forms.Label();
             this.gLoginDetails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nPort)).BeginInit();
             this.gLocalFolder.SuspendLayout();
@@ -103,6 +103,14 @@
             this.gLoginDetails.TabIndex = 36;
             this.gLoginDetails.TabStop = false;
             this.gLoginDetails.Text = "FTP Login Details";
+            // 
+            // labKeyPath
+            // 
+            this.labKeyPath.Location = new System.Drawing.Point(324, 57);
+            this.labKeyPath.Name = "labKeyPath";
+            this.labKeyPath.Size = new System.Drawing.Size(124, 13);
+            this.labKeyPath.TabIndex = 33;
+            this.labKeyPath.Text = "KeyFilePath";
             // 
             // labColon
             // 
@@ -398,6 +406,7 @@
             // 
             // bNext
             // 
+            this.bNext.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.bNext.Location = new System.Drawing.Point(316, 223);
             this.bNext.Name = "bNext";
             this.bNext.Size = new System.Drawing.Size(75, 23);
@@ -408,6 +417,7 @@
             // 
             // bFinish
             // 
+            this.bFinish.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.bFinish.Location = new System.Drawing.Point(397, 223);
             this.bFinish.Name = "bFinish";
             this.bFinish.Size = new System.Drawing.Size(75, 23);
@@ -418,6 +428,7 @@
             // 
             // bPrevious
             // 
+            this.bPrevious.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.bPrevious.Location = new System.Drawing.Point(235, 223);
             this.bPrevious.Name = "bPrevious";
             this.bPrevious.Size = new System.Drawing.Size(75, 23);
@@ -463,19 +474,11 @@
             this.cLanguages.Size = new System.Drawing.Size(256, 21);
             this.cLanguages.TabIndex = 0;
             // 
-            // labKeyPath
-            // 
-            this.labKeyPath.Location = new System.Drawing.Point(324, 57);
-            this.labKeyPath.Name = "labKeyPath";
-            this.labKeyPath.Size = new System.Drawing.Size(124, 13);
-            this.labKeyPath.TabIndex = 33;
-            this.labKeyPath.Text = "KeyFilePath";
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1416, 502);
+            this.ClientSize = new System.Drawing.Size(480, 253);
             this.Controls.Add(this.gLanguage);
             this.Controls.Add(this.bPrevious);
             this.Controls.Add(this.bFinish);

@@ -8,8 +8,7 @@ namespace FTPbox.Forms
 {
     public partial class Setup : Form
     {
-        private readonly Point _groupLocation = new Point(12, 12);        
-        private readonly Size _formSize = new Size(496, 292);
+        private readonly Point _groupLocation = new Point(12, 12);
 
         private AccountSetupTab _prevTab = AccountSetupTab.None;
         private AccountSetupTab _currentTab = AccountSetupTab.None;
@@ -26,7 +25,6 @@ namespace FTPbox.Forms
             InitializeComponent();
             var basicSetup = string.IsNullOrEmpty(Settings.General.Language);
 
-            this.Size = _formSize;
             _initialTab = basicSetup ? AccountSetupTab.None : AccountSetupTab.Login;
 
             PopulateLanguages();
