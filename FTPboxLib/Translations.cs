@@ -231,6 +231,16 @@ namespace FTPboxLib
                         return Get("/web_interface/use_webint", "Use the Web Interface");
                     case UiControl.ViewInBrowser:
                         return Get("/web_interface/view", "(View in browser)");
+                    case UiControl.WayOfSync:
+                        return Get("/main_form/way_of_sync", "Way of synchronization") + ":";
+                    case UiControl.LocalToRemoteSync:
+                        return Get("/main_form/local_to_remote", "Local to remote only");
+                    case UiControl.RemoteToLocalSync:
+                        return Get("/main_form/remote_to_local", "Remote to local only");
+                    case UiControl.BothWaysSync:
+                        return Get("/main_form/both_ways", "Both ways");
+                    case UiControl.TempNamePrefix:
+                        return Get("/main_form/temp_file_prefix", "Temporary file prefix") + ":";
                     case UiControl.Filters:
                         return Get("/main_form/file_filters", "Filters");
                     case UiControl.Configure:

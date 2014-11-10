@@ -435,6 +435,11 @@ namespace FTPbox.Forms
             bConfigureAccount.Text = Common.Languages[UiControl.Details];
             chkWebInt.Text = Common.Languages[UiControl.UseWebUi];
             labViewInBrowser.Text = Common.Languages[UiControl.ViewInBrowser];
+            labWayOfSync.Text = Common.Languages[UiControl.WayOfSync];
+            rLocalToRemoteOnly.Text = Common.Languages[UiControl.LocalToRemoteSync];
+            rRemoteToLocalOnly.Text = Common.Languages[UiControl.RemoteToLocalSync];
+            rBothWaySync.Text = Common.Languages[UiControl.BothWaysSync];
+            labTempPrefix.Text = Common.Languages[UiControl.TempNamePrefix];
 
             //filters tab
             tabFilters.Text = Common.Languages[UiControl.Filters];            
