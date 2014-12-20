@@ -2767,7 +2767,7 @@
 	
 	<da>
     <main_form>
-      <options>Muligheder</options>
+      <options>Opsætning</options>
       <general>Generelt</general>
       <host>Host</host>
       <port>Port nummer</port>
@@ -2779,6 +2779,7 @@
       <application>Program</application>
       <start_on_startup>Start ved system start</start_on_startup>
       <show_nots>Vis beskeder</show_nots>
+      <profile>Profil</profile>
       <details>Detaljer</details>
       <links>Links</links>
       <remote_path>Fjern sti</remote_path>
@@ -2795,7 +2796,7 @@
       <coded_in>Kodet i</coded_in>
       <notes>Notater</notes>
       <contribute>Bidrag</contribute>
-      <ftpbox_is_free> FTPbox er gratis og Open-Source</ftpbox_is_free>
+      <ftpbox_is_free>FTPbox er gratis og Open-Source</ftpbox_is_free>
       <contact_me>Du er altid velkommen til at kontakte mig</contact_me>
       <copyright>Kopibeskyttet</copyright>
       <report_bug>Anmeld en fejl</report_bug>
@@ -2809,17 +2810,29 @@
       <manually>manuelt</manually>
       <auto>Automatisk for hver</auto>
       <seconds>sekunder</seconds>
-      <speed_limits>Maks hastighed</speed_limits>
+      <speed_limits>Hastigheds begrænsning</speed_limits>
       <limit_download>Begræns download hastighed</limit_download>
       <limit_upload>Begræns upload hastighed</limit_upload>
-      <no_limits>skriv 0 for ingen begrænsning</no_limits>
+      <no_limits>Skriv 0 for ingen begrænsning</no_limits>
       <selective>Selektiv synkronisering</selective>
       <selective_info>Fjern markering ved enheder du ikke vil have synkroniseret</selective_info>
+      <refresh>Opdater</refresh>
+      <configure>Konfigurer</configure>
+      <file_filters>Filtrér</file_filters>
+      <ignored_extensions>Ignorer filtyper</ignored_extensions>
+      <remove>Fjern</remove>
+      <also_ignore>Ignorér også</also_ignore>
+      <dotfiles>Filertyper uden navn (  .eksempel  )</dotfiles>
+      <temp_files>Midlertidige filer</temp_files>
+      <old_files>Filer ændret før</old_files>
+      <enable_logging>Aktiver logging</enable_logging>
+      <view_log>Gennemse log</view_log>
     </main_form>
     <new_account>
       <new_ftp>Ny FTP konto</new_ftp>
       <login_details>FTP login detaljer</login_details>
       <encryption>Kryptering</encryption>
+      <ask_for_password>Altid spørg efter kodeord</ask_for_password>
       <add>Tilføj</add>
       <done>Slut</done>
     </new_account>
@@ -2828,9 +2841,18 @@
       <add_dir>Tilføj et nyt bibliotek</add_dir>
       <select_dir>Vælg et bibliotek</select_dir>
       <full_path>Den fulde sti</full_path>
+      <default_local>Jeg ønsker at bruge den standard lokal mappe</default_local>
+      <custom_local>Jeg ønsker selv at vælge en lokal mappe</custom_local>
       <local_folder>Lokal folder</local_folder>
       <browse>Gennemse</browse>
     </paths>
+    <setup>
+      <authentication>Autoritasition</authentication>
+      <sync_all_files>Jeg ønsker at synkronisere alle filer</sync_all_files>
+      <sync_specific_files>Jeg ønsker selv at vælge hvile filer der skal synkroniseres</sync_specific_files>
+      <previous>Tilbage</previous>
+      <next>Næste</next>
+    </setup>
     <new_version>
       <new_ver>Ny version</new_ver>
       <update_available>Opdatering tilgængelig</update_available>
@@ -2838,17 +2860,17 @@
       <new_version>Ny version</new_version>
       <current_version>Nuværende version</current_version>
       <wanna_download>Vil du downloade den nye version nu?</wanna_download>
-      <download>Download</download>
+      <download>Opdatér nu</download>
       <learn_more>Lær mere</learn_more>
       <remind_me_next_time>Påmind mig næste gang</remind_me_next_time>
     </new_version>
     <tray>
       <tray_and_nots>Påmindelser og beskeder</tray_and_nots>
-      <updated>Filer 0 blev opdateret</updated>
-      <created>Filer 0 blev oprettet</created>
-      <renamed>Filer 0 blev navngivet til 1</renamed>
-      <deleted>Filer 0 blev slettet</deleted>
-      <changed>Filer 0 blev ændret</changed>
+      <updated>Filer {0} blev opdateret</updated>
+      <created>Filer {0} blev oprettet</created>
+      <renamed>Filer {0} blev navngivet til {1}</renamed>
+      <deleted>Filer {0} blev slettet</deleted>
+      <changed>Filer {0} blev ændret</changed>
       <FilesOrFoldersUpdated>{0} {1} er blevet opdateret</FilesOrFoldersUpdated>
       <FilesOrFoldersCreated>{0} {1} er blevet oprettet</FilesOrFoldersCreated>
       <FilesAndFoldersChanged>{0} {1} og {2} {3} er blevet opdateret</FilesAndFoldersChanged>
@@ -2863,25 +2885,25 @@
       <uploading>Uploader {0}</uploading>
       <downloading>Downloader {0}</downloading>
       <ready>FTPbox - Er klar</ready>
-      <synced>FTPbox -Alle filer synkroniseret</synced>
+      <synced>FTPbox - Alle filer synkroniseret</synced>
       <syncing>FTPbox Synkronisere nu</syncing>
       <offline>FTPbox Offline</offline>
       <link_copied>Links kopieret til klipbord</link_copied>
-      <recent_files> Seneste filer</recent_files>
+      <recent_files>Seneste filer</recent_files>
       <not_available>Ikke tilgængelig</not_available>
       <start_syncing>Start synkronisering</start_syncing>
-      <exit>afslutte</exit>
+      <exit>Afslut</exit>
     </tray>
     <web_interface>
-      <web_int>Web interface</web_int>
-      <downloading>Webinterfacet bliver downloadet.</downloading>
+      <web_int>Web brugerflade</web_int>
+      <downloading>Web brugerfladen bliver downloadet.</downloading>
       <in_a_minute>Det vil tage et øjeblik.</in_a_minute>
-      <removing>Fjerner webinterfacet...</removing>
-      <removed>Webinterfacet er blevet fjernet.</removed>
-      <updating>Opdatere webinterfacet,,,</updating>
-      <updated>Webinterfacet er blevet opdateret.</updated>
+      <removing>Fjerner web brugerfladen...</removing>
+      <removed>Web brugerfladen er blevet fjernet.</removed>
+      <updating>Opdatere web brugerfladen...</updating>
+      <updated>Web brugerfladen er blevet opdateret.</updated>
       <setup>Klik her for at se og opsætning!</setup>
-      <use_webint>Benyt webinterfacet</use_webint>
+      <use_webint>Benyt web brugerflade</use_webint>
       <view>Se i browser vindue</view>
     </web_interface>
 	</da>
