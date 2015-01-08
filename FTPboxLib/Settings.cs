@@ -208,5 +208,7 @@ namespace FTPboxLib
         public int DefaultProfile = 0;
 
         public bool EnableLogging = true;
+
+        public bool AddContextMenu = true;
     }
 }

@@ -159,7 +159,6 @@ namespace FTPbox.Forms
 
                 if (!Settings.IsNoMenusMode)
                 {
-                    AddContextMenu();
                     RunServer();
                 }
             }
@@ -243,6 +242,7 @@ namespace FTPbox.Forms
 
             chkShowNots.Checked = Settings.General.Notifications;
             chkEnableLogging.Checked = Settings.General.EnableLogging;
+            chkShellMenus.Checked = Settings.General.AddContextMenu;
 
             if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
                 rOpenInBrowser.Checked = true;
@@ -425,6 +425,7 @@ namespace FTPbox.Forms
             chkStartUp.Text = Common.Languages[UiControl.StartOnStartup];
             chkEnableLogging.Text = Common.Languages[UiControl.EnableLogging];
             bBrowseLogs.Text = Common.Languages[UiControl.ViewLog];
+            chkShellMenus.Text = Common.Languages[UiControl.AddShellMenu];
 
             //account tab
             tabAccount.Text = Common.Languages[UiControl.Account];
@@ -1187,6 +1188,21 @@ namespace FTPbox.Forms
             if (File.Exists(logFile))
                 Process.Start("explorer.exe", logFile);
 
+        }
+
+        private void chkShellMenus_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.General.AddContextMenu = chkShellMenus.Checked;
+            Settings.SaveGeneral();
+
+            if (chkShellMenus.Checked)
+            {
+                AddContextMenu();
+            }
+            else
+            {
+                RemoveFTPboxMenu();
+            }
         }
 
         #endregion

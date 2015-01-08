@@ -215,6 +215,8 @@ namespace FTPboxLib
                         return Get("/main_form/enable_logging", "Enable Logging");
                     case UiControl.ViewLog:
                         return Get("/main_form/view_log", "View Log");
+                    case UiControl.AddShellMenu:
+                        return Get("/main_form/shell_menus", "Add to context menu");
                     case UiControl.Account:
                         return Get("/main_form/account", "Account");
                     case UiControl.Profile:

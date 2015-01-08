@@ -62,6 +62,7 @@
       <old_files>Files modified before</old_files>
 	  <enable_logging>Enable Logging</enable_logging>
 	  <view_log>View Log</view_log>
+	  <shell_menus>Add to context menu</shell_menus>
       <way_of_sync>Way of synchronization</way_of_sync>
       <local_to_remote>Local to remote only</local_to_remote>
       <remote_to_local>Remote to local only</remote_to_local>

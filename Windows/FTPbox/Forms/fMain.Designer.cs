@@ -41,6 +41,7 @@
             this.rCopy2Clipboard = new System.Windows.Forms.RadioButton();
             this.rOpenInBrowser = new System.Windows.Forms.RadioButton();
             this.gApp = new System.Windows.Forms.GroupBox();
+            this.chkShellMenus = new System.Windows.Forms.CheckBox();
             this.bBrowseLogs = new System.Windows.Forms.Button();
             this.chkEnableLogging = new System.Windows.Forms.CheckBox();
             this.chkShowNots = new System.Windows.Forms.CheckBox();
@@ -175,7 +176,7 @@
             // 
             this.gLanguage.Controls.Add(this.bTranslate);
             this.gLanguage.Controls.Add(this.cLanguages);
-            this.gLanguage.Location = new System.Drawing.Point(8, 221);
+            this.gLanguage.Location = new System.Drawing.Point(8, 242);
             this.gLanguage.Name = "gLanguage";
             this.gLanguage.Size = new System.Drawing.Size(449, 54);
             this.gLanguage.TabIndex = 13;
@@ -271,16 +272,27 @@
             // gApp
             // 
             this.gApp.AccessibleDescription = "";
+            this.gApp.Controls.Add(this.chkShellMenus);
             this.gApp.Controls.Add(this.bBrowseLogs);
             this.gApp.Controls.Add(this.chkEnableLogging);
             this.gApp.Controls.Add(this.chkShowNots);
             this.gApp.Controls.Add(this.chkStartUp);
             this.gApp.Location = new System.Drawing.Point(8, 123);
             this.gApp.Name = "gApp";
-            this.gApp.Size = new System.Drawing.Size(449, 92);
+            this.gApp.Size = new System.Drawing.Size(449, 113);
             this.gApp.TabIndex = 3;
             this.gApp.TabStop = false;
             this.gApp.Text = "Application";
+            // 
+            // chkShellMenus
+            // 
+            this.chkShellMenus.Location = new System.Drawing.Point(9, 88);
+            this.chkShellMenus.Name = "chkShellMenus";
+            this.chkShellMenus.Size = new System.Drawing.Size(434, 17);
+            this.chkShellMenus.TabIndex = 11;
+            this.chkShellMenus.Text = "Add to context menu";
+            this.chkShellMenus.UseVisualStyleBackColor = true;
+            this.chkShellMenus.CheckedChanged += new System.EventHandler(this.chkShellMenus_CheckedChanged);
             // 
             // bBrowseLogs
             // 
@@ -1271,5 +1283,6 @@
         private System.Windows.Forms.RadioButton rLocalToRemoteOnly;
         private System.Windows.Forms.TextBox tTempPrefix;
         private System.Windows.Forms.Label labTempPrefix;
+        private System.Windows.Forms.CheckBox chkShellMenus;
     }
 }
