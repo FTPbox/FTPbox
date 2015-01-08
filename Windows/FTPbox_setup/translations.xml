@@ -1358,7 +1358,7 @@
       <account>Konto</account>
       <application>Applikation</application>
       <start_on_startup>Starta vid systemstart</start_on_startup>
-      <show_nots>visa notifikationer</show_nots>
+      <show_nots>Visa meddelanden</show_nots>
       <profile>Profil</profile>
       <details>Detaljer</details>
       <links>Länkar</links>
@@ -1366,12 +1366,12 @@
       <local_path>Lokal sökväg</local_path>
       <account_full_path>Kontots kompletta sökväg</account_full_path>
       <when_not_clicked>när notifikationen eller senaste fil är klickad på</when_not_clicked>
-      <open_in_browser>öppna länk i webbläsare</open_in_browser>
-      <copy>kopiera länk till urklipp</copy>
+      <open_in_browser>Öppna länk i webbläsare</open_in_browser>
+      <copy>Kopiera länk till urklipp</copy>
       <about>Om</about>
       <current_version>Nuvarande version</current_version>
       <team>Laget</team>
-      <website>officiell hemsida</website>
+      <website>Officiell hemsida</website>
       <contact>Kontakt</contact>
       <coded_in>Skrivet i</coded_in>
       <notes>Notiser</notes>
@@ -1379,14 +1379,14 @@
       <ftpbox_is_free>FTPbox är gratis och öppen källkod</ftpbox_is_free>
       <contact_me>Känn dig välkommen att kontakta mig</contact_me>
       <copyright>Copyright</copyright>
-      <report_bug>Rapportera en bugg</report_bug>
-      <request_feature>önska en ny funktion</request_feature>
-      <donate>donera</donate>
+      <report_bug>Rapportera ett fel</report_bug>
+      <request_feature>Önska en ny funktion</request_feature>
+      <donate>Donera</donate>
       <language>Språk</language>
       <open_local>Öppna den lokala filen</open_local>
       <bandwidth>Bandbredd</bandwidth>
-      <sync_freq>Synkroniceringsfrekevens</sync_freq>
-      <sync_when>Synkronicera fjärrfiler</sync_when>
+      <sync_freq>Synkroniseringsfrekevens</sync_freq>
+      <sync_when>Synkronisera fjärrfiler</sync_when>
       <manually>manuellt</manually>
       <auto>automatiskt varje</auto>
       <seconds>sekunder</seconds>
@@ -1397,31 +1397,44 @@
       <selective>Selektiv synk</selective>
       <selective_info>Klicka bort de filer du inte vill synka</selective_info>
       <refresh>Uppdatera</refresh>
+      <configure>Konfigurera</configure>
       <file_filters>Filter</file_filters>
       <ignored_extensions>Ignorera filändelse</ignored_extensions>
       <remove>Ta bort</remove>
       <also_ignore>Ignorera även</also_ignore>
-      <dotfiles>dotfiles</dotfiles>
+      <dotfiles>'.'-filer</dotfiles>
       <temp_files>Temporära filer</temp_files>
-      <old_files>Filer modifierade innan</old_files>
+      <old_files>Filer som ändrats före</old_files>
+      <enable_logging>Slå på loggning</enable_logging>
+      <view_log>Visa logg</view_log>
     </main_form>
     <new_account>
-      <new_ftp>Nytt FTP konto</new_ftp>
-      <login_details>FTP inloggnings detaljer</login_details>
+      <new_ftp>Nytt FTP-konto</new_ftp>
+      <login_details>Detaljer för FTP-inloggning</login_details>
       <encryption>Kryptera</encryption>
-      <add>lägg till</add>
-      <done>klar</done>
+      <ask_for_password>Fråga alltid efter lösenord</ask_for_password>
+      <add>Lägg till</add>
+      <done>Klar</done>
     </new_account>
     <paths>
       <new_paths>Ny sökväg</new_paths>
       <add_dir>Lägg till en katalog</add_dir>
-      <select_dir>välj katalog</select_dir>
+      <select_dir>Välj katalog</select_dir>
       <full_path>Komplett sökväg</full_path>
-      <local_folder>Lokal sökväg</local_folder>
+      <default_local>Jag vill använda standardkatalogen lokalt</default_local>
+      <custom_local>Jag vill välja en lokal katalog</custom_local>
+      <local_folder>Lokal katalog</local_folder>
       <browse>Bläddra</browse>
     </paths>
+    <setup>
+      <authentication>Autentisering</authentication>
+      <sync_all_files>Jag vill synkronisera alla filer</sync_all_files>
+      <sync_specific_files>Jag vil välja vilka filer som skall synkroniseras</sync_specific_files>
+      <previous>Föregående</previous>
+      <next>Nästa</next>
+    </setup>
     <new_version>
-      <new_ver>Ny Version</new_ver>
+      <new_ver>Ny version</new_ver>
       <update_available>Uppdatering finns tillgänglig</update_available>
       <new_v_available>Ny version av FTPbox finns tillgänglig</new_v_available>
       <new_version>Ny version</new_version>
@@ -1429,10 +1442,10 @@
       <wanna_download>Vill du ladda ned den nya versionen nu</wanna_download>
       <download>Uppdatera nu</download>
       <learn_more>Lär dig mer</learn_more>
-      <remind_me_next_time>Påmin mig nästa gång</remind_me_next_time>
+      <remind_me_next_time>Påminn mig nästa gång</remind_me_next_time>
     </new_version>
     <tray>
-      <tray_and_nots>Notifikationer</tray_and_nots>
+      <tray_and_nots>Systemfältet &amp; Meddelanden</tray_and_nots>
       <updated>{0} uppdaterad.</updated>
       <created>{0} har skapats.</created>
       <renamed>{0} har döpts om till {1}</renamed>
@@ -1448,17 +1461,17 @@
       <folders>Kataloger</folders>
       <connecting>FTPBox - Ansluter…</connecting>
       <reconnecting>FTPBox - Återansluter…</reconnecting>
-      <listing>FTPBox - Lyssnar…</listing>
+      <listing>FTPBox - Listar…</listing>
       <uploading>Laddar upp {0}</uploading>
       <downloading>Laddar ned {0}</downloading>
       <ready>FTPBox - Redo</ready>
       <synced>FTPbox - Alla filer synkroniserade</synced>
       <syncing>FTPbox - Synkroniserar…</syncing>
-      <offline>FTPbox - Offline</offline>
+      <offline>FTPbox - Nedkopplad</offline>
       <link_copied>Länk kopierad till urklipp</link_copied>
-      <recent_files>Senaste Filer</recent_files>
-      <not_available>Inte tillgäng</not_available>
-      <start_syncing>Starta synkroniceringen</start_syncing>
+      <recent_files>Senaste filer</recent_files>
+      <not_available>Inte tillgänglig</not_available>
+      <start_syncing>Starta synkronisering</start_syncing>
       <exit>Avsluta</exit>
     </tray>
     <web_interface>
@@ -1469,7 +1482,7 @@
       <removed>Webbgränssnittet har tagits bort</removed>
       <updating>Uppdaterar webbgränssnittet…</updating>
       <updated>Webbgränssnittet har uppdaterats.</updated>
-      <setup>Klicka här för att se samt konfigurera!</setup>
+      <setup>Klicka här för att visa och konfigurera!</setup>
       <use_webint>Använd webbgränssnittet</use_webint>
       <view>(Visa i webbläsaren)</view>
     </web_interface>
