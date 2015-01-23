@@ -2841,6 +2841,12 @@
       <old_files>Filer ændret før</old_files>
       <enable_logging>Aktiver logging</enable_logging>
       <view_log>Gennemse log</view_log>
+      <shell_menus>Tilføj til genvejsmenu</shell_menus>
+      <way_of_sync>Synkronisering</way_of_sync>
+      <local_to_remote>Upload kun</local_to_remote>
+      <remote_to_local>Hent kun</remote_to_local>
+      <both_ways>Begge veje</both_ways>
+      <temp_file_prefix>Midlertidig fil-forstavelse</temp_file_prefix>
     </main_form>
     <new_account>
       <new_ftp>Ny FTP konto</new_ftp>
