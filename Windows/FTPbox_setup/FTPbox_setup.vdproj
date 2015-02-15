@@ -100,13 +100,13 @@
         "Entry"
         {
         "MsmKey" = "8:_986DF24C806FE4D125E632FFB34EE797"
-        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
+        "OwnerKey" = "8:_501FEBDA4AB44963BC62217164703C1C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_986DF24C806FE4D125E632FFB34EE797"
-        "OwnerKey" = "8:_501FEBDA4AB44963BC62217164703C1C"
+        "OwnerKey" = "8:_32B83AA4B64F4755AA03BE7917490E75"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -124,43 +124,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_79E027320435F9386BD88D1BCD24C2BC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A5BDDDAF0A5C1DDE259B33C500918545"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3339D7A6312B3ABAC3F7416E7C63F5F8"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_986DF24C806FE4D125E632FFB34EE797"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_202F3727FEB307EA72FAD770900F27D0"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_75F8749880D0817EFFABD0C93B5F717A"
+        "OwnerKey" = "8:_501FEBDA4AB44963BC62217164703C1C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -172,7 +136,43 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_501FEBDA4AB44963BC62217164703C1C"
+        "OwnerKey" = "8:_75F8749880D0817EFFABD0C93B5F717A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_202F3727FEB307EA72FAD770900F27D0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_986DF24C806FE4D125E632FFB34EE797"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_3339D7A6312B3ABAC3F7416E7C63F5F8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C0AEE24927AB3D33882558AF4110D9F7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A5BDDDAF0A5C1DDE259B33C500918545"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_79E027320435F9386BD88D1BCD24C2BC"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -327,6 +327,11 @@
             "AssemblyAsmDisplayName" = "8:Renci.SshNet, Version=2013.4.7.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_202F3727FEB307EA72FAD770900F27D0"
+                    {
+                    "Name" = "8:Renci.SshNet.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Renci.SshNet.dll"
             "TargetName" = "8:"
@@ -353,6 +358,11 @@
             "AssemblyAsmDisplayName" = "8:Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_3339D7A6312B3ABAC3F7416E7C63F5F8"
+                    {
+                    "Name" = "8:Newtonsoft.Json.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Newtonsoft.Json.dll"
             "TargetName" = "8:"
@@ -447,9 +457,14 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:FTPboxLib, Version=2.5.3.1, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:FTPboxLib, Version=2.6.1.1, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_70E218FFCC4559A3F77F69678119E851"
+                    {
+                    "Name" = "8:FTPboxLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:FTPboxLib.dll"
             "TargetName" = "8:"
@@ -476,6 +491,11 @@
             "AssemblyAsmDisplayName" = "8:System.Net.FtpClient, Version=1.0.5064.19175, Culture=neutral, PublicKeyToken=fa4be07daa57c2b7, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_75F8749880D0817EFFABD0C93B5F717A"
+                    {
+                    "Name" = "8:System.Net.FtpClient.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:System.Net.FtpClient.dll"
             "TargetName" = "8:"
@@ -502,6 +522,11 @@
             "AssemblyAsmDisplayName" = "8:Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_986DF24C806FE4D125E632FFB34EE797"
+                    {
+                    "Name" = "8:Ionic.Zip.Reduced.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Ionic.Zip.Reduced.dll"
             "TargetName" = "8:"
@@ -641,15 +666,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FTPbox"
-        "ProductCode" = "8:{F4195DB1-5E02-4943-9477-D35E4F91D94E}"
-        "PackageCode" = "8:{A54F6BDC-5974-49B9-BB76-B2259C2ADB95}"
+        "ProductCode" = "8:{AAFA973E-FD0B-4657-9B2B-155909E8E842}"
+        "PackageCode" = "8:{7A89231F-CFCF-4341-8D6A-E411EFA1F745}"
         "UpgradeCode" = "8:{C3AC21D9-1CD1-40EC-A4F8-F482D3922829}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.5.4"
+        "ProductVersion" = "8:2.6.1"
         "Manufacturer" = "8:ftpbox.org"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:ftpbox.org"
@@ -1205,7 +1230,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_32B83AA4B64F4755AA03BE7917490E75"
             {
-            "SourcePath" = "8:..\\FTPbox\\obj\\x86\\Debug\\FTPbox.exe"
+            "SourcePath" = "8:..\\FTPbox\\obj\\x86\\Release\\FTPbox.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_716D4F3FE11844F98CD60FAF2FB1D41F"

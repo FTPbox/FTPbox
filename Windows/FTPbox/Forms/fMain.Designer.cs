@@ -1010,7 +1010,7 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(435, 13);
             this.label11.TabIndex = 3;
-            this.label11.Text = "Copyright © 2013 - ftpbox.org";
+            this.label11.Text = "Copyright © 2015 - ftpbox.org";
             // 
             // labContactMe
             // 
