@@ -342,7 +342,7 @@ namespace FTPboxLib
                 // upload to a temp file...
                 if (FTP)
                 {
-                    using (Stream file = File.OpenRead(i.LocalPath), rem = _ftpc.OpenWrite(temp))
+                    using (Stream file = File.Open(i.LocalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), rem = _ftpc.OpenWrite(temp))
                     {
                         var buf = new byte[8192];
                         int read;
@@ -359,7 +359,7 @@ namespace FTPboxLib
                     }
                 }
                 else
-                    using (var file = File.OpenRead(i.LocalPath))
+                    using (var file = File.Open(i.LocalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         _sftpc.UploadFile(file, temp, true,
                             (d) => 
                                 {

@@ -133,10 +133,21 @@ namespace FTPboxLib
         private void OnRenamed(object source, RenamedEventArgs e)
         {
             Log.Write(l.Debug, "Item {0} was renamed", e.OldName);
+
             if (!controller.ItemGetsSynced(e.FullPath, true) || !controller.ItemGetsSynced(e.OldFullPath, true))
                 return;
 
-            AddToQueue(e, ChangeAction.renamed);
+            var isFile = Common.PathIsFile(e.FullPath);
+            // Find if renamed from/to temporary file
+            var renamedFromTempFile = new FileInfo(e.OldFullPath).Attributes.HasFlag(FileAttributes.Temporary);
+            var renamedToTempFile = new FileInfo(e.FullPath).Attributes.HasFlag(FileAttributes.Temporary);
+            // Get common path to old (renamed) file
+            var oldCommon = controller.GetCommonPath(e.OldFullPath, true);
+
+            if (isFile && renamedFromTempFile && !renamedToTempFile && !controller.FileLog.Contains(oldCommon))
+                AddToQueue(e, ChangeAction.changed);
+            else
+                AddToQueue(e, ChangeAction.renamed);
         }
         
         #endregion

@@ -73,10 +73,14 @@ namespace FTPboxLib
             string ext = name.Contains(".") ? name.Substring(name.LastIndexOf(".") + 1) : null;
 
             return
-                (IgnoreDotFiles && name.StartsWith(".")) ||                                                                 // are dotfiles ignored?
-                (IgnoreTempFiles && (name.EndsWith("~") || name.StartsWith(".goutputstream") || name.StartsWith("~"))) ||   //are temporary files ignored?
-                ((Extensions.Contains(ext) || Extensions.Contains("." + ext)) && ext != null) ||                            //is this extension ignored?
-                isInIgnoredFolders(path);                                                                                   //is the item in an ignored folder?
+                // are dotfiles ignored?
+                (IgnoreDotFiles && name.StartsWith(".")) ||
+                // are temporary files ignored?
+                (IgnoreTempFiles && (name.ToLower().EndsWith(".tmp") || name.EndsWith("~") || name.StartsWith(".goutputstream") || name.StartsWith("~"))) ||
+                // is this extension ignored?
+                ((Extensions.Contains(ext) || Extensions.Contains("." + ext)) && ext != null) ||
+                // is the item in an ignored folder?
+                isInIgnoredFolders(path);
         }
 
         /// <summary>
