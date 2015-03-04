@@ -39,6 +39,8 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\..\FTPboxLib\FTPboxLib\FTPboxLib\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -74,6 +76,12 @@
     <Compile Include="Forms\fSelectiveSync.Designer.cs">
       <DependentUpon>fSelectiveSync.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\fTrayForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\fTrayForm.Designer.cs">
+      <DependentUpon>fTrayForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\newversion.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -92,8 +100,15 @@
     <Compile Include="Forms\Translate.Designer.cs">
       <DependentUpon>Translate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\trayFormListItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\trayFormListItem.Designer.cs">
+      <DependentUpon>trayFormListItem.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Win32.cs" />
     <EmbeddedResource Include="Forms\fAccountDetails.resx">
       <DependentUpon>fAccountDetails.cs</DependentUpon>
     </EmbeddedResource>
@@ -106,6 +121,9 @@
     <EmbeddedResource Include="Forms\fSelectiveSync.resx">
       <DependentUpon>fSelectiveSync.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\fTrayForm.resx">
+      <DependentUpon>fTrayForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\newversion.resx">
       <DependentUpon>newversion.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -115,6 +133,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Translate.resx">
       <DependentUpon>Translate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\trayFormListItem.resx">
+      <DependentUpon>trayFormListItem.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -162,6 +183,10 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -1038,6 +1038,7 @@
             this.tray.Text = "FTPbox";
             this.tray.Visible = true;
             this.tray.BalloonTipClicked += new System.EventHandler(this.tray_BalloonTipClicked);
+            this.tray.MouseClick += new System.Windows.Forms.MouseEventHandler(this.tray_MouseClick);
             this.tray.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.tray_MouseDoubleClick);
             // 
             // trayMenu

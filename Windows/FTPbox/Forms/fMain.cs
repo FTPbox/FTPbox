@@ -36,6 +36,7 @@ namespace FTPbox.Forms
         private Setup fSetup;
         private Translate ftranslate;
         private fSelectiveSync fSelective;
+        private fTrayForm fTrayForm;
 
         private TrayTextNotificationArgs _lastTrayStatus = new TrayTextNotificationArgs
             {AssossiatedFile = null, MessageType = MessageType.AllSynced};
@@ -123,6 +124,7 @@ namespace FTPbox.Forms
             fSetup = new Setup {Tag = this};
             ftranslate = new Translate {Tag = this};
             fSelective = new fSelectiveSync();
+            fTrayForm = new fTrayForm();
             
             if (!string.IsNullOrEmpty(Settings.General.Language))
                 Set_Language(Settings.General.Language);
@@ -1431,6 +1433,14 @@ namespace FTPbox.Forms
         {
             if (e.Button == MouseButtons.Left)
                 Process.Start("explorer.exe", Program.Account.Paths.Local);
+        }
+
+        private void tray_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (!fTrayForm.Visible && e.Button == MouseButtons.Left)
+                fTrayForm.Show();
+            // Make sure tray form gets focus
+            fTrayForm.Activate();
         }
 
         private void SyncToolStripMenuItem_Click(object sender, EventArgs e)
