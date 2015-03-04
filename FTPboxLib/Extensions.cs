@@ -61,7 +61,7 @@ namespace FTPboxLib
         /// <returns></returns>
         public static string FormatDate(this DateTime date)
         {
-            return (date.Date == DateTime.Today) ? date.ToString("HH:mm") : date.ToString("MM-dd-yy");
+            return (date.Date == DateTime.Today) ? date.ToString("HH:mm") : date.ToString("dd-MM-yyy");
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace FTPboxLib
         /// </summary>
         public static DateTime LatestChangeTime(this FileLogItem item)
         {
-            return DateTime.Compare(item.Remote, item.Local) < 0 ? item.Remote : item.Local;
+            return DateTime.Compare(item.Remote, item.Local) > 0 ? item.Remote : item.Local;
         }
 
         /// <summary>
