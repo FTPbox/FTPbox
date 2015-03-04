@@ -205,6 +205,8 @@ namespace FTPboxLib
 
             // Notifications time
 
+            Notifications.ChangeRecentList();
+
             int folders = CompletedList.Count(x => x.Item.Type == ClientItemType.Folder && x.Status == StatusType.Success && !x.SkipNotification);
             int files = CompletedList.Count(x => x.Item.Type == ClientItemType.File && x.Status == StatusType.Success && !x.SkipNotification);
             int failed = CompletedList.Count(x => x.Status == StatusType.Failure);

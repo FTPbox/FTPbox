@@ -37,7 +37,7 @@ namespace FTPbox.Forms
             // Make sure the border doesn't appear
             this.Text = String.Empty;
 
-            Program.Account.FileLog.FileLogChanged += (o, n) => this.Invoke(new MethodInvoker(LoadRecent));
+            Notifications.RecentListChanged += (o, n) => this.Invoke(new MethodInvoker(LoadRecent));
 
             Program.Account.Client.TransferProgress += (o, n) =>
             {

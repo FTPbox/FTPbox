@@ -71,7 +71,7 @@ namespace FTPbox.Forms
                 };
 
 
-            Program.Account.FileLog.FileLogChanged += (o, n) => Load_Recent();
+            //Program.Account.FileLog.FileLogChanged += (o, n) => Load_Recent();
 
             Program.Account.Client.ConnectionClosed += (o, n) => Log.Write(l.Warning, "Connection closed: {0}", n.Text ?? string.Empty);
 

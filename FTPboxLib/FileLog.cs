@@ -26,9 +26,6 @@ namespace FTPboxLib
         [JsonProperty]
         public List<string> Folders { get; private set; }
 
-        // An event used from the main form to refresh the recent files list
-	    public event EventHandler FileLogChanged;
-
         private AccountController controller;
 
         public FileLog(AccountController account)
@@ -57,8 +54,6 @@ namespace FTPboxLib
                 Local = file.SyncTo == SyncTo.Remote ? file.Item.LastWriteTime : System.IO.File.GetLastWriteTime(file.LocalPath),
                 Remote = controller.Client.GetLwtOf(file.NewCommonPath)
             });
-
-            FileLogChanged.SafeInvoke(null, EventArgs.Empty);
 
             Settings.SaveProfile();
         }

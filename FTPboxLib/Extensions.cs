@@ -100,6 +100,14 @@ namespace FTPboxLib
         }
 
         /// <summary>
+        /// Safely invoke handler with specified type of EventArgs
+        /// </summary>
+        public static void SafeInvoke<TEventArgs>(this EventHandler<TEventArgs> handler, object sender, TEventArgs args) where TEventArgs : EventArgs
+        {
+            if (handler != null) handler(sender, args);
+        }
+
+        /// <summary>
         /// Gets the fingerprint from the given byte-array representation of the key
         /// </summary>
         /// <returns>fingerprint in string format</returns>
