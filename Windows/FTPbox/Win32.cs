@@ -6,6 +6,8 @@ namespace FTPbox
 {
     class Win32
     {
+        #region  File extention icon
+        
         private const uint SHGFI_ICON = 0x100;
         private const uint SHGFI_LARGEICON = 0x0;    // 'Large icon
         private const uint SHGFI_USEFILEATTRIBUTES = 0x000000010;
@@ -43,6 +45,52 @@ namespace FTPbox
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
             public string szTypeName;
         };
+
+        #endregion
+
+        #region Windows Taskbar information
+
+        [DllImport("shell32.dll")]
+        private static extern IntPtr SHAppBarMessage(uint dwMessage, [In] ref APPBARDATA pData);
+        
+        private const uint ABM_GETTASKBARPOS = 0x00000005;
+
+        private struct APPBARDATA
+        {
+            public uint cbSize;
+            public IntPtr hWnd;
+            public uint uCallbackMessage;
+            public AppBarLocation uEdge;
+            public RECT rc;
+            public int lParam;
+        }
+
+        public enum AppBarLocation
+        {
+            Left = 0, Top = 1, Right = 2, Bottom = 3
+        }
+
+        private struct RECT
+        {
+            public int left;
+            public int top;
+            public int right;
+            public int bottom;
+        }
+
+        /// <summary>
+        /// Returns information for the Windows taskbar (type, location, size)
+        /// </summary>
+        public static Rectangle GetTaskbar(out AppBarLocation location)
+        {
+            var data = new APPBARDATA();
+            var res = SHAppBarMessage(ABM_GETTASKBARPOS, ref data);
+            Console.WriteLine(data.rc);
+            location = data.uEdge;
+            return Rectangle.FromLTRB(data.rc.left, data.rc.top, data.rc.right, data.rc.bottom);
+        }
+
+        #endregion
     }
 
     

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using FTPboxLib;
@@ -130,6 +131,55 @@ namespace FTPbox.Forms
         private void fTrayForm_Deactivate(object sender, EventArgs e)
         {
             this.Hide();
+        }
+
+        /// <summary>
+        /// Positions the form according to the location of the Windows taskbar and our tray icon
+        /// </summary>
+        /// <param name="MousePosition">the point the user clicked at when opening the form</param>
+        public void PositionProperly(Point MousePosition)
+        {
+            // Get the taskbar location and type
+            Win32.AppBarLocation taskbarType;
+            var taskbarRectangle = Win32.GetTaskbar(out taskbarType);
+            
+            int x = 0;
+            int y = 0;
+            
+            // Calculate where the form should be placed
+            if (taskbarType == Win32.AppBarLocation.Bottom)
+            {
+                x = MousePosition.X - this.Width / 2;
+                y = taskbarRectangle.Y - this.Height - 10;
+            }
+            else if (taskbarType == Win32.AppBarLocation.Top)
+            {
+                x = MousePosition.X - this.Width / 2;
+                y = taskbarRectangle.Height + 10;
+            }
+            else if (taskbarType == Win32.AppBarLocation.Left)
+            {
+                x = taskbarRectangle.X + taskbarRectangle.Width + 10;
+                y = MousePosition.Y - this.Height / 2;
+            }
+            else if (taskbarType == Win32.AppBarLocation.Right)
+            {
+                x = taskbarRectangle.X - this.Width - 10;
+                y = MousePosition.Y - this.Height / 2;
+            }
+            // Make sure the form does not get outside the screen bounds
+            if (taskbarType == Win32.AppBarLocation.Bottom || taskbarType == Win32.AppBarLocation.Top)
+            {
+                if (x + this.Width > taskbarRectangle.Right - 10)
+                    x = taskbarRectangle.Right - 10 - this.Width;
+            }
+            else
+            {
+                if (y + this.Height > taskbarRectangle.Bottom - 10)
+                    y = taskbarRectangle.Bottom - 10 - this.Height;
+            }
+            // Set the location
+            this.Location = new Point(x, y);
         }
     }
 }

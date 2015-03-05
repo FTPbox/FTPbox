@@ -1441,6 +1441,8 @@ namespace FTPbox.Forms
                 fTrayForm.Show();
             // Make sure tray form gets focus
             fTrayForm.Activate();
+            // Move the form to the correct position
+            fTrayForm.PositionProperly(MousePosition);
         }
 
         private void SyncToolStripMenuItem_Click(object sender, EventArgs e)
