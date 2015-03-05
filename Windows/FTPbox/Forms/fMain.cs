@@ -124,7 +124,7 @@ namespace FTPbox.Forms
             fSetup = new Setup {Tag = this};
             ftranslate = new Translate {Tag = this};
             fSelective = new fSelectiveSync();
-            fTrayForm = new fTrayForm();
+            fTrayForm = new fTrayForm() {Tag = this};
             
             if (!string.IsNullOrEmpty(Settings.General.Language))
                 Set_Language(Settings.General.Language);

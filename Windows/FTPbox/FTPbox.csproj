@@ -163,6 +163,8 @@
     <None Include="Resources\btn_donate_SM.gif" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\folder.jpg" />
+    <Content Include="Resources\settings.jpg" />
     <None Include="Resources\syncing.ico" />
     <None Include="Resources\regular_60.ico" />
     <None Include="Resources\offline.ico" />

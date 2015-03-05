@@ -30,14 +30,19 @@
         {
             this.lCurrentStatus = new System.Windows.Forms.Label();
             this.fRecentList = new System.Windows.Forms.FlowLayoutPanel();
+            this.pLocalFolder = new System.Windows.Forms.PictureBox();
+            this.pSettings = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pLocalFolder)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pSettings)).BeginInit();
             this.SuspendLayout();
             // 
             // lCurrentStatus
             // 
-            this.lCurrentStatus.AutoSize = true;
-            this.lCurrentStatus.Location = new System.Drawing.Point(12, 229);
+            this.lCurrentStatus.BackColor = System.Drawing.Color.Transparent;
+            this.lCurrentStatus.Location = new System.Drawing.Point(68, 228);
             this.lCurrentStatus.Name = "lCurrentStatus";
-            this.lCurrentStatus.Size = new System.Drawing.Size(104, 13);
+            this.lCurrentStatus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lCurrentStatus.Size = new System.Drawing.Size(234, 13);
             this.lCurrentStatus.TabIndex = 1;
             this.lCurrentStatus.Text = "All files synchronized";
             // 
@@ -46,10 +51,35 @@
             this.fRecentList.AutoScroll = true;
             this.fRecentList.BackColor = System.Drawing.Color.White;
             this.fRecentList.Location = new System.Drawing.Point(0, 0);
-            this.fRecentList.MaximumSize = new System.Drawing.Size(316, 215);
             this.fRecentList.Name = "fRecentList";
-            this.fRecentList.Size = new System.Drawing.Size(315, 215);
+            this.fRecentList.Size = new System.Drawing.Size(315, 217);
             this.fRecentList.TabIndex = 2;
+            // 
+            // pLocalFolder
+            // 
+            this.pLocalFolder.BackColor = System.Drawing.Color.Transparent;
+            this.pLocalFolder.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pLocalFolder.Image = global::FTPbox.Properties.Resources.folder;
+            this.pLocalFolder.Location = new System.Drawing.Point(42, 226);
+            this.pLocalFolder.Name = "pLocalFolder";
+            this.pLocalFolder.Size = new System.Drawing.Size(16, 16);
+            this.pLocalFolder.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pLocalFolder.TabIndex = 3;
+            this.pLocalFolder.TabStop = false;
+            this.pLocalFolder.Click += new System.EventHandler(this.pLocalFolder_Click);
+            // 
+            // pSettings
+            // 
+            this.pSettings.BackColor = System.Drawing.Color.Transparent;
+            this.pSettings.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pSettings.Image = global::FTPbox.Properties.Resources.settings;
+            this.pSettings.Location = new System.Drawing.Point(12, 226);
+            this.pSettings.Name = "pSettings";
+            this.pSettings.Size = new System.Drawing.Size(16, 16);
+            this.pSettings.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pSettings.TabIndex = 4;
+            this.pSettings.TabStop = false;
+            this.pSettings.Click += new System.EventHandler(this.pSettings_Click);
             // 
             // fTrayForm
             // 
@@ -57,10 +87,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(314, 251);
             this.ControlBox = false;
+            this.Controls.Add(this.pSettings);
+            this.Controls.Add(this.pLocalFolder);
             this.Controls.Add(this.fRecentList);
             this.Controls.Add(this.lCurrentStatus);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MaximumSize = new System.Drawing.Size(330, 267);
+            this.MinimumSize = new System.Drawing.Size(330, 267);
             this.Name = "fTrayForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
@@ -68,8 +101,9 @@
             this.Deactivate += new System.EventHandler(this.fTrayForm_Deactivate);
             this.Load += new System.EventHandler(this.fTrayForm_Load);
             this.Leave += new System.EventHandler(this.fTrayForm_Leave);
+            ((System.ComponentModel.ISupportInitialize)(this.pLocalFolder)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pSettings)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -77,5 +111,7 @@
 
         private System.Windows.Forms.Label lCurrentStatus;
         private System.Windows.Forms.FlowLayoutPanel fRecentList;
+        private System.Windows.Forms.PictureBox pLocalFolder;
+        private System.Windows.Forms.PictureBox pSettings;
     }
 }

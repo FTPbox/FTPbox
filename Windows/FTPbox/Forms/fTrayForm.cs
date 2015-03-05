@@ -181,5 +181,16 @@ namespace FTPbox.Forms
             // Set the location
             this.Location = new Point(x, y);
         }
+
+        private void pLocalFolder_Click(object sender, EventArgs e)
+        {
+            Process.Start("explorer.exe", Program.Account.Paths.Local);
+        }
+
+        private void pSettings_Click(object sender, EventArgs e)
+        {
+            ((fMain)Tag).Show();
+            ((fMain)Tag).Activate();
+        }
     }
 }
