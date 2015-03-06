@@ -311,6 +311,8 @@ namespace FTPboxLib
 
                     case UiControl.RecentFiles:
                         return Get("/tray/recent_files", "Recent Files");
+                    case UiControl.Modified:
+                        return Get("/tray/modified", "Modified");
                     case UiControl.StartSync:
                         return Get("/tray/start_syncing", "Start Syncing");
                     case UiControl.Exit:

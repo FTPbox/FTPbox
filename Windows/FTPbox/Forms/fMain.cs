@@ -506,6 +506,8 @@ namespace FTPbox.Forms
 
             SetTray(null, _lastTrayStatus);
 
+            fTrayForm.Set_Language();
+
             // Is this a right-to-left language?
             RightToLeftLayout = Common.RtlLanguages.Contains(lan);
 
@@ -1438,11 +1440,15 @@ namespace FTPbox.Forms
         private void tray_MouseClick(object sender, MouseEventArgs e)
         {
             if (!fTrayForm.Visible && e.Button == MouseButtons.Left)
+            {
+                var mouse = MousePosition;
+                // Show the tray form
                 fTrayForm.Show();
-            // Make sure tray form gets focus
-            fTrayForm.Activate();
-            // Move the form to the correct position
-            fTrayForm.PositionProperly(MousePosition);
+                // Make sure tray form gets focus
+                fTrayForm.Activate();
+                // Move the form to the correct position
+                fTrayForm.PositionProperly(mouse);
+            }
         }
 
         private void SyncToolStripMenuItem_Click(object sender, EventArgs e)

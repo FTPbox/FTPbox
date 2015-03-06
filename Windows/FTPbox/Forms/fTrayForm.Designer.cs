@@ -41,10 +41,10 @@
             this.lCurrentStatus.BackColor = System.Drawing.Color.Transparent;
             this.lCurrentStatus.Location = new System.Drawing.Point(68, 228);
             this.lCurrentStatus.Name = "lCurrentStatus";
-            this.lCurrentStatus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lCurrentStatus.Size = new System.Drawing.Size(234, 13);
             this.lCurrentStatus.TabIndex = 1;
             this.lCurrentStatus.Text = "All files synchronized";
+            this.lCurrentStatus.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // fRecentList
             // 

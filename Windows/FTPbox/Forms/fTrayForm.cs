@@ -21,6 +21,8 @@ namespace FTPbox.Forms
                     else
                         _lastStatus = n;
                 };
+            // Make status label same color as the icons
+            lCurrentStatus.ForeColor = Color.FromArgb(105, 105, 105);
         }
 
         /// <summary>
@@ -72,7 +74,7 @@ namespace FTPbox.Forms
                     var t = new trayFormListItem
                         {
                             FileNameLabel = Common._name(f.CommonPath),
-                            FileStatusLabel = f.LatestChangeTime().FormatDate()
+                            FileStatusLabel = Common.Languages[UiControl.Modified] + " " + f.LatestChangeTime().FormatDate()
                         };
                     // Open the file in explorer.exe on click
                     t.Click += (sender, args) => Process.Start("explorer.exe", @"/select, " + fullPath);
@@ -116,6 +118,9 @@ namespace FTPbox.Forms
                         lCurrentStatus.Text = Common.Languages[e.MessageType];
                         break;
                 }
+                // Remove 'FTPbox - ' from the beginning of the label
+                if (lCurrentStatus.Text.StartsWith("FTPbox - "))
+                    lCurrentStatus.Text = lCurrentStatus.Text.Substring("FTPbox - ".Length);
             }
             catch (Exception ex)
             {
@@ -191,6 +196,18 @@ namespace FTPbox.Forms
         {
             ((fMain)Tag).Show();
             ((fMain)Tag).Activate();
+        }
+
+        public void Set_Language()
+        {
+            if (!this.IsHandleCreated) return;
+
+            this.Invoke(new MethodInvoker(() =>
+                {
+                    // Set the status label and load the recent files
+                    SetStatusLabel(null, _lastStatus);
+                    LoadRecent();
+                }));
         }
     }
 }

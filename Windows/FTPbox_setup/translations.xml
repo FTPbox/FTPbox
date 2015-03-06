@@ -132,6 +132,7 @@
       <link_copied>Link copied to clipboard</link_copied>
       <recent_files>Recent Files</recent_files>
       <not_available>Not Available</not_available>
+	  <modified>Modified</modified>
       <start_syncing>Start Syncing</start_syncing>
       <exit>Exit</exit>
     </tray>

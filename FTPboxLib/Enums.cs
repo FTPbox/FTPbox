@@ -149,7 +149,7 @@ namespace FTPboxLib
         About, TheTeam, Website, Contact, CodedIn, Notes, Contribute, FreeAndAll, GetInTouch, ReportBug, RequestFeature, Donate,
 
         // Tray
-        RecentFiles, StartSync, Exit,
+        RecentFiles, StartSync, Exit, Modified,
 
         //  New Version
         UpdateAvailable, NewVersionAvailable, CurrentVersion, NewVersion, AskDownload, DownloadNow, LearnMore, RemindLater

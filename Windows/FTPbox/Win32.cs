@@ -85,7 +85,7 @@ namespace FTPbox
         {
             var data = new APPBARDATA();
             var res = SHAppBarMessage(ABM_GETTASKBARPOS, ref data);
-            Console.WriteLine(data.rc);
+            
             location = data.uEdge;
             return Rectangle.FromLTRB(data.rc.left, data.rc.top, data.rc.right, data.rc.bottom);
         }
