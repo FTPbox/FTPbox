@@ -56,6 +56,7 @@ namespace FTPboxLib
             });
 
             Settings.SaveProfile();
+            Notifications.ChangeRecentList();
         }
 
         /// <summary>
@@ -69,6 +70,7 @@ namespace FTPboxLib
 	            Files.Remove(fi);
 
 	        Log.Write(l.Debug, "*** Removed from Log: {0}", path);
+            Notifications.ChangeRecentList();
 	    }
 
         /// <summary>
@@ -104,6 +106,7 @@ namespace FTPboxLib
 	        if (Folders.Contains(cpath))
 	            Folders.Remove(cpath);
 	        Settings.SaveProfile();
+            Notifications.ChangeRecentList();
         }
 
         public DateTime getLocal(string path)

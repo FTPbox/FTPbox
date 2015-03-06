@@ -61,6 +61,7 @@ namespace FTPboxLib
                 Log.Write(l.Client, "{0} items in RecentList", FileLog.Files.Count);
 
                 return FileLog.Files
+                    .Where(x => File.Exists(Path.Combine(Paths.Local, x.CommonPath)))
                     .OrderByDescending(x => x.LatestChangeTime())
                     .Take(10)
                     .ToList();

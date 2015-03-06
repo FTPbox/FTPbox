@@ -167,7 +167,7 @@ namespace FTPboxLib
         }
 
         /// <summary>
-        /// Update log, show notifications and run any pending WebUI actions
+        /// Show notifications and run any pending WebUI actions
         /// </summary>
         private void Finish()
         {
@@ -179,33 +179,9 @@ namespace FTPboxLib
             foreach (var d in CompletedList.Where(x => x.Status == StatusType.Success))
             {
                 Log.Write(l.Info, string.Format("{0,-40} {1,-10}", d.NewCommonPath, d.Status.ToString()));
-
-                if (d.Item.Type == ClientItemType.Folder)
-                {
-                    if (d.ActionType == ChangeAction.deleted)
-                        controller.FileLog.removeFolder(d.CommonPath);
-                    else if (d.ActionType == ChangeAction.renamed)
-                        controller.FileLog.putFolder(d.NewCommonPath, d.CommonPath);
-                    else
-                        controller.FileLog.putFolder(d.CommonPath);
-                }
-                else if (d.Item.Type == ClientItemType.File)
-                {
-                    if (d.ActionType == ChangeAction.deleted)
-                        controller.RemoveFromLog(d.CommonPath);
-                    else if (d.ActionType == ChangeAction.renamed)
-                    {
-                        controller.RemoveFromLog(d.CommonPath);
-                        controller.FileLog.putFile(d);
-                    }
-                    else
-                        controller.FileLog.putFile(d);
-                }
             }
 
             // Notifications time
-
-            Notifications.ChangeRecentList();
 
             int folders = CompletedList.Count(x => x.Item.Type == ClientItemType.Folder && x.Status == StatusType.Success && !x.SkipNotification);
             int files = CompletedList.Count(x => x.Item.Type == ClientItemType.File && x.Status == StatusType.Success && !x.SkipNotification);
@@ -261,6 +237,10 @@ namespace FTPboxLib
             }
         }               
 
+        /// <summary>
+        /// Moves the last item from the queue to the CompletedList and adds it to FileLog
+        /// </summary>
+        /// <param name="status"></param>
         public void RemoveLast(StatusType status)
         {
             CompletedList.Add(new SyncQueueItem (controller)
@@ -272,7 +252,32 @@ namespace FTPboxLib
                 CompletedOn = DateTime.Now,
                 SkipNotification = Next.SkipNotification
             });
-
+            // Add last item to FileLog
+            if (status == StatusType.Success)
+            {
+                if (Next.Item.Type == ClientItemType.Folder)
+                {
+                    if (Next.ActionType == ChangeAction.deleted)
+                        controller.FileLog.removeFolder(Next.CommonPath);
+                    else if (Next.ActionType == ChangeAction.renamed)
+                        controller.FileLog.putFolder(Next.NewCommonPath, Next.CommonPath);
+                    else
+                        controller.FileLog.putFolder(Next.CommonPath);
+                }
+                else if (Next.Item.Type == ClientItemType.File)
+                {
+                    if (Next.ActionType == ChangeAction.deleted)
+                        controller.RemoveFromLog(Next.CommonPath);
+                    else if (Next.ActionType == ChangeAction.renamed)
+                    {
+                        controller.RemoveFromLog(Next.CommonPath);
+                        controller.FileLog.putFile(Next);
+                    }
+                    else
+                        controller.FileLog.putFile(Next);
+                }
+            }
+            // Remove from queue
             RemoveAt(0);
         }
 
@@ -515,6 +520,8 @@ namespace FTPboxLib
                         sqi.CompletedOn = DateTime.Now;
                         sqi.Status = StatusType.Success;
                         CompletedList.Add(sqi);
+                        // Add to log
+                        controller.FileLog.putFolder(sqi.CommonPath);
                     }
                 }
                 else if (f.Type == ClientItemType.File)
@@ -530,6 +537,9 @@ namespace FTPboxLib
                     sqi.Status = _status == TransferStatus.Success ? StatusType.Success : StatusType.Failure;
                     sqi.CompletedOn = DateTime.Now;
                     CompletedList.Add(sqi);
+                    // Add to log
+                    if (sqi.Status == StatusType.Success)
+                        controller.FileLog.putFile(sqi);
                 }
             }
             if (controller.Client.ListingFailed)
