@@ -161,7 +161,7 @@ namespace FTPboxLib
                 || cpath.Contains("webint") || aName == "." || aName == ".."                            //web interface, current and parent folders are ignored
                 || aName == ".ftpquota" || aName == "error_log" || aName.StartsWith(".bash")            //server files are ignored
                 || !Common.IsAllowedFilename(aName)                                                     //checks characters not allowed in windows file/folder names
-                || aName.StartsWith("~ftpb_")                                                           //FTPbox-generated temporary files are ignored
+                || aName.StartsWith(Account.TempFilePrefix)                                             //FTPbox-generated temporary files are ignored
                 );
 
             return b;
