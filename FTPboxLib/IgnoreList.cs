@@ -76,7 +76,7 @@ namespace FTPboxLib
                 // are dotfiles ignored?
                 (IgnoreDotFiles && name.StartsWith(".")) ||
                 // are temporary files ignored?
-                (IgnoreTempFiles && (name.ToLower().EndsWith(".tmp") || name.EndsWith("~") || name.StartsWith(".goutputstream") || name.StartsWith("~"))) ||
+                (IgnoreTempFiles && (name.ToLower().EndsWith(".tmp") || name.EndsWith("~") || name.StartsWith(".goutputstream") || name.StartsWith("~") || name.Equals("Thumbs.db"))) ||
                 // is this extension ignored?
                 ((Extensions.Contains(ext) || Extensions.Contains("." + ext)) && ext != null) ||
                 // is the item in an ignored folder?
