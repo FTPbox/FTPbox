@@ -4623,5 +4623,154 @@
       <view>عرض</view>
     </web_interface>
   </ar>
+
+  <bg>
+    <main_form>
+      <options>Опции</options>
+      <general>Главно меню</general>
+      <host>Хост</host>
+      <port>Порт</port>
+      <username>Потребителско име</username>
+      <password>Парола</password>
+      <mode>Протокол</mode>
+      <change>Промяна</change>
+      <account>Акаунт</account>
+      <application>Приложение</application>
+      <start_on_startup>Стартирай заедно с ОС</start_on_startup>
+      <show_nots>покажи съобщения</show_nots>
+      <profile>Профил</profile>
+      <details>Детайли</details>
+      <links>Връзки</links>
+      <remote_path>Отдалечено местоназначение</remote_path>
+      <local_path>Локално местоназначение</local_path>
+      <account_full_path>Пълно местоназначение на акаунта</account_full_path>
+      <when_not_clicked>когато се кликне върху уведомление или последно използван файл</when_not_clicked>
+      <open_in_browser>отвори линка в браузъра</open_in_browser>
+      <copy>копирай линк в клипборда</copy>
+      <about>Относно</about>
+      <current_version>Актуална версия</current_version>
+      <team>Екипът</team>
+      <website>Официална уебстраница</website>
+      <contact>Контакт</contact>
+      <coded_in>Програмиран с</coded_in>
+      <notes>Бележки</notes>
+      <contribute>Принос</contribute>
+      <ftpbox_is_free>FTPbox е безплатна и open-source програма</ftpbox_is_free>
+      <contact_me>Чувствайте се свободни да се свързвате с мен</contact_me>
+      <copyright>Авторско право</copyright>
+      <report_bug>Докладвай за проблем</report_bug>
+      <request_feature>заявка за функция</request_feature>
+      <donate>дари</donate>
+      <language>Език</language>
+      <open_local>Отвори локален файл</open_local>
+      <bandwidth>Честотна лента</bandwidth>
+      <sync_freq>Честота на синхронизиране</sync_freq>
+      <sync_when>Синхронизирай отдалечените файлове</sync_when>
+      <manually>ръчно</manually>
+      <auto>автоматично всеки</auto>
+      <seconds>секунди</seconds>
+      <speed_limits>Скоростен лимит</speed_limits>
+      <limit_download>Лимит на сваляне</limit_download>
+      <limit_upload>Лимит на качване</limit_upload>
+      <no_limits>(въведете 0 за без лимит)</no_limits>
+      <selective>Избирателно синхронизиране</selective>
+      <selective_info>Премахнете отметката, там където не искате синхронизиране</selective_info>
+      <refresh>Опресняване</refresh>
+      <configure>Конфигуриране</configure>
+      <file_filters>Филтъри</file_filters>
+      <ignored_extensions>Игнорирани разширения на файлове</ignored_extensions>
+      <remove>Премахване</remove>
+      <also_ignore>Игнорирани също</also_ignore>
+      <dotfiles>dotfiles</dotfiles>
+      <temp_files>Временни файлове</temp_files>
+      <old_files>Файлове, модифицирани преди</old_files>
+      <enable_logging>Включи водене на логфайл</enable_logging>
+      <view_log>Вижте логфайла</view_log>
+      <shell_menus>Добави в контекстното меню</shell_menus>
+      <way_of_sync>Път на синхронизация</way_of_sync>
+      <local_to_remote>Локални към отдалечени, единствено</local_to_remote>
+      <remote_to_local>Отдалечени към локални, единствено</remote_to_local>
+      <both_ways>В двете посоки</both_ways>
+      <temp_file_prefix>Временен файлов префикс</temp_file_prefix>
+    </main_form>
+    <new_account>
+      <new_ftp>Нов FTP акаунт</new_ftp>
+      <login_details>FTP детайли за вход</login_details>
+      <encryption>Кодиране</encryption>
+      <ask_for_password>Винаги искай парола</ask_for_password>
+      <add>Добави</add>
+      <done>Готово</done>
+    </new_account>
+    <paths>
+      <new_paths>Ново местоназначение</new_paths>
+      <add_dir>Добави нова папка</add_dir>
+      <select_dir>Избери папка</select_dir>
+      <full_path>Пълно местоназначение</full_path>
+      <default_local>Искам да използвам локалната папка по подразбиране</default_local>
+      <custom_local>Искам да избера локална папка</custom_local>
+      <local_folder>Локална папка</local_folder>
+      <browse>Търси</browse>
+    </paths>
+    <setup>
+      <authentication>Удостоверяване</authentication>
+      <sync_all_files>Искам да синхронизирам всички файлове</sync_all_files>
+      <sync_specific_files>Искам да избера кои файлове да се синхронизират</sync_specific_files>
+      <previous>Предишен</previous>
+      <next>Следващ</next>
+    </setup>
+    <new_version>
+      <new_ver>Нова версия</new_ver>
+      <update_available>Налична е актуализация</update_available>
+      <new_v_available>Налична е нова версия на FTPbox</new_v_available>
+      <new_version>Нова версия</new_version>
+      <current_version>Текуща версия</current_version>
+      <wanna_download>Искате ли да свалите новата версия сега</wanna_download>
+      <download>Актуализирайте сега</download>
+      <learn_more>Научете още</learn_more>
+      <remind_me_next_time>Не и сега</remind_me_next_time>
+    </new_version>
+    <tray>
+      <tray_and_nots>Уведомления</tray_and_nots>
+      <updated>{0} беше актуализиран.</updated>
+      <created>{0}  беше създаден.</created>
+      <renamed>{0} е преименуван на {1}</renamed>
+      <deleted>{0} беше изтрит.</deleted>
+      <changed>{0} беше променен.</changed>
+      <FilesOrFoldersUpdated>{0} {1} са актуализирани</FilesOrFoldersUpdated>
+      <FilesOrFoldersCreated>{0} {1} са създадени</FilesOrFoldersCreated>
+      <FilesAndFoldersChanged>{0} {1} и {2} {3} са актуализирани</FilesAndFoldersChanged>
+      <ItemsDeleted>{0} обекти са изтрити.</ItemsDeleted>
+      <file>Файл</file>
+      <files>Файлове</files>
+      <folder>Папка</folder>
+      <folders>Папки</folders>
+      <connecting>FTPbox - В процес на свързване...</connecting>
+      <reconnecting>FTPbox - В процес на последващо свързване...</reconnecting>
+      <listing>FTPbox - Изчакване...</listing>
+      <uploading>Качване на {0}</uploading>
+      <downloading>Сваляне на {0}</downloading>
+      <ready>FTPbox - В готовност</ready>
+      <synced>FTPbox - Всички файлове са актуализирани</synced>
+      <syncing>FTPbox - Синхронизиране...</syncing>
+      <offline>FTPbox - Офлайн</offline>
+      <link_copied>Линкът е копиран в клипборда</link_copied>
+      <recent_files>Последни файлове</recent_files>
+      <not_available>Не е налично</not_available>
+      <start_syncing>Старт на синхронизация</start_syncing>
+      <exit>Изход</exit>
+    </tray>
+    <web_interface>
+      <web_int>Уеб-интерфейс</web_int>
+      <downloading>Уеб-интерфейсът е свален.</downloading>
+      <in_a_minute>Това ще отнеме известно време.</in_a_minute>
+      <removing>Премахване на уеб-интерфейса...</removing>
+      <removed>Уеб-интерфейса беше премахнат</removed>
+      <updating>Актуализация на уеб-интерфейса...</updating>
+      <updated>Уеб-интерфейсът е актуализиран.</updated>
+      <setup>Кликнете тук, за да видите и настройте!</setup>
+      <use_webint>Използвайте уеб-интерфейса</use_webint>
+      <view>(Виж в браузъра)</view>
+    </web_interface>
+  </bg>
   
 </translations>
