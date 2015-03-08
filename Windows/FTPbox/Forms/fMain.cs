@@ -59,7 +59,6 @@ namespace FTPbox.Forms
             
             //TODO: Should this stay?
             Program.Account.LoadLocalFolders();
-            Load_Recent();
 
             if (!Log.DebugEnabled && Settings.General.EnableLogging)
                 Log.DebugEnabled = true;
@@ -69,9 +68,6 @@ namespace FTPbox.Forms
                     link = Program.Account.LinkToRecent();
                     tray.ShowBalloonTip(100, n.Title, n.Text, ToolTipIcon.Info);
                 };
-
-
-            //Program.Account.FileLog.FileLogChanged += (o, n) => Load_Recent();
 
             Program.Account.Client.ConnectionClosed += (o, n) => Log.Write(l.Warning, "Connection closed: {0}", n.Text ?? string.Empty);
 
@@ -109,18 +105,6 @@ namespace FTPbox.Forms
 
             Notifications.TrayTextNotification += (o,n) => this.Invoke(new MethodInvoker(() => SetTray(o,n)));
 
-            Program.Account.Client.TransferProgress += (o, n) =>
-            {
-                // Only when Downloading/Uploading.
-                if (string.IsNullOrWhiteSpace(_lastTrayStatus.AssossiatedFile)) return;
-                // Update tray text.
-                this.Invoke(new MethodInvoker(() =>
-                    {
-                        SetTray(null, _lastTrayStatus);
-                        // Append progress details in a new line
-                        tray.Text += string.Format("\n{0,3}% - {1}", n.Progress, n.Rate);
-                    }));               
-            };
             fSetup = new Setup {Tag = this};
             ftranslate = new Translate {Tag = this};
             fSelective = new fSelectiveSync();
@@ -368,40 +352,6 @@ namespace FTPbox.Forms
             }
         }
 
-        #region Recent Files
-
-        /// <summary>
-        /// Load the recent items in the tray menu
-        /// </summary>
-        private void Load_Recent()
-        {
-            var list = new List<FileLogItem>(Program.Account.RecentList);
-            int lim = list.Count > 5 ? 5 : list.Count;
-            
-            for (int i = 0; i < 5; i++)
-            {
-                if (i >= lim)
-                {
-                    recentFilesToolStripMenuItem.DropDownItems[i].Text = Common.Languages[MessageType.NotAvailable];
-                    recentFilesToolStripMenuItem.DropDownItems[i].Enabled = false;
-                    recentFilesToolStripMenuItem.DropDownItems[i].ToolTipText = string.Empty;
-                    continue;
-                }
-
-                this.Invoke( new MethodInvoker(() =>
-                    {
-                        recentFilesToolStripMenuItem.DropDownItems[i].Text = Common._name(list[i].CommonPath);
-                        recentFilesToolStripMenuItem.DropDownItems[i].Enabled = true;
-                        var lastchange = DateTime.Compare(list[i].Local, list[i].Remote) < 0
-                                             ? list[i].Local
-                                             : list[i].Remote;
-                        recentFilesToolStripMenuItem.DropDownItems[i].ToolTipText = lastchange.FormatDate();
-                    }));
-            }
-        }
-
-        #endregion
-
         #region translations
 
         /// <summary>
@@ -485,24 +435,9 @@ namespace FTPbox.Forms
             labSupportMail.Text = "support@ftpbox.org";
             //tray
             optionsToolStripMenuItem.Text = Common.Languages[UiControl.Options];
-            recentFilesToolStripMenuItem.Text = Common.Languages[UiControl.RecentFiles];
             aboutToolStripMenuItem.Text = Common.Languages[UiControl.About];
             SyncToolStripMenuItem.Text = Common.Languages[UiControl.StartSync];
             exitToolStripMenuItem.Text = Common.Languages[UiControl.Exit];
-
-            if (trayMenu.InvokeRequired)
-                trayMenu.Invoke(new MethodInvoker(delegate
-                {
-                    foreach (ToolStripItem t in recentFilesToolStripMenuItem.DropDownItems)
-                        if (!t.Enabled)
-                            t.Text = Common.Languages[MessageType.NotAvailable];
-                }));
-            else
-            {
-                foreach (ToolStripItem t in recentFilesToolStripMenuItem.DropDownItems)
-                    if (!t.Enabled)
-                        t.Text = Common.Languages[MessageType.NotAvailable];
-            }
 
             SetTray(null, _lastTrayStatus);
 
@@ -1486,131 +1421,6 @@ namespace FTPbox.Forms
             tabControl1.SelectedTab = tabAbout;
         }
 
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            int ind = 0;
-            if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
-            {
-                try
-                {
-                    Process.Start(Program.Account.LinkToRecent(ind));
-                }
-                catch { }
-
-            }
-            else if (Settings.General.TrayAction == TrayAction.CopyLink)
-            {
-                try
-                {
-                    Clipboard.SetText(Program.Account.LinkToRecent(ind));
-                    SetTray(null, new TrayTextNotificationArgs { MessageType = MessageType.LinkCopied });
-                }
-                catch { }
-            }
-            else
-                Process.Start(Program.Account.PathToRecent(ind));
-        }
-
-        private void toolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            int ind = 1;
-            if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
-            {
-                try
-                {
-                    Process.Start(Program.Account.LinkToRecent(ind));
-                }
-                catch { }
-
-            }
-            else if (Settings.General.TrayAction == TrayAction.CopyLink)
-            {
-                try
-                {
-                    Clipboard.SetText(Program.Account.LinkToRecent(ind));
-                    SetTray(null, new TrayTextNotificationArgs { MessageType = MessageType.LinkCopied });
-                }
-                catch { }
-            }
-            else
-                Process.Start(Program.Account.PathToRecent(ind));
-        }
-
-        private void toolStripMenuItem3_Click(object sender, EventArgs e)
-        {
-            int ind = 2;
-            if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
-            {
-                try
-                {
-                    Process.Start(Program.Account.LinkToRecent(ind));
-                }
-                catch { }
-
-            }
-            else if (Settings.General.TrayAction == TrayAction.CopyLink)
-            {
-                try
-                {
-                    Clipboard.SetText(Program.Account.LinkToRecent(ind));
-                    SetTray(null, new TrayTextNotificationArgs { MessageType = MessageType.LinkCopied });
-                }
-                catch { }
-            }
-            else
-                Process.Start(Program.Account.PathToRecent(ind));
-        }
-
-        private void toolStripMenuItem4_Click(object sender, EventArgs e)
-        {
-            int ind = 3;
-            if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
-            {
-                try
-                {
-                    Process.Start(Program.Account.LinkToRecent(ind));
-                }
-                catch { }
-
-            }
-            else if (Settings.General.TrayAction == TrayAction.CopyLink)
-            {
-                try
-                {
-                    Clipboard.SetText(Program.Account.LinkToRecent(ind));
-                    SetTray(null, new TrayTextNotificationArgs { MessageType = MessageType.LinkCopied });
-                }
-                catch { }
-            }
-            else
-                Process.Start(Program.Account.PathToRecent(ind));
-        }
-
-        private void toolStripMenuItem5_Click(object sender, EventArgs e)
-        {
-            int ind = 4;
-            if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
-            {
-                try
-                {
-                    Process.Start(Program.Account.LinkToRecent(ind));
-                }
-                catch { }
-
-            }
-            else if (Settings.General.TrayAction == TrayAction.CopyLink)
-            {
-                try
-                {
-                    Clipboard.SetText(Program.Account.LinkToRecent(ind));
-                    SetTray(null, new TrayTextNotificationArgs { MessageType = MessageType.LinkCopied });
-                }
-                catch { }
-            }
-            else
-                Process.Start(Program.Account.PathToRecent(ind));
-        }
-
         private void tray_BalloonTipClicked(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(link)) return;
@@ -1673,62 +1483,36 @@ namespace FTPbox.Forms
                 // Save latest tray status
                 _lastTrayStatus = e;
 
-                string msg = null;
-                if (!string.IsNullOrWhiteSpace(e.AssossiatedFile))
-                {
-                    string name = e.AssossiatedFile;
-                    // Shorten long names to be all cool with the stupid 64-character limit
-                    if (name.Length >= 15)
-                        name = string.Format("{0}...{1}",name.Substring(0,7), name.Substring(name.Length-5));
-
-                    msg = (e.MessageType == MessageType.Uploading) ? string.Format(Common.Languages[MessageType.Uploading], name) : string.Format(Common.Languages[MessageType.Downloading], name);
-                }
-
                 switch (e.MessageType)
                 {
-                    case MessageType.Uploading:
-                        tray.Icon = Properties.Resources.syncing;
-                        tray.Text = msg ?? Common.Languages[MessageType.Syncing];
-                        break;
-                    case MessageType.Downloading:
-                        tray.Icon = Properties.Resources.syncing;
-                        tray.Text = msg ?? Common.Languages[MessageType.Syncing];
-                        break;
-                    case MessageType.AllSynced:
-                        tray.Icon = Properties.Resources.AS;
-                        tray.Text = Common.Languages[MessageType.AllSynced];                        
-                        break;
+                    case MessageType.Connecting:
+                    case MessageType.Reconnecting:
                     case MessageType.Syncing:
                         tray.Icon = Properties.Resources.syncing;
-                        tray.Text = Common.Languages[MessageType.Syncing];                        
+                        tray.Text = Common.Languages[e.MessageType];
+                        break;
+                    case MessageType.Uploading:
+                    case MessageType.Downloading:
+                        tray.Icon = Properties.Resources.syncing;
+                        tray.Text = Common.Languages[MessageType.Syncing];
+                        break;
+                    case MessageType.AllSynced:
+                    case MessageType.Ready:
+                        tray.Icon = Properties.Resources.AS;
+                        tray.Text = Common.Languages[e.MessageType];
                         break;
                     case MessageType.Offline:
+                    case MessageType.Disconnected:
                         tray.Icon = Properties.Resources.offline1;
-                        tray.Text = Common.Languages[MessageType.Offline];                        
+                        tray.Text = Common.Languages[e.MessageType];
                         break;
                     case MessageType.Listing:
                         tray.Icon = Properties.Resources.AS;
                         tray.Text = (Program.Account.Account.SyncMethod == SyncMethod.Automatic) ? Common.Languages[MessageType.AllSynced] : Common.Languages[MessageType.Listing];
                         break;
-                    case MessageType.Connecting:
-                        tray.Icon = Properties.Resources.syncing;
-                        tray.Text = Common.Languages[MessageType.Connecting];                        
-                        break;
-                    case MessageType.Disconnected:
-                        tray.Icon = Properties.Resources.offline1;
-                        tray.Text = Common.Languages[MessageType.Disconnected];                        
-                        break;
-                    case MessageType.Reconnecting:
-                        tray.Icon = Properties.Resources.syncing;
-                        tray.Text = Common.Languages[MessageType.Reconnecting];                       
-                        break;
-                    case MessageType.Ready:
-                        tray.Icon = Properties.Resources.AS;
-                        tray.Text = Common.Languages[MessageType.Ready];                        
-                        break;
                     case MessageType.Nothing:
                         tray.Icon = Properties.Resources.ftpboxnew;
-                        tray.Text = Common.Languages[MessageType.Nothing];                        
+                        tray.Text = Common.Languages[e.MessageType];
                         break;
                 }
             }
