@@ -57,6 +57,7 @@
             // 
             // pLocalFolder
             // 
+            this.pLocalFolder.AccessibleDescription = "open the local folder";
             this.pLocalFolder.BackColor = System.Drawing.Color.Transparent;
             this.pLocalFolder.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pLocalFolder.Image = global::FTPbox.Properties.Resources.folder;
@@ -70,6 +71,7 @@
             // 
             // pSettings
             // 
+            this.pSettings.AccessibleDescription = "open the settings form";
             this.pSettings.BackColor = System.Drawing.Color.Transparent;
             this.pSettings.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pSettings.Image = global::FTPbox.Properties.Resources.settings;

@@ -189,8 +189,8 @@
             // 
             // cLanguages
             // 
-            this.cLanguages.AccessibleDescription = "";
-            this.cLanguages.AccessibleName = "Encryption";
+            this.cLanguages.AccessibleDescription = "select the language of the application";
+            this.cLanguages.AccessibleName = "Language";
             this.cLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cLanguages.FormattingEnabled = true;
             this.cLanguages.Items.AddRange(new object[] {
@@ -280,6 +280,7 @@
             // 
             // chkShellMenus
             // 
+            this.chkShellMenus.AccessibleName = "add program to windows right click menu";
             this.chkShellMenus.Location = new System.Drawing.Point(9, 88);
             this.chkShellMenus.Name = "chkShellMenus";
             this.chkShellMenus.Size = new System.Drawing.Size(434, 17);
@@ -290,6 +291,7 @@
             // 
             // bBrowseLogs
             // 
+            this.bBrowseLogs.AccessibleDescription = "opens the debug log file";
             this.bBrowseLogs.Location = new System.Drawing.Point(191, 61);
             this.bBrowseLogs.Name = "bBrowseLogs";
             this.bBrowseLogs.Size = new System.Drawing.Size(89, 23);
@@ -300,6 +302,7 @@
             // 
             // chkEnableLogging
             // 
+            this.chkEnableLogging.AccessibleName = "enable logging";
             this.chkEnableLogging.Location = new System.Drawing.Point(9, 65);
             this.chkEnableLogging.Name = "chkEnableLogging";
             this.chkEnableLogging.Size = new System.Drawing.Size(434, 17);
@@ -351,6 +354,7 @@
             // 
             // bRemoveAccount
             // 
+            this.bRemoveAccount.AccessibleName = "Remove this account";
             this.bRemoveAccount.Location = new System.Drawing.Point(380, 10);
             this.bRemoveAccount.Name = "bRemoveAccount";
             this.bRemoveAccount.Size = new System.Drawing.Size(75, 23);
@@ -361,6 +365,7 @@
             // 
             // bAddAccount
             // 
+            this.bAddAccount.AccessibleName = "Add a new account";
             this.bAddAccount.Location = new System.Drawing.Point(299, 10);
             this.bAddAccount.Name = "bAddAccount";
             this.bAddAccount.Size = new System.Drawing.Size(75, 23);
@@ -371,7 +376,7 @@
             // 
             // cProfiles
             // 
-            this.cProfiles.AccessibleDescription = "";
+            this.cProfiles.AccessibleDescription = "Select the current account";
             this.cProfiles.AccessibleName = "Profiles";
             this.cProfiles.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cProfiles.FormattingEnabled = true;
@@ -404,6 +409,7 @@
             // 
             // tTempPrefix
             // 
+            this.tTempPrefix.AccessibleDescription = "the prefix added to temporary files created by the application";
             this.tTempPrefix.Location = new System.Drawing.Point(21, 181);
             this.tTempPrefix.Name = "tTempPrefix";
             this.tTempPrefix.Size = new System.Drawing.Size(408, 20);
@@ -422,8 +428,8 @@
             // 
             // rBothWaySync
             // 
-            this.rBothWaySync.AccessibleDescription = "";
-            this.rBothWaySync.AccessibleName = "open the local file";
+            this.rBothWaySync.AccessibleDescription = "both upload and download";
+            this.rBothWaySync.AccessibleName = "";
             this.rBothWaySync.Checked = true;
             this.rBothWaySync.Location = new System.Drawing.Point(21, 136);
             this.rBothWaySync.Name = "rBothWaySync";
@@ -445,8 +451,8 @@
             // 
             // rRemoteToLocalOnly
             // 
-            this.rRemoteToLocalOnly.AccessibleDescription = "";
-            this.rRemoteToLocalOnly.AccessibleName = "copy link to clipboard";
+            this.rRemoteToLocalOnly.AccessibleDescription = "only download files to local machine";
+            this.rRemoteToLocalOnly.AccessibleName = "";
             this.rRemoteToLocalOnly.Location = new System.Drawing.Point(21, 113);
             this.rRemoteToLocalOnly.Name = "rRemoteToLocalOnly";
             this.rRemoteToLocalOnly.Size = new System.Drawing.Size(408, 17);
@@ -457,8 +463,8 @@
             // 
             // rLocalToRemoteOnly
             // 
-            this.rLocalToRemoteOnly.AccessibleDescription = "";
-            this.rLocalToRemoteOnly.AccessibleName = "open link in default browser";
+            this.rLocalToRemoteOnly.AccessibleDescription = "only upload files to server";
+            this.rLocalToRemoteOnly.AccessibleName = "";
             this.rLocalToRemoteOnly.Location = new System.Drawing.Point(21, 90);
             this.rLocalToRemoteOnly.Name = "rLocalToRemoteOnly";
             this.rLocalToRemoteOnly.Size = new System.Drawing.Size(408, 17);
@@ -494,6 +500,8 @@
             // 
             // bConfigureAccount
             // 
+            this.bConfigureAccount.AccessibleDescription = "opens a form with details of this account";
+            this.bConfigureAccount.AccessibleName = "Account details";
             this.bConfigureAccount.Location = new System.Drawing.Point(325, 16);
             this.bConfigureAccount.Name = "bConfigureAccount";
             this.bConfigureAccount.Size = new System.Drawing.Size(107, 23);
@@ -542,6 +550,7 @@
             // 
             // bConfigureSelectiveSync
             // 
+            this.bConfigureSelectiveSync.AccessibleDescription = "Open form to configure selective sync";
             this.bConfigureSelectiveSync.Location = new System.Drawing.Point(325, 19);
             this.bConfigureSelectiveSync.Name = "bConfigureSelectiveSync";
             this.bConfigureSelectiveSync.Size = new System.Drawing.Size(107, 23);
@@ -552,6 +561,7 @@
             // 
             // bConfigureExtensions
             // 
+            this.bConfigureExtensions.AccessibleDescription = "Open form to configure ignored extensions";
             this.bConfigureExtensions.Location = new System.Drawing.Point(325, 48);
             this.bConfigureExtensions.Name = "bConfigureExtensions";
             this.bConfigureExtensions.Size = new System.Drawing.Size(107, 23);
@@ -609,6 +619,7 @@
             // 
             // cIgnoreTempFiles
             // 
+            this.cIgnoreTempFiles.AccessibleDescription = "Check to ignore temporary files";
             this.cIgnoreTempFiles.Location = new System.Drawing.Point(22, 98);
             this.cIgnoreTempFiles.Name = "cIgnoreTempFiles";
             this.cIgnoreTempFiles.Size = new System.Drawing.Size(408, 17);
@@ -619,6 +630,7 @@
             // 
             // cIgnoreDotfiles
             // 
+            this.cIgnoreDotfiles.AccessibleDescription = "Check to ignore dotfiles";
             this.cIgnoreDotfiles.Location = new System.Drawing.Point(22, 121);
             this.cIgnoreDotfiles.Name = "cIgnoreDotfiles";
             this.cIgnoreDotfiles.Size = new System.Drawing.Size(408, 17);
@@ -1045,7 +1057,7 @@
             this.aboutToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.trayMenu.Name = "trayMenu";
-            this.trayMenu.Size = new System.Drawing.Size(153, 126);
+            this.trayMenu.Size = new System.Drawing.Size(143, 104);
             // 
             // optionsToolStripMenuItem
             // 

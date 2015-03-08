@@ -72,6 +72,8 @@
             // 
             // cAskForPass
             // 
+            this.cAskForPass.AccessibleDescription = "Ask for password on start up";
+            this.cAskForPass.AccessibleName = "Always ask for password";
             this.cAskForPass.Location = new System.Drawing.Point(15, 167);
             this.cAskForPass.Name = "cAskForPass";
             this.cAskForPass.Size = new System.Drawing.Size(433, 17);
@@ -270,6 +272,7 @@
             // 
             // rDefaultLocalFolder
             // 
+            this.rDefaultLocalFolder.AccessibleName = "Use the default local folder";
             this.rDefaultLocalFolder.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
             this.rDefaultLocalFolder.Checked = true;
             this.rDefaultLocalFolder.Location = new System.Drawing.Point(15, 30);
@@ -284,6 +287,7 @@
             // 
             // rCustomLocalFolder
             // 
+            this.rCustomLocalFolder.AccessibleName = "Manually select a local folder";
             this.rCustomLocalFolder.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
             this.rCustomLocalFolder.Location = new System.Drawing.Point(15, 76);
             this.rCustomLocalFolder.Name = "rCustomLocalFolder";
@@ -380,6 +384,8 @@
             // 
             // rSyncAll
             // 
+            this.rSyncAll.AccessibleDescription = "Synchronize every file";
+            this.rSyncAll.AccessibleName = "";
             this.rSyncAll.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
             this.rSyncAll.Checked = true;
             this.rSyncAll.Location = new System.Drawing.Point(15, 30);
@@ -394,6 +400,8 @@
             // 
             // rSyncCustom
             // 
+            this.rSyncCustom.AccessibleDescription = "Select what files to synchronize";
+            this.rSyncCustom.AccessibleName = "";
             this.rSyncCustom.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
             this.rSyncCustom.Location = new System.Drawing.Point(15, 76);
             this.rSyncCustom.Name = "rSyncCustom";
@@ -406,6 +414,7 @@
             // 
             // bNext
             // 
+            this.bNext.AccessibleDescription = "Go to next step";
             this.bNext.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.bNext.Location = new System.Drawing.Point(316, 223);
             this.bNext.Name = "bNext";
@@ -417,6 +426,7 @@
             // 
             // bFinish
             // 
+            this.bFinish.AccessibleDescription = "Finish account set up";
             this.bFinish.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.bFinish.Location = new System.Drawing.Point(397, 223);
             this.bFinish.Name = "bFinish";
@@ -428,6 +438,8 @@
             // 
             // bPrevious
             // 
+            this.bPrevious.AccessibleDescription = "Go to previous step";
+            this.bPrevious.AccessibleName = "";
             this.bPrevious.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.bPrevious.Location = new System.Drawing.Point(235, 223);
             this.bPrevious.Name = "bPrevious";
@@ -461,8 +473,8 @@
             // 
             // cLanguages
             // 
-            this.cLanguages.AccessibleDescription = "";
-            this.cLanguages.AccessibleName = "Encryption";
+            this.cLanguages.AccessibleDescription = "select the language of the application";
+            this.cLanguages.AccessibleName = "Language";
             this.cLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cLanguages.FormattingEnabled = true;
             this.cLanguages.Items.AddRange(new object[] {

@@ -37,6 +37,7 @@
             // 
             // bRefresh
             // 
+            this.bRefresh.AccessibleDescription = "refresh the list";
             this.bRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bRefresh.Location = new System.Drawing.Point(15, 391);
             this.bRefresh.Name = "bRefresh";
@@ -73,6 +74,7 @@
             // 
             // bDone
             // 
+            this.bDone.AccessibleDescription = "finish configuring selective sync";
             this.bDone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bDone.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.bDone.Location = new System.Drawing.Point(283, 391);

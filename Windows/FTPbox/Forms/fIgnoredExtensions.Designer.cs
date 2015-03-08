@@ -38,6 +38,7 @@
             // 
             // tNewExt
             // 
+            this.tNewExt.AccessibleDescription = "new extension to add to ignored list";
             this.tNewExt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tNewExt.Location = new System.Drawing.Point(12, 12);
@@ -48,6 +49,7 @@
             // 
             // lIgnoredExtensions
             // 
+            this.lIgnoredExtensions.AccessibleDescription = "list of ignored extensions";
             this.lIgnoredExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -62,6 +64,7 @@
             // 
             // bRemoveExt
             // 
+            this.bRemoveExt.AccessibleDescription = "remove extension from list";
             this.bRemoveExt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.bRemoveExt.Enabled = false;
             this.bRemoveExt.Location = new System.Drawing.Point(156, 39);
@@ -74,6 +77,7 @@
             // 
             // bAddExt
             // 
+            this.bAddExt.AccessibleDescription = "add extension to list";
             this.bAddExt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.bAddExt.Enabled = false;
             this.bAddExt.Location = new System.Drawing.Point(156, 10);
@@ -86,6 +90,7 @@
             // 
             // bDone
             // 
+            this.bDone.AccessibleDescription = "Finish editing ignored extensions";
             this.bDone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bDone.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.bDone.Location = new System.Drawing.Point(156, 155);
