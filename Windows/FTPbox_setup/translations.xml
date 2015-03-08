@@ -2782,12 +2782,12 @@
 	
 	<da>
     <main_form>
-      <options>Opsætning</options>
+      <options>Indstillinger</options>
       <general>Generelt</general>
       <host>Host</host>
-      <port>Port nummer</port>
+      <port>Port</port>
       <username>Brugernavn</username>
-      <password>Kodeord</password>
+      <password>Adgangskode</password>
       <mode>Protokol</mode>
       <change>Ændre</change>
       <account>Konto</account>
@@ -2801,8 +2801,8 @@
       <local_path>Lokal sti</local_path>
       <account_full_path>Kontoens fulde sti</account_full_path>
       <when_not_clicked>Når system beskeder eller seneste fil bliver klikket på</when_not_clicked>
-      <open_in_browser>Open link i standart browser</open_in_browser>
-      <copy>Kopier link til klipbord</copy>
+      <open_in_browser>Open link i standard browser</open_in_browser>
+      <copy>Kopier link til udklipsholder</copy>
       <about>Om</about>
       <current_version>Denne version</current_version>
       <team>Holdet</team>
@@ -2813,19 +2813,19 @@
       <contribute>Bidrag</contribute>
       <ftpbox_is_free>FTPbox er gratis og Open-Source</ftpbox_is_free>
       <contact_me>Du er altid velkommen til at kontakte mig</contact_me>
-      <copyright>Kopibeskyttet</copyright>
+      <copyright>Copyright</copyright>
       <report_bug>Anmeld en fejl</report_bug>
       <request_feature>Forespørg på en funktion</request_feature>
       <donate>Doner</donate>
       <language>Sprog</language>
       <open_local>Åben den lokale fil</open_local>
       <bandwidth>Båndbredde</bandwidth>
-      <sync_freq>Synkroniserings interval</sync_freq>
+      <sync_freq>Synkroniseringsinterval</sync_freq>
       <sync_when>Synkroniser filer på fjern destination</sync_when>
-      <manually>manuelt</manually>
+      <manually>Manuelt</manually>
       <auto>Automatisk for hver</auto>
       <seconds>sekunder</seconds>
-      <speed_limits>Hastigheds begrænsning</speed_limits>
+      <speed_limits>Hastighedsbegrænsning</speed_limits>
       <limit_download>Begræns download hastighed</limit_download>
       <limit_upload>Begræns upload hastighed</limit_upload>
       <no_limits>Skriv 0 for ingen begrænsning</no_limits>
@@ -2834,7 +2834,7 @@
       <refresh>Opdater</refresh>
       <configure>Konfigurer</configure>
       <file_filters>Filtrér</file_filters>
-      <ignored_extensions>Ignorer filtyper</ignored_extensions>
+      <ignored_extensions>Ignoreret filtyper</ignored_extensions>
       <remove>Fjern</remove>
       <also_ignore>Ignorér også</also_ignore>
       <dotfiles>Filertyper uden navn (  .eksempel  )</dotfiles>
@@ -2853,18 +2853,18 @@
       <new_ftp>Ny FTP konto</new_ftp>
       <login_details>FTP login detaljer</login_details>
       <encryption>Kryptering</encryption>
-      <ask_for_password>Altid spørg efter kodeord</ask_for_password>
+      <ask_for_password>Spørg mig altid om adgangskode</ask_for_password>
       <add>Tilføj</add>
-      <done>Slut</done>
+      <done>Færdig</done>
     </new_account>
     <paths>
       <new_paths>Ny sti</new_paths>
-      <add_dir>Tilføj et nyt bibliotek</add_dir>
-      <select_dir>Vælg et bibliotek</select_dir>
+      <add_dir>Tilføj et ny mappe</add_dir>
+      <select_dir>Vælg en mappe</select_dir>
       <full_path>Den fulde sti</full_path>
       <default_local>Jeg ønsker at bruge den standard lokal mappe</default_local>
       <custom_local>Jeg ønsker selv at vælge en lokal mappe</custom_local>
-      <local_folder>Lokal folder</local_folder>
+      <local_folder>Lokal mappe</local_folder>
       <browse>Gennemse</browse>
     </paths>
     <setup>
@@ -2883,7 +2883,7 @@
       <wanna_download>Vil du downloade den nye version nu?</wanna_download>
       <download>Opdatér nu</download>
       <learn_more>Lær mere</learn_more>
-      <remind_me_next_time>Påmind mig næste gang</remind_me_next_time>
+      <remind_me_next_time>Påmind mig senere</remind_me_next_time>
     </new_version>
     <tray>
       <tray_and_nots>Påmindelser og beskeder</tray_and_nots>
@@ -2901,15 +2901,15 @@
       <folder>Mappe</folder>
       <folders>Mapper</folders>
       <connecting>FTPbox - Forbinder…</connecting>
-      <reconnecting>FTPbox - Genetablerer forbindelsen</reconnecting>
-      <listing>FTPbox - Oversigt</listing>
+      <reconnecting>FTPbox - Genetablerer forbindelsen...</reconnecting>
+      <listing>FTPbox - Tjekker efter ændringer...</listing>
       <uploading>Uploader {0}</uploading>
       <downloading>Downloader {0}</downloading>
-      <ready>FTPbox - Er klar</ready>
+      <ready>FTPbox - Klar</ready>
       <synced>FTPbox - Alle filer synkroniseret</synced>
-      <syncing>FTPbox Synkronisere nu</syncing>
+      <syncing>FTPbox - Synkroniserer...</syncing>
       <offline>FTPbox Offline</offline>
-      <link_copied>Links kopieret til klipbord</link_copied>
+      <link_copied>Link kopieret til udklipsholder</link_copied>
       <recent_files>Seneste filer</recent_files>
       <not_available>Ikke tilgængelig</not_available>
       <start_syncing>Start synkronisering</start_syncing>
@@ -2918,12 +2918,12 @@
     <web_interface>
       <web_int>Web brugerflade</web_int>
       <downloading>Web brugerfladen bliver downloadet.</downloading>
-      <in_a_minute>Det vil tage et øjeblik.</in_a_minute>
+      <in_a_minute>Vent et øjeblik.</in_a_minute>
       <removing>Fjerner web brugerfladen...</removing>
       <removed>Web brugerfladen er blevet fjernet.</removed>
-      <updating>Opdatere web brugerfladen...</updating>
+      <updating>Opdaterer web brugerfladen...</updating>
       <updated>Web brugerfladen er blevet opdateret.</updated>
-      <setup>Klik her for at se og opsætning!</setup>
+      <setup>Klik her for at se og sætte op!</setup>
       <use_webint>Benyt web brugerflade</use_webint>
       <view>Se i browser vindue</view>
     </web_interface>
