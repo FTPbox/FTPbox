@@ -80,6 +80,15 @@ namespace FTPbox.Forms
                     t.Click += (sender, args) => Process.Start("explorer.exe", @"/select, " + fullPath);
                     fRecentList.Controls.Add(t);
                 });
+            if (list.Count == 0)
+            {
+                // If recent list is empty, just add a single 'Not Available' item
+                fRecentList.Controls.Add(new trayFormListItem
+                    {
+                        FileNameLabel = Common.Languages[MessageType.NotAvailable],
+                        FileStatusLabel = string.Empty
+                    });
+            }
         }
 
         public void SetStatusLabel(object o, TrayTextNotificationArgs e)
