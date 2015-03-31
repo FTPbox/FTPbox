@@ -2641,8 +2641,8 @@
       <offline>FTPbox - 离线</offline>
       <link_copied>链接已经复制至剪贴板</link_copied>
       <recent_files>最近的文件</recent_files>
-      <not_available>最近的文件</not_available>
-      <start_syncing>不提供</start_syncing>
+      <not_available>不提供</not_available>
+      <start_syncing>开始同步</start_syncing>
       <exit>退出</exit>
     </tray>
     <web_interface>
