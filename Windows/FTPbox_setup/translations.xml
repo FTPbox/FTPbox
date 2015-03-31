@@ -4772,5 +4772,155 @@
       <view>(Виж в браузъра)</view>
     </web_interface>
   </bg>
+
+  <id>
+    <main_form>
+      <options>Pengaturan</options>
+      <general>Umum</general>
+      <host>Host</host>
+      <port>Port</port>
+      <username>Nama User</username>
+      <password>Sandi</password>
+      <mode>Protokol</mode>
+      <change>Ubah</change>
+      <account>Akun</account>
+      <application>Aplikasi</application>
+      <start_on_startup>Jalankan otomatis ketika memulai sistem</start_on_startup>
+      <show_nots>Tampilkan peringatan</show_nots>
+      <profile>Profil</profile>
+      <details>Detail</details>
+      <links>Tautan</links>
+      <remote_path>Path untuk remot</remote_path>
+      <local_path>Path lokal</local_path>
+      <account_full_path>Maksimal path pada akun</account_full_path>
+      <when_not_clicked>Ketika notifikasi pada tray atau file telah di klik</when_not_clicked>
+      <open_in_browser>Membuka link pada broser default</open_in_browser>
+      <copy>Menyalin link</copy>
+      <about>Tentang</about>
+      <current_version>Versi saat ini</current_version>
+      <team>Tim</team>
+      <website>Website resmi</website>
+      <contact>Kontak</contact>
+      <coded_in>Dikode pada</coded_in>
+      <notes>Catatan</notes>
+      <contribute>Kontribusi</contribute>
+      <ftpbox_is_free>FTPbox gratis dan open-source</ftpbox_is_free>
+      <contact_me>Anda dapat bebas menghubungi kami kapan saja</contact_me>
+      <copyright>Hak cipta</copyright>
+      <report_bug>Laporkan bug</report_bug>
+      <request_feature>meminta fitur baru</request_feature>
+      <donate>donasi</donate>
+      <language>Bahasa</language>
+      <open_local>Buka pada file lokal</open_local>
+      <bandwidth>Bandwith</bandwidth>
+      <sync_freq>Frekuensi sinkronisasi</sync_freq>
+      <sync_when>Sinkronisasi file remot</sync_when>
+      <manually>secara manual</manually>
+      <auto>otomastis setiap</auto>
+      <seconds>detik</seconds>
+      <speed_limits>Pembatasan Kecepatan</speed_limits>
+      <limit_download>Pembatasan Kecepatan Pengunduhan</limit_download>
+      <limit_upload>Pembatasan Kecepatan Unggah</limit_upload>
+      <no_limits>( isi 0 atau tidak terbatas )</no_limits>
+      <selective>Sikronisasi Selektif</selective>
+      <selective_info>Jangan menceklist item yang tidak anda inginkan untuk disinkronkan</selective_info>
+      <refresh>Refresh</refresh>
+      <configure>Pengaturan</configure>
+      <file_filters>Penyaringan</file_filters>
+      <ignored_extensions>Mengabaikan Ekstensi</ignored_extensions>
+      <remove>Hapus</remove>
+      <also_ignore>Jangan hiraukan</also_ignore>
+      <dotfiles>( . ) file</dotfiles>
+      <temp_files>File Temporer</temp_files>
+      <old_files>File telah dimodifikasi sebelum</old_files>
+      <enable_logging>Aktifkan Log</enable_logging>
+      <view_log>Lihat Log</view_log>
+      <shell_menus>Tambahkan pada menu konteks</shell_menus>
+      <way_of_sync>Pilihan sinkronasi</way_of_sync>
+      <local_to_remote>Hanya lokal ke remot</local_to_remote>
+      <remote_to_local>Hanya remot ke lokal</remote_to_local>
+      <both_ways>Kedua-duanya</both_ways>
+      <temp_file_prefix>File temporer awal</temp_file_prefix>
+    </main_form>
+    <new_account>
+      <new_ftp>Akun FTP baru</new_ftp>
+      <login_details>Detail FTP login</login_details>
+      <encryption>Enkripsi</encryption>
+      <ask_for_password>Selalu meminta password</ask_for_password>
+      <add>Tambahkan</add>
+      <done>Selesai</done>
+    </new_account>
+    <paths>
+      <new_paths>Path baru</new_paths>
+      <add_dir>Tambahkan direktori baru</add_dir>
+      <select_dir>Pilih direktori</select_dir>
+      <full_path>Path keseluruhan</full_path>
+      <default_local>Gunakan default folder lokal</default_local>
+      <custom_local>Pilih lokal folder</custom_local>
+      <local_folder>Folder lokal</local_folder>
+      <browse>Jelajahi</browse>
+    </paths>
+    <setup>
+      <authentication>Autentikasi</authentication>
+      <sync_all_files>Sinkronasi semua file</sync_all_files>
+      <sync_specific_files>Pilih file yang akan disinkronkan</sync_specific_files>
+      <previous>Sebelumnya</previous>
+      <next>Selanjutnya</next>
+    </setup>
+    <new_version>
+      <new_ver>Versi Baru</new_ver>
+      <update_available>Update Tersedia</update_available>
+      <new_v_available>Versi baru FTPbox telah tersedia</new_v_available>
+      <new_version>Versi Baru</new_version>
+      <current_version>Versi Saat Ini </current_version>
+      <wanna_download>Apakah anda ingin mengunduh versi baru sekarang</wanna_download>
+      <download>Update Sekarang</download>
+      <learn_more>Lebih lanjut</learn_more>
+      <remind_me_next_time>Bukan saatnya</remind_me_next_time>
+    </new_version>
+    <tray>
+      <tray_and_nots>Tray &amp; Notifikasi</tray_and_nots>
+      <updated>{0} telah terupdate</updated>
+      <created>{0} telah dibuat</created>
+      <renamed>{0} telah diganti nama menjadi {1}</renamed>
+      <deleted>{0} telah dihapus</deleted>
+      <changed>{0} telah dirubah</changed>
+      <FilesOrFoldersUpdated>{0} {1} telah terupdate</FilesOrFoldersUpdated>
+      <FilesOrFoldersCreated>{0} {1} telah dibuat</FilesOrFoldersCreated>
+      <FilesAndFoldersChanged>{0} {1} dan {2} {3} telah terupdate</FilesAndFoldersChanged>
+      <ItemsDeleted>{0} item telah terhapus</ItemsDeleted>
+      <file>File</file>
+      <files>File-file</files>
+      <folder>Folder</folder>
+      <folders>Folder-folder</folders>
+      <connecting>FTPbox - Terhubung...</connecting>
+      <reconnecting>FTPbox - Kembali Menghubungkan...</reconnecting>
+      <listing>FTPbox - Mendata...</listing>
+      <uploading>Mengunggah {0}</uploading>
+      <downloading>Mengunduh {0}</downloading>
+      <ready>FTPbox - Telah Siap</ready>
+      <synced>FTPbox - Semua file telah tersinkron</synced>
+      <syncing>FTPbox - Sikronasi...</syncing>
+      <offline>FTPbox - Tidak Terhubung</offline>
+      <link_copied>Link telah disalin</link_copied>
+      <recent_files>File Sebelumnya</recent_files>
+      <not_available>Tidak Tersedia</not_available>
+      <modified>Dirubah</modified>
+      <start_syncing>Memulai Sinkronisasi</start_syncing>
+      <exit>Keluar</exit>
+    </tray>
+    <web_interface>
+      <web_int>Tampilan Antarmuka Web</web_int>
+      <downloading>Tampilan antarmuka web telah terunduh.</downloading>
+      <in_a_minute>Ini membutuhkan waktu beberapa menit.</in_a_minute>
+      <removing>Menghapus antarmuka web...</removing>
+      <removed>Antarmuka web telah terhapus</removed>
+      <updating>Memperbarui tampilan antarmuka web...</updating>
+      <updated>Tampilan antarmuka web telah diperbarui.</updated>
+      <setup>Klik disini untuk melihat dan mengaturnya!</setup>
+      <use_webint>Menggunakan tampilan antarmuka web</use_webint>
+      <view>(Lihat pada tampilan browser)</view>
+    </web_interface>
+  </id>
   
 </translations>
