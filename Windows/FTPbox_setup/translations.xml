@@ -2805,7 +2805,7 @@
       <profile>Profil</profile>
       <details>Detaljer</details>
       <links>Links</links>
-      <remote_path>Fjern sti</remote_path>
+      <remote_path>Server sti</remote_path>
       <local_path>Lokal sti</local_path>
       <account_full_path>Kontoens fulde sti</account_full_path>
       <when_not_clicked>Når system beskeder eller seneste fil bliver klikket på</when_not_clicked>
@@ -2813,7 +2813,7 @@
       <copy>Kopier link til udklipsholder</copy>
       <about>Om</about>
       <current_version>Denne version</current_version>
-      <team>Holdet</team>
+      <team>Teamet</team>
       <website>Officiel website</website>
       <contact>Kontakt</contact>
       <coded_in>Kodet i</coded_in>
@@ -2826,17 +2826,17 @@
       <request_feature>Forespørg på en funktion</request_feature>
       <donate>Doner</donate>
       <language>Sprog</language>
-      <open_local>Åben den lokale fil</open_local>
+      <open_local>Åbn den lokale fil</open_local>
       <bandwidth>Båndbredde</bandwidth>
       <sync_freq>Synkroniseringsinterval</sync_freq>
-      <sync_when>Synkroniser filer på fjern destination</sync_when>
+      <sync_when>Synkroniser serverfiler</sync_when>
       <manually>Manuelt</manually>
       <auto>Automatisk for hver</auto>
       <seconds>sekunder</seconds>
       <speed_limits>Hastighedsbegrænsning</speed_limits>
       <limit_download>Begræns download hastighed</limit_download>
       <limit_upload>Begræns upload hastighed</limit_upload>
-      <no_limits>Skriv 0 for ingen begrænsning</no_limits>
+      <no_limits>(Skriv 0 for ingen begrænsning)</no_limits>
       <selective>Selektiv synkronisering</selective>
       <selective_info>Fjern markering ved enheder du ikke vil have synkroniseret</selective_info>
       <refresh>Opdater</refresh>
@@ -2849,13 +2849,13 @@
       <temp_files>Midlertidige filer</temp_files>
       <old_files>Filer ændret før</old_files>
       <enable_logging>Aktiver logging</enable_logging>
-      <view_log>Gennemse log</view_log>
+      <view_log>Vis log</view_log>
       <shell_menus>Tilføj til genvejsmenu</shell_menus>
       <way_of_sync>Synkronisering</way_of_sync>
       <local_to_remote>Upload kun</local_to_remote>
       <remote_to_local>Hent kun</remote_to_local>
       <both_ways>Begge veje</both_ways>
-      <temp_file_prefix>Midlertidig fil-forstavelse</temp_file_prefix>
+      <temp_file_prefix>Midlertidig fil-præfiks</temp_file_prefix>
     </main_form>
     <new_account>
       <new_ftp>Ny FTP konto</new_ftp>
@@ -2866,40 +2866,40 @@
       <done>Færdig</done>
     </new_account>
     <paths>
-      <new_paths>Ny sti</new_paths>
-      <add_dir>Tilføj et ny mappe</add_dir>
-      <select_dir>Vælg en mappe</select_dir>
-      <full_path>Den fulde sti</full_path>
-      <default_local>Jeg ønsker at bruge den standard lokal mappe</default_local>
-      <custom_local>Jeg ønsker selv at vælge en lokal mappe</custom_local>
+      <new_paths>Nye stier</new_paths>
+      <add_dir>Tilføj en ny mappe</add_dir>
+      <select_dir>Vælg mappe</select_dir>
+      <full_path>Fulde sti</full_path>
+      <default_local>Jeg ønsker at bruge standard-lokalmappen</default_local>
+      <custom_local>Jeg ønsker at vælge en lokal mappe</custom_local>
       <local_folder>Lokal mappe</local_folder>
       <browse>Gennemse</browse>
     </paths>
     <setup>
       <authentication>Autoritasition</authentication>
       <sync_all_files>Jeg ønsker at synkronisere alle filer</sync_all_files>
-      <sync_specific_files>Jeg ønsker selv at vælge hvile filer der skal synkroniseres</sync_specific_files>
+      <sync_specific_files>Jeg ønsker at vælge hvilke filer der skal synkroniseres</sync_specific_files>
       <previous>Tilbage</previous>
       <next>Næste</next>
     </setup>
     <new_version>
       <new_ver>Ny version</new_ver>
       <update_available>Opdatering tilgængelig</update_available>
-      <new_v_available>En ny version af FTPbox er tilgængelig</new_v_available>
+      <new_v_available>Ny version af FTPbox er tilgængelig</new_v_available>
       <new_version>Ny version</new_version>
       <current_version>Nuværende version</current_version>
       <wanna_download>Vil du downloade den nye version nu?</wanna_download>
       <download>Opdatér nu</download>
       <learn_more>Lær mere</learn_more>
-      <remind_me_next_time>Påmind mig senere</remind_me_next_time>
+      <remind_me_next_time>Ikke nu</remind_me_next_time>
     </new_version>
     <tray>
-      <tray_and_nots>Påmindelser og beskeder</tray_and_nots>
-      <updated>Filer {0} blev opdateret</updated>
-      <created>Filer {0} blev oprettet</created>
-      <renamed>Filer {0} blev navngivet til {1}</renamed>
-      <deleted>Filer {0} blev slettet</deleted>
-      <changed>Filer {0} blev ændret</changed>
+      <tray_and_nots>Påmindelser &amp; beskeder</tray_and_nots>
+      <updated>{0} blev opdateret.</updated>
+      <created>{0} blev oprettet.</created>
+      <renamed>{0} blev omdøbt til {1}</renamed>
+      <deleted>{0} blev slettet.</deleted>
+      <changed>{0} blev ændret.</changed>
       <FilesOrFoldersUpdated>{0} {1} er blevet opdateret</FilesOrFoldersUpdated>
       <FilesOrFoldersCreated>{0} {1} er blevet oprettet</FilesOrFoldersCreated>
       <FilesAndFoldersChanged>{0} {1} og {2} {3} er blevet opdateret</FilesAndFoldersChanged>
@@ -2916,24 +2916,25 @@
       <ready>FTPbox - Klar</ready>
       <synced>FTPbox - Alle filer synkroniseret</synced>
       <syncing>FTPbox - Synkroniserer...</syncing>
-      <offline>FTPbox Offline</offline>
+      <offline>FTPbox - Offline</offline>
       <link_copied>Link kopieret til udklipsholder</link_copied>
       <recent_files>Seneste filer</recent_files>
       <not_available>Ikke tilgængelig</not_available>
+      <modified>Modificeret</modified>
       <start_syncing>Start synkronisering</start_syncing>
-      <exit>Afslut</exit>
+      <exit>Luk</exit>
     </tray>
     <web_interface>
       <web_int>Web brugerflade</web_int>
       <downloading>Web brugerfladen bliver downloadet.</downloading>
-      <in_a_minute>Vent et øjeblik.</in_a_minute>
+      <in_a_minute>Dette vil tage et øjeblik.</in_a_minute>
       <removing>Fjerner web brugerfladen...</removing>
       <removed>Web brugerfladen er blevet fjernet.</removed>
       <updating>Opdaterer web brugerfladen...</updating>
       <updated>Web brugerfladen er blevet opdateret.</updated>
-      <setup>Klik her for at se og sætte op!</setup>
-      <use_webint>Benyt web brugerflade</use_webint>
-      <view>Se i browser vindue</view>
+      <setup>Klik her for at se og sætte det op!</setup>
+      <use_webint>Benyt web brugerfladen</use_webint>
+      <view>(Vis i browser)</view>
     </web_interface>
 	</da>
 	
