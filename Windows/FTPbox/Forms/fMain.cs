@@ -263,13 +263,13 @@ namespace FTPbox.Forms
 
             //  Bandwidth tab   //
 
+            nSyncFrequency.Value = Convert.ToDecimal(Program.Account.Account.SyncFrequency);
+            if (nSyncFrequency.Value == 0) nSyncFrequency.Value = 10;
+
             if (Program.Account.Account.SyncMethod == SyncMethod.Automatic)
                 cAuto.Checked = true;
             else
                 cManually.Checked = true;
-
-            nSyncFrequency.Value = Convert.ToDecimal(Settings.DefaultProfile.Account.SyncFrequency);
-            if (nSyncFrequency.Value == 0) nSyncFrequency.Value = 10;
 
             if (Program.Account.Account.Protocol != FtpProtocol.SFTP)
             {
