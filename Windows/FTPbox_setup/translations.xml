@@ -185,7 +185,7 @@
       <contact_me>Kontaktieren Sie mich</contact_me>
       <copyright>Copyright</copyright>
       <report_bug>Einen Fehler melden</report_bug>
-      <request_feature>Ein Feature vorschlagen</request_feature>
+      <request_feature>Eine neue Funktion vorschlagen</request_feature>
       <donate>Spenden</donate>
       <language>Sprache</language>
       <open_local>Lokale Datei öffnen</open_local>
@@ -200,8 +200,9 @@
       <limit_upload>Uploadgeschwindigkeit beschränken</limit_upload>
       <no_limits>( 0 für keine Beschränkung )</no_limits>
       <selective>Selektive Synchronisierung</selective>
-      <selective_info>Daten deselektieren um sie nicht zu synchronisieren</selective_info>
+      <selective_info>Einträge abwählen, um sie nicht zu synchronisieren</selective_info>
       <refresh>Aktualisieren</refresh>
+      <configure>Konfigurieren</configure>
       <file_filters>Filter</file_filters>
       <ignored_extensions>Ignorierte Dateiendungen</ignored_extensions>
       <remove>Löschen</remove>
@@ -211,6 +212,12 @@
       <old_files>Zuvor geänderte Dateien</old_files>
       <enable_logging>Logging erlauben</enable_logging>
       <view_log>Logbuch anzeigen</view_log>
+      <shell_menus>Zum Kontextmenü hinzufügen</shell_menus>
+      <way_of_sync>Synchronisierungsrichtung</way_of_sync>
+      <local_to_remote>Nur lokal zu entfernt</local_to_remote>
+      <remote_to_local>Nur entfernt zu lokal</remote_to_local>
+      <both_ways>Beide Richtungen</both_ways>
+      <temp_file_prefix>Prefix für temporäre Dateien</temp_file_prefix>
     </main_form>
     <new_account>
       <new_ftp>Neuer FTP Account</new_ftp>
@@ -249,7 +256,7 @@
       <remind_me_next_time>Erinnere mich das nächste mal</remind_me_next_time>
     </new_version>
     <tray>
-      <tray_and_nots>Tray _and Benachrichtigungen</tray_and_nots>
+      <tray_and_nots>Tray &amp; Benachrichtigungen</tray_and_nots>
       <updated>{0} wurde aktualisiert.</updated>
       <created>{0} wurde erstellt.</created>
       <renamed>{0} wurde umbenannt in {1}</renamed>
@@ -265,7 +272,7 @@
       <folders>Ordner</folders>
       <connecting>FTPbox - Verbinden...</connecting>
       <reconnecting>FTPbox - Erneut verbinden..</reconnecting>
-      <listing>FTPbox - Auflistung...</listing>
+      <listing>FTPbox - Vergleichen...</listing>
       <uploading>Hochladen {0}</uploading>
       <downloading>Herunterladen {0}</downloading>
       <ready>FTPbox - Bereit</ready>
@@ -275,6 +282,7 @@
       <link_copied>Link wurde in die Zwischenablage kopiert</link_copied>
       <recent_files>Letzte Dateien</recent_files>
       <not_available>Nicht verfügbar</not_available>
+      <modified>Geändert</modified>
       <start_syncing>Beginne Synchronisierung</start_syncing>
       <exit>Verlassen</exit>
     </tray>
