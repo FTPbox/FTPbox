@@ -36,6 +36,7 @@ namespace FTPbox.Forms
 
             _currentTab = _initialTab;
 
+            labKeyPath.Text = string.Empty;
             cEncryption.SelectedIndex = 0;
             cMode.SelectedIndex = 0;
         }
@@ -75,6 +76,7 @@ namespace FTPbox.Forms
                 bPrevious.Enabled = false;
             }
             cEncryption.SelectedIndexChanged += cEncryption_SelectedIndexChanged;
+            cMode.SelectedIndexChanged += cMode_SelectedIndexChanged;
         }
 
         /// <summary>

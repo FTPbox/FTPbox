@@ -152,7 +152,6 @@
             this.cMode.Name = "cMode";
             this.cMode.Size = new System.Drawing.Size(57, 21);
             this.cMode.TabIndex = 0;
-            this.cMode.SelectedIndexChanged += new System.EventHandler(this.cMode_SelectedIndexChanged);
             // 
             // tHost
             // 
