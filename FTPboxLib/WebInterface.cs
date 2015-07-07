@@ -14,10 +14,10 @@
 using System;
 using System.IO;
 using System.Net;
-using FTPbox.Classes;
-using Newtonsoft.Json;
 using System.Threading;
+using FTPbox.Classes;
 using Ionic.Zip;
+using Newtonsoft.Json;
 
 namespace FTPboxLib
 {
@@ -32,11 +32,11 @@ namespace FTPboxLib
         public event EventHandler InterfaceUploaded;
         public event EventHandler InterfaceRemoved;
 
-        private AccountController controller;
+        private readonly AccountController _controller;
 
         public WebInterface(AccountController account)
         {
-            this.controller = account;
+            _controller = account;
             _wiThread = new Thread(StartUpdate);
         }
 
@@ -47,7 +47,7 @@ namespace FTPboxLib
         {
             get
             {
-                bool e = controller.Client.Exists("webint");
+                var e = _controller.Client.Exists("webint");
                 if (e) CheckForUpdate();
                 return e;
             }
@@ -86,7 +86,7 @@ namespace FTPboxLib
             Notifications.Show(WebUiAction.waiting);
 
             const string dllink = "http://ftpbox.org/webint.zip";
-            string webuiPath = Path.Combine(Common.AppdataFolder, "webint.zip");
+            var webuiPath = Path.Combine(Common.AppdataFolder, "webint.zip");
             //DeleteWebInt();
             var wc = new WebClient();
             wc.DownloadFileCompleted += (o, e) =>
@@ -104,7 +104,7 @@ namespace FTPboxLib
         {
             Notifications.ChangeTrayText(MessageType.Syncing);
 
-            string path = Common.AppdataFolder + @"\WebInterface";
+            var path = Common.AppdataFolder + @"\WebInterface";
 
             Console.WriteLine();
             foreach (var d in Directory.GetDirectories(path, "*", SearchOption.AllDirectories))
@@ -114,7 +114,7 @@ namespace FTPboxLib
                 fname = fname.Replace(@"\", @"/");
                 Console.Write("\r Creating: {0,50}", fname);
                 // Create folder
-                controller.Client.MakeFolder(fname);
+                _controller.Client.MakeFolder(fname);
             }
             Console.WriteLine();
             foreach (var f in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
@@ -124,7 +124,7 @@ namespace FTPboxLib
                 fname = fname.ReplaceSlashes();
                 Console.Write("\r Uploading: {0,50}", fname);
                 // Upload file
-                controller.Client.Upload(f, fname);
+                _controller.Client.Upload(f, fname);
             }
             Console.WriteLine();
 
@@ -153,7 +153,7 @@ namespace FTPboxLib
         {
             Notifications.Show(updating ? WebUiAction.updating : WebUiAction.removing);
 
-            controller.Client.RemoveFolder("webint", false);
+            _controller.Client.RemoveFolder("webint", false);
 
             if (!updating)
             {
@@ -169,25 +169,25 @@ namespace FTPboxLib
         {
             try
             {
-                string lpath = Path.Combine(Common.AppdataFolder, @"version.ini");
-                controller.Client.Download("webint/version.ini", lpath);
+                var lpath = Path.Combine(Common.AppdataFolder, @"version.ini");
+                _controller.Client.Download("webint/version.ini", lpath);
 
                 var ini = new IniFile(lpath);
-                string currentversion = ini.ReadValue("Version", "latest");
+                var currentversion = ini.ReadValue("Version", "latest");
 
                 var wc = new WebClient();
                 wc.DownloadStringCompleted += (s, e) =>
                 {
                     var vinfo = (WebInterfaceVersionInfo)JsonConvert.DeserializeObject(e.Result, typeof(WebInterfaceVersionInfo));
 
-                    if (!vinfo.uptodate)
+                    if (!vinfo.Uptodate)
                         UpdateFound.SafeInvoke(null, EventArgs.Empty);
                     else
                         Log.Write(l.Client, "Web Interface is up to date");
 
                     File.Delete(lpath);
                 };
-                string link = string.Format("http://ftpbox.org/webui.php?version={0}", currentversion);
+                var link = string.Format("http://ftpbox.org/webui.php?version={0}", currentversion);
                 
                 wc.DownloadStringAsync(new Uri(link));
             }
@@ -204,10 +204,10 @@ namespace FTPboxLib
         /// </summary>
         private void ExtractAndUpload()
         {
-            string webuiPath = Path.Combine(Common.AppdataFolder, "webint.zip");
+            var webuiPath = Path.Combine(Common.AppdataFolder, "webint.zip");
 
-            using (ZipFile zip = ZipFile.Read(webuiPath))
-                foreach (ZipEntry en in zip)
+            using (var zip = ZipFile.Read(webuiPath))
+                foreach (var en in zip)
                     en.Extract(Path.Combine(Common.AppdataFolder, "WebInterface"), ExtractExistingFileAction.OverwriteSilently);
 
             Log.Write(l.Info, "WebUI unzipped");
@@ -229,7 +229,7 @@ namespace FTPboxLib
         /// </summary>
         private void CheckForFiles()
         {
-            string p = Common.AppdataFolder;
+            var p = Common.AppdataFolder;
             if (File.Exists(p + @"\webint.zip"))
                 File.Delete(p + @"\webint.zip");
             if (Directory.Exists(p + @"\webint"))
@@ -243,7 +243,7 @@ namespace FTPboxLib
 
     class WebInterfaceVersionInfo
     {
-        public bool uptodate;
+        public bool Uptodate;
 
         //TODO: file/folder list?
     }

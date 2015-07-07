@@ -10,44 +10,48 @@ namespace FTPbox.Forms
 {
     public partial class fTrayForm : Form
     {
+        /// <summary>
+        ///     This item will be added to the recent list when a file transfer is in progress
+        /// </summary>
+        private readonly trayFormListItem _transferItem = new trayFormListItem();
+
+        /// <summary>
+        ///     the latest status used to set the status label
+        /// </summary>
+        private TrayTextNotificationArgs _lastStatus = new TrayTextNotificationArgs
+        {
+            AssossiatedFile = null,
+            MessageType = MessageType.AllSynced
+        };
+
         public fTrayForm()
         {
             InitializeComponent();
 
             Notifications.TrayTextNotification += (o, n) =>
-                {
-                    if (this.IsHandleCreated)
-                        this.Invoke(new MethodInvoker(() => SetStatusLabel(o, n)));
-                    else
-                        _lastStatus = n;
-                };
+            {
+                if (IsHandleCreated)
+                    Invoke(new MethodInvoker(() => SetStatusLabel(o, n)));
+                else
+                    _lastStatus = n;
+            };
             // Make status label same color as the icons
             lCurrentStatus.ForeColor = Color.FromArgb(105, 105, 105);
         }
 
-        /// <summary>
-        /// the latest status used to set the status label
-        /// </summary>
-        private TrayTextNotificationArgs _lastStatus = new TrayTextNotificationArgs { AssossiatedFile = null, MessageType = MessageType.AllSynced };
-
-        /// <summary>
-        /// This item will be added to the recent list when a file transfer is in progress
-        /// </summary>
-        private readonly trayFormListItem _transferItem = new trayFormListItem();
-
         private void fTrayForm_Load(object sender, EventArgs e)
         {
             // Make sure the border doesn't appear
-            this.Text = String.Empty;
+            Text = string.Empty;
 
-            Notifications.RecentListChanged += (o, n) => this.Invoke(new MethodInvoker(LoadRecent));
+            Notifications.RecentListChanged += (o, n) => Invoke(new MethodInvoker(LoadRecent));
 
             Program.Account.Client.TransferProgress += (o, n) =>
             {
                 // Only when Downloading/Uploading.
                 if (string.IsNullOrWhiteSpace(_lastStatus.AssossiatedFile)) return;
                 // Update item in recent list
-                this.Invoke(new MethodInvoker(() =>
+                Invoke(new MethodInvoker(() =>
                 {
                     // Get status progress for the transfer
                     var progress = string.Format("{0,3}% - {1}", n.Progress, n.Rate);
@@ -61,7 +65,7 @@ namespace FTPbox.Forms
         }
 
         /// <summary>
-        /// Load the recent items list
+        ///     Load the recent items list
         /// </summary>
         private void LoadRecent()
         {
@@ -69,25 +73,25 @@ namespace FTPbox.Forms
             // Update the Recent List
             fRecentList.Controls.Clear();
             list.ForEach(f =>
+            {
+                var fullPath = Path.GetFullPath(Path.Combine(Program.Account.Paths.Local, f.CommonPath));
+                var t = new trayFormListItem
                 {
-                    var fullPath = Path.GetFullPath(Path.Combine(Program.Account.Paths.Local, f.CommonPath));
-                    var t = new trayFormListItem
-                        {
-                            FileNameLabel = Common._name(f.CommonPath),
-                            FileStatusLabel = Common.Languages[UiControl.Modified] + " " + f.LatestChangeTime().FormatDate()
-                        };
-                    // Open the file in explorer.exe on click
-                    t.Click += (sender, args) => Process.Start("explorer.exe", @"/select, " + fullPath);
-                    fRecentList.Controls.Add(t);
-                });
+                    FileNameLabel = Common._name(f.CommonPath),
+                    FileStatusLabel = Common.Languages[UiControl.Modified] + " " + f.LatestChangeTime().FormatDate()
+                };
+                // Open the file in explorer.exe on click
+                t.Click += (sender, args) => Process.Start("explorer.exe", @"/select, " + fullPath);
+                fRecentList.Controls.Add(t);
+            });
             if (list.Count == 0)
             {
                 // If recent list is empty, just add a single 'Not Available' item
                 fRecentList.Controls.Add(new trayFormListItem
-                    {
-                        FileNameLabel = Common.Languages[MessageType.NotAvailable],
-                        FileStatusLabel = string.Empty
-                    });
+                {
+                    FileNameLabel = Common.Languages[MessageType.NotAvailable],
+                    FileStatusLabel = string.Empty
+                });
             }
         }
 
@@ -120,8 +124,8 @@ namespace FTPbox.Forms
                         break;
                     case MessageType.Listing:
                         lCurrentStatus.Text = (Program.Account.Account.SyncMethod == SyncMethod.Automatic)
-                                        ? Common.Languages[MessageType.AllSynced]
-                                        : Common.Languages[MessageType.Listing];
+                            ? Common.Languages[MessageType.AllSynced]
+                            : Common.Languages[MessageType.Listing];
                         break;
                     default:
                         lCurrentStatus.Text = Common.Languages[e.MessageType];
@@ -139,16 +143,16 @@ namespace FTPbox.Forms
 
         private void fTrayForm_Leave(object sender, EventArgs e)
         {
-            this.Hide();
+            Hide();
         }
 
         private void fTrayForm_Deactivate(object sender, EventArgs e)
         {
-            this.Hide();
+            Hide();
         }
 
         /// <summary>
-        /// Positions the form according to the location of the Windows taskbar and our tray icon
+        ///     Positions the form according to the location of the Windows taskbar and our tray icon
         /// </summary>
         /// <param name="MousePosition">the point the user clicked at when opening the form</param>
         public void PositionProperly(Point MousePosition)
@@ -156,44 +160,44 @@ namespace FTPbox.Forms
             // Get the taskbar location and type
             Win32.AppBarLocation taskbarType;
             var taskbarRectangle = Win32.GetTaskbar(out taskbarType);
-            
-            int x = 0;
-            int y = 0;
-            
+
+            var x = 0;
+            var y = 0;
+
             // Calculate where the form should be placed
             if (taskbarType == Win32.AppBarLocation.Bottom)
             {
-                x = MousePosition.X - this.Width / 2;
-                y = taskbarRectangle.Y - this.Height - 10;
+                x = MousePosition.X - Width/2;
+                y = taskbarRectangle.Y - Height - 10;
             }
             else if (taskbarType == Win32.AppBarLocation.Top)
             {
-                x = MousePosition.X - this.Width / 2;
+                x = MousePosition.X - Width/2;
                 y = taskbarRectangle.Height + 10;
             }
             else if (taskbarType == Win32.AppBarLocation.Left)
             {
                 x = taskbarRectangle.X + taskbarRectangle.Width + 10;
-                y = MousePosition.Y - this.Height / 2;
+                y = MousePosition.Y - Height/2;
             }
             else if (taskbarType == Win32.AppBarLocation.Right)
             {
-                x = taskbarRectangle.X - this.Width - 10;
-                y = MousePosition.Y - this.Height / 2;
+                x = taskbarRectangle.X - Width - 10;
+                y = MousePosition.Y - Height/2;
             }
             // Make sure the form does not get outside the screen bounds
             if (taskbarType == Win32.AppBarLocation.Bottom || taskbarType == Win32.AppBarLocation.Top)
             {
-                if (x + this.Width > taskbarRectangle.Right - 10)
-                    x = taskbarRectangle.Right - 10 - this.Width;
+                if (x + Width > taskbarRectangle.Right - 10)
+                    x = taskbarRectangle.Right - 10 - Width;
             }
             else
             {
-                if (y + this.Height > taskbarRectangle.Bottom - 10)
-                    y = taskbarRectangle.Bottom - 10 - this.Height;
+                if (y + Height > taskbarRectangle.Bottom - 10)
+                    y = taskbarRectangle.Bottom - 10 - Height;
             }
             // Set the location
-            this.Location = new Point(x, y);
+            Location = new Point(x, y);
         }
 
         private void pLocalFolder_Click(object sender, EventArgs e)
@@ -203,20 +207,20 @@ namespace FTPbox.Forms
 
         private void pSettings_Click(object sender, EventArgs e)
         {
-            ((fMain)Tag).Show();
-            ((fMain)Tag).Activate();
+            ((fMain) Tag).Show();
+            ((fMain) Tag).Activate();
         }
 
         public void Set_Language()
         {
-            if (!this.IsHandleCreated) return;
+            if (!IsHandleCreated) return;
 
-            this.Invoke(new MethodInvoker(() =>
-                {
-                    // Set the status label and load the recent files
-                    SetStatusLabel(null, _lastStatus);
-                    LoadRecent();
-                }));
+            Invoke(new MethodInvoker(() =>
+            {
+                // Set the status label and load the recent files
+                SetStatusLabel(null, _lastStatus);
+                LoadRecent();
+            }));
         }
     }
 }

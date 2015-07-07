@@ -8,8 +8,9 @@
 
 using System;
 using System.IO;
-using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
+using System.Text;
+using Microsoft.Win32.SafeHandles;
 
 namespace FTPboxLib
 {
@@ -26,12 +27,11 @@ namespace FTPboxLib
         public static void Allocate()
         {
             AllocConsole();
-            IntPtr stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-            SafeFileHandle safeFileHandle = new SafeFileHandle(stdHandle, true);
-            FileStream fileStream = new FileStream(safeFileHandle, FileAccess.Write);
-            System.Text.Encoding encoding = System.Text.Encoding.GetEncoding(MY_CODE_PAGE);
-            StreamWriter standardOutput = new StreamWriter(fileStream, encoding);
-            standardOutput.AutoFlush = true;
+            var stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+            var safeFileHandle = new SafeFileHandle(stdHandle, true);
+            var fileStream = new FileStream(safeFileHandle, FileAccess.Write);
+            var encoding = Encoding.GetEncoding(MY_CODE_PAGE);
+            var standardOutput = new StreamWriter(fileStream, encoding) {AutoFlush = true};
             Console.SetOut(standardOutput);
         }
     }

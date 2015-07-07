@@ -11,6 +11,7 @@
  */
 
 using System.IO;
+using System.Threading;
 
 namespace FTPboxLib
 {
@@ -18,11 +19,11 @@ namespace FTPboxLib
     {
         private FileSystemWatcher _fsWatcher;
 
-        private AccountController controller;
+        private readonly AccountController _controller;
 
         public FolderWatcher (AccountController account)
         {
-            this.controller = account;
+            _controller = account;
         }
 
         /// <summary>
@@ -31,16 +32,18 @@ namespace FTPboxLib
         public void Setup()
         {
             Log.Write(l.Debug, "Setting up the file system watcher");
-            
-            _fsWatcher = new FileSystemWatcher();
-            _fsWatcher.Path = controller.Paths.Local;
-            _fsWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-            _fsWatcher.Filter = "*";
-            _fsWatcher.IncludeSubdirectories = true;
+
+            _fsWatcher = new FileSystemWatcher
+            {
+                Path = _controller.Paths.Local,
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
+                Filter = "*",
+                IncludeSubdirectories = true
+            };
 
             // add event handlers
-            _fsWatcher.Changed += onChanged;
-            _fsWatcher.Created += onChanged;
+            _fsWatcher.Changed += OnChanged;
+            _fsWatcher.Created += OnChanged;
             _fsWatcher.Deleted += OnDeleted;
             _fsWatcher.Renamed += OnRenamed;
 
@@ -71,11 +74,11 @@ namespace FTPboxLib
         /// <summary>
         /// Raised when a file or folder is changed
         /// </summary>
-        private void onChanged(object source, FileSystemEventArgs e)
+        private void OnChanged(object source, FileSystemEventArgs e)
         {
-            if (!controller.ItemGetsSynced(e.FullPath, true) || (!File.Exists(e.FullPath) && !Directory.Exists(e.FullPath))) return;
+            if (!_controller.ItemGetsSynced(e.FullPath, true) || (!File.Exists(e.FullPath) && !Directory.Exists(e.FullPath))) return;
 
-            int retries = 0;
+            var retries = 0;
             if (File.Exists(e.FullPath))
             {
                 // avoid queuing the same file multiple times
@@ -85,7 +88,7 @@ namespace FTPboxLib
                     // Exit after 5 retries
                     if (retries > 5) return;
                     // Sleep for a 10th of a second, then check again
-                    System.Threading.Thread.Sleep(100);
+                    Thread.Sleep(100);
                     retries++;
                 }
             }
@@ -99,7 +102,7 @@ namespace FTPboxLib
         /// </summary>
         private void OnDeleted(object source, FileSystemEventArgs e)
         {
-            if (!controller.ItemGetsSynced(e.FullPath, true)) return;
+            if (!_controller.ItemGetsSynced(e.FullPath, true)) return;
             // Add to queue
             AddToQueue(e, ChangeAction.deleted);
         }
@@ -111,7 +114,7 @@ namespace FTPboxLib
         {
             Log.Write(l.Debug, "Item {0} was renamed", e.OldName);
 
-            if (!controller.ItemGetsSynced(e.FullPath, true) || !controller.ItemGetsSynced(e.OldFullPath, true))
+            if (!_controller.ItemGetsSynced(e.FullPath, true) || !_controller.ItemGetsSynced(e.OldFullPath, true))
                 return;
 
             var isFile = Common.PathIsFile(e.FullPath);
@@ -119,9 +122,9 @@ namespace FTPboxLib
             var renamedFromTempFile = new FileInfo(e.OldFullPath).Attributes.HasFlag(FileAttributes.Temporary);
             var renamedToTempFile = new FileInfo(e.FullPath).Attributes.HasFlag(FileAttributes.Temporary);
             // Get common path to old (renamed) file
-            var oldCommon = controller.GetCommonPath(e.OldFullPath, true);
+            var oldCommon = _controller.GetCommonPath(e.OldFullPath, true);
             // Add to queue
-            if (isFile && renamedFromTempFile && !renamedToTempFile && !controller.FileLog.Contains(oldCommon))
+            if (isFile && renamedFromTempFile && !renamedToTempFile && !_controller.FileLog.Contains(oldCommon))
                 AddToQueue(e, ChangeAction.changed);
             else
                 AddToQueue(e, ChangeAction.renamed);
@@ -138,7 +141,7 @@ namespace FTPboxLib
             // ignore directory changes
             if (!isFile && action == ChangeAction.changed) return;
 
-            var queueItem = new SyncQueueItem(controller)
+            var queueItem = new SyncQueueItem(_controller)
                 {
                     Item = new ClientItem
                         {
@@ -155,11 +158,14 @@ namespace FTPboxLib
             if (action == ChangeAction.renamed)
             {
                 var args = e as RenamedEventArgs;
-                queueItem.Item.FullPath = args.OldFullPath;
-                queueItem.Item.NewFullPath = args.FullPath;
+                if (args != null)
+                {
+                    queueItem.Item.FullPath = args.OldFullPath;
+                    queueItem.Item.NewFullPath = args.FullPath;
+                }
             }
             // Send to the sync queue
-            controller.SyncQueue.Add(queueItem);
+            _controller.SyncQueue.Add(queueItem);
         }
     }
 }

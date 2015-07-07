@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Utilities.Encryption;
 
 namespace FTPboxLib
 {
@@ -46,7 +47,7 @@ namespace FTPboxLib
         /// </summary>
         public static string Encrypt(string password)
         {
-            return Utilities.Encryption.AESEncryption.Encrypt(password, DecryptionPassword, DecryptionSalt);
+            return AESEncryption.Encrypt(password, DecryptionPassword, DecryptionSalt);
         }
 
         /// <summary>
@@ -54,7 +55,7 @@ namespace FTPboxLib
         /// </summary>
         public static string Decrypt(string encrypted)
         {
-            return Utilities.Encryption.AESEncryption.Decrypt(encrypted, DecryptionPassword, DecryptionSalt);
+            return AESEncryption.Decrypt(encrypted, DecryptionPassword, DecryptionSalt);
         }
 
         /// <summary>
@@ -83,9 +84,9 @@ namespace FTPboxLib
         public static string _name(string path)
         {
             if (path.Contains("/"))
-                path = path.Substring(path.LastIndexOf("/"));
+                path = path.Substring(path.LastIndexOf("/", StringComparison.Ordinal));
             if (path.Contains(@"\"))
-                path = path.Substring(path.LastIndexOf(@"\"));
+                path = path.Substring(path.LastIndexOf(@"\", StringComparison.Ordinal));
             if (path.StartsWith("/") || path.StartsWith(@"\"))
                 path = path.Substring(1);
             return path;
@@ -100,12 +101,12 @@ namespace FTPboxLib
         public static string _tempName(string cpath, string prefix)
         {
             if (!cpath.Contains("/") && !cpath.Contains(@"\"))
-                return String.Format("{0}{1}", prefix, cpath);
+                return string.Format("{0}{1}", prefix, cpath);
 
-            string parent = cpath.Substring(0, cpath.LastIndexOf("/"));
-            string temp_name = String.Format("{0}{1}", prefix, _name(cpath));
+            var parent = cpath.Substring(0, cpath.LastIndexOf("/", StringComparison.Ordinal));
+            var tempName = string.Format("{0}{1}", prefix, _name(cpath));
 
-            return String.Format("{0}/{1}", parent, temp_name);
+            return string.Format("{0}/{1}", parent, tempName);
         }
 
         /// <summary>
@@ -117,9 +118,9 @@ namespace FTPboxLib
         public static string _tempLocal(string lpath, string prefix)
         {
             lpath = lpath.ReplaceSlashes();
-            string parent = lpath.Substring(0, lpath.LastIndexOf("/"));            
+            var parent = lpath.Substring(0, lpath.LastIndexOf("/", StringComparison.Ordinal));            
 
-            return String.Format("{0}/{1}{2}", parent, prefix, _name(lpath));
+            return string.Format("{0}/{1}{2}", parent, prefix, _name(lpath));
         }
 
         /// <summary>
@@ -178,7 +179,7 @@ namespace FTPboxLib
                 if (stream != null)
                     stream.Close();
             }
-            if (!String.IsNullOrWhiteSpace(name))
+            if (!string.IsNullOrWhiteSpace(name))
                 Log.Write(l.Debug, "File {0} is locked: False", name);
             return false;
         }

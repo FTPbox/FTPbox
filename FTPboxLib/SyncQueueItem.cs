@@ -11,6 +11,7 @@
  */
 
 using System;
+using System.IO;
 
 namespace FTPboxLib
 {
@@ -20,7 +21,7 @@ namespace FTPboxLib
 
         public SyncQueueItem(AccountController account)
         {
-            this.controller = account;
+            controller = account;
         }
 
         /// <summary>
@@ -77,8 +78,7 @@ namespace FTPboxLib
             {
                 if (CommonPath.Length <= Common._name(CommonPath).Length + 1)
                     return string.Empty;
-                else
-                    return CommonPath.Substring(0, CommonPath.Length - Common._name(CommonPath).Length - 1);
+                return CommonPath.Substring(0, CommonPath.Length - Common._name(CommonPath).Length - 1);
             }
         }
 
@@ -86,7 +86,7 @@ namespace FTPboxLib
         {
             get
             {
-                return SyncTo == SyncTo.Remote ? Item.FullPath : System.IO.Path.Combine(controller.Paths.Local, CommonPath);
+                return SyncTo == SyncTo.Remote ? Item.FullPath : Path.Combine(controller.Paths.Local, CommonPath);
             }
         }
     }

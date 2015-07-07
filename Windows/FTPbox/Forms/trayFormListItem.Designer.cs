@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace FTPbox.Forms
 {
-    partial class trayFormListItem
+    sealed partial class trayFormListItem
     {
         /// <summary> 
         /// Required designer variable.

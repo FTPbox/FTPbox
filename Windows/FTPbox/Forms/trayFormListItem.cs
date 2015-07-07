@@ -4,17 +4,17 @@ using System.Windows.Forms;
 
 namespace FTPbox.Forms
 {
-    public partial class trayFormListItem : UserControl
+    public sealed partial class trayFormListItem : UserControl
     {
         public trayFormListItem()
         {
             InitializeComponent();
-            
-            this.BackColor = Color.Transparent;
+
+            BackColor = Color.Transparent;
         }
 
         /// <summary>
-        /// The name of the file this recent item refers to
+        ///     The name of the file this recent item refers to
         /// </summary>
         public string FileNameLabel
         {
@@ -26,17 +26,20 @@ namespace FTPbox.Forms
         }
 
         /// <summary>
-        /// The status of the item, will either include transfer status or last modified time
+        ///     The status of the item, will either include transfer status or last modified time
         /// </summary>
-        public string FileStatusLabel { set { lStatusLabel.Text = value; } }        
+        public string FileStatusLabel
+        {
+            set { lStatusLabel.Text = value; }
+        }
 
         /// <summary>
-        /// The format of the status label when the item is being transfered, ie 'Downloading {0}'
+        ///     The format of the status label when the item is being transfered, ie 'Downloading {0}'
         /// </summary>
         public string SubTitleFormat { get; set; }
 
         /// <summary>
-        /// Make sure Click is raised no matter where the user clicks
+        ///     Make sure Click is raised no matter where the user clicks
         /// </summary>
         public new event EventHandler Click
         {

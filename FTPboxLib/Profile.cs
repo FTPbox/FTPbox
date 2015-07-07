@@ -43,7 +43,7 @@ namespace FTPboxLib
 
 	    public void AddAccount(string host, string user, string pass, int port)
 	    {
-	        Account = new Account()
+	        Account = new Account
 	        {
                 Host = host,
                 Username = user,
@@ -56,7 +56,7 @@ namespace FTPboxLib
 
 	    public void AddPaths(string remote, string local, string http)
 	    {
-            Paths = new Paths()
+            Paths = new Paths
             {
                 Remote = remote,
 	            Local = local, 
@@ -74,25 +74,19 @@ namespace FTPboxLib
 
         #region Serialization
 
-        private string tmpPassword = string.Empty;
+        private string _tmpPassword = string.Empty;
 
         [OnSerializing]
         internal void OnSerializing(StreamingContext context)
         {
-            tmpPassword = Account.Password;
-            if (AskForPassword)
-                Account.Password = string.Empty;
-            else
-                Account.Password = Common.Encrypt(Account.Password);
+            _tmpPassword = Account.Password;
+            Account.Password = AskForPassword ? string.Empty : Common.Encrypt(Account.Password);
         }
 
         [OnSerialized]
         internal void OnSerialized(StreamingContext context)
         {
-            if (AskForPassword)
-                Account.Password = tmpPassword;
-            else
-                Account.Password = Common.Decrypt(Account.Password);
+            Account.Password = AskForPassword ? _tmpPassword : Common.Decrypt(Account.Password);
         }
 
         [OnDeserialized]

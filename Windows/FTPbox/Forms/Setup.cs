@@ -11,10 +11,10 @@ namespace FTPbox.Forms
         private readonly Point _groupLocation = new Point(12, 12);
 
         private AccountSetupTab _prevTab = AccountSetupTab.None;
-        private AccountSetupTab _currentTab = AccountSetupTab.None;
-        private AccountSetupTab _initialTab;
+        private AccountSetupTab _currentTab;
+        private readonly AccountSetupTab _initialTab;
 
-        private FolderBrowserDialog fbd = new FolderBrowserDialog() { RootFolder = Environment.SpecialFolder.Desktop, ShowNewFolderButton = true };
+        private readonly FolderBrowserDialog _fbd = new FolderBrowserDialog() { RootFolder = Environment.SpecialFolder.Desktop, ShowNewFolderButton = true };
 
         private bool _checkingNodes = false;
         public static bool JustPassword = false;
@@ -49,7 +49,7 @@ namespace FTPbox.Forms
 
             SwitchTab(_currentTab);
 
-            if (JustPassword && Program.Account.isAccountSet)
+            if (JustPassword && Program.Account.IsAccountSet)
             {
                 tHost.Text = Program.Account.Account.Host;
                 tUsername.Text = Program.Account.Account.Username;
@@ -58,7 +58,7 @@ namespace FTPbox.Forms
                 cMode.SelectedIndex = (Program.Account.Account.Protocol != FtpProtocol.SFTP) ? 0 : 1;
                 cAskForPass.Checked = true;
 
-                if (Program.Account.isPrivateKeyValid)
+                if (Program.Account.IsPrivateKeyValid)
                 {
                     _privateKey = Program.Account.Account.PrivateKeyFile;
                     labKeyPath.Text = new System.IO.FileInfo(_privateKey).Name;
@@ -301,14 +301,14 @@ namespace FTPbox.Forms
             {
                 if (c.Type == ClientItemType.Folder)
                 {
-                    var ParentNode = new TreeNode { Text = c.Name };
+                    var parentNode = new TreeNode { Text = c.Name };
                     if (_currentTab == AccountSetupTab.RemoteFolder)
-                        current.Nodes.Add(ParentNode);
+                        current.Nodes.Add(parentNode);
                     else
-                        tRemoteList.Nodes.Add(ParentNode);
+                        tRemoteList.Nodes.Add(parentNode);
 
-                    var ChildNode = new TreeNode { Text = c.Name };
-                    ParentNode.Nodes.Add(ChildNode);
+                    var childNode = new TreeNode { Text = c.Name };
+                    parentNode.Nodes.Add(childNode);
                 }
                 // Only list files in SelectiveSync tab
                 else if (c.Type == ClientItemType.File && _currentTab == AccountSetupTab.SelectiveSync)
@@ -324,16 +324,21 @@ namespace FTPbox.Forms
                 EditNodeCheckboxes();
         }
 
-        private void CheckSingleRoute(TreeNode tn)
+        private static void CheckSingleRoute(TreeNode tn)
         {
-            if (tn.Checked && tn.Parent != null)
-                if (!tn.Parent.Checked)
-                {
-                    tn.Parent.Checked = true;
-                    if (Program.Account.IgnoreList.Items.Contains(tn.Parent.FullPath))
-                        Program.Account.IgnoreList.Items.Remove(tn.Parent.FullPath);
-                    CheckSingleRoute(tn.Parent);
-                }
+            while (true)
+            {
+                if (tn.Checked && tn.Parent != null)
+                    if (!tn.Parent.Checked)
+                    {
+                        tn.Parent.Checked = true;
+                        if (Program.Account.IgnoreList.Items.Contains(tn.Parent.FullPath))
+                            Program.Account.IgnoreList.Items.Remove(tn.Parent.FullPath);
+                        tn = tn.Parent;
+                        continue;
+                    }
+                break;
+            }
         }
 
         /// <summary>
@@ -352,7 +357,7 @@ namespace FTPbox.Forms
             }
         }
 
-        private void EditNodeCheckboxesRecursive(TreeNode t)
+        private static void EditNodeCheckboxesRecursive(TreeNode t)
         {
             t.Checked = Program.Account.IgnoreList.isInIgnoredFolders(t.FullPath);
             if (t.Parent != null)
@@ -362,7 +367,7 @@ namespace FTPbox.Forms
                 EditNodeCheckboxesRecursive(tn);
         }
 
-        private void CheckUncheckChildNodes(TreeNode t, bool c)
+        private static void CheckUncheckChildNodes(TreeNode t, bool c)
         {
             t.Checked = c;
             foreach (TreeNode tn in t.Nodes)
@@ -422,7 +427,7 @@ namespace FTPbox.Forms
             switch (_currentTab)
             {
                 case AccountSetupTab.None:
-                    string lan = cLanguages.SelectedItem.ToString().Substring(cLanguages.SelectedItem.ToString().IndexOf("(") + 1);
+                    var lan = cLanguages.SelectedItem.ToString().Substring(cLanguages.SelectedItem.ToString().IndexOf("(", StringComparison.Ordinal) + 1);
                     lan = lan.Substring(0, lan.Length - 1);
                     Settings.General.Language = lan;
                     SetLanguage(lan);
@@ -481,9 +486,9 @@ namespace FTPbox.Forms
 
         private void bBrowse_Click(object sender, EventArgs e)
         {
-            fbd.ShowDialog();
-            if (fbd.SelectedPath != string.Empty)
-                tLocalPath.Text = fbd.SelectedPath;
+            _fbd.ShowDialog();
+            if (_fbd.SelectedPath != string.Empty)
+                tLocalPath.Text = _fbd.SelectedPath;
         }
 
         private void cMode_SelectedIndexChanged(object sender, EventArgs e)
@@ -492,10 +497,9 @@ namespace FTPbox.Forms
 
             labKeyPath.Text = string.Empty;
             cEncryption.Items.Clear();
-            if (cMode.SelectedIndex == 0)
-                cEncryption.Items.AddRange(new[] { "None", "require explicit FTP over TLS", "require implicit FTP over TLS"});
-            else
-                cEncryption.Items.AddRange(new[] { "Normal", "public key authentication" });
+            cEncryption.Items.AddRange(cMode.SelectedIndex == 0
+                ? new object[] {"None", "require explicit FTP over TLS", "require implicit FTP over TLS"}
+                : new object[] {"Normal", "public key authentication"});
             cEncryption.SelectedIndex = 0;
 
             labEncryption.Text = cMode.SelectedIndex == 0 ? Common.Languages[UiControl.Encryption] : Common.Languages[UiControl.Authentication];
@@ -624,11 +628,11 @@ namespace FTPbox.Forms
             {
                 if (c.Type == ClientItemType.Folder)
                 {
-                    var ParentNode = new TreeNode { Text = c.Name };
-                    e.Node.Nodes.Add(ParentNode);
+                    var parentNode = new TreeNode { Text = c.Name };
+                    e.Node.Nodes.Add(parentNode);
 
-                    var ChildNode = new TreeNode { Text = c.Name };
-                    ParentNode.Nodes.Add(ChildNode);
+                    var childNode = new TreeNode { Text = c.Name };
+                    parentNode.Nodes.Add(childNode);
                 }
                 else if (c.Type == ClientItemType.File && _currentTab == AccountSetupTab.SelectiveSync)
                     e.Node.Nodes.Add(c.Name);

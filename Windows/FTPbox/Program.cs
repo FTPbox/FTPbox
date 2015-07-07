@@ -89,7 +89,7 @@ namespace FTPbox
         {
             string[] all = { "Starksoft.Net.Ftp.dll", "Starksoft.Net.Proxy.dll", "DiffieHellman.dll", "Org.Mentalis.Security.dll", "Tamir.SharpSSH.dll", "appinfo.ini", "updater.exe" };
 
-            foreach (string s in all)
+            foreach (var s in all)
             {
                 if (File.Exists(Path.Combine(Application.StartupPath, s)))
                     try
@@ -110,12 +110,12 @@ namespace FTPbox
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        private static bool CheckArgs(string[] args)
+        private static bool CheckArgs(IEnumerable<string> args)
         {
             string param = null;
             var files = new List<string>();
             
-            foreach (string s in args)
+            foreach (var s in args)
             {
                 if (File.Exists(s) || Directory.Exists(s))
                     files.Add(s);
@@ -141,22 +141,22 @@ namespace FTPbox
         /// <param name="param"></param>
         private static void RunClient(string[] args, string param)
         {
-            if (!isServerRunning)
+            if (!IsServerRunning)
             {
                 MessageBox.Show("FTPbox must be running to use the context menus!", "FTPbox", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 RemoveFTPboxMenu();
                 Process.GetCurrentProcess().Kill();
             }
             
-            NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", "FTPbox Server", PipeDirection.InOut, PipeOptions.None, System.Security.Principal.TokenImpersonationLevel.Impersonation);
+            var pipeClient = new NamedPipeClientStream(".", "FTPbox Server", PipeDirection.InOut, PipeOptions.None, System.Security.Principal.TokenImpersonationLevel.Impersonation);
 
             Log.Write(l.Client, "Connecting client...");
             pipeClient.Connect();
 
-            StreamString ss = new StreamString(pipeClient);
+            var ss = new StreamString(pipeClient);
             if (ss.ReadString() == "ftpbox")
             {
-                string p = CombineParameters(args, param);
+                var p = CombineParameters(args, param);
                 ss.WriteString(p);
                 Log.Write(l.Client, ss.ReadString());
             }
@@ -170,11 +170,11 @@ namespace FTPbox
             Process.GetCurrentProcess().Kill();
         }
 
-        private static string CombineParameters(string[] args, string param)
+        private static string CombineParameters(IEnumerable<string> args, string param)
         {
-            string r = param + "\"";
+            var r = param + "\"";
 
-            foreach (string s in args)
+            foreach (var s in args)
                 r += string.Format("{0}\"", s);
 
             r = r.Substring(0, r.Length - 1);
@@ -182,7 +182,7 @@ namespace FTPbox
             return r;
         }
 
-        private static bool isServerRunning
+        private static bool IsServerRunning
         {
             get
             {
@@ -198,13 +198,19 @@ namespace FTPbox
         /// </summary>
         private static void RemoveFTPboxMenu()
         {
-            RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Classes\\*\\Shell\\", true);
-            key.DeleteSubKeyTree("FTPbox", false);
-            key.Close();
+            var key = Registry.CurrentUser.OpenSubKey("Software\\Classes\\*\\Shell\\", true);
+            if (key != null)
+            {
+                key.DeleteSubKeyTree("FTPbox", false);
+                key.Close();
+            }
 
             key = Registry.CurrentUser.OpenSubKey("Software\\Classes\\Directory\\Shell\\", true);
-            key.DeleteSubKeyTree("FTPbox", false);
-            key.Close();
+            if (key != null)
+            {
+                key.DeleteSubKeyTree("FTPbox", false);
+                key.Close();
+            }
         }
 
         /// <summary>
@@ -218,7 +224,7 @@ namespace FTPbox
                 var allprocesses = Process.GetProcessesByName(procname);
 
                 if (allprocesses.Length > 0)
-                    foreach (Process p in allprocesses)
+                    foreach (var p in allprocesses)
                         if (p.Id != Process.GetCurrentProcess().Id)
                         {
                             p.WaitForExit(3000);
@@ -236,39 +242,39 @@ namespace FTPbox
 
     public class StreamString
     {
-        private Stream ioStream;
-        private UnicodeEncoding sEncoding;
+        private readonly Stream _ioStream;
+        private readonly UnicodeEncoding _sEncoding;
 
         public StreamString(Stream ioStream)
         {
-            this.ioStream = ioStream;
-            sEncoding = new UnicodeEncoding();
+            _ioStream = ioStream;
+            _sEncoding = new UnicodeEncoding();
         }
 
         public string ReadString()
         {
             int len = 0;
 
-            len = ioStream.ReadByte() * 256;
-            len += ioStream.ReadByte();
-            byte[] inBuffer = new byte[len];
-            ioStream.Read(inBuffer, 0, len);
+            len = _ioStream.ReadByte() * 256;
+            len += _ioStream.ReadByte();
+            var inBuffer = new byte[len];
+            _ioStream.Read(inBuffer, 0, len);
 
-            return sEncoding.GetString(inBuffer);
+            return _sEncoding.GetString(inBuffer);
         }
 
         public int WriteString(string outString)
         {
-            byte[] outBuffer = sEncoding.GetBytes(outString);
-            int len = outBuffer.Length;
+            var outBuffer = _sEncoding.GetBytes(outString);
+            var len = outBuffer.Length;
 
-            if (len > UInt16.MaxValue)
-                len = (int)UInt16.MaxValue;            
+            if (len > ushort.MaxValue)
+                len = ushort.MaxValue;            
 
-            ioStream.WriteByte((byte)(len / 256));
-            ioStream.WriteByte((byte)(len & 255));
-            ioStream.Write(outBuffer, 0, len);
-            ioStream.Flush();
+            _ioStream.WriteByte((byte)(len / 256));
+            _ioStream.WriteByte((byte)(len & 255));
+            _ioStream.Write(outBuffer, 0, len);
+            _ioStream.Flush();
 
             return outBuffer.Length + 2;
         }
@@ -276,18 +282,18 @@ namespace FTPbox
 
     public class ReadMessageSent
     {
-        private string _data;
-        private StreamString ss;
+        private readonly string _data;
+        private readonly StreamString _ss;
 
         public ReadMessageSent(StreamString str, string data)
         {
             _data = data;
-            ss = str;
+            _ss = str;
         }
 
         public void Start()
         {
-            ss.WriteString(_data);
+            _ss.WriteString(_data);
         }
     }
 }

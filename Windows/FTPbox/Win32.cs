@@ -37,13 +37,13 @@ namespace FTPbox
         [StructLayout(LayoutKind.Sequential)]
         private struct SHFILEINFO
         {
-            public IntPtr hIcon;
-            public IntPtr iIcon;
-            public uint dwAttributes;
+            public readonly IntPtr hIcon;
+            public readonly IntPtr iIcon;
+            public readonly uint dwAttributes;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-            public string szDisplayName;
+            public readonly string szDisplayName;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
-            public string szTypeName;
+            public readonly string szTypeName;
         };
 
         #endregion
