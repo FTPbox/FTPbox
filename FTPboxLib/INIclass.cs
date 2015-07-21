@@ -1,11 +1,11 @@
-﻿using System.Text;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
+using System.Text;
 
 namespace FTPbox.Classes
 {
     internal class IniFile
     {
-        public string path;
+        public string Path;
 
         [DllImport("kernel32")]
         private static extern long WritePrivateProfileString(string section,
@@ -16,20 +16,20 @@ namespace FTPbox.Classes
           string key, string def, StringBuilder retVal,
           int size, string filePath);
 
-        public IniFile(string INIPath)
+        public IniFile(string iniPath)
         {
-            path = INIPath;
+            Path = iniPath;
         }
 
-        public void WriteValue(string Section, string Key, string Value)
+        public void WriteValue(string section, string key, string value)
         {
-            WritePrivateProfileString(Section, Key, Value, this.path);
+            WritePrivateProfileString(section, key, value, Path);
         }
 
-        public string ReadValue(string Section, string Key)
+        public string ReadValue(string section, string key)
         {
-            StringBuilder temp = new StringBuilder(255);
-            int i = GetPrivateProfileString(Section, Key, "", temp, 255, this.path);
+            var temp = new StringBuilder(255);
+            var i = GetPrivateProfileString(section, key, "", temp, 255, Path);
             return temp.ToString();
         }
     }

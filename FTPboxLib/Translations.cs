@@ -12,20 +12,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Xml;
 using System.Linq;
+using System.Xml;
 
 namespace FTPboxLib
 {
     public class Translations
     {
-        XmlDocument xmlDocument = new XmlDocument();       
-        string documentPath = Environment.CurrentDirectory + "\\translations.xml";
+        readonly XmlDocument _xmlDocument = new XmlDocument();
+        readonly string _documentPath = Environment.CurrentDirectory + "\\translations.xml";
 
         public Translations()
         {
-            try { xmlDocument.Load(documentPath); }
-            catch (Exception ex) { Log.Write(l.Info, "?>" + ex.Message); xmlDocument.LoadXml("<translations></translations>"); }
+            try { _xmlDocument.Load(_documentPath); }
+            catch (Exception ex) { Log.Write(l.Info, "?>" + ex.Message); _xmlDocument.LoadXml("<translations></translations>"); }
         }
 
         public string this[MessageType t]
@@ -120,7 +120,7 @@ namespace FTPboxLib
         {
             get
             {
-                string fileorfolder = (file) ? this[MessageType.File] : this[MessageType.Folder];
+                var fileorfolder = (file) ? this[MessageType.File] : this[MessageType.Folder];
                 switch (ca)
                 {
                     case ChangeAction.created:
@@ -347,9 +347,8 @@ namespace FTPboxLib
         public string Get(string xPath, string defaultValue, string lan = null)
         {
             var path = string.Format("translations/{0}{1}", lan ?? Settings.General.Language, xPath);
-            XmlNode xmlNode = xmlDocument.SelectSingleNode(path);
-            if (xmlNode != null) { return xmlNode.InnerText.Replace("_and", "&"); }
-            else { return defaultValue; }
+            var xmlNode = _xmlDocument.SelectSingleNode(path);
+            return xmlNode != null ? xmlNode.InnerText.Replace("_and", "&") : defaultValue;
         }
 
         /// <summary>
@@ -357,9 +356,17 @@ namespace FTPboxLib
         /// </summary>
         public List<string> GetPaths()
         {
-            return xmlDocument.SelectNodes("translations/en/*/*").Cast<XmlNode>()
-                .Select(x => string.Format("/{0}/{1}", x.ParentNode.Name, x.Name))
-                .ToList();
+            if (_xmlDocument != null)
+            {
+                var nodes = _xmlDocument.SelectNodes("translations/en/*/*");
+                if (nodes != null)
+                {
+                    var result = nodes.Cast<XmlNode>()
+                        .Select(x => x.ParentNode != null ? string.Format("/{0}/{1}", x.ParentNode.Name, x.Name) : null);
+                    return result.ToList();
+                }
+            }
+            return new List<string>();
         }
         
         #endregion

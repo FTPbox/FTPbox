@@ -6,14 +6,15 @@
 *************************************/
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
-using System.Threading;
 using System.IO;
+using System.Threading;
 
 namespace FTPboxLib
 {
+    [Flags]
     public enum l
     {
         Debug = 1,
@@ -25,18 +26,18 @@ namespace FTPboxLib
 
     public class Log
     {
-        private static ConsoleColor WHITE = ConsoleColor.White;
-        private static ConsoleColor RED = ConsoleColor.Red;
-        private static ConsoleColor BLUE = ConsoleColor.Blue;
-        private static ConsoleColor CYAN = ConsoleColor.Cyan;
-        private static ConsoleColor DRED = ConsoleColor.DarkRed;
-        private static ConsoleColor YELLOW = ConsoleColor.Yellow;
-        private static ConsoleColor GREEN = ConsoleColor.Green;
-        private static ConsoleColor DGREEN = ConsoleColor.DarkGreen;
-        private static ConsoleColor DGRAY = ConsoleColor.DarkGray;
-        private static ConsoleColor GRAY = ConsoleColor.Gray;
+        private const ConsoleColor White = ConsoleColor.White;
+        private const ConsoleColor Red = ConsoleColor.Red;
+        private const ConsoleColor Blue = ConsoleColor.Blue;
+        private const ConsoleColor Cyan = ConsoleColor.Cyan;
+        private const ConsoleColor Dred = ConsoleColor.DarkRed;
+        private const ConsoleColor Yellow = ConsoleColor.Yellow;
+        private const ConsoleColor Green = ConsoleColor.Green;
+        private const ConsoleColor Dgreen = ConsoleColor.DarkGreen;
+        private const ConsoleColor Dgray = ConsoleColor.DarkGray;
+        private const ConsoleColor Gray = ConsoleColor.Gray;
 
-        private static List<LogItem> LogQueue = new List<LogItem>();
+        private static readonly List<LogItem> LogQueue = new List<LogItem>();
 
         private static string _fname;
         private static l _level;
@@ -62,39 +63,45 @@ namespace FTPboxLib
                 }
                 catch
                 {
-                    Log.Write(l.Warning, "Could not delete previous log file");
+                    Write(l.Warning, "Could not delete previous log file");
                 }
             }
             
-            Thread wrtThread = new Thread(LogWriter);
+            var wrtThread = new Thread(LogWriter);
             wrtThread.Start();
         }
 
-        private static void sColor(ConsoleColor color)
+        private static void SColor(ConsoleColor color)
         {
             Console.ForegroundColor = color;
         }
 
         public static void Write(l level, string text)
         {
-            StackFrame frame = new StackFrame(1);
+            var frame = new StackFrame(1);
             var method = frame.GetMethod();
-            string caller = method.DeclaringType.Name.ToString();
+            if (method.DeclaringType != null)
+            {
+                var caller = method.DeclaringType.Name;
 
-            finalLog(level, caller, text);
+                FinalLog(level, caller, text);
+            }
         }
 
         public static void Write(l level, string text, params object[] args)
         {
-            StackFrame frame = new StackFrame(1);
+            var frame = new StackFrame(1);
             var method = frame.GetMethod();
-            string caller = method.DeclaringType.Name.ToString();
-            for (int i = 0; i < args.Length; i++)
+            if (method.DeclaringType != null)
             {
-                text = text.Replace("{" + i + "}", args[i].ToString());
-            }
+                var caller = method.DeclaringType.Name;
+                for (var i = 0; i < args.Length; i++)
+                {
+                    text = text.Replace("{" + i + "}", args[i].ToString());
+                }
 
-            finalLog(level, caller, text);
+                FinalLog(level, caller, text);
+            }
         }
 
         private static void LogWriter()
@@ -103,7 +110,7 @@ namespace FTPboxLib
             {
                 if (LogQueue.Count > 0)
                 {
-                    outputLog(0);
+                    OutputLog(0);
                     while (!LogQueue[0].IsDone)
                         Thread.Sleep(5);
                     LogQueue.RemoveAt(0);
@@ -112,95 +119,97 @@ namespace FTPboxLib
             }
         }
 
-        private static void finalLog(l level, string caller, string text)
+        private static void FinalLog(l level, string caller, string text)
         {
-            LogItem _lItem = new LogItem(level, caller, text);
-            LogQueue.Add(_lItem);
+            var lItem = new LogItem(level, caller, text);
+            LogQueue.Add(lItem);
         }
 
-        private static void outputLog(int iIndex)
+        private static void OutputLog(int iIndex)
         {
-            LogItem lItem = LogQueue[iIndex];
+            var lItem = LogQueue[iIndex];
 
-            DateTime thisDate = DateTime.Now;
-            CultureInfo culture = new CultureInfo("en-US");
+            var thisDate = DateTime.Now;
+            var culture = new CultureInfo("en-US");
 
             if (DebugEnabled)
-                finalWrite(formatOutLine(lItem));
+                FinalWrite(FormatOutLine(lItem));
 
             if ((_level & lItem.Level) != lItem.Level)
                 goto Finish;
 
-            sColor(DGRAY);
+            SColor(Dgray);
             Console.Write("[{0}] ", (thisDate.ToString("HH:mm:ss", culture)));
-            sColor(GRAY);
+            SColor(Gray);
             Console.Write("{0}: ", lItem.Caller);
             switch (lItem.Level)
             {
                 case l.Debug:
-                    sColor(CYAN);
+                    SColor(Cyan);
                     break;
                 case l.Info:
-                    sColor(WHITE);
+                    SColor(White);
                     break;
                 case l.Warning:
-                    sColor(YELLOW);
+                    SColor(Yellow);
                     break;
                 case l.Error:
-                    sColor(RED);
+                    SColor(Red);
                     break;
                 case l.Client:
-                    sColor(DGREEN);
+                    SColor(Dgreen);
                     break;
                 default:
-                    sColor(WHITE);
+                    SColor(White);
                     break;
             }
             Console.Write("{0}\r\n", lItem.Text);
-            sColor(WHITE);
+            SColor(White);
 
         Finish:
             lItem.IsDone = true;
         }
 
-        private static void finalWrite(string inText)
+        private static void FinalWrite(string inText)
         {
             try
             {
-                StreamWriter _logWriter;
-                _logWriter = new StreamWriter(_fname, true);
-                _logWriter.Write(inText);
-                _logWriter.Flush();
-                _logWriter.Close();
-                _logWriter.Dispose();
+                var logWriter = new StreamWriter(_fname, true);
+                logWriter.Write(inText);
+                logWriter.Flush();
+                logWriter.Close();
+                logWriter.Dispose();
             }
             catch { }
         }
 
-        private static string formatOutLine(LogItem li)
+        private static string FormatOutLine(LogItem li)
         {
-            DateTime thisDate = DateTime.Now;
-            CultureInfo culture = new CultureInfo("en-US");
+            var thisDate = DateTime.Now;
+            var culture = new CultureInfo("en-US");
             // Get color based on Level
-            string color = getColorCode(li.Level);
+            var color = GetColorCode(li.Level);
 
-            string time = string.Format(FontFormat, "#c5c3bd", thisDate.ToString("yyyy-MM-dd HH:mm:ss", culture));
-            string caller = string.Format(FontFormat, "#c5c3bd", li.Caller);
-            string text = string.Format(FontFormat, color, li.Text);
+            var time = string.Format(FontFormat, "#c5c3bd", thisDate.ToString("yyyy-MM-dd HH:mm:ss", culture));
+            var caller = string.Format(FontFormat, "#c5c3bd", li.Caller);
+            var text = string.Format(FontFormat, color, li.Text);
 
             return string.Format(OutputFormat, time, caller, text);
         }
 
-        private static string getColorCode(l li)
+        private static string GetColorCode(l li)
         {
-            if (li == l.Debug)
-                return "#222";
-            if (li == l.Info)
-                return "#666";
-            if (li == l.Warning)
-                return "orange";
-            if (li == l.Error)
-                return "red";
+            switch (li)
+            {
+                case l.Debug:
+                    return "#222";
+                case l.Info:
+                    return "#666";
+                case l.Warning:
+                    return "orange";
+                case l.Error:
+                    return "red";
+            }
             // if l.Client            
             return "green";
             
@@ -210,15 +219,15 @@ namespace FTPboxLib
         {
             public LogItem(l level, string caller, string text)
             {
-                this.Level = level;
-                this.Caller = caller;
-                this.Text = text;
-                this.IsDone = false;
+                Level = level;
+                Caller = caller;
+                Text = text;
+                IsDone = false;
             }
 
-            public l Level { get; set; }
-            public string Caller { get; set; }
-            public string Text { get; set; }
+            public l Level { get; }
+            public string Caller { get; }
+            public string Text { get; }
             public bool IsDone { get; set; }
         }
     }

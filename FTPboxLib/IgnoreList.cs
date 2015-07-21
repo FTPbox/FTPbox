@@ -29,7 +29,7 @@ namespace FTPboxLib
 	    public List<string> Extensions = new List<string>();     //list of extensions to be ignored
 
         [JsonProperty("Dotfiles")]
-	    public bool IgnoreDotFiles = false; //ignore dotfiles?
+	    public bool IgnoreDotFiles; //ignore dotfiles?
 
         [JsonProperty("Tempfiles")]
 	    public bool IgnoreTempFiles = true; //ignore temporary files?
@@ -38,8 +38,6 @@ namespace FTPboxLib
 	    public DateTime LastModifiedMinimum = DateTime.MinValue; //the minimum modification datetime
         
 	    #endregion
-
-		public IgnoreList() { }
 
         /// <summary>
         /// Saves the current filter settings to the settings file
@@ -69,8 +67,8 @@ namespace FTPboxLib
         /// <returns>True if the path matches the ignore filters</returns>
         public bool IsIgnored(string path)
         {
-            string name = Common._name(path);
-            string ext = name.Contains(".") ? name.Substring(name.LastIndexOf(".") + 1) : null;
+            var name = Common._name(path);
+            var ext = name.Contains(".") ? name.Substring(name.LastIndexOf(".", StringComparison.Ordinal) + 1) : null;
 
             return
                 // are dotfiles ignored?
@@ -92,9 +90,7 @@ namespace FTPboxLib
         public bool isInIgnoredFolders(string path)
         {
             if (Items.Count <= 0) return false;
-            if (Items.Contains(path)) return true;
-
-            return Items.Any(f => path.StartsWith(f + "/") && !string.IsNullOrWhiteSpace(f));
+            return Items.Contains(path) || Items.Any(f => path.StartsWith(f + "/") && !string.IsNullOrWhiteSpace(f));
         }
 	}
 }

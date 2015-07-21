@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 
@@ -21,16 +22,16 @@ namespace FTPboxLib
 	public class FileLog
 	{
         [JsonProperty("Items")]
-        public List<FileLogItem> Files { get; private set; }
+        public List<FileLogItem> Files { get; }
 
         [JsonProperty]
-        public List<string> Folders { get; private set; }
+        public List<string> Folders { get; }
 
-        private AccountController controller;
+        private readonly AccountController _controller;
 
         public FileLog(AccountController account)
         {
-            this.controller = account;
+            _controller = account;
 
             Files = new List<FileLogItem>();
             Folders = new List<string>();
@@ -43,7 +44,7 @@ namespace FTPboxLib
         /// <summary>
         /// Puts the specified file in the File Log and saves to the config file
         /// </summary>
-        public void putFile(SyncQueueItem file)
+        public void PutFile(SyncQueueItem file)
         {
             Log.Write(l.Debug, "Putting file {0} to log", file.NewCommonPath);
             if (Contains(file.NewCommonPath)) Remove(file.NewCommonPath);
@@ -51,8 +52,8 @@ namespace FTPboxLib
             Files.Add(new FileLogItem
             {
                 CommonPath = file.NewCommonPath,
-                Local = file.SyncTo == SyncTo.Remote ? file.Item.LastWriteTime : System.IO.File.GetLastWriteTime(file.LocalPath),
-                Remote = controller.Client.GetLwtOf(file.NewCommonPath)
+                Local = file.SyncTo == SyncTo.Remote ? file.Item.LastWriteTime : File.GetLastWriteTime(file.LocalPath),
+                Remote = _controller.Client.GetLwtOf(file.NewCommonPath)
             });
 
             Settings.SaveProfile();
@@ -66,7 +67,7 @@ namespace FTPboxLib
 	    public void Remove(string path)
 	    {
 	        var fl = new List<FileLogItem>(Files);
-	        foreach (FileLogItem fi in fl.Where(f => f.CommonPath == path))
+	        foreach (var fi in fl.Where(f => f.CommonPath == path))
 	            Files.Remove(fi);
 
 	        Log.Write(l.Debug, "*** Removed from Log: {0}", path);
@@ -76,8 +77,9 @@ namespace FTPboxLib
         /// <summary>
         /// Puts the specified folder in the Folder Log and saves to the config file
         /// </summary>
+        /// <param name="cpath"></param>
         /// <param name="oldName">Used when renaming a folder to also rename any of its subitems in the logs</param>
-	    public void putFolder(string cpath, string oldName = null)
+        public void PutFolder(string cpath, string oldName = null)
 	    {
             if (oldName != null && Folders.Contains(oldName))
             {
@@ -101,7 +103,7 @@ namespace FTPboxLib
 	    /// removes the specified folder from log
 	    /// </summary>
 	    /// <param name="cpath"></param>
-	    public void removeFolder(string cpath)
+	    public void RemoveFolder(string cpath)
 	    {
 	        if (Folders.Contains(cpath))
 	            Folders.Remove(cpath);
@@ -109,21 +111,21 @@ namespace FTPboxLib
             Notifications.ChangeRecentList();
         }
 
-        public DateTime getLocal(string path)
+        public DateTime GetLocal(string path)
         {
-            DateTime ret = DateTime.MinValue;
+            var ret = DateTime.MinValue;
 
-            foreach (FileLogItem fi in Files)
+            foreach (var fi in Files)
                 if (fi.CommonPath == path)
                     return fi.Local;
             return ret;
         }
 
-        public DateTime getRemote(string path)
+        public DateTime GetRemote(string path)
         {
-            DateTime ret = DateTime.MinValue;
+            var ret = DateTime.MinValue;
 
-            foreach (FileLogItem fi in Files)
+            foreach (var fi in Files)
                 if (fi.CommonPath == path)
                     return fi.Remote;
             return ret;
@@ -131,14 +133,14 @@ namespace FTPboxLib
 
         public bool Contains(string path)
         {
-            bool ret = false;
-            foreach (FileLogItem fi in Files)
+            var ret = false;
+            foreach (var fi in Files)
                 if (fi.CommonPath == path)
                     ret = true;
             return ret;
         }
 
-        public bool isEmpty()
+        public bool IsEmpty()
         {
             return Files.Count == 0 && Folders.Count == 0;
         }

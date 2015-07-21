@@ -22,10 +22,10 @@ namespace FTPbox.Forms
     public partial class fSelectiveSync : Form
     {
 
-        private bool checking_nodes = false;
-        private Thread tRefresh;
-        private string title_listing;   // The form text when listing
-        private string title_normal;    // The form text when not listing
+        private bool _checkingNodes = false;
+        private Thread _tRefresh;
+        private string _titleListing;   // The form text when listing
+        private string _titleNormal;    // The form text when not listing
 
         public fSelectiveSync()
         {
@@ -37,8 +37,8 @@ namespace FTPbox.Forms
             var listing = Common.Languages[MessageType.Listing];
             if (listing.StartsWith("FTPbox - ")) listing = listing.Substring("FTPbox - ".Length - 1);
 
-            title_listing = string.Format("{0} - {1}", Common.Languages[UiControl.SelectiveSync], listing);
-            title_normal = Common.Languages[UiControl.SelectiveSync];
+            _titleListing = string.Format("{0} - {1}", Common.Languages[UiControl.SelectiveSync], listing);
+            _titleNormal = Common.Languages[UiControl.SelectiveSync];
 
             Set_Language(Settings.General.Language);
 
@@ -62,11 +62,11 @@ namespace FTPbox.Forms
         /// </summary>
         private void RefreshListing()
         {
-            this.Text = title_listing;
+            this.Text = _titleListing;
             bRefresh.Enabled = false;
-            if (tRefresh != null && tRefresh.IsAlive) return;
+            if (_tRefresh != null && _tRefresh.IsAlive) return;
 
-            tRefresh = new Thread(() =>
+            _tRefresh = new Thread(() =>
             {
                 var li = new List<ClientItem>(Program.Account.Client.List(".").ToList());
                 if (Program.Account.Client.ListingFailed) goto Finish;
@@ -93,22 +93,27 @@ namespace FTPbox.Forms
             Finish:
                 this.Invoke(new MethodInvoker(delegate { 
                     bRefresh.Enabled = true;
-                    this.Text = title_normal; 
+                    this.Text = _titleNormal; 
                 }));
             });
-            tRefresh.Start();
+            _tRefresh.Start();
         }
 
-        private void CheckSingleRoute(TreeNode tn)
+        private static void CheckSingleRoute(TreeNode tn)
         {
-            if (tn.Checked && tn.Parent != null)
-                if (!tn.Parent.Checked)
-                {
-                    tn.Parent.Checked = true;
-                    if (Program.Account.IgnoreList.Items.Contains(tn.Parent.FullPath))
-                        Program.Account.IgnoreList.Items.Remove(tn.Parent.FullPath);
-                    CheckSingleRoute(tn.Parent);
-                }
+            while (true)
+            {
+                if (tn.Checked && tn.Parent != null)
+                    if (!tn.Parent.Checked)
+                    {
+                        tn.Parent.Checked = true;
+                        if (Program.Account.IgnoreList.Items.Contains(tn.Parent.FullPath))
+                            Program.Account.IgnoreList.Items.Remove(tn.Parent.FullPath);
+                        tn = tn.Parent;
+                        continue;
+                    }
+                break;
+            }
         }
 
         /// <summary>
@@ -142,7 +147,7 @@ namespace FTPbox.Forms
         /// </summary>
         /// <param name="t">The parent node</param>
         /// <param name="c"><c>True</c> to check, <c>False</c> to uncheck</param>
-        private void CheckUncheckChildNodes(TreeNode t, bool c)
+        private static void CheckUncheckChildNodes(TreeNode t, bool c)
         {
             t.Checked = c;
             foreach (TreeNode tn in t.Nodes)
@@ -151,9 +156,9 @@ namespace FTPbox.Forms
 
         private void lSelectiveSync_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            if (checking_nodes || e.Node.Text == "!tempnode!") return;
+            if (_checkingNodes || e.Node.Text == "!tempnode!") return;
 
-            string cpath = Program.Account.GetCommonPath(e.Node.FullPath, false);
+            var cpath = Program.Account.GetCommonPath(e.Node.FullPath, false);
 
             if (e.Node.Checked && Program.Account.IgnoreList.Items.Contains(cpath))
                 Program.Account.IgnoreList.Items.Remove(cpath);
@@ -161,7 +166,7 @@ namespace FTPbox.Forms
                 Program.Account.IgnoreList.Items.Add(cpath);
             Program.Account.IgnoreList.Save();
 
-            checking_nodes = true;
+            _checkingNodes = true;
             CheckUncheckChildNodes(e.Node, e.Node.Checked);
 
             if (e.Node.Checked && e.Node.Parent != null)
@@ -173,7 +178,7 @@ namespace FTPbox.Forms
                     CheckSingleRoute(e.Node.Parent);
                 }
             Program.Account.IgnoreList.Save();
-            checking_nodes = false;
+            _checkingNodes = false;
         }
 
         private void lSelectiveSync_AfterCollapse(object sender, TreeViewEventArgs e)
@@ -184,7 +189,7 @@ namespace FTPbox.Forms
 
         private void lSelectiveSync_AfterExpand(object sender, TreeViewEventArgs e)
         {
-            string path = e.Node.FullPath;
+            var path = e.Node.FullPath;
 
             if (e.Node.Nodes.Count > 0)
             {
@@ -203,7 +208,7 @@ namespace FTPbox.Forms
 
             var tExpandItem = new Thread(() =>
             {
-                var li = new List<ClientItem>();
+                List<ClientItem> li;
                 try
                 {
                     li = Program.Account.Client.List(path).ToList();
@@ -226,17 +231,20 @@ namespace FTPbox.Forms
                     this.Invoke(new MethodInvoker(() => e.Node.Nodes.Add(new TreeNode(f.Name))));
 
                 foreach (TreeNode tn in e.Node.Nodes)
+                {
+                    var tn1 = tn;
                     this.Invoke(new MethodInvoker(delegate
                     {
-                        tn.Checked = !Program.Account.IgnoreList.isInIgnoredFolders(tn.FullPath);
+                        tn1.Checked = !Program.Account.IgnoreList.isInIgnoredFolders(tn1.FullPath);
                     }));
+                }
             });
             tExpandItem.Start();
         }
 
         private void Set_Language(string lan)
         {
-            this.Text = title_normal;
+            this.Text = _titleNormal;
             labSelectFolders.Text = Common.Languages[UiControl.UncheckFiles];
             bRefresh.Text = Common.Languages[UiControl.Refresh];
             bDone.Text = Common.Languages[UiControl.Finish];
