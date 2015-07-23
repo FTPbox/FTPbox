@@ -22,10 +22,10 @@ namespace FTPboxLib
 	public class FileLog
 	{
         [JsonProperty("Items")]
-        public List<FileLogItem> Files { get; }
+        public List<FileLogItem> Files { get; private set; }
 
         [JsonProperty]
-        public List<string> Folders { get; }
+        public List<string> Folders { get; private set; }
 
         private readonly AccountController _controller;
 

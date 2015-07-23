@@ -225,9 +225,9 @@ namespace FTPboxLib
                 IsDone = false;
             }
 
-            public l Level { get; }
-            public string Caller { get; }
-            public string Text { get; }
+            public l Level { get; set; }
+            public string Caller { get; set; }
+            public string Text { get; set; }
             public bool IsDone { get; set; }
         }
     }
