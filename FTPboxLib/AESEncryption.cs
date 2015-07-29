@@ -32,8 +32,6 @@ namespace Utilities.Encryption
     /// </summary>
     internal class AESEncryption
     {
-        #region Static Functions
-   
         /// <summary>
         /// Encrypts a string
         /// </summary>
@@ -44,7 +42,7 @@ namespace Utilities.Encryption
         /// <param name="initialVector">Needs to be 16 ASCII characters long</param>
         /// <param name="keySize">Can be 128, 192, or 256</param>
         /// <returns>An encrypted string</returns>
-        public static string Encrypt(string plainText, string password, string salt = "Kosher", int passwordIterations = 1000, string initialVector = "OFRna73m*aze01xY", int keySize = 256)
+        public static string Encrypt(string plainText, string password, string salt, int passwordIterations = 1000, string initialVector = "OFRna73m*aze01xY", int keySize = 256)
         {
             if (string.IsNullOrEmpty(plainText))
                 return "";
@@ -83,7 +81,7 @@ namespace Utilities.Encryption
         /// <param name="initialVector">Needs to be 16 ASCII characters long</param>
         /// <param name="keySize">Can be 128, 192, or 256</param>
         /// <returns>A decrypted string</returns>
-        public static string Decrypt(string cipherText, string password, string salt = "Kosher", int passwordIterations = 2, string initialVector = "OFRna73m*aze01xY", int keySize = 256)
+        public static string Decrypt(string cipherText, string password, string salt, int passwordIterations = 1000, string initialVector = "OFRna73m*aze01xY", int keySize = 256)
         {
             if (string.IsNullOrEmpty(cipherText))
                 return "";
@@ -111,7 +109,5 @@ namespace Utilities.Encryption
             symmetricKey.Clear();
             return Encoding.UTF8.GetString(plainTextBytes, 0, byteCount);
         }
-   
-        #endregion
     }
  }

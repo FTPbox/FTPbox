@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Utilities.Encryption;
+using System.Security.Cryptography;
 
 namespace FTPboxLib
 {
@@ -55,7 +56,15 @@ namespace FTPboxLib
         /// </summary>
         public static string Decrypt(string encrypted)
         {
-            return AESEncryption.Decrypt(encrypted, DecryptionPassword, DecryptionSalt);
+            try
+            {
+                return AESEncryption.Decrypt(encrypted, DecryptionPassword, DecryptionSalt);
+            }
+            catch (CryptographicException ex)
+            {
+                // Failed to decrypt, ask user for password.
+                return string.Empty;
+            }
         }
 
         /// <summary>
