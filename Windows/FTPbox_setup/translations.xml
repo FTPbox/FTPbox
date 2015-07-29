@@ -2688,6 +2688,7 @@
       <application>應用</application>
       <start_on_startup>當啟動時自動執行</start_on_startup>
       <show_nots>顯示提示訊息</show_nots>
+      <profile>設定檔</profile>
       <details>詳細資料</details>
       <links>連結</links>
       <remote_path>遠端路徑</remote_path>
@@ -2724,11 +2725,29 @@
       <no_limits>( 設定 0 為 沒有限速 )</no_limits>
       <selective>選擇性同步</selective>
       <selective_info>反勾選不需要同步的項目</selective_info>
+      <refresh>重新整理</refresh>
+      <configure>設定</configure>
+      <file_filters>篩選</file_filters>
+      <ignored_extensions>例外清單</ignored_extensions>
+      <remove>移除</remove>
+      <also_ignore>總是略過</also_ignore>
+      <dotfiles>點文件</dotfiles>
+      <temp_files>暫存檔案</temp_files>
+      <old_files>修改之前</old_files>
+      <enable_logging>啟動記錄檔</enable_logging>
+      <view_log>檢示記錄</view_log>
+      <shell_menus>增加在選單上</shell_menus>
+      <way_of_sync>同步選項</way_of_sync>
+      <local_to_remote>本機到遠端</local_to_remote>
+      <remote_to_local>遠端到本機</remote_to_local>
+      <both_ways>兩者都要</both_ways>
+      <temp_file_prefix>暫存檔案字首</temp_file_prefix>
     </main_form>
     <new_account>
       <new_ftp>新增 FTP 帳戶</new_ftp>
       <login_details>FTP 登入詳情</login_details>
       <encryption>加密</encryption>
+      <ask_for_password>總是問密碼</ask_for_password>
       <add>新增</add>
       <done>完成</done>
     </new_account>
@@ -2737,9 +2756,18 @@
       <add_dir>新增新的資料夾</add_dir>
       <select_dir>選擇資料夾</select_dir>
       <full_path>完全路徑</full_path>
+      <default_local>使用預計資料夾</default_local>
+      <custom_local>使用選擇資料夾</custom_local>
       <local_folder>本地資料夾</local_folder>
       <browse>瀏覽</browse>
     </paths>
+    <setup>
+      <authentication>認證</authentication>
+      <sync_all_files>同步所有檔案</sync_all_files>
+      <sync_specific_files>同步已選擇檔案</sync_specific_files>
+      <previous>上一步</previous>
+      <next>下一步</next>
+    </setup>
     <new_version>
       <new_ver>最新版本</new_ver>
       <update_available>更新已可供下載</update_available>
@@ -2778,6 +2806,7 @@
       <link_copied>連結複製的到剪貼板</link_copied>
       <recent_files>最近的文件</recent_files>
       <not_available>不可用</not_available>
+      <modified>已修改</modified>
       <start_syncing>開始同步</start_syncing>
       <exit>關閉</exit>
     </tray>
