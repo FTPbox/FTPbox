@@ -618,16 +618,16 @@
       <copy>Kopieer link naar het klembord</copy>
       <about>Over</about>
       <current_version>Huidige versie</current_version>
-      <team>Het team</team>
+      <team>Het Team</team>
       <website>Officiële website</website>
       <contact>Contact</contact>
       <coded_in>Geprogrammeerd in</coded_in>
       <notes>Notities</notes>
-      <contribute>Contributies</contribute>
+      <contribute>Doneer</contribute>
       <ftpbox_is_free>FTPbox is gratis en open-source</ftpbox_is_free>
       <contact_me>Aarzel niet contact met me op te nemen</contact_me>
       <copyright>Copyright</copyright>
-      <report_bug>Meld en probleem</report_bug>
+      <report_bug>Meld een probleem</report_bug>
       <request_feature>Verzoek een functie</request_feature>
       <donate>doneer</donate>
       <language>Taal</language>
@@ -647,14 +647,20 @@
       <refresh>Vernieuwen</refresh>
       <configure>Configureren</configure>
       <file_filters>Filters</file_filters>
-      <ignored_extensions>Genegeerde extensies</ignored_extensions>
+      <ignored_extensions>Genegeerde Extensies</ignored_extensions>
       <remove>Verwijder</remove>
       <also_ignore>Negeer ook</also_ignore>
       <dotfiles>dotbestanden</dotfiles>
-      <temp_files>Tijdelijke bestanden</temp_files>
+      <temp_files>Tijdelijke Bestanden</temp_files>
       <old_files>Bestanden gewijzigd voor</old_files>
-      <enable_logging>Schakel loggen in</enable_logging>
-      <view_log>Bekijk log</view_log>
+      <enable_logging>Aanzetten Logging</enable_logging>
+      <view_log>Bekijk Log</view_log>
+      <shell_menus>Toevoegen aan submenu</shell_menus>
+      <way_of_sync>Manier van synchroniseren</way_of_sync>
+      <local_to_remote>Alleen van lokaal naar extern</local_to_remote>
+      <remote_to_local>Alleen van extern naar lokaal</remote_to_local>
+      <both_ways>Beide kanten</both_ways>
+      <temp_file_prefix>Tijdelijke bestandsprefix</temp_file_prefix>
     </main_form>
     <new_account>
       <new_ftp>Nieuwe FTP account</new_ftp>
@@ -666,13 +672,13 @@
     </new_account>
     <paths>
       <new_paths>Nieuwe paden</new_paths>
-      <add_dir>voeg een map toe</add_dir>
-      <select_dir>selecteer een map</select_dir>
-      <full_path>volledig pad</full_path>
+      <add_dir>Voeg een map toe</add_dir>
+      <select_dir>Selecteer een map</select_dir>
+      <full_path>Volledig pad</full_path>
       <default_local>Ik wil de default lokale folder gebruiken</default_local>
       <custom_local>Ik wil zelf een lokale folder kiezen</custom_local>
-      <local_folder>lokale map</local_folder>
-      <browse>Zoeken</browse>
+      <local_folder>Lokale map</local_folder>
+      <browse>Bladeren</browse>
     </paths>
     <setup>
       <authentication>Authenticatie</authentication>
@@ -682,22 +688,22 @@
       <next>Volgende</next>
     </setup>
     <new_version>
-      <new_ver>Nieuwe versie</new_ver>
+      <new_ver>Nieuwe Versie</new_ver>
       <update_available>Update beschikbaar</update_available>
       <new_v_available>Een nieuwe versie van FTPbox is beschikbaar</new_v_available>
-      <new_version>Nieuwe versie</new_version>
-      <current_version>Huidige versie</current_version>
+      <new_version>Nieuwe Versie</new_version>
+      <current_version>Huidige Versie</current_version>
       <wanna_download>Wilt u de nieuwste versie downloaden</wanna_download>
-      <download>Download</download>
-      <learn_more>Lees meer</learn_more>
-      <remind_me_next_time>Waarschuw me de volgende keer</remind_me_next_time>
+      <download>Nu Bijwerken</download>
+      <learn_more>Lees Meer</learn_more>
+      <remind_me_next_time>Niet deze keer</remind_me_next_time>
     </new_version>
     <tray>
-      <tray_and_nots>Taakbal _and Notificaties</tray_and_nots>
+      <tray_and_nots>Taakbalk &amp; Notificaties</tray_and_nots>
       <updated>{0} is geüpdatet</updated>
       <created>{0} is gecreëerd</created>
       <renamed>{0} is hernoemd naar {1}</renamed>
-      <deleted>{0} is verwijdert.</deleted>
+      <deleted>{0} is verwijderd.</deleted>
       <changed>{0} is gewijzigd.</changed>
       <FilesOrFoldersUpdated>{0} {1} zijn bijgewerkt</FilesOrFoldersUpdated>
       <FilesOrFoldersCreated>{0} {1} zijn aangemaakt</FilesOrFoldersCreated>
@@ -717,18 +723,19 @@
       <syncing>FTPbox – Synchroniseren</syncing>
       <offline>FTPbox – Offline</offline>
       <link_copied>Link naar klembord gekopieerd</link_copied>
-      <recent_files>Recente bestanden</recent_files>
-      <not_available>Recente Bestanden</not_available>
-      <start_syncing>Niet Beschikbaar</start_syncing>
-      <exit>Start Synchronisatie</exit>
+      <recent_files>Recente Bestanden</recent_files>
+      <not_available>Niet Beschikbaar</not_available>
+      <modified>Aangepast</modified>
+      <start_syncing>Start Synchronisatie</start_syncing>
+      <exit>Beëindigen</exit>
     </tray>
     <web_interface>
-      <web_int>Web interface</web_int>
-      <downloading>Het Web Interface wordt gedownload.</downloading>
-      <in_a_minute>Een minuut geduld alstublieft.</in_a_minute>
+      <web_int>Web Interface</web_int>
+      <downloading>De Web Interface wordt gedownload.</downloading>
+      <in_a_minute>Eén minuut geduld alstublieft.</in_a_minute>
       <removing>Web Interface aan het verwijderen...</removing>
       <removed>De Web interface is verwijderd</removed>
-      <updating>Web interface aan het updaten...</updating>
+      <updating>Web interface is aan het updaten...</updating>
       <updated>De Web Interface is geüpdatet</updated>
       <setup>Klik hier om het te bekijken en op te zetten</setup>
       <use_webint>Gebruik de web interface</use_webint>
