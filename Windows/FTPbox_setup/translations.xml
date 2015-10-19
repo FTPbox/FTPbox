@@ -2097,6 +2097,7 @@
       <application>Alkalmazás</application>
       <start_on_startup>Indítás a rendszer indításakor</start_on_startup>
       <show_nots>értesítések mutatása</show_nots>
+      <profile>Profil</profile>
       <details>Részletek</details>
       <links>Linkek</links>
       <remote_path>Távoli útvonal</remote_path>
@@ -2133,22 +2134,49 @@
       <no_limits>( állítsd 0-ra a korlátlanhoz )</no_limits>
       <selective>Válogatott szinkronizálás</selective>
       <selective_info>Ne pipáld ki azokat, amelyeket nem szeretnél szinkronizálni</selective_info>
+      <refresh>Frissítés</refresh>
+      <configure>Konfigurálás</configure>
+      <file_filters>Szűrők</file_filters>
+      <ignored_extensions>Kizárt kiterjesztések</ignored_extensions>
+      <remove>Eltávolítás</remove>
+      <also_ignore>További kizárás</also_ignore>
+      <dotfiles>Ponttal kezdődő</dotfiles>
+      <temp_files>Ideiglenes fájlok</temp_files>
+      <old_files>Fájlok módosítva ez előtt</old_files>
+      <enable_logging>Naplózás</enable_logging>
+      <view_log>Napló megtekintése</view_log>
+      <shell_menus>Hozzáadás helyi menühöz</shell_menus>
+      <way_of_sync>Szinkronizáció iránya</way_of_sync>
+      <local_to_remote>Csak feltöltés</local_to_remote>
+      <remote_to_local>Csak letöltés</remote_to_local>
+      <both_ways>Kétirányú</both_ways>
+      <temp_file_prefix>Ideiglenes fájlkiterjesztés</temp_file_prefix>
     </main_form>
     <new_account>
       <new_ftp>Új FTP fiók</new_ftp>
       <login_details>FTP belépési adatok</login_details>
       <encryption>Titkosítás</encryption>
-      <add>új</add>
-      <done>rendben</done>
+      <ask_for_password>Ne jegyezze meg a jelszót</ask_for_password>
+      <add>Hozzáadás</add>
+      <done>Rendben</done>
     </new_account>
     <paths>
       <new_paths>Új útvonalak</new_paths>
-      <add_dir>új könyvtár hozzáadása</add_dir>
-      <select_dir>könyvtár kiválasztása</select_dir>
-      <full_path>teljes útvonal</full_path>
-      <local_folder>helyi mappa</local_folder>
-      <browse>böngészés</browse>
+      <add_dir>Új könyvtár hozzáadása</add_dir>
+      <select_dir>Könyvtár kiválasztása</select_dir>
+      <full_path>Teljes útvonal</full_path>
+      <default_local>Az alapértelmezett mappa használata</default_local>
+      <custom_local>Helyi mappa használata</custom_local>
+      <local_folder>Helyi mappa</local_folder>
+      <browse>Böngészés</browse>
     </paths>
+    <setup>
+      <authentication>Hitelesítés</authentication>
+      <sync_all_files>Minden fájl szinkronizálása</sync_all_files>
+      <sync_specific_files>Csak a kiválasztott fájlok szinkronizálása</sync_specific_files>
+      <previous>Előző</previous>
+      <next>Következő</next>
+    </setup>
     <new_version>
       <new_ver>Új verzió</new_ver>
       <update_available>Frissítés elérhető</update_available>
@@ -2187,8 +2215,9 @@
       <link_copied>Link a vágólapra másolva</link_copied>
       <recent_files>Legutóbbi fájlok</recent_files>
       <not_available>Nem elérhető</not_available>
+      <modified>Módosítva</modified>
       <start_syncing>Szinkronizálás indítása</start_syncing>
-      <exit>Išeiti</exit>
+      <exit>Kilépés</exit>
     </tray>
     <web_interface>
       <web_int>Webes felület</web_int>
