@@ -3541,6 +3541,12 @@
       <old_files>Ficheiros modificados antes de </old_files>
       <enable_logging>Activar registo</enable_logging>
       <view_log>Ver registo</view_log>
+      <shell_menus>Adicionar ao menu de conteúdo</shell_menus>
+      <way_of_sync>Modo de sincronização</way_of_sync>
+      <local_to_remote>Apenas do local para o servidor</local_to_remote>
+      <remote_to_local>Apenas do Servidor para o local</remote_to_local>
+      <both_ways>Em ambos os sentidos</both_ways>
+      <temp_file_prefix>Prefixo arquivo temporário</temp_file_prefix>
     </main_form>
     <new_account>
       <new_ftp>Nova conta FTP</new_ftp>
@@ -3605,6 +3611,7 @@
       <link_copied>Ligação copiado para o clipboard</link_copied>
       <recent_files>Ficheiros Recentes</recent_files>
       <not_available>Não Disponível</not_available>
+      <modified>Modificado</modified>
       <start_syncing>Iniciar Sincronização</start_syncing>
       <exit>Sair</exit>
     </tray>
