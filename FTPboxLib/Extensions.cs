@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace FTPboxLib
@@ -116,6 +117,29 @@ namespace FTPboxLib
             var sb = new StringBuilder();
             foreach (var b in key) sb.Append(String.Format("{0:x}:", b).PadLeft(3, '0'));
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Get the permissions of the specified file
+        /// </summary>
+        /// <param name="attr">The SftpFileAttributes object from which to obtain the permissions</param>
+        /// <returns>The permissions formatted in numeric notation</returns>
+        public static string Permissions(this Renci.SshNet.Sftp.SftpFileAttributes attr)
+        {
+            var p = (uint)attr.GetType().GetProperty("Permissions", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(attr, null);
+
+            return string.Format("{2}{1}{0}", p & (1 | 2 | 4), (p & (8 | 16 | 32)) >> 3, (p & (64 | 128 | 256)) >> 6);
+        }
+
+        /// <summary>
+        /// Get the permissions of the specified file
+        /// </summary>
+        /// <param name="f">The FtpListItem from which to obtain the permissions</param>
+        /// <returns>The permissions formatted in numeric notation</returns>
+        public static string Permissions(this System.Net.FtpClient.FtpListItem f)
+        {
+            return string.Format("{0}{1}{2}",
+                                 (uint) f.OwnerPermissions, (uint) f.GroupPermissions, (uint) f.OthersPermissions);
         }
     }
 }

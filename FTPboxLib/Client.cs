@@ -394,6 +394,38 @@ namespace FTPboxLib
             return TransferStatus.Failure;
         }
 
+        /// <summary>
+        ///     Change the permissions of the specified file
+        /// </summary>
+        /// <param name="i">The item to change the permissions of</param>
+        /// <param name="mode">The new permissions in numeric notation</param>
+        public void SetFilePermissions(SyncQueueItem i, short mode)
+        {
+            if (FTP)
+            {
+                string command;
+                var reply = new FtpReply();
+
+                if (_ftpc.Capabilities.HasFlag(FtpCapability.MFF))
+                {
+                    command = string.Format("MFF UNIX.mode={0}; {1}", mode, i.CommonPath);
+                    reply = _ftpc.Execute(command);
+                }
+                if (!reply.Success)
+                {
+                    command = string.Format("SITE CHMOD {0} {1}", mode, i.CommonPath);
+                    reply = _ftpc.Execute(command);
+                }
+
+                if (!reply.Success)
+                    Log.Write(l.Error, "chmod failed, file: {0} msg: {1}", i.CommonPath, reply.ErrorMessage);
+            }
+            else
+            {
+                _sftpc.ChangePermissions(i.CommonPath, mode);
+            }
+        }
+
         public void Download(string cpath, string lpath)
         {
             if (FTP)
@@ -851,7 +883,8 @@ namespace FTPboxLib
                 FullPath = fullPath,
                 Type = _ItemTypeOf(f.Type),
                 Size = f.Size,
-                LastWriteTime = f.Modified
+                LastWriteTime = f.Modified,
+                Permissions = f.Permissions()
             };
         }
 
@@ -866,7 +899,8 @@ namespace FTPboxLib
                 FullPath = _controller.GetCommonPath(f.FullName, false),
                 Type = _ItemTypeOf(f),
                 Size = f.Attributes.Size,
-                LastWriteTime = f.LastWriteTime
+                LastWriteTime = f.LastWriteTime,
+                Permissions = f.Attributes.Permissions()
             };
         }
 
