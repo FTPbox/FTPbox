@@ -426,6 +426,46 @@ namespace FTPboxLib
             }
         }
 
+        /// <summary>
+        ///     Set the Last Modified Time of an item
+        /// </summary>
+        /// <param name="i">The item</param>
+        /// <param name="time">The new Last Modified Time</param>
+        public void SetModifiedTime(SyncQueueItem i, DateTime time)
+        {
+            if (FTP)
+            {
+                string command;
+                var reply = new FtpReply();
+                var timeFormatted = time.ToString("yyyyMMddHHMMss");
+
+                if (_ftpc.Capabilities.HasFlag(FtpCapability.MFF))
+                {
+                    command = string.Format("MFF Modify={0}; {1}", timeFormatted, i.CommonPath);
+                    reply = _ftpc.Execute(command);
+                }
+                if (!reply.Success && _ftpc.Capabilities.HasFlag(FtpCapability.MFMT))
+                {
+                    command = string.Format("MFMT {0} {1}", timeFormatted, i.CommonPath);
+                    reply = _ftpc.Execute(command);
+                }
+                if (!reply.Success)
+                {
+                    command = string.Format("SITE UTIME {0} {1}", timeFormatted, i.CommonPath);
+                    reply = _ftpc.Execute(command);
+                }
+
+                if (!reply.Success)
+                    Log.Write(l.Error, "SetModTime failed, file: {0} msg: {1}", i.CommonPath, reply.ErrorMessage);
+            }
+            else
+            {
+                var attr = _sftpc.GetAttributes(i.CommonPath);
+                attr.LastWriteTime = time;
+                _sftpc.SetAttributes(i.CommonPath, attr);
+            }
+        }
+
         public void Download(string cpath, string lpath)
         {
             if (FTP)
