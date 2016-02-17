@@ -211,6 +211,34 @@ namespace FTPboxLib
             Log.Write(l.Error, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
+        public static void RecycleOrDeleteFile(string path)
+        {
+            if (File.Exists(path))
+            {
+                #if __MonoCs__
+                File.Delete(path);
+                #else
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(path,
+                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                #endif
+            }
+        }
+
+        public static void RecycleOrDeleteFolder(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                #if __MonoCs__
+                Directory.Delete(path);
+                #else
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(path,
+                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                #endif
+            }
+        }
+
         #endregion
 
         #region Properties

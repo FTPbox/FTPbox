@@ -10,16 +10,11 @@
  * A queue of items to be synchronized. 
  */
 
-// #define __MonoCs__
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-#if !__MonoCs__
-using FileIO = Microsoft.VisualBasic.FileIO;
-#endif
 
 namespace FTPboxLib
 {
@@ -405,10 +400,10 @@ namespace FTPboxLib
                     switch (item.Item.Type)
                     {
                         case ClientItemType.File:
-                            FileIO.FileSystem.DeleteFile(item.LocalPath, FileIO.UIOption.OnlyErrorDialogs, FileIO.RecycleOption.SendToRecycleBin);
+                            Common.RecycleOrDeleteFile(item.LocalPath);
                             break;
                         case ClientItemType.Folder:
-                            FileIO.FileSystem.DeleteDirectory(item.LocalPath, FileIO.UIOption.OnlyErrorDialogs, FileIO.RecycleOption.SendToRecycleBin);
+                            Common.RecycleOrDeleteFolder(item.LocalPath);
                             break;
                     }
                     _controller.FolderWatcher.Resume();  // Resume watchers

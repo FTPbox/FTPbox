@@ -10,8 +10,6 @@
  * The client class handles communication with the server, combining the FTP and SFTP libraries.
  */
 
-// #define __MonoCs__
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,10 +23,6 @@ using System.Threading;
 using Renci.SshNet;
 using Renci.SshNet.Common;
 using Renci.SshNet.Sftp;
-#if !__MonoCs__
-using FileIO = Microsoft.VisualBasic.FileIO;
-
-#endif
 
 namespace FTPboxLib
 {
@@ -538,26 +532,16 @@ namespace FTPboxLib
             if (i.Item.Size == new FileInfo(temp).Length)
             {
                 _controller.FolderWatcher.Pause(); // Pause Watchers
-                if (File.Exists(i.LocalPath))
-#if __MonoCs__
-                    File.Delete(i.LocalPath);
-                    #else
-                    FileIO.FileSystem.DeleteFile(i.LocalPath, FileIO.UIOption.OnlyErrorDialogs,
-                        FileIO.RecycleOption.SendToRecycleBin);
-#endif
+                Common.RecycleOrDeleteFile(i.LocalPath);
+
                 File.Move(temp, i.LocalPath);
                 _controller.FolderWatcher.Resume(); // Resume Watchers
                 return TransferStatus.Success;
             }
 
             Finish:
-            if (File.Exists(temp))
-#if __MonoCs__
-                File.Delete(temp);
-                #else
-                FileIO.FileSystem.DeleteFile(temp, FileIO.UIOption.OnlyErrorDialogs,
-                    FileIO.RecycleOption.SendToRecycleBin);
-#endif
+            Common.RecycleOrDeleteFile(temp);
+
             return TransferStatus.Failure;
         }
 
