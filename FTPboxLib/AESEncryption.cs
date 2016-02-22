@@ -83,7 +83,7 @@ namespace Utilities.Encryption
         /// <param name="initialVector">Needs to be 16 ASCII characters long</param>
         /// <param name="keySize">Can be 128, 192, or 256</param>
         /// <returns>A decrypted string</returns>
-        public static string Decrypt(string cipherText, string password, string salt = "Kosher", int passwordIterations = 2, string initialVector = "OFRna73m*aze01xY", int keySize = 256)
+        public static string Decrypt(string cipherText, string password, string salt = "Kosher", int passwordIterations = 1000, string initialVector = "OFRna73m*aze01xY", int keySize = 256)
         {
             if (string.IsNullOrEmpty(cipherText))
                 return "";
