@@ -43,9 +43,21 @@ namespace FTPboxLib
             FolderWatcher = new FolderWatcher(this);
 
             WebInterface = new WebInterface(this);
-            SyncQueue = new SyncQueue(this);            
+            SyncQueue = new SyncQueue(this);
 
-            Client = new Client(this);
+            InitClient();
+        }
+
+        public void InitClient()
+        {
+            if (this.Account.Protocol == FtpProtocol.SFTP)
+            {
+                Client = new SftpClient(this);
+            }
+            else
+            {
+                Client = new FtpClient(this);
+            }
         }
 
         #region Properties

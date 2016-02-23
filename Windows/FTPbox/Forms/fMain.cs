@@ -72,14 +72,6 @@ namespace FTPbox.Forms
                 tray.ShowBalloonTip(100, n.Title, n.Text, ToolTipIcon.Info);
             };
 
-            Program.Account.Client.ConnectionClosed +=
-                (o, n) => Log.Write(l.Warning, "Connection closed: {0}", n.Text ?? string.Empty);
-
-            Program.Account.Client.ReconnectingFailed += (o, n) => Log.Write(l.Warning, "Reconnecting failed");
-            //TODO: Use this...
-
-            Program.Account.Client.ValidateCertificate += CheckCertificate;
-
             Program.Account.WebInterface.UpdateFound += (o, n) =>
             {
                 const string msg = "A new version of the web interface is available, do you want to upgrade to it?";
@@ -181,6 +173,12 @@ namespace FTPbox.Forms
             else if (Program.Account.IsAccountSet)
                 try
                 {
+                    Program.Account.InitClient();
+                    Program.Account.Client.ConnectionClosed +=
+                        (o, n) => Log.Write(l.Warning, "Connection closed: {0}", n.Text ?? string.Empty);
+                    Program.Account.Client.ReconnectingFailed += (o, n) => Log.Write(l.Warning, "Reconnecting failed");
+                    Program.Account.Client.ValidateCertificate += CheckCertificate;
+
                     Program.Account.Client.Connect();
 
                     Invoke(new MethodInvoker(() =>
@@ -839,7 +837,7 @@ namespace FTPbox.Forms
 
         private void chkWebInt_CheckedChanged(object sender, EventArgs e)
         {
-            if (!Program.Account.Client.isConnected) return;
+            if (!Program.Account.Client.IsConnected) return;
 
             if (!_changedfromcheck)
             {
@@ -1145,7 +1143,7 @@ namespace FTPbox.Forms
 
         private void SyncToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!Program.Account.Client.isConnected) return;
+            if (!Program.Account.Client.IsConnected) return;
 
             StartRemoteSync(".");
         }

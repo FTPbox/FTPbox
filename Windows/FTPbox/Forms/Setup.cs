@@ -252,8 +252,9 @@ namespace FTPbox.Forms
 
             try
             {
+                Program.Account.InitClient();
                 Program.Account.Client.Connect();
-                Log.Write(l.Debug, "Connected: {0}", Program.Account.Client.isConnected);
+                Log.Write(l.Debug, "Connected: {0}", Program.Account.Client.IsConnected);
 
                 if (JustPassword)
                 {

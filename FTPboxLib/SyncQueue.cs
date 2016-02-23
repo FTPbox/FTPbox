@@ -633,7 +633,7 @@ namespace FTPboxLib
         private TransferStatus CheckExistingFile(SyncQueueItem item)
         {
             var locLwt = File.GetLastWriteTime(item.LocalPath);
-            var remLwt = (_controller.Account.Protocol != FtpProtocol.SFTP) ? _controller.Client.GetLwtOf(item.CommonPath) : item.Item.LastWriteTime;
+            var remLwt = (_controller.Account.Protocol != FtpProtocol.SFTP) ? _controller.Client.TryGetModifiedTime(item.CommonPath) : item.Item.LastWriteTime;
             
             var locLog = _controller.FileLog.GetLocal(item.CommonPath);
             var remLog = _controller.FileLog.GetRemote(item.CommonPath);

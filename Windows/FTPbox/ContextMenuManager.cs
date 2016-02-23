@@ -153,7 +153,7 @@ namespace FTPbox
                         Name = Common._name(cpath),
                         Type = ClientItemType.File,
                         Size = exists ? Program.Account.Client.SizeOf(cpath) : new FileInfo(path).Length,
-                        LastWriteTime = exists ? Program.Account.Client.GetLwtOf(cpath) : File.GetLastWriteTime(path)
+                        LastWriteTime = exists ? Program.Account.Client.TryGetModifiedTime(cpath) : File.GetLastWriteTime(path)
                     },
                     ActionType = ChangeAction.changed,
                     SyncTo = exists ? SyncTo.Local : SyncTo.Remote

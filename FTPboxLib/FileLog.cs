@@ -53,7 +53,7 @@ namespace FTPboxLib
             {
                 CommonPath = file.NewCommonPath,
                 Local = file.SyncTo == SyncTo.Remote ? file.Item.LastWriteTime : File.GetLastWriteTime(file.LocalPath),
-                Remote = _controller.Client.GetLwtOf(file.NewCommonPath)
+                Remote = _controller.Client.TryGetModifiedTime(file.NewCommonPath)
             });
 
             Settings.SaveProfile();
