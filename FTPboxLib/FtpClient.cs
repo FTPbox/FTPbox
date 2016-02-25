@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.FtpClient;
+using System.Net.FtpClient.Async;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace FTPboxLib
 {
@@ -165,6 +168,30 @@ namespace FTPboxLib
             }
         }
 
+        public override async Task DownloadAsync(SyncQueueItem i, string path)
+        {
+            var s = await _ftpc.OpenReadAsync(i.CommonPath);
+
+            var startedOn = DateTime.Now;
+            long transfered = 0;
+
+            using (Stream file = File.OpenWrite(path))
+            {
+                var buf = new byte[8192];
+                int read;
+
+                while ((read = s.Read(buf, 0, buf.Length)) > 0)
+                {
+                    file.Write(buf, 0, read);
+                    transfered += read;
+
+                    ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
+
+                    ThrottleTransfer(Settings.General.DownloadLimit, transfered, startedOn);
+                }
+            }
+        }
+
         public override void Upload(string localPath, string path)
         {
             using (Stream file = File.OpenRead(localPath), rem = _ftpc.OpenWrite(path))
@@ -199,6 +226,30 @@ namespace FTPboxLib
                 while ((read = file.Read(buf, 0, buf.Length)) > 0)
                 {
                     rem.Write(buf, 0, read);
+                    transfered += read;
+
+                    ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
+
+                    ThrottleTransfer(Settings.General.UploadLimit, transfered, startedOn);
+                }
+            }
+        }
+
+        public override async Task UploadAsync(SyncQueueItem i, string path)
+        {
+            var s = await _ftpc.OpenWriteAsync(path);
+
+            var startedOn = DateTime.Now;
+            long transfered = 0;
+
+            var buf = new byte[8192];
+
+            using (Stream file = File.Open(i.LocalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                int read;
+                while ((read = await file.ReadAsync(buf, 0, buf.Length)) > 0)
+                {
+                    await s.WriteAsync(buf, 0, read);
                     transfered += read;
 
                     ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
@@ -320,6 +371,13 @@ namespace FTPboxLib
             var list = _ftpc.GetListing(path);
             
             return Array.ConvertAll(list, ConvertItem);
+        }
+
+        public override async Task<IEnumerable<ClientItem>> GetFileListingAsync(string path)
+        {
+            var list = await _ftpc.GetListingAsync(path);
+
+            return Array.ConvertAll(list.ToArray(), ConvertItem);
         }
 
         /// <summary>

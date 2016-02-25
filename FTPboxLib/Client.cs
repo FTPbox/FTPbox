@@ -86,9 +86,13 @@ namespace FTPboxLib
 
         public abstract void Download(SyncQueueItem i, string localPath);
 
+        public abstract Task DownloadAsync(SyncQueueItem i, string path);
+
         public abstract void Upload(string localPath, string path);
 
         public abstract void Upload(SyncQueueItem i, string path);
+
+        public abstract Task UploadAsync(SyncQueueItem i, string path);
 
         /// <summary>
         ///     Download to a temporary file.
@@ -332,6 +336,8 @@ namespace FTPboxLib
         /// <param name="path">The directory to list inside</param>
         /// <returns></returns>
         public abstract IEnumerable<ClientItem> GetFileListing(string path);
+
+        public abstract Task<IEnumerable<ClientItem>> GetFileListingAsync(string path);
 
         /// <summary>
         ///     Returns a non-recursive list of files/folders inside the specified path

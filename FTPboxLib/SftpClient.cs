@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Renci.SshNet;
+using Renci.SshNet.Async;
 using Renci.SshNet.Common;
 using Renci.SshNet.Sftp;
 
@@ -138,6 +140,22 @@ namespace FTPboxLib
             }
         }
 
+        public override async Task DownloadAsync(SyncQueueItem i, string path)
+        {
+            var startedOn = DateTime.Now;
+            long transfered = 0;
+
+            using (var f = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
+            {
+                await _sftpc.DownloadAsync(i.CommonPath, f, d =>
+                {
+                    ReportTransferProgress(new TransferProgressArgs((long)d - transfered, (long)d, i,
+                        startedOn));
+                    transfered = (long)d;
+                });
+            }
+        }
+
         public override void Upload(string localPath, string path)
         {
             using (var file = File.OpenRead(localPath))
@@ -158,6 +176,22 @@ namespace FTPboxLib
                             startedOn));
                         transfered = (long)d;
                     });
+            }
+        }
+
+        public override async Task UploadAsync(SyncQueueItem i, string path)
+        {
+            var startedOn = DateTime.Now;
+            long transfered = 0;
+
+            using (var file = File.Open(i.LocalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                await _sftpc.UploadAsync(file, path, d =>
+                {
+                    ReportTransferProgress(new TransferProgressArgs((long)d - transfered, (long)d, i,
+                        startedOn));
+                    transfered = (long)d;
+                });
             }
         }
 
@@ -241,6 +275,13 @@ namespace FTPboxLib
         public override IEnumerable<ClientItem> GetFileListing(string path)
         {
             var list = _sftpc.ListDirectory(path);
+
+            return Array.ConvertAll(list.ToArray(), ConvertItem);
+        }
+
+        public override async Task<IEnumerable<ClientItem>> GetFileListingAsync(string path)
+        {
+            var list = await _sftpc.ListDirectoryAsync(path);
 
             return Array.ConvertAll(list.ToArray(), ConvertItem);
         }
