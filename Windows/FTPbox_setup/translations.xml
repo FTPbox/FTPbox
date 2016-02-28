@@ -52,7 +52,7 @@
       <selective>Selective Sync</selective>
       <selective_info>Uncheck the items you don't want to sync</selective_info>
       <refresh>Refresh</refresh>
-	  <configure>Configure</configure>
+      <configure>Configure</configure>
       <file_filters>Filters</file_filters>
       <ignored_extensions>Ignored Extensions</ignored_extensions>
       <remove>Remove</remove>
@@ -60,9 +60,9 @@
       <dotfiles>dotfiles</dotfiles>
       <temp_files>Temporary Files</temp_files>
       <old_files>Files modified before</old_files>
-	  <enable_logging>Enable Logging</enable_logging>
-	  <view_log>View Log</view_log>
-	  <shell_menus>Add to context menu</shell_menus>
+      <enable_logging>Enable Logging</enable_logging>
+      <view_log>View Log</view_log>
+      <shell_menus>Add to context menu</shell_menus>
       <way_of_sync>Way of synchronization</way_of_sync>
       <local_to_remote>Local to remote only</local_to_remote>
       <remote_to_local>Remote to local only</remote_to_local>
@@ -73,7 +73,7 @@
       <new_ftp>New FTP account</new_ftp>
       <login_details>FTP login details</login_details>
       <encryption>Encryption</encryption>
-	  <ask_for_password>Always ask for password</ask_for_password>
+      <ask_for_password>Always ask for password</ask_for_password>
       <add>Add</add>
       <done>Done</done>
     </new_account>
@@ -82,18 +82,18 @@
       <add_dir>Add a new directory</add_dir>
       <select_dir>Select directory</select_dir>
       <full_path>Full path</full_path>
-	  <default_local>I want to use the default local folder</default_local>
-	  <custom_local>I want to select a local folder</custom_local>
+      <default_local>I want to use the default local folder</default_local>
+      <custom_local>I want to select a local folder</custom_local>
       <local_folder>Local folder</local_folder>
       <browse>Browse</browse>
     </paths>
-	<setup>
-    <authentication>Authentication</authentication>
-	  <sync_all_files>I want to synchronize all files</sync_all_files>
-	  <sync_specific_files>I want to select what files will be synchronized</sync_specific_files>
-	  <previous>Previous</previous>
-	  <next>Next</next>
-	</setup>
+    <setup>
+      <authentication>Authentication</authentication>
+      <sync_all_files>I want to synchronize all files</sync_all_files>
+      <sync_specific_files>I want to select what files will be synchronized</sync_specific_files>
+      <previous>Previous</previous>
+      <next>Next</next>
+    </setup>
     <new_version>
       <new_ver>New Version</new_ver>
       <update_available>Update available</update_available>
@@ -132,7 +132,7 @@
       <link_copied>Link copied to clipboard</link_copied>
       <recent_files>Recent Files</recent_files>
       <not_available>Not Available</not_available>
-	  <modified>Modified</modified>
+      <modified>Modified</modified>
       <start_syncing>Start Syncing</start_syncing>
       <exit>Exit</exit>
     </tray>
@@ -1961,7 +1961,7 @@
       <view>(Показать в браузере)</view>
     </web_interface>
   </ru>
-  
+
   <no>
     <main_form>
       <options>Innstillinger</options>
@@ -2081,9 +2081,9 @@
       <use_webint>Bruk nett grensesnitt</use_webint>
       <view>(Se i nettleser)</view>
     </web_interface>
-	</no>
-	
-	<hu>
+  </no>
+
+  <hu>
     <main_form>
       <options>Beállítások</options>
       <general>Általános</general>
@@ -2231,9 +2231,9 @@
       <use_webint>Használja a Webes felületet</use_webint>
       <view>(Megtekintés böngészőben)</view>
     </web_interface>
-	</hu>
+  </hu>
 
-	<ja>
+  <ja>
     <main_form>
       <options>オプション</options>
       <general>基本設定</general>
@@ -2352,9 +2352,9 @@
       <use_webint>Webインタフェースを使用</use_webint>
       <view>（ブラウザで表示）</view>
     </web_interface>
-	</ja>
-	
-	<vi>
+  </ja>
+
+  <vi>
     <main_form>
       <options>Tuỳ chọn</options>
       <general>Tổng hợp</general>
@@ -2473,101 +2473,101 @@
       <use_webint>Sử dụng giao diện web</use_webint>
       <view>(Xem trong trình duyệt)</view>
     </web_interface>
-	</vi>
-	
-	<lt>
-		<main_form>
-		<options>Nustatymai</options>
-		<general>Bendri</general>
-		<host>Serveris</host>
-		<port>Privadas (portas)</port>
-		<username>Vartotojo vardas</username>
-		<password>Slaptažodis</password>
-		<mode>Protokolas</mode>
-		<change>Keisti</change>
-		<account>Sąskaitą</account>
-		<application>Aplikacija</application>
-		<start_on_startup>Startuoti sistemos paleidimo metu</start_on_startup>
-		<show_nots>rodyti pranešimus</show_nots>
-		<details>Detalės</details>
-		<links>Nuorodos</links>
-		<remote_path>Nuotolinis kelias</remote_path>
-		<local_path>Vietinis kelias</local_path>
-		<account_full_path>Sąskaitos pilnas kelias</account_full_path>
-		<when_not_clicked>kuomet pranešimas ar ankstesnės bylos spusteli</when_not_clicked>
-		<open_in_browser>atverti nuorodą Jūsų numatytoje naršyklėje</open_in_browser>
-		<copy>kopijuoti nuorodą</copy>
-		<about>Apie</about>
-		<current_version>Dabartinė versija</current_version>
-		<team>Komanda</team>
-		<website>oficialus tinklalapis</website>
-		<contact>Kontaktai</contact>
-		<coded_in>Programuota su</coded_in>
-		<notes>Žinutės</notes>
-		<contribute>Prisidėti</contribute>
-		<ftpbox_is_free>Ftpbox yra nemokama bei atvirojo kodo programa</ftpbox_is_free>
-		<contact_me>Nedvėjodami galite kreiptis į mane</contact_me>
-		<copyright>Autorinės teisės</copyright>
-		<report_bug>Pranešti apie klaidą</report_bug>
-		<request_feature>užklausą dėl papildomos funkcijos (-ų)</request_feature>
-		<donate>paremti</donate>
-		<language>Kalba</language>
-		</main_form>
-		<new_account>
-		<new_ftp>Nauja FTP sąskaita</new_ftp>
-		<login_details>FTP prisijungimo duomenys</login_details>
-		<encryption>Koduoti</encryption>
-		<add>pridėti</add>
-		<done>atlikta</done>
-		</new_account>
-		<paths>
-		<new_paths>Naujas kelias</new_paths>
-		<add_dir>sukurti naują katalogą</add_dir>
-		<select_dir>pasirinkti katalogą</select_dir>
-		<full_path>pilnas kelias</full_path>
-		<local_folder>vietinis katalogas</local_folder>
-		<browse>naršyti</browse>
-		</paths>
-		<new_version>
-		<new_ver>Nauja versija</new_ver>
-		<update_available>Galimas atnaujinimas</update_available>
-		<new_v_available>Nauja FTPbox versiją jau yra pasiekiama</new_v_available>
-		<new_version>Nauja Versija</new_version>
-		<current_version>Dabartinė versija</current_version>
-		<wanna_download>Ar norite dabar atsisiųsti naują versiją?</wanna_download>
-		<download>Siųstis</download>
-		<learn_more>Išmokti</learn_more>
-		<remind_me_next_time>Perspėti mane kitą kartą</remind_me_next_time>
-		</new_version>
-		<tray>
-		<tray_and_nots>Dėklas _and Pranešimai</tray_and_nots>
-		<updated>Byla {0} atnaujinta.</updated>
-		<created>Byla {0} sukurta.</created>
-		<renamed>Byla {0} buvo pervadinta į {1}</renamed>
-		<deleted>Byla {0} pašalinta.</deleted>
-		<changed>Byla {0} pakeista.</changed>
-		<folder>Katalogas</folder>
-		<synced>FTPbox - Visi duomenys sinchronizuoti.</synced>
-		<syncing>FTPbox - Vyksta duomenų sinchronizavimas...</syncing>
-		<offline>FTPbox - Neprisijungęs</offline>
-		<link_copied>Nuorodą nukopijuota</link_copied>
-		<recent_files>Naujausi failai</recent_files>
-		</tray>
-		<web_interface>
-		<web_int>Tinklalapio sąsaja</web_int>
-		<downloading>Tinklalapio sąsaja bus atsiųsti.</downloading>
-		<in_a_minute>Tai užims apie vieną minutę.</in_a_minute>
-		<removing>Pašalinti tinklalapio sąsaja.</removing>
-		<removed>Tinklalpio sąsaja pašalinta</removed>
-		<updating>Tinklalpio sąsaja atnaujinama...</updating>
-		<updated>Tinklalpio sąsaja atnaujinta.</updated>
-		<setup>Spustelkite čia tam kad pamatyti bei išsaugoti!</setup>
-		<use_webint>Naudoti tinklalapio sąsają</use_webint>
-		<view>(Žiūrėti naršyklės pagalba)</view>
-		</web_interface>
-	</lt>
-	
-	<zh_HANS>
+  </vi>
+
+  <lt>
+    <main_form>
+      <options>Nustatymai</options>
+      <general>Bendri</general>
+      <host>Serveris</host>
+      <port>Privadas (portas)</port>
+      <username>Vartotojo vardas</username>
+      <password>Slaptažodis</password>
+      <mode>Protokolas</mode>
+      <change>Keisti</change>
+      <account>Sąskaitą</account>
+      <application>Aplikacija</application>
+      <start_on_startup>Startuoti sistemos paleidimo metu</start_on_startup>
+      <show_nots>rodyti pranešimus</show_nots>
+      <details>Detalės</details>
+      <links>Nuorodos</links>
+      <remote_path>Nuotolinis kelias</remote_path>
+      <local_path>Vietinis kelias</local_path>
+      <account_full_path>Sąskaitos pilnas kelias</account_full_path>
+      <when_not_clicked>kuomet pranešimas ar ankstesnės bylos spusteli</when_not_clicked>
+      <open_in_browser>atverti nuorodą Jūsų numatytoje naršyklėje</open_in_browser>
+      <copy>kopijuoti nuorodą</copy>
+      <about>Apie</about>
+      <current_version>Dabartinė versija</current_version>
+      <team>Komanda</team>
+      <website>oficialus tinklalapis</website>
+      <contact>Kontaktai</contact>
+      <coded_in>Programuota su</coded_in>
+      <notes>Žinutės</notes>
+      <contribute>Prisidėti</contribute>
+      <ftpbox_is_free>Ftpbox yra nemokama bei atvirojo kodo programa</ftpbox_is_free>
+      <contact_me>Nedvėjodami galite kreiptis į mane</contact_me>
+      <copyright>Autorinės teisės</copyright>
+      <report_bug>Pranešti apie klaidą</report_bug>
+      <request_feature>užklausą dėl papildomos funkcijos (-ų)</request_feature>
+      <donate>paremti</donate>
+      <language>Kalba</language>
+    </main_form>
+    <new_account>
+      <new_ftp>Nauja FTP sąskaita</new_ftp>
+      <login_details>FTP prisijungimo duomenys</login_details>
+      <encryption>Koduoti</encryption>
+      <add>pridėti</add>
+      <done>atlikta</done>
+    </new_account>
+    <paths>
+      <new_paths>Naujas kelias</new_paths>
+      <add_dir>sukurti naują katalogą</add_dir>
+      <select_dir>pasirinkti katalogą</select_dir>
+      <full_path>pilnas kelias</full_path>
+      <local_folder>vietinis katalogas</local_folder>
+      <browse>naršyti</browse>
+    </paths>
+    <new_version>
+      <new_ver>Nauja versija</new_ver>
+      <update_available>Galimas atnaujinimas</update_available>
+      <new_v_available>Nauja FTPbox versiją jau yra pasiekiama</new_v_available>
+      <new_version>Nauja Versija</new_version>
+      <current_version>Dabartinė versija</current_version>
+      <wanna_download>Ar norite dabar atsisiųsti naują versiją?</wanna_download>
+      <download>Siųstis</download>
+      <learn_more>Išmokti</learn_more>
+      <remind_me_next_time>Perspėti mane kitą kartą</remind_me_next_time>
+    </new_version>
+    <tray>
+      <tray_and_nots>Dėklas _and Pranešimai</tray_and_nots>
+      <updated>Byla {0} atnaujinta.</updated>
+      <created>Byla {0} sukurta.</created>
+      <renamed>Byla {0} buvo pervadinta į {1}</renamed>
+      <deleted>Byla {0} pašalinta.</deleted>
+      <changed>Byla {0} pakeista.</changed>
+      <folder>Katalogas</folder>
+      <synced>FTPbox - Visi duomenys sinchronizuoti.</synced>
+      <syncing>FTPbox - Vyksta duomenų sinchronizavimas...</syncing>
+      <offline>FTPbox - Neprisijungęs</offline>
+      <link_copied>Nuorodą nukopijuota</link_copied>
+      <recent_files>Naujausi failai</recent_files>
+    </tray>
+    <web_interface>
+      <web_int>Tinklalapio sąsaja</web_int>
+      <downloading>Tinklalapio sąsaja bus atsiųsti.</downloading>
+      <in_a_minute>Tai užims apie vieną minutę.</in_a_minute>
+      <removing>Pašalinti tinklalapio sąsaja.</removing>
+      <removed>Tinklalpio sąsaja pašalinta</removed>
+      <updating>Tinklalpio sąsaja atnaujinama...</updating>
+      <updated>Tinklalpio sąsaja atnaujinta.</updated>
+      <setup>Spustelkite čia tam kad pamatyti bei išsaugoti!</setup>
+      <use_webint>Naudoti tinklalapio sąsają</use_webint>
+      <view>(Žiūrėti naršyklės pagalba)</view>
+    </web_interface>
+  </lt>
+
+  <zh_HANS>
     <main_form>
       <options>选项</options>
       <general>一般</general>
@@ -2708,9 +2708,9 @@
       <use_webint>使用网页界面</use_webint>
       <view>(在浏览器中查看)</view>
     </web_interface>
-	</zh_HANS>
-	
-	<zh_HANT>
+  </zh_HANS>
+
+  <zh_HANT>
     <main_form>
       <options>選項</options>
       <general>一般</general>
@@ -2858,9 +2858,9 @@
       <use_webint>使用網頁介面</use_webint>
       <view>(在瀏覽器中使用)</view>
     </web_interface>
-	</zh_HANT>
-	
-	<da>
+  </zh_HANT>
+
+  <da>
     <main_form>
       <options>Indstillinger</options>
       <general>Generelt</general>
@@ -3008,9 +3008,9 @@
       <use_webint>Benyt web brugerfladen</use_webint>
       <view>(Vis i browser)</view>
     </web_interface>
-	</da>
-	
-	<pl>
+  </da>
+
+  <pl>
     <main_form>
       <options>Opcje</options>
       <general>Ogólne</general>
@@ -3150,8 +3150,8 @@
       <use_webint>Użyj interfejsu przeglądarki (WEB)</use_webint>
       <view>( Otwórz w przeglądarce)</view>
     </web_interface>
-	</pl>
-  
+  </pl>
+
   <hr>
     <main_form>
       <options>Mogućnosti</options>
@@ -3272,7 +3272,7 @@
       <view>(Pogledaj u internet pregledniku)</view>
     </web_interface>
   </hr>
-  
+
   <sk>
     <main_form>
       <options>Nastavenia</options>
@@ -3514,7 +3514,7 @@
       <view>(Ver no navegador)</view>
     </web_interface>
   </gl>
-  
+
   <pt>
     <main_form>
       <options>Opções</options>
@@ -3664,7 +3664,7 @@
       <view>(Ver no navegador)</view>
     </web_interface>
   </pt>
-  
+
   <th>
     <main_form>
       <options>ตัวเลือก</options>
@@ -3785,7 +3785,7 @@
       <view>(ดูในเบราว์เซอร์)</view>
     </web_interface>
   </th>
-  
+
   <sl>
     <main_form>
       <options>Možnosti</options>
@@ -3906,7 +3906,7 @@
       <view>(Ogled v brskalniku)</view>
     </web_interface>
   </sl>
-  
+
   <cs>
     <main_form>
       <options>Možnosti</options>
@@ -4048,7 +4048,7 @@
       <view>(zobrazit v prohlížeči)</view>
     </web_interface>
   </cs>
-  
+
   <he>
     <main_form>
       <options>אפשרויות</options>
@@ -4178,7 +4178,7 @@
       <view>(הצג בדפדפן)</view>
     </web_interface>
   </he>
-  
+
   <sr>
     <main_form>
       <options>Opcije</options>
@@ -4308,7 +4308,7 @@
       <view>(Vidi u pregledaču)</view>
     </web_interface>
   </sr>
-  
+
   <src>
     <main_form>
       <options>Опције</options>
@@ -4438,7 +4438,7 @@
       <view>(види у претраћивач)</view>
     </web_interface>
   </src>
-  
+
   <eu>
     <main_form>
       <options>Ezarpenak</options>
@@ -4621,7 +4621,7 @@
       <selective>اختياريّ</selective>
       <selective_info>معلومات الإختيار</selective_info>
       <refresh>التحديث</refresh>
-	  <configure>صحح</configure>
+      <configure>صحح</configure>
       <file_filters>تصفية الملفات</file_filters>
       <ignored_extensions>تجاهل نهاية الملفات التالية</ignored_extensions>
       <remove>حذف</remove>
@@ -5010,5 +5010,5 @@
       <view>(Lihat pada tampilan browser)</view>
     </web_interface>
   </id>
-  
+
 </translations>
