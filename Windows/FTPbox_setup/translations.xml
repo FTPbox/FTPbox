@@ -3062,6 +3062,7 @@
       <selective>Wybiórcza synchronizacja</selective>
       <selective_info>Odznacz, jeśli nie chcesz synchronizować</selective_info>
       <refresh>Odśwież</refresh>
+      <configure>Konfiguruj</configure>
       <file_filters>Filtry</file_filters>
       <ignored_extensions>Ignoruj pliki o rozszerzeniach</ignored_extensions>
       <remove>Usuń</remove>
@@ -3071,6 +3072,12 @@
       <old_files>Pliki zmienione przed</old_files>
       <enable_logging>Włącz zapis zdarzeń</enable_logging>
       <view_log>Pokaż zapis zdarzeń</view_log>
+      <shell_menus>Dodaj do menu kontekstowego</shell_menus>
+      <way_of_sync>Sposób synchronizacji</way_of_sync>
+      <local_to_remote>Tylko wysyłka na serwer</local_to_remote>
+      <remote_to_local>Tylko pobieranie z serwera</remote_to_local>
+      <both_ways>W obie strony</both_ways>
+      <temp_file_prefix>Przedrostek nazw plików tymczasowych</temp_file_prefix>
     </main_form>
     <new_account>
       <new_ftp>Nowe konto FTP</new_ftp>
@@ -3135,6 +3142,7 @@
       <link_copied>Odnośnik skopiowany do schowka</link_copied>
       <recent_files>Ostatnie pliki</recent_files>
       <not_available>Niedostępny</not_available>
+      <modified>Zmodyfikowany</modified>
       <start_syncing>Rozpocznij synchronizację plików</start_syncing>
       <exit>Zakończ</exit>
     </tray>
