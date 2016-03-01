@@ -362,6 +362,12 @@
       <old_files>Archivos modificados antes de</old_files>
       <enable_logging>Habilitar registro</enable_logging>
       <view_log>Ver registro</view_log>
+      <shell_menus>Añadir al menu contextual</shell_menus>
+      <way_of_sync>Modo de sincronización</way_of_sync>
+      <local_to_remote>Solo local a remoto</local_to_remote>
+      <remote_to_local>Solo remoto a local</remote_to_local>
+      <both_ways>Ambos</both_ways>
+      <temp_file_prefix>Prefijo del archivo temporal</temp_file_prefix>
     </main_form>
     <new_account>
       <new_ftp>Nueva cuenta FTP</new_ftp>
@@ -397,15 +403,15 @@
       <wanna_download>¿Deseas descargar la nueva versión ahora?</wanna_download>
       <download>Actualizar Ahora</download>
       <learn_more>Conoce más</learn_more>
-      <remind_me_next_time>Recuerdame la próxima vez</remind_me_next_time>
+      <remind_me_next_time>Esta vez no</remind_me_next_time>
     </new_version>
     <tray>
       <tray_and_nots>Barra de tareas y notificaciones</tray_and_nots>
       <updated>{0} fue actualizado.</updated>
       <created>{0} fue creado</created>
       <renamed>{0} fue renombrado a {1}</renamed>
-      <deleted>{0} fue borrado</deleted>
-      <changed>{0} fue cambiado</changed>
+      <deleted>{0} fue borrado.</deleted>
+      <changed>{0} fue cambiado.</changed>
       <FilesOrFoldersUpdated>{0} {1} han sido actualizados</FilesOrFoldersUpdated>
       <FilesOrFoldersCreated>{0} {1} han sido creados</FilesOrFoldersCreated>
       <FilesAndFoldersChanged>{0} {1} y {2} {3} han sido actualizados</FilesAndFoldersChanged>
@@ -421,25 +427,26 @@
       <downloading>Descargando {0}</downloading>
       <ready>FTPbox – Listo</ready>
       <synced>FTPbox - Todos los archivos sincronizados</synced>
-      <syncing>FTPbox - Sincronizando</syncing>
+      <syncing>FTPbox - Sincronizando...</syncing>
       <offline>FTPbox - Sin conexión</offline>
       <link_copied>Vinculo copiado al portapapeles.</link_copied>
       <recent_files>Archivos Recientes</recent_files>
       <not_available>No disponible</not_available>
+      <modified>Modificado</modified>
       <start_syncing>Comenzar sincronización</start_syncing>
       <exit>Cerrar</exit>
     </tray>
     <web_interface>
       <web_int>Interfaz Web</web_int>
       <downloading>La interfaz web será descargada</downloading>
-      <in_a_minute>Esto tomará un minuto.</in_a_minute>
-      <removing>Eliminando la interfaz web.</removing>
+      <in_a_minute>Esto tardará un minuto.</in_a_minute>
+      <removing>Eliminando la interfaz web...</removing>
       <removed>La interfaz web ha sido eliminada</removed>
       <updating>Actualizando la interfaz web...</updating>
-      <updated>La interfaz web ha sido actualizada</updated>
-      <setup>Haz click aquí para verla y configurarla</setup>
+      <updated>La interfaz web ha sido actualizada.</updated>
+      <setup>Haz click aquí para verla y configurarla!</setup>
       <use_webint>Usar la interfaz web</use_webint>
-      <view>(Ver en el explorador)</view>
+      <view>(Ver en el navegador)</view>
     </web_interface>
   </es>
 
