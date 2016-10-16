@@ -146,19 +146,19 @@ namespace FTPboxLib
             }
         }
 
-        public override void Download(SyncQueueItem i, string localPath)
+        public override void Download(SyncQueueItem i, Stream fileStream)
         {
             var startedOn = DateTime.Now;
             long transfered = 0;
-
-            using (Stream file = File.OpenWrite(localPath), rem = _ftpc.OpenRead(i.CommonPath))
+            
+            using (var rem = _ftpc.OpenRead(i.CommonPath))
             {
                 var buf = new byte[8192];
                 int read;
 
                 while ((read = rem.Read(buf, 0, buf.Length)) > 0)
                 {
-                    file.Write(buf, 0, read);
+                    fileStream.Write(buf, 0, read);
                     transfered += read;
 
                     ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
@@ -168,27 +168,23 @@ namespace FTPboxLib
             }
         }
 
-        public override async Task DownloadAsync(SyncQueueItem i, string path)
+        public override async Task DownloadAsync(SyncQueueItem i, Stream fileStream)
         {
             var s = await _ftpc.OpenReadAsync(i.CommonPath);
-
             var startedOn = DateTime.Now;
             long transfered = 0;
 
-            using (Stream file = File.OpenWrite(path))
+            var buf = new byte[8192];
+            int read;
+
+            while ((read = s.Read(buf, 0, buf.Length)) > 0)
             {
-                var buf = new byte[8192];
-                int read;
+                await fileStream.WriteAsync(buf, 0, read);
+                transfered += read;
 
-                while ((read = s.Read(buf, 0, buf.Length)) > 0)
-                {
-                    file.Write(buf, 0, read);
-                    transfered += read;
+                ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
 
-                    ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
-
-                    ThrottleTransfer(Settings.General.DownloadLimit, transfered, startedOn);
-                }
+                ThrottleTransfer(Settings.General.DownloadLimit, transfered, startedOn);
             }
         }
 
@@ -213,17 +209,17 @@ namespace FTPboxLib
             }
         }
 
-        public override void Upload(SyncQueueItem i, string path)
+        public override void Upload(SyncQueueItem i, Stream uploadStream, string path)
         {
             var startedOn = DateTime.Now;
             long transfered = 0;
             var buf = new byte[8192];
 
-            using (Stream file = File.OpenRead(i.LocalPath), rem = _ftpc.OpenWrite(path))
+            using (var rem = _ftpc.OpenWrite(path))
             {
                 int read;
 
-                while ((read = file.Read(buf, 0, buf.Length)) > 0)
+                while ((read = uploadStream.Read(buf, 0, buf.Length)) > 0)
                 {
                     rem.Write(buf, 0, read);
                     transfered += read;
@@ -235,7 +231,7 @@ namespace FTPboxLib
             }
         }
 
-        public override async Task UploadAsync(SyncQueueItem i, string path)
+        public override async Task UploadAsync(SyncQueueItem i, Stream uploadStream, string path)
         {
             var s = await _ftpc.OpenWriteAsync(path);
 
@@ -244,18 +240,15 @@ namespace FTPboxLib
 
             var buf = new byte[8192];
 
-            using (Stream file = File.Open(i.LocalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            int read;
+            while ((read = await uploadStream.ReadAsync(buf, 0, buf.Length)) > 0)
             {
-                int read;
-                while ((read = await file.ReadAsync(buf, 0, buf.Length)) > 0)
-                {
-                    await s.WriteAsync(buf, 0, read);
-                    transfered += read;
+                await s.WriteAsync(buf, 0, read);
+                transfered += read;
 
-                    ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
+                ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
 
-                    ThrottleTransfer(Settings.General.UploadLimit, transfered, startedOn);
-                }
+                ThrottleTransfer(Settings.General.UploadLimit, transfered, startedOn);
             }
         }
 

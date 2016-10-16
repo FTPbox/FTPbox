@@ -84,15 +84,15 @@ namespace FTPboxLib
 
         public abstract void Download(string path, string localPath);
 
-        public abstract void Download(SyncQueueItem i, string localPath);
+        public abstract void Download(SyncQueueItem i, Stream fileStream);
 
-        public abstract Task DownloadAsync(SyncQueueItem i, string path);
+        public abstract Task DownloadAsync(SyncQueueItem i, Stream fileStream);
 
         public abstract void Upload(string localPath, string path);
 
-        public abstract void Upload(SyncQueueItem i, string path);
+        public abstract void Upload(SyncQueueItem i, Stream uploadStream, string path);
 
-        public abstract Task UploadAsync(SyncQueueItem i, string path);
+        public abstract Task UploadAsync(SyncQueueItem i, Stream uploadStream, string path);
 
         /// <summary>
         ///     Download to a temporary file.
@@ -108,7 +108,10 @@ namespace FTPboxLib
             try
             {
                 // download to a temp file...
-                Download(i, temp);
+                using (var file = File.OpenWrite(temp))
+                {
+                    Download(i, file);
+                }
 
                 if (i.Item.Size == new FileInfo(temp).Length)
                 {
@@ -151,7 +154,10 @@ namespace FTPboxLib
             try
             {
                 // upload to a temp file...
-                Upload(i, temp);
+                using (Stream file = File.OpenRead(i.LocalPath))
+                {
+                    Upload(i, file, temp);
+                }
             }
             catch (Exception ex)
             {

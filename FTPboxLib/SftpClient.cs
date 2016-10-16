@@ -123,37 +123,30 @@ namespace FTPboxLib
             }
         }
 
-        public override void Download(SyncQueueItem i, string localPath)
+        public override void Download(SyncQueueItem i, Stream fileStream)
         {
             var startedOn = DateTime.Now;
             long transfered = 0;
 
-            using (var f = new FileStream(localPath, FileMode.Create, FileAccess.ReadWrite))
+            _sftpc.DownloadFile(i.CommonPath, fileStream, d =>
             {
-                _sftpc.DownloadFile(i.CommonPath, f,
-                    d =>
-                    {
-                        ReportTransferProgress(new TransferProgressArgs((long)d - transfered, (long)d, i,
-                            startedOn));
-                        transfered = (long)d;
-                    });
-            }
+                ReportTransferProgress(new TransferProgressArgs((long) d - transfered, (long) d, i,
+                    startedOn));
+                transfered = (long) d;
+            });
         }
 
-        public override async Task DownloadAsync(SyncQueueItem i, string path)
+        public override async Task DownloadAsync(SyncQueueItem i, Stream fileStream)
         {
             var startedOn = DateTime.Now;
             long transfered = 0;
 
-            using (var f = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
+            await _sftpc.DownloadAsync(i.CommonPath, fileStream, d =>
             {
-                await _sftpc.DownloadAsync(i.CommonPath, f, d =>
-                {
-                    ReportTransferProgress(new TransferProgressArgs((long)d - transfered, (long)d, i,
-                        startedOn));
-                    transfered = (long)d;
-                });
-            }
+                ReportTransferProgress(new TransferProgressArgs((long)d - transfered, (long)d, i,
+                    startedOn));
+                transfered = (long)d;
+            });
         }
 
         public override void Upload(string localPath, string path)
@@ -162,37 +155,30 @@ namespace FTPboxLib
                 _sftpc.UploadFile(file, path, true);
         }
 
-        public override void Upload(SyncQueueItem i, string path)
+        public override void Upload(SyncQueueItem i, Stream uploadStream, string path)
         {
             var startedOn = DateTime.Now;
             long transfered = 0;
 
-            using (var file = File.Open(i.LocalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            _sftpc.UploadFile(uploadStream, path, true, d =>
             {
-                _sftpc.UploadFile(file, path, true,
-                    d =>
-                    {
-                        ReportTransferProgress(new TransferProgressArgs((long)d - transfered, (long)d, i,
-                            startedOn));
-                        transfered = (long)d;
-                    });
-            }
+                ReportTransferProgress(new TransferProgressArgs((long) d - transfered, (long) d, i,
+                    startedOn));
+                transfered = (long) d;
+            });
         }
 
-        public override async Task UploadAsync(SyncQueueItem i, string path)
+        public override async Task UploadAsync(SyncQueueItem i, Stream uploadStream, string path)
         {
             var startedOn = DateTime.Now;
             long transfered = 0;
 
-            using (var file = File.Open(i.LocalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            await _sftpc.UploadAsync(uploadStream, path, d =>
             {
-                await _sftpc.UploadAsync(file, path, d =>
-                {
-                    ReportTransferProgress(new TransferProgressArgs((long)d - transfered, (long)d, i,
-                        startedOn));
-                    transfered = (long)d;
-                });
-            }
+                ReportTransferProgress(new TransferProgressArgs((long)d - transfered, (long)d, i,
+                    startedOn));
+                transfered = (long)d;
+            });
         }
 
         public override void SendKeepAlive()
