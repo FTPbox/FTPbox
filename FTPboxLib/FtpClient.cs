@@ -8,6 +8,7 @@ using System.Net.FtpClient.Async;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,6 +34,21 @@ namespace FTPboxLib
             {
                 _ftpc.SetWorkingDirectory(value);
                 Log.Write(l.Client, "cd {0}", value);
+            }
+        }
+
+        public override Encoding Charset
+        {
+            get
+            {
+                if (Controller.Charset == null)
+                {
+                    // UTF-8 if supported, else local charset
+                    Controller.Charset = (_ftpc.Capabilities & FtpCapability.UTF8) != 0
+                        ? Encoding.UTF8
+                        : Encoding.Default;
+                }
+                return Controller.Charset;
             }
         }
 
@@ -112,6 +128,8 @@ namespace FTPboxLib
                 // This is a workaround to avoid storing Certificate files locally...
                 Connect();
             }
+
+            _ftpc.Encoding = this.Charset;
 
             Controller.HomePath = WorkingDirectory;
 

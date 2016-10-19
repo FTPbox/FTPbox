@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Renci.SshNet;
 using Renci.SshNet.Async;
@@ -31,6 +32,18 @@ namespace FTPboxLib
             }
         }
 
+        public override Encoding Charset
+        {
+            get
+            {
+                if (Controller.Charset == null)
+                {
+                    Controller.Charset = Encoding.UTF8;
+                }
+                return Controller.Charset;
+            }
+        }
+
         public SftpClient(AccountController account)
         {
             Controller = account;
@@ -53,6 +66,7 @@ namespace FTPboxLib
                 connectionInfo = new PasswordConnectionInfo(Controller.Account.Host, Controller.Account.Port,
                     Controller.Account.Username, Controller.Account.Password);
             }
+            connectionInfo.Encoding = this.Charset;
 
             _sftpc = new Renci.SshNet.SftpClient(connectionInfo);
             _sftpc.ConnectionInfo.AuthenticationBanner += (o, x) => Log.Write(l.Warning, x.BannerMessage);

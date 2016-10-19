@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -47,6 +48,8 @@ namespace FTPboxLib
         ///     Get or set the remote working directory
         /// </summary>
         public abstract string WorkingDirectory { get; set; }
+
+        public abstract Encoding Charset { get; }
 
         /// <summary>
         ///     Connect to the remote servers, with the details from Profile
