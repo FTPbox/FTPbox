@@ -59,18 +59,10 @@ namespace FTPboxLib
         /// </summary>
         public bool SkipNotification = false;
 
-        public string CommonPath
-        {
-            get { return controller.GetCommonPath(Item.FullPath, SyncTo ==  SyncTo.Remote); }
-        }
+        public string CommonPath => controller.GetCommonPath(Item.FullPath, SyncTo ==  SyncTo.Remote);
 
         public string NewCommonPath
-        {
-            get { 
-                return ActionType == ChangeAction.renamed ?
-                    controller.GetCommonPath(Item.NewFullPath, true) : CommonPath;
-            }
-        }
+            => ActionType == ChangeAction.renamed ? controller.GetCommonPath(Item.NewFullPath, true) : CommonPath;
 
         public string PathToFile
         {
@@ -83,11 +75,6 @@ namespace FTPboxLib
         }
 
         public string LocalPath
-        {
-            get
-            {
-                return SyncTo == SyncTo.Remote ? Item.FullPath : Path.Combine(controller.Paths.Local, CommonPath);
-            }
-        }
+            => SyncTo == SyncTo.Remote ? Item.FullPath : Path.Combine(controller.Paths.Local, CommonPath);
     }
 }
