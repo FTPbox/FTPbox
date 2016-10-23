@@ -39,6 +39,8 @@ namespace FTPboxLib
 
         public long Size { get; set; }
 
+        public DateTime CreationTime = default(DateTime);
+
         public DateTime LastWriteTime { get; set; }
 
         public string Permissions { get; set; }

@@ -326,6 +326,13 @@ namespace FTPboxLib
         public abstract void SetModifiedTime(SyncQueueItem i, DateTime time);
 
         /// <summary>
+        ///     Set the Creation Time of an item
+        /// </summary>
+        /// <param name="i">The item</param>
+        /// <param name="time">The new Creation Time</param>
+        public abstract void SetCreationTime(SyncQueueItem i, DateTime time);
+
+        /// <summary>
         ///     Returns the file size of the file in the given bath, in both SFTP and FTP
         /// </summary>
         /// <param name="path">The path to the file</param>

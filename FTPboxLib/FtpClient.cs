@@ -367,6 +367,27 @@ namespace FTPboxLib
                 Log.Write(l.Error, "SetModTime failed, file: {0} msg: {1}", i.CommonPath, reply.ErrorMessage);
         }
 
+        public override void SetCreationTime(SyncQueueItem i, DateTime time)
+        {
+            string command;
+            var reply = new FtpReply();
+            var timeFormatted = time.ToString("yyyyMMddHHMMss");
+
+            if (_ftpc.Capabilities.HasFlag(FtpCapability.MFF))
+            {
+                command = string.Format("MFF Create={0}; {1}", timeFormatted, i.CommonPath);
+                reply = _ftpc.Execute(command);
+            }
+            if (!reply.Success && _ftpc.Capabilities.HasFlag(FtpCapability.MFCT))
+            {
+                command = string.Format("MFCT {0} {1}", timeFormatted, i.CommonPath);
+                reply = _ftpc.Execute(command);
+            }
+
+            if (!reply.Success)
+                Log.Write(l.Error, "SetCreationTime failed, file: {0} msg: {1}", i.CommonPath, reply.ErrorMessage);
+        }
+
         public override long SizeOf(string path)
         {
             return _ftpc.GetFileSize(path);
@@ -437,6 +458,7 @@ namespace FTPboxLib
                 FullPath = fullPath,
                 Type = GetItemTypeOf(f.Type),
                 Size = f.Size,
+                CreationTime = f.Created,
                 LastWriteTime = f.Modified,
                 Permissions = f.Permissions()
             };

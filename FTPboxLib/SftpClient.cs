@@ -262,6 +262,11 @@ namespace FTPboxLib
             _sftpc.SetAttributes(i.CommonPath, attr);
         }
 
+        public override void SetCreationTime(SyncQueueItem i, DateTime time)
+        {
+            Log.Write(l.Warning, "[Not Supported] On SFTP, cannot set creation time of {0}", i.CommonPath);
+        }
+
         public override long SizeOf(string path)
         {
             return _sftpc.GetAttributes(path).Size;
