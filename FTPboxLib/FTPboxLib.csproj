@@ -43,13 +43,11 @@
       <HintPath>..\Windows\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Renci.SshNet, Version=2013.4.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\Windows\packages\SSH.NET.2013.4.7\lib\net40\Renci.SshNet.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Renci.SshNet, Version=2016.0.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
+      <HintPath>..\Windows\packages\SSH.NET.2016.0.0\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
-    <Reference Include="Renci.SshNet.Async, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\Windows\packages\Renci.SshNet.Async.1.0.0\lib\net40\Renci.SshNet.Async.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Renci.SshNet.Async, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\Windows\packages\Renci.SshNet.Async.1.1.0.0\lib\net40\Renci.SshNet.Async.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
