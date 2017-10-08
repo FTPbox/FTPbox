@@ -37,6 +37,23 @@ namespace FTPboxLib
 
         // Trust the certificate?
         public bool IsTrusted;
+
+        public string ValidationMessage()
+        {
+            var msg = string.Empty;
+            // Add certificate info
+            if (!string.IsNullOrEmpty(Key) && !string.IsNullOrEmpty(KeySize))
+                msg += string.Format("{0,-8}\t {1}\n{2,-8}\t {3}\n", "Key:", Key, "Key Size:", KeySize);
+            else
+                msg += string.Format("{0,-25}\t {1}\n{2,-25}\t {3}\n{4,-25}\t {5}\n{6,-25}\t {7}\n\n",
+                    "Valid from:", ValidFrom, "Valid to:", ValidTo, 
+                    "Serial number:", SerialNumber, "Algorithm:", Algorithm);
+
+            msg += string.Format("Fingerprint: {0}\n\n", Fingerprint);
+            msg += "Trust this certificate and continue?";
+
+            return msg;
+        }
     }
 
     // EventArgs for Notifications.cs

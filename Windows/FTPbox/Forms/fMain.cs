@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -488,21 +487,9 @@ namespace FTPbox.Forms
         /// </summary>
         public static void CheckCertificate(object sender, ValidateCertificateEventArgs n)
         {
-            var msg = string.Empty;
-            // Add certificate info
-            if (Program.Account.Account.Protocol == FtpProtocol.SFTP)
-                msg += string.Format("{0,-8}\t {1}\n{2,-8}\t {3}\n", "Key:", n.Key, "Key Size:", n.KeySize);
-            else
-                msg += string.Format("{0,-25}\t {1}\n{2,-25}\t {3}\n{4,-25}\t {5}\n{6,-25}\t {7}\n\n",
-                    "Valid from:", n.ValidFrom, "Valid to:", n.ValidTo, "Serial number:", n.SerialNumber, "Algorithm:",
-                    n.Algorithm);
-
-            msg += string.Format("Fingerprint: {0}\n\n", n.Fingerprint);
-            msg += "Trust this certificate and continue?";
-
             // Do we trust the server's certificate?
-            var certificateTrusted =
-                MessageBox.Show(msg, "Do you trust this certificate?", MessageBoxButtons.YesNo,
+            var certificateTrusted = 
+                MessageBox.Show(n.ValidationMessage(), "Do you trust this certificate?", MessageBoxButtons.YesNo,
                     MessageBoxIcon.Information) == DialogResult.Yes;
             n.IsTrusted = certificateTrusted;
 

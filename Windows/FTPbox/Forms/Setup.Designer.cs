@@ -132,8 +132,8 @@
             this.cEncryption.FormattingEnabled = true;
             this.cEncryption.Items.AddRange(new object[] {
             "None",
-            "require explicit FTP over TLS",
-            "require implicit FTP over TLS"});
+            "Require implicit FTP over TLS",
+            "Require explicit FTP over TLS"});
             this.cEncryption.Location = new System.Drawing.Point(145, 54);
             this.cEncryption.Name = "cEncryption";
             this.cEncryption.Size = new System.Drawing.Size(173, 21);

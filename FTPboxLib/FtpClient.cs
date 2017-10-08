@@ -106,14 +106,11 @@ namespace FTPboxLib
                     ValidateCertificate?.Invoke(null, e);
                     x.Accept = e.IsTrusted;
                 };
-
-                // Change Security Protocol
-                if (Controller.Account.FtpsMethod == FtpsMethod.Explicit)
-                    _ftpc.EncryptionMode = FtpEncryptionMode.Explicit;
-                else if (Controller.Account.FtpsMethod == FtpsMethod.Implicit)
-                    _ftpc.EncryptionMode = FtpEncryptionMode.Implicit;
             }
 
+            // Change Security Protocol
+            _ftpc.EncryptionMode = (FtpEncryptionMode) Controller.Account.FtpsMethod;
+            
             _ftpc.Credentials = new NetworkCredential(Controller.Account.Username, Controller.Account.Password);
 
             try

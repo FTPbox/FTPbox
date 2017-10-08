@@ -20,6 +20,10 @@ namespace FTPbox.Forms
         public static bool JustPassword = false;
         private string _privateKey;
 
+        private bool ftp => cMode.SelectedIndex == 0;
+        private bool ftps => ftp && cEncryption.SelectedIndex != 0;
+        private bool keyAuth => !ftp && cEncryption.SelectedIndex == 1;
+
         public Setup()
         {
             InitializeComponent();
@@ -54,7 +58,7 @@ namespace FTPbox.Forms
                 tHost.Text = Program.Account.Account.Host;
                 tUsername.Text = Program.Account.Account.Username;
                 nPort.Value = Program.Account.Account.Port;
-                cEncryption.SelectedIndex = (Program.Account.Account.Protocol != FtpProtocol.FTPS) ? 0 : (Program.Account.Account.FtpsMethod == FtpsMethod.Explicit ? 1 : 2);
+                cEncryption.SelectedIndex = (int) Program.Account.Account.FtpsMethod;
                 cMode.SelectedIndex = (Program.Account.Account.Protocol != FtpProtocol.SFTP) ? 0 : 1;
                 cAskForPass.Checked = true;
 
@@ -229,30 +233,17 @@ namespace FTPbox.Forms
         /// </summary>
         private void TryLogin()
         {
-            bool ftporsftp = cMode.SelectedIndex == 0;
-            bool ftps = cMode.SelectedIndex == 0 && cEncryption.SelectedIndex != 0;
-            bool ftpes = cEncryption.SelectedIndex == 1;
-
             Program.Account.AddAccount(tHost.Text, tUsername.Text, tPass.Text, Convert.ToInt32(nPort.Value));
-            if (ftporsftp && ftps)
-                Program.Account.Account.Protocol = FtpProtocol.FTPS;
-            else if (ftporsftp)
-                Program.Account.Account.Protocol = FtpProtocol.FTP;
-            else
-                Program.Account.Account.Protocol = FtpProtocol.SFTP;
-
-            if (!ftps)
-                Program.Account.Account.FtpsMethod = FtpsMethod.None;
-            else if (ftpes)
-                Program.Account.Account.FtpsMethod = FtpsMethod.Explicit;
-            else
-                Program.Account.Account.FtpsMethod = FtpsMethod.Implicit;
-
-            Program.Account.Account.PrivateKeyFile = (!ftporsftp && cEncryption.SelectedIndex == 1) ? _privateKey : null;
+            Program.Account.Account.Protocol = ftps ? FtpProtocol.FTPS : (FtpProtocol)cMode.SelectedIndex;
+            Program.Account.Account.FtpsMethod = (FtpsMethod) cEncryption.SelectedIndex;
+            Program.Account.Account.PrivateKeyFile = (keyAuth) ? _privateKey : null;
 
             try
             {
                 Program.Account.InitClient();
+
+                Program.Account.Client.ValidateCertificate += fMain.CheckCertificate;
+
                 Program.Account.Client.Connect();
                 Log.Write(l.Debug, "Connected: {0}", Program.Account.Client.IsConnected);
 
@@ -269,6 +260,7 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
+                Common.LogError(ex);
                 MessageBox.Show("Could not connect to FTP server. Check your account details and try again."
                     + Environment.NewLine + " Error message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -494,22 +486,23 @@ namespace FTPbox.Forms
 
         private void cMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            nPort.Value = cMode.SelectedIndex != 1 ? 21 : 22;
+            nPort.Value = ftp ? 21 : 22;
 
             labKeyPath.Text = string.Empty;
             cEncryption.Items.Clear();
-            cEncryption.Items.AddRange(cMode.SelectedIndex == 0
-                ? new object[] {"None", "require explicit FTP over TLS", "require implicit FTP over TLS"}
-                : new object[] {"Normal", "public key authentication"});
+            cEncryption.Items.AddRange( 
+                ftp
+                ? new object[] {"None", "Require implicit FTP over TLS", "Require explicit FTP over TLS" }
+                : new object[] {"Normal", "Public Key Authentication"});
             cEncryption.SelectedIndex = 0;
 
-            labEncryption.Text = cMode.SelectedIndex == 0 ? Common.Languages[UiControl.Encryption] : Common.Languages[UiControl.Authentication];
+            labEncryption.Text = ftp ? Common.Languages[UiControl.Encryption] : Common.Languages[UiControl.Authentication];
         }
 
         private void cEncryption_SelectedIndexChanged(object sender, EventArgs e)
         {
             labKeyPath.Text = string.Empty;
-            if (cMode.SelectedIndex != 1 || cEncryption.SelectedIndex != 1) return;
+            if (ftp || cEncryption.SelectedIndex != 1) return;
 
             var ofd = new OpenFileDialog() { InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), Multiselect = false };
 
