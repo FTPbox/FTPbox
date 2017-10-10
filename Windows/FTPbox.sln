@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FTPbox", "FTPbox\FTPbox.csproj", "{934DC82D-E5FD-421B-932B-7F0135E0EB8B}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FTPbox_setup", "FTPbox_setup\FTPbox_setup.vdproj", "{8B28C55B-83C5-4C33-8A84-3B5C34CB2B4B}"
@@ -58,5 +60,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2D549139-1D08-431F-8A4F-96B1B483A104}
 	EndGlobalSection
 EndGlobal
