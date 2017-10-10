@@ -334,19 +334,16 @@ namespace FTPboxLib
             }
             
             var di = new DirectoryInfo(folder.LocalPath);
-            foreach (var d in di.GetDirectories("*", SearchOption.AllDirectories).Where(x => !remoteFilesList.Contains(_controller.GetCommonPath(x.FullName, true))))
+            foreach (var d in di.GetDirectories("*", SearchOption.AllDirectories))
             {
+                var cpath = _controller.GetCommonPath(d.FullName, true);
+
+                if (remoteFilesList.Contains(cpath)) continue;
                 if (!_controller.ItemGetsSynced(d.FullName, true)) continue;
 
                 Add(new SyncQueueItem (_controller)
                 {
-                    Item = new ClientItem{
-                        Name = d.Name,
-                        FullPath = d.FullName,
-                        Type = ClientItemType.Folder,
-                        LastWriteTime = DateTime.Now,   // Doesn't matter
-                        Size = 0x0                      // Doesn't matter
-                    },
+                    Item = new ClientItem(d) { FullPath = d.FullName },
                     ActionType = ChangeAction.changed,
                     Status = StatusType.Waiting,
                     SyncTo = SyncTo.Remote
@@ -361,20 +358,13 @@ namespace FTPboxLib
                 if (!remoteFilesList.Contains(cpath) || _controller.FileLog.GetLocal(cpath) != f.LastWriteTime)
                     Add(new SyncQueueItem(_controller)
                     {
-                        Item = new ClientItem
-                        {
-                            Name = f.Name,
-                            FullPath = f.FullName,
-                            Type = ClientItemType.File,
-                            LastWriteTime = File.GetLastWriteTime(f.FullName),
-                            Size = new FileInfo(f.FullName).Length
-                        },
+                        Item = new ClientItem(f),
                         ActionType = ChangeAction.changed,
                         Status = StatusType.Waiting,
                         SyncTo = SyncTo.Remote
                     });
             }
-        }        
+        }
 
         /// <summary>
         /// Delete the specified item (folder or file)
@@ -542,8 +532,9 @@ namespace FTPboxLib
                 return StatusType.Failure;
             }
 
+            var dInfo = new DirectoryInfo(item.LocalPath);
             // Look for local files that should be deleted
-            foreach (var local in new DirectoryInfo(item.LocalPath).GetFiles("*", SearchOption.AllDirectories))
+            foreach (var local in dInfo.GetFiles("*", SearchOption.AllDirectories))
             {
                 var cpath = _controller.GetCommonPath(local.FullName, true);
                 // continue if the file is ignored
@@ -551,38 +542,29 @@ namespace FTPboxLib
                 // continue if the file was found in the remote list
                 if (allItems.Any(x => _controller.GetCommonPath(x.FullPath, false) == cpath)) continue;
                 // continue if the file is not in the log, or is changed compared to the logged data TODO: Maybe send to remote folder?
+                var tbaItem = new SyncQueueItem(_controller)
+                {
+                    Item = new ClientItem(local),
+                    ActionType = ChangeAction.created
+                };
                 if (!_controller.FileLog.Contains(cpath) || _controller.FileLog.GetLocal(cpath) != local.LastWriteTime)
-                    Add(new SyncQueueItem(_controller)
-                    {
-                        Item = new ClientItem
-                        {
-                            Name = local.Name,
-                            FullPath = local.FullName,
-                            Type = ClientItemType.File,
-                            LastWriteTime = local.LastWriteTime,
-                            Size = local.Length
-                        },
-                        ActionType = ChangeAction.created,
-                        SyncTo = SyncTo.Remote
-                    });
+                {
+                    // The file has not been uploaded yet
+                    tbaItem.Item.FullPath = local.FullName;
+                    tbaItem.ActionType = ChangeAction.created;
+                    tbaItem.SyncTo = SyncTo.Remote;
+                }
                 else
+                {
                     // Seems like the file was deleted from the remote folder
-                    Add(new SyncQueueItem(_controller)
-                    {
-                        Item = new ClientItem
-                        {
-                            FullPath = cpath,
-                            Name = local.Name,
-                            Type = ClientItemType.File,
-                            LastWriteTime = local.LastWriteTime,
-                            Size = local.Length
-                        },
-                        ActionType = ChangeAction.deleted,
-                        SyncTo = SyncTo.Local
-                    });
+                    tbaItem.Item.FullPath = cpath;
+                    tbaItem.ActionType = ChangeAction.deleted;
+                    tbaItem.SyncTo = SyncTo.Local;
+                }
+                Add(tbaItem);
             }
             // Look for local folders that should be deleted
-            foreach (var local in new DirectoryInfo(item.LocalPath).GetDirectories("*", SearchOption.AllDirectories))
+            foreach (var local in dInfo.GetDirectories("*", SearchOption.AllDirectories))
             {
                 var cpath = _controller.GetCommonPath(local.FullName, true);
                 // continue if the folder is ignored
@@ -595,14 +577,7 @@ namespace FTPboxLib
                 // Seems like the folder was deleted from the remote folder
                 Add(new SyncQueueItem(_controller)
                 {
-                    Item = new ClientItem
-                    {
-                        FullPath = _controller.GetCommonPath(local.FullName, true),
-                        Name = local.Name,
-                        Type = ClientItemType.Folder,
-                        LastWriteTime = DateTime.MinValue, // Doesn't matter
-                        Size = 0x0 // Doesn't matter
-                    },
+                    Item = new ClientItem(local) { FullPath = _controller.GetCommonPath(local.FullName, true) },
                     ActionType = ChangeAction.deleted,
                     SyncTo = SyncTo.Local
                 });
