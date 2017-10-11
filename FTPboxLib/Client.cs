@@ -107,7 +107,8 @@ namespace FTPboxLib
         public TransferStatus SafeDownload(SyncQueueItem i)
         {
             Notifications.ChangeTrayText(MessageType.Downloading, i.Item.Name);
-            var temp = Common._tempLocal(i.LocalPath, Controller.Account.TempFilePrefix);
+            var temp = Path.GetTempFileName();
+
             try
             {
                 // download to a temp file...
