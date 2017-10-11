@@ -116,13 +116,13 @@ namespace FTPboxLib
                     Download(i, file);
                 }
 
-                if (i.Item.Size == new FileInfo(temp).Length)
+                if (Controller.TransferValidator.Validate(temp, i.Item))
                 {
-                    Controller.FolderWatcher.Pause();   // Pause Watchers
+                    Controller.FolderWatcher.Pause();
                     Common.RecycleOrDeleteFile(i.LocalPath);
 
                     File.Move(temp, i.LocalPath);
-                    Controller.FolderWatcher.Resume(); // Resume Watchers
+                    Controller.FolderWatcher.Resume();
                     return TransferStatus.Success;
                 }
             }
@@ -169,13 +169,19 @@ namespace FTPboxLib
                 return TransferStatus.Failure;
             }
 
-            if (i.Item.Size == SizeOf(temp))
+            if (Controller.TransferValidator.Validate(i.Item, temp))
             {
-                if (Exists(i.CommonPath)) Remove(i.CommonPath);
+                if (Exists(i.CommonPath))
+                {
+                    Log.Write(l.Debug, $"Replacing remote file: [{i.CommonPath}]");
+                    Remove(i.CommonPath);
+                }
+
                 Rename(temp, i.CommonPath);
 
                 return TransferStatus.Success;
             }
+
             Remove(temp);
             return TransferStatus.Failure;
         }

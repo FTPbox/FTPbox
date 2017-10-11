@@ -76,6 +76,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="FileLog.cs" />
     <Compile Include="FileLogItem.cs" />
+    <Compile Include="TransferValidator.cs" />
     <Compile Include="FolderWatcher.cs" />
     <Compile Include="FtpClient.cs" />
     <Compile Include="IgnoreList.cs" />

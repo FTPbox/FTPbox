@@ -46,6 +46,8 @@ namespace FTPboxLib
             SyncQueue = new SyncQueue(this);
 
             InitClient();
+
+            TransferValidator = new SizeTransferValidator(this);
         }
 
         public void InitClient()
@@ -317,6 +319,8 @@ namespace FTPboxLib
             }
             Log.Write(l.Info, "Loaded {0} local directories and {1} files", Common.LocalFolders.Count, Common.LocalFiles.Count);
         }
+
+        internal TransferValidator TransferValidator;
 
         #endregion
     }
