@@ -85,17 +85,13 @@ namespace FTPboxLib
             }
         }
 
-        public abstract void Download(string path, string localPath);
+        public abstract Task Download(string path, string localPath);
 
-        public abstract void Download(SyncQueueItem i, Stream fileStream);
+        public abstract Task Download(SyncQueueItem i, Stream fileStream);
 
-        public abstract Task DownloadAsync(SyncQueueItem i, Stream fileStream);
+        public abstract Task Upload(string localPath, string path);
 
-        public abstract void Upload(string localPath, string path);
-
-        public abstract void Upload(SyncQueueItem i, Stream uploadStream, string path);
-
-        public abstract Task UploadAsync(SyncQueueItem i, Stream uploadStream, string path);
+        public abstract Task Upload(SyncQueueItem i, Stream uploadStream, string path);
 
         /// <summary>
         ///     Download to a temporary file.
@@ -114,7 +110,7 @@ namespace FTPboxLib
                 // download to a temp file...
                 using (var file = File.OpenWrite(temp))
                 {
-                    await DownloadAsync(i, file);
+                    await Download(i, file);
                 }
 
                 if (Controller.TransferValidator.Validate(temp, i.Item))
@@ -160,7 +156,7 @@ namespace FTPboxLib
                 // upload to a temp file...
                 using (Stream file = File.OpenRead(i.LocalPath))
                 {
-                    await UploadAsync(i, file, temp);
+                    await Upload(i, file, temp);
                 }
             }
             catch (Exception ex)
@@ -264,7 +260,7 @@ namespace FTPboxLib
             Log.Write(l.Client, "About to delete: {0}", path);
             // Empty the folder before deleting it
             // List is reversed to delete an files before their parent folders
-            foreach (var i in ListRecursive(path, skipIgnored).Reverse())
+            foreach (var i in (await ListRecursive(path, skipIgnored)).Reverse())
             {
                 Console.Write("\r Removing: {0,50}", i.FullPath);
                 if (i.Type == ClientItemType.File)
@@ -358,41 +354,34 @@ namespace FTPboxLib
         /// </summary>
         /// <param name="path">The directory to list inside</param>
         /// <returns></returns>
-        public abstract IEnumerable<ClientItem> GetFileListing(string path);
-
-        public abstract Task<IEnumerable<ClientItem>> GetFileListingAsync(string path);
+        public abstract Task<IEnumerable<ClientItem>> GetFileListing(string path);
 
         /// <summary>
         ///     Returns a non-recursive list of files/folders inside the specified path
         /// </summary>
         /// <param name="cpath">path to folder to list inside</param>
         /// <param name="skipIgnored">if true, ignored items are not returned</param>
-        public virtual IEnumerable<ClientItem> List(string cpath, bool skipIgnored = true)
+        public virtual async Task<IEnumerable<ClientItem>> List(string cpath, bool skipIgnored = true)
         {
             ListingFailed = false;
             UnsetKeepAlive();
 
-            List<ClientItem> list;
-
             try
             {
-                list = GetFileListing(cpath).ToList();
+                var list = await GetFileListing(cpath);
+                return list
+                    .Where(x => x.Type != ClientItemType.Other)
+                    .Where(x => !skipIgnored || (skipIgnored && !x.FullPath.Contains("webint")))
+                    .Where(x => x.Name != "." && x.Name != "..");
             }
             catch (Exception ex)
             {
                 ex.LogException();
                 ListingFailed = true;
-                yield break;
+                return default(IEnumerable<ClientItem>);
             }
 
-            list.RemoveAll(x => x.Name == "." || x.Name == "..");
-            if (skipIgnored)
-                list.RemoveAll(x => x.FullPath.Contains("webint"));
-
-            foreach (var f in list.Where(x => x.Type != ClientItemType.Other))
-                yield return f;
-
-            SetKeepAlive();
+            //SetKeepAlive();
         }
 
         /// <summary>
@@ -400,20 +389,27 @@ namespace FTPboxLib
         /// </summary>
         /// <param name="cpath">path to folder to list inside</param>
         /// <param name="skipIgnored">if true, ignored items are not returned</param>
-        public virtual IEnumerable<ClientItem> ListRecursive(string cpath, bool skipIgnored = true)
+        public virtual async Task<IEnumerable<ClientItem>> ListRecursive(string cpath, bool skipIgnored = true)
         {
-            var list = new List<ClientItem>(List(cpath, skipIgnored).ToList());
-            if (ListingFailed) yield break;
+            var list = await List(cpath, skipIgnored);
+
+            if (ListingFailed) return default(IEnumerable<ClientItem>);
 
             if (skipIgnored)
-                list.RemoveAll(x => !Controller.ItemGetsSynced(x.FullPath, false));
+                list = list.Where(x => Controller.ItemGetsSynced(x.FullPath, false));
 
-            foreach (var f in list.Where(x => x.Type == ClientItemType.File))
-                yield return f;
+            var subItems = list.Where(x => x.Type == ClientItemType.File).ToList();
 
             foreach (var d in list.Where(x => x.Type == ClientItemType.Folder))
-                foreach (var f in ListRecursiveInside(d, skipIgnored))
-                    yield return f;
+            {
+                subItems.Add(d);
+                foreach (var f in await ListRecursiveInside(d, skipIgnored))
+                {
+                    subItems.Add(f);
+                }
+            }
+
+            return subItems;
         }
 
         /// <summary>
@@ -421,24 +417,29 @@ namespace FTPboxLib
         /// </summary>
         /// <param name="p">The clientItem (should be of type directory) to list inside</param>
         /// <param name="skipIgnored">if true, ignored items are not returned</param>
-        private IEnumerable<ClientItem> ListRecursiveInside(ClientItem p, bool skipIgnored = true)
+        private async Task<IEnumerable<ClientItem>> ListRecursiveInside(ClientItem p, bool skipIgnored = true)
         {
-            yield return p;
-
             var cpath = Controller.GetCommonPath(p.FullPath, false);
 
-            var list = new List<ClientItem>(List(cpath, skipIgnored).ToList());
-            if (ListingFailed) yield break;
+            var list = await List(cpath, skipIgnored);
+
+            if (ListingFailed) return default(IEnumerable<ClientItem>);
 
             if (skipIgnored)
-                list.RemoveAll(x => !Controller.ItemGetsSynced(x.FullPath, false));
-
-            foreach (var f in list.Where(x => x.Type == ClientItemType.File))
-                yield return f;
+                list = list.Where(x => Controller.ItemGetsSynced(x.FullPath, false));
+            
+            var subItems = list.Where(x => x.Type == ClientItemType.File).ToList();
 
             foreach (var d in list.Where(x => x.Type == ClientItemType.Folder))
-                foreach (var f in ListRecursiveInside(d, skipIgnored))
-                    yield return f;
+            {
+                subItems.Add(d);
+                foreach (var f in await ListRecursiveInside(d, skipIgnored))
+                {
+                    subItems.Add(f);
+                }
+            }
+
+            return subItems;
         }
 
         /// <summary>

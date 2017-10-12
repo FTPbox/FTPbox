@@ -150,41 +150,19 @@ namespace FTPboxLib
             await _ftpc.DisconnectAsync();
         }
 
-        public override void Download(string path, string localPath)
+        public override async Task Download(string path, string localPath)
         {
-            using (Stream file = File.OpenWrite(localPath), rem = _ftpc.OpenRead(path))
+            using (Stream fileStream = File.OpenWrite(localPath), rem = await _ftpc.OpenReadAsync(path))
             {
                 var buf = new byte[8192];
                 int read;
 
-                while ((read = rem.Read(buf, 0, buf.Length)) > 0)
-                    file.Write(buf, 0, read);
+                while ((read = await rem.ReadAsync(buf, 0, buf.Length)) > 0)
+                    await fileStream.WriteAsync(buf, 0, read);
             }
         }
 
-        public override void Download(SyncQueueItem i, Stream fileStream)
-        {
-            var startedOn = DateTime.Now;
-            long transfered = 0;
-            
-            using (var rem = _ftpc.OpenRead(i.CommonPath))
-            {
-                var buf = new byte[8192];
-                int read;
-
-                while ((read = rem.Read(buf, 0, buf.Length)) > 0)
-                {
-                    fileStream.Write(buf, 0, read);
-                    transfered += read;
-
-                    ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
-
-                    ThrottleTransfer(Settings.General.DownloadLimit, transfered, startedOn);
-                }
-            }
-        }
-
-        public override async Task DownloadAsync(SyncQueueItem i, Stream fileStream)
+        public override async Task Download(SyncQueueItem i, Stream fileStream)
         {
             using (var s = await _ftpc.OpenReadAsync(i.CommonPath))
             {
@@ -206,50 +184,31 @@ namespace FTPboxLib
             }
         }
 
-        public override void Upload(string localPath, string path)
+        public override async Task Upload(string localPath, string path)
         {
-            using (Stream file = File.OpenRead(localPath), rem = _ftpc.OpenWrite(path))
+            using (Stream uploadStream = File.OpenRead(localPath))
             {
-                var buf = new byte[8192];
-                int read;
-                long total = 0;
-
-
-                while ((read = file.Read(buf, 0, buf.Length)) > 0)
+                using (var s = await _ftpc.OpenWriteAsync(path))
                 {
-                    rem.Write(buf, 0, read);
-                    total += read;
+                    var startedOn = DateTime.Now;
+                    long transfered = 0;
+                    var buf = new byte[8192];
 
-                    Console.WriteLine("{0}/{1} {2:p}",
-                        total, file.Length,
-                        total / (double)file.Length);
+                    int read;
+                    while ((read = await uploadStream.ReadAsync(buf, 0, buf.Length)) > 0)
+                    {
+                        await s.WriteAsync(buf, 0, read);
+                        transfered += read;
+
+                        Console.WriteLine("{0}/{1} {2:p}",
+                        transfered, uploadStream.Length,
+                        transfered / (double)uploadStream.Length);
+                    }
                 }
             }
         }
 
-        public override void Upload(SyncQueueItem i, Stream uploadStream, string path)
-        {
-            var startedOn = DateTime.Now;
-            long transfered = 0;
-            var buf = new byte[8192];
-
-            using (var rem = _ftpc.OpenWrite(path))
-            {
-                int read;
-
-                while ((read = uploadStream.Read(buf, 0, buf.Length)) > 0)
-                {
-                    rem.Write(buf, 0, read);
-                    transfered += read;
-
-                    ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
-
-                    ThrottleTransfer(Settings.General.UploadLimit, transfered, startedOn);
-                }
-            }
-        }
-
-        public override async Task UploadAsync(SyncQueueItem i, Stream uploadStream, string path)
+        public override async Task Upload(SyncQueueItem i, Stream uploadStream, string path)
         {
             using (var s = await _ftpc.OpenWriteAsync(path))
             {
@@ -399,14 +358,7 @@ namespace FTPboxLib
             return _ftpc.FileExists(cpath) || _ftpc.DirectoryExists(cpath);
         }
 
-        public override IEnumerable<ClientItem> GetFileListing(string path)
-        {
-            var list = _ftpc.GetListing(path);
-            
-            return Array.ConvertAll(list, ConvertItem);
-        }
-
-        public override async Task<IEnumerable<ClientItem>> GetFileListingAsync(string path)
+        public override async Task<IEnumerable<ClientItem>> GetFileListing(string path)
         {
             var list = await _ftpc.GetListingAsync(path);
 

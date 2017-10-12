@@ -13,7 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using FTPboxLib;
 
@@ -23,7 +23,6 @@ namespace FTPbox.Forms
     {
 
         private bool _checkingNodes = false;
-        private Thread _tRefresh;
         private string _titleListing;   // The form text when listing
         private string _titleNormal;    // The form text when not listing
 
@@ -32,7 +31,7 @@ namespace FTPbox.Forms
             InitializeComponent();
         }
 
-        private void fSelectiveSync_Load(object sender, EventArgs e)
+        private async void fSelectiveSync_Load(object sender, EventArgs e)
         {
             var listing = Common.Languages[MessageType.Listing];
             if (listing.StartsWith("FTPbox - ")) listing = listing.Substring("FTPbox - ".Length - 1);
@@ -43,12 +42,12 @@ namespace FTPbox.Forms
             Set_Language(Settings.General.Language);
 
             if (lSelectiveSync.Nodes.Count <= 0)
-                RefreshListing();
+                await RefreshListing();
         }
 
-        private void bRefresh_Click(object sender, EventArgs e)
-        {            
-            RefreshListing();
+        private async void bRefresh_Click(object sender, EventArgs e)
+        {
+            await RefreshListing();
         }
 
         private void bDone_Click(object sender, EventArgs e)
@@ -60,43 +59,37 @@ namespace FTPbox.Forms
         /// <summary>
         /// Refresh the entire list of files/folders
         /// </summary>
-        private void RefreshListing()
+        private async Task RefreshListing()
         {
             this.Text = _titleListing;
             bRefresh.Enabled = false;
-            if (_tRefresh != null && _tRefresh.IsAlive) return;
+            
+            var li = (await Program.Account.Client.List(".")).ToList();
 
-            _tRefresh = new Thread(() =>
+            if (!Program.Account.Client.ListingFailed)
             {
-                var li = new List<ClientItem>(Program.Account.Client.List(".").ToList());
-                if (Program.Account.Client.ListingFailed) goto Finish;
+                lSelectiveSync.Nodes.Clear();
 
-                this.Invoke(new MethodInvoker(() => lSelectiveSync.Nodes.Clear()));
                 // List directories first
-                foreach (var d in li.Where(d => d.Type == ClientItemType.Folder))                    
-                    {
-                        if (d.Name == "webint") continue;
+                foreach (var d in li.Where(d => d.Type == ClientItemType.Folder))
+                {
+                    if (d.Name == "webint") continue;
 
-                        var parent = new TreeNode(d.Name);
-                        this.Invoke(new MethodInvoker(delegate
-                        {
-                            lSelectiveSync.Nodes.Add(parent);
-                            parent.Nodes.Add(new TreeNode("!tempnode!"));
-                        }));
+                    var parent = new TreeNode(d.Name);
 
-                    }
+                    lSelectiveSync.Nodes.Add(parent);
+                    parent.Nodes.Add(new TreeNode("!tempnode!"));
+
+                }
                 // Then list files
-                foreach (var f in li.Where(f => f.Type == ClientItemType.File))                    
-                        this.Invoke(new MethodInvoker(() => lSelectiveSync.Nodes.Add(new TreeNode(f.Name))));
+                foreach (var f in li.Where(f => f.Type == ClientItemType.File))
+                    lSelectiveSync.Nodes.Add(new TreeNode(f.Name));
 
-                this.Invoke(new MethodInvoker(EditNodeCheckboxes));
-            Finish:
-                this.Invoke(new MethodInvoker(delegate { 
-                    bRefresh.Enabled = true;
-                    this.Text = _titleNormal; 
-                }));
-            });
-            _tRefresh.Start();
+                EditNodeCheckboxes();
+            }
+
+            bRefresh.Enabled = true;
+            this.Text = _titleNormal;
         }
 
         private static void CheckSingleRoute(TreeNode tn)
@@ -187,7 +180,7 @@ namespace FTPbox.Forms
             e.Node.Nodes.Add(e.Node.Name);
         }
 
-        private void lSelectiveSync_AfterExpand(object sender, TreeViewEventArgs e)
+        private async void lSelectiveSync_AfterExpand(object sender, TreeViewEventArgs e)
         {
             var path = e.Node.FullPath;
 
@@ -205,41 +198,36 @@ namespace FTPbox.Forms
                     }
                 }
             }
-
-            var tExpandItem = new Thread(() =>
+            
+            IEnumerable<ClientItem> li = new List<ClientItem>();
+            try
             {
-                List<ClientItem> li;
-                try
-                {
-                    li = Program.Account.Client.List(path).ToList();
-                }
-                catch (Exception ex)
-                {
-                    Common.LogError(ex);
-                    return;
-                }
-                // List directories first
-                foreach (var d in li.Where(d => d.Type == ClientItemType.Folder))
-                    this.Invoke(new MethodInvoker(delegate
-                        {
-                            var parent = new TreeNode(d.Name);
-                            e.Node.Nodes.Add(parent);
-                            parent.Nodes.Add(new TreeNode("!tempnode"));
-                        }));
-                // Then list files
-                foreach (var f in li.Where(f => f.Type == ClientItemType.File))                    
-                    this.Invoke(new MethodInvoker(() => e.Node.Nodes.Add(new TreeNode(f.Name))));
+                li = await Program.Account.Client.List(path);
+            }
+            catch (Exception ex)
+            {
+                ex.LogException();
+                return;
+            }
+            // List directories first
+            foreach (var d in li.Where(d => d.Type == ClientItemType.Folder))
+            {
+                var parent = new TreeNode(d.Name);
+                e.Node.Nodes.Add(parent);
+                parent.Nodes.Add(new TreeNode("!tempnode"));
+            }
 
-                foreach (TreeNode tn in e.Node.Nodes)
-                {
-                    var tn1 = tn;
-                    this.Invoke(new MethodInvoker(delegate
-                    {
-                        tn1.Checked = !Program.Account.IgnoreList.isInIgnoredFolders(tn1.FullPath);
-                    }));
-                }
-            });
-            tExpandItem.Start();
+            // Then list files
+            foreach (var f in li.Where(f => f.Type == ClientItemType.File))
+            {
+                e.Node.Nodes.Add(new TreeNode(f.Name));
+            }
+
+            foreach (TreeNode tn in e.Node.Nodes)
+            {
+                var tn1 = tn;
+                tn1.Checked = !Program.Account.IgnoreList.isInIgnoredFolders(tn1.FullPath);
+            }
         }
 
         private void Set_Language(string lan)

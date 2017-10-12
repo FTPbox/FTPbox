@@ -271,7 +271,7 @@ namespace FTPbox.Forms
         /// Get a remote list inside the current directory
         /// and display the results in tRemoteList.        
         /// </summary>
-        private void PopulateRemoteList()
+        private async Task PopulateRemoteList()
         {
             tRemoteList.Nodes.Clear();
 
@@ -291,7 +291,7 @@ namespace FTPbox.Forms
                 tRemoteList.ExpandAll();
             }
             Log.Write(l.Warning, Program.Account.Client.WorkingDirectory);
-            foreach (var c in Program.Account.Client.List(".", false))
+            foreach (var c in await Program.Account.Client.List(".", false))
             {
                 if (c.Type == ClientItemType.Folder)
                 {
@@ -370,7 +370,7 @@ namespace FTPbox.Forms
 
         #region Control event handlers
 
-        private void bPrevious_Click(object sender, EventArgs e)
+        private async void bPrevious_Click(object sender, EventArgs e)
         {
             SwitchTab(_prevTab);
 
@@ -407,7 +407,7 @@ namespace FTPbox.Forms
                 tRemoteList.CheckBoxes = false;
                 tFullRemotePath.Visible = true;
                 labFullPath.Text = Common.Languages[UiControl.FullRemotePath];
-                PopulateRemoteList();
+                await PopulateRemoteList();
             }
 
             bPrevious.Enabled = _currentTab != _initialTab;
@@ -439,7 +439,7 @@ namespace FTPbox.Forms
                     labFullPath.Text = Common.Languages[UiControl.FullRemotePath];
                     gRemoteFolder.Text = Common.Languages[UiControl.RemotePath];
                     SwitchTab(AccountSetupTab.RemoteFolder);
-                    PopulateRemoteList();
+                    await PopulateRemoteList();
                     break;
                 case AccountSetupTab.RemoteFolder:
                     var parentPath = Program.Account.Account.Host + tFullRemotePath.Text;
@@ -456,7 +456,7 @@ namespace FTPbox.Forms
                     labFullPath.Text = Common.Languages[UiControl.UncheckFiles];
                     gRemoteFolder.Text = Common.Languages[UiControl.SelectiveSync];
                     SwitchTab(AccountSetupTab.SelectiveSync);
-                    PopulateRemoteList();
+                    await PopulateRemoteList();
                     break;
             }
             bFinish.Enabled = (_currentTab == AccountSetupTab.FileSyncOption && rSyncAll.Checked) || _currentTab == AccountSetupTab.SelectiveSync;
@@ -609,7 +609,7 @@ namespace FTPbox.Forms
             tFullRemotePath.Text = path;
         }
 
-        private void tRemoteList_AfterExpand(object sender, TreeViewEventArgs e)
+        private async void tRemoteList_AfterExpand(object sender, TreeViewEventArgs e)
         {
             string path = (_currentTab == AccountSetupTab.RemoteFolder) ? "/" : "./";
             path += e.Node.FullPath.Replace('\\', '/');
@@ -619,7 +619,7 @@ namespace FTPbox.Forms
             if (e.Node.Nodes.Count > 0)
                 e.Node.Nodes.Clear();
 
-            foreach (var c in Program.Account.Client.List(path, false))
+            foreach (var c in await Program.Account.Client.List(path, false))
             {
                 if (c.Type == ClientItemType.Folder)
                 {

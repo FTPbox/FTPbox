@@ -1170,8 +1170,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label labContactMe;
         private System.Windows.Forms.Label labFree;
-        private System.IO.FileSystemWatcher fswFiles;
-        private System.IO.FileSystemWatcher fswFolders;
         private System.Windows.Forms.NotifyIcon tray;
         private System.Windows.Forms.ContextMenuStrip trayMenu;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;

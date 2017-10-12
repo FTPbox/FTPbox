@@ -208,7 +208,7 @@ namespace FTPboxLib
 
             // Check for any pending WebUI actions
             if (_controller.WebInterface.DeletePending || _controller.WebInterface.UpdatePending)
-                _controller.WebInterface.Update();
+                await _controller.WebInterface.Update();
             else
             {
                 if (_controller.Account.SyncMethod == SyncMethod.Automatic) SetTimer();
@@ -305,7 +305,7 @@ namespace FTPboxLib
             }
 
             var remoteFilesList = cpExists 
-                ? _controller.Client.ListRecursive(cp).Select(x => x.FullPath).ToList()
+                ? (await _controller.Client.ListRecursive(cp)).Select(x => x.FullPath).ToList()
                 : new List<string>();
 
             remoteFilesList = remoteFilesList.ConvertAll(x => _controller.GetCommonPath(x, false));
@@ -459,7 +459,7 @@ namespace FTPboxLib
                 return StatusType.Failure;
             }
 
-            foreach (var f in _controller.Client.ListRecursive(item.CommonPath))
+            foreach (var f in await _controller.Client.ListRecursive(item.CommonPath))
             {
                 allItems.Add(f);
                 var cpath = _controller.GetCommonPath(f.FullPath, false);

@@ -71,7 +71,7 @@ namespace FTPbox.Forms
                 tray.ShowBalloonTip(100, n.Title, n.Text, ToolTipIcon.Info);
             };
 
-            Program.Account.WebInterface.UpdateFound += (o, n) =>
+            Program.Account.WebInterface.UpdateFound += async (o, n) =>
             {
                 const string msg = "A new version of the web interface is available, do you want to upgrade to it?";
                 if (
@@ -79,29 +79,23 @@ namespace FTPbox.Forms
                     DialogResult.Yes)
                 {
                     Program.Account.WebInterface.UpdatePending = true;
-                    Program.Account.WebInterface.Update();
+                    await Program.Account.WebInterface.Update();
                 }
             };
             Program.Account.WebInterface.InterfaceRemoved += (o, n) =>
             {
-                Invoke(new MethodInvoker(() =>
-                {
-                    chkWebInt.Enabled = true;
-                    labViewInBrowser.Enabled = false;
-                }));
+                chkWebInt.Enabled = true;
+                labViewInBrowser.Enabled = false;
                 Link = string.Empty;
             };
             Program.Account.WebInterface.InterfaceUploaded += (o, n) =>
             {
-                Invoke(new MethodInvoker(() =>
-                {
-                    chkWebInt.Enabled = true;
-                    labViewInBrowser.Enabled = true;
-                }));
+                chkWebInt.Enabled = true;
+                labViewInBrowser.Enabled = true;
                 Link = Program.Account.WebInterfaceLink;
             };
 
-            Notifications.TrayTextNotification += (o, n) => Invoke(new MethodInvoker(() => SetTray(o, n)));
+            Notifications.TrayTextNotification += (o, n) => SetTray(o, n);
 
             _fSetup = new Setup {Tag = this};
             _ftranslate = new Translate {Tag = this};
@@ -180,12 +174,9 @@ namespace FTPbox.Forms
 
                     await Program.Account.Client.Connect();
 
-                    Invoke(new MethodInvoker(() =>
-                    {
-                        ShowInTaskbar = false;
-                        Hide();
-                        ShowInTaskbar = true;
-                    }));
+                    ShowInTaskbar = false;
+                    Hide();
+                    ShowInTaskbar = true;
                 }
                 catch (Exception ex)
                 {
@@ -293,7 +284,7 @@ namespace FTPbox.Forms
 
             if (OfflineMode || !GotPaths) return;
 
-            var e = Program.Account.WebInterface.Exists;
+            var e = await Program.Account.WebInterface.CheckForUpdate();
             chkWebInt.Checked = e;
             labViewInBrowser.Enabled = e;
             _changedfromcheck = false;
@@ -686,8 +677,6 @@ namespace FTPbox.Forms
                     if (!OfflineMode)
                     {
                         await Program.Account.Client.Disconnect();
-                        fswFiles.Dispose();
-                        fswFolders.Dispose();
                     }
                     OfflineMode = true;
                     SetTray(null, new TrayTextNotificationArgs {MessageType = MessageType.Offline});
@@ -822,7 +811,7 @@ namespace FTPbox.Forms
             Settings.SaveGeneral();
         }
 
-        private void chkWebInt_CheckedChanged(object sender, EventArgs e)
+        private async void chkWebInt_CheckedChanged(object sender, EventArgs e)
         {
             if (!Program.Account.Client.IsConnected) return;
 
@@ -836,7 +825,7 @@ namespace FTPbox.Forms
                 chkWebInt.Enabled = false;
 
                 if (!Program.Account.SyncQueue.Running)
-                    Program.Account.WebInterface.Update();
+                    await Program.Account.WebInterface.Update();
             }
             _changedfromcheck = false;
         }
@@ -1053,26 +1042,14 @@ namespace FTPbox.Forms
 
         private void nDownLimit_ValueChanged(object sender, EventArgs e)
         {
-            try
-            {
-                Settings.General.DownloadLimit = Convert.ToInt32(nDownLimit.Value);
-                Settings.SaveGeneral();
-            }
-            catch
-            {
-            }
+            Settings.General.DownloadLimit = Convert.ToInt32(nDownLimit.Value);
+            Settings.SaveGeneral();
         }
 
         private void nUpLimit_ValueChanged(object sender, EventArgs e)
         {
-            try
-            {
-                Settings.General.UploadLimit = Convert.ToInt32(nUpLimit.Value);
-                Settings.SaveGeneral();
-            }
-            catch
-            {
-            }
+            Settings.General.UploadLimit = Convert.ToInt32(nUpLimit.Value);
+            Settings.SaveGeneral();
         }
 
         #endregion

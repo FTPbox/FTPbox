@@ -166,28 +166,15 @@ namespace FTPboxLib
                 throw caughtException;
         }
 
-        public override void Download(string path, string localPath)
+        public override async Task Download(string path, string localPath)
         {
             using (var f = new FileStream(localPath, FileMode.Create, FileAccess.ReadWrite))
             {
-                _sftpc.DownloadFile(path, f);
+                await _sftpc.DownloadAsync(path, f);
             }
         }
 
-        public override void Download(SyncQueueItem i, Stream fileStream)
-        {
-            var startedOn = DateTime.Now;
-            long transfered = 0;
-
-            _sftpc.DownloadFile(i.CommonPath, fileStream, d =>
-            {
-                ReportTransferProgress(new TransferProgressArgs((long) d - transfered, (long) d, i,
-                    startedOn));
-                transfered = (long) d;
-            });
-        }
-
-        public override async Task DownloadAsync(SyncQueueItem i, Stream fileStream)
+        public override async Task Download(SyncQueueItem i, Stream fileStream)
         {
             var startedOn = DateTime.Now;
             long transfered = 0;
@@ -200,26 +187,13 @@ namespace FTPboxLib
             });
         }
 
-        public override void Upload(string localPath, string path)
+        public override async Task Upload(string localPath, string path)
         {
             using (var file = File.OpenRead(localPath))
-                _sftpc.UploadFile(file, path, true);
+                await _sftpc.UploadAsync(file, path, true);
         }
 
-        public override void Upload(SyncQueueItem i, Stream uploadStream, string path)
-        {
-            var startedOn = DateTime.Now;
-            long transfered = 0;
-
-            _sftpc.UploadFile(uploadStream, path, true, d =>
-            {
-                ReportTransferProgress(new TransferProgressArgs((long) d - transfered, (long) d, i,
-                    startedOn));
-                transfered = (long) d;
-            });
-        }
-
-        public override async Task UploadAsync(SyncQueueItem i, Stream uploadStream, string path)
+        public override async Task Upload(SyncQueueItem i, Stream uploadStream, string path)
         {
             var startedOn = DateTime.Now;
             long transfered = 0;
@@ -359,14 +333,7 @@ namespace FTPboxLib
             return _sftpc.Exists(cpath);
         }
 
-        public override IEnumerable<ClientItem> GetFileListing(string path)
-        {
-            var list = _sftpc.ListDirectory(path);
-
-            return Array.ConvertAll(list.ToArray(), ConvertItem);
-        }
-
-        public override async Task<IEnumerable<ClientItem>> GetFileListingAsync(string path)
+        public override async Task<IEnumerable<ClientItem>> GetFileListing(string path)
         {
             var list = await _sftpc.ListDirectoryAsync(path);
 

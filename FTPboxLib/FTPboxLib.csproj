@@ -80,7 +80,6 @@
     <Compile Include="FolderWatcher.cs" />
     <Compile Include="FtpClient.cs" />
     <Compile Include="IgnoreList.cs" />
-    <Compile Include="INIclass.cs" />
     <Compile Include="Notifications.cs" />
     <Compile Include="Profile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

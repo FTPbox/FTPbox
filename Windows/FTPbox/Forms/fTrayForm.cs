@@ -31,7 +31,7 @@ namespace FTPbox.Forms
             Notifications.TrayTextNotification += (o, n) =>
             {
                 if (IsHandleCreated)
-                    Invoke(new MethodInvoker(() => SetStatusLabel(o, n)));
+                    SetStatusLabel(o, n);
                 else
                     _lastStatus = n;
             };
@@ -44,20 +44,17 @@ namespace FTPbox.Forms
             // Make sure the border doesn't appear
             Text = string.Empty;
 
-            Notifications.RecentListChanged += (o, n) => Invoke(new MethodInvoker(LoadRecent));
+            Notifications.RecentListChanged += (o, n) => LoadRecent();
 
             Program.Account.Client.TransferProgress += (o, n) =>
             {
                 // Only when Downloading/Uploading.
                 if (string.IsNullOrWhiteSpace(_lastStatus.AssossiatedFile)) return;
+                
+                // Get status progress for the transfer
+                var progress = string.Format("{0,3}% - {1}", n.Progress, n.Rate);
                 // Update item in recent list
-                Invoke(new MethodInvoker(() =>
-                {
-                    // Get status progress for the transfer
-                    var progress = string.Format("{0,3}% - {1}", n.Progress, n.Rate);
-
-                    _transferItem.FileStatusLabel = string.Format(_transferItem.SubTitleFormat, progress);
-                }));
+                _transferItem.FileStatusLabel = string.Format(_transferItem.SubTitleFormat, progress);
             };
             // Set the status label and load the recent files
             SetStatusLabel(null, _lastStatus);
@@ -215,12 +212,9 @@ namespace FTPbox.Forms
         {
             if (!IsHandleCreated) return;
 
-            Invoke(new MethodInvoker(() =>
-            {
-                // Set the status label and load the recent files
-                SetStatusLabel(null, _lastStatus);
-                LoadRecent();
-            }));
+            // Set the status label and load the recent files
+            SetStatusLabel(null, _lastStatus);
+            LoadRecent();
         }
     }
 }
