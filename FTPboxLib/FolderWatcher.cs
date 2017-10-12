@@ -10,6 +10,8 @@
  * Watch for changes in the local folder and add any changes to the SyncQueue
  */
 
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
@@ -69,6 +71,27 @@ namespace FTPboxLib
             _fsWatcher.EnableRaisingEvents = true;
         }
 
+        Dictionary<string, DateTime> raisedList = new Dictionary<string, DateTime>();
+
+        // avoid queuing the same file multiple times
+        private bool isRecentlyRaised(string path)
+        {
+            if (raisedList.ContainsKey(path))
+            {
+                var t = raisedList[path];
+
+                if (DateTime.Now.Subtract(t).TotalSeconds < 1)
+                    return true;
+
+                raisedList[path] = DateTime.Now;
+            }
+            else
+            {
+                raisedList.Add(path, DateTime.Now);
+            }
+            return false;
+        }
+
         #region Private Handlers
 
         /// <summary>
@@ -76,6 +99,9 @@ namespace FTPboxLib
         /// </summary>
         private void OnChanged(object source, FileSystemEventArgs e)
         {
+            if (isRecentlyRaised(e.FullPath))
+                return;
+
             if (!_controller.ItemGetsSynced(e.FullPath, true) || (!File.Exists(e.FullPath) && !Directory.Exists(e.FullPath))) return;
 
             var retries = 0;
