@@ -261,7 +261,7 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                Common.LogError(ex);
+                ex.LogException();
                 MessageBox.Show("Could not connect to FTP server. Check your account details and try again."
                     + Environment.NewLine + " Error message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

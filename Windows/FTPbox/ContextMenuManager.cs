@@ -121,9 +121,9 @@ namespace FTPbox
                 else
                     Clipboard.SetText(link);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Common.LogError(e);
+                ex.LogException();
             }
             _dtLastContextAction = DateTime.Now;
         }
@@ -190,9 +190,9 @@ namespace FTPbox
             {
                 Process.Start(link);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Common.LogError(e);
+                ex.LogException();
             }
         }
 

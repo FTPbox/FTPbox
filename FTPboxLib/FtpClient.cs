@@ -281,7 +281,7 @@ namespace FTPboxLib
             }
             catch (Exception ex)
             {
-                Common.LogError(ex);
+                ex.LogException();
                 await Reconnect();
             }
         }

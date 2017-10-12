@@ -38,7 +38,6 @@ namespace FTPboxLib
                 { "he", "Hebrew" }, { "sr", "Serbian" }, { "src", "Serbian, Cyrillic" }, { "eu", "Basque" }, { "ar", "Arabic" }, { "bg", "Bulgarian" }, { "id", "Indonesian" }
             }.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
-
         #endregion
 
         #region Methods
@@ -191,24 +190,6 @@ namespace FTPboxLib
             if (!string.IsNullOrWhiteSpace(name))
                 Log.Write(l.Debug, "File {0} is locked: False", name);
             return false;
-        }
-
-        /// <summary>
-        /// displays details of the thrown exception in the console
-        /// </summary>
-        /// <param name="error"></param>
-        public static void LogError(Exception error)
-        {
-            Log.Write(l.Error, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            Log.Write(l.Error, "Message: {0}", error.Message);
-            Log.Write(l.Error, "--");
-            Log.Write(l.Error, "StackTrace: {0}", error.StackTrace);
-            Log.Write(l.Error, "--");
-            Log.Write(l.Error, "Source: {0} Type: {1}", error.Source, error.GetType().ToString());
-            Log.Write(l.Error, "--");
-            foreach (KeyValuePair<string, string> s in error.Data)
-                Log.Write(l.Error, "key: {0} value: {1}", s.Key, s.Value);
-            Log.Write(l.Error, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
         public static void RecycleOrDeleteFile(string path)

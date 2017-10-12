@@ -75,7 +75,7 @@ namespace FTPboxLib
             }
             catch (Exception ex)
             {
-                Common.LogError(ex);
+                ex.LogException();
                 Notifications.ChangeTrayText(MessageType.Disconnected);
                 ReconnectingFailed.SafeInvoke(null, EventArgs.Empty);
             }
@@ -129,7 +129,7 @@ namespace FTPboxLib
             }
             catch (Exception ex)
             {
-                Common.LogError(ex);
+                ex.LogException();
                 CheckWorkingDirectory();
             }
 
@@ -165,7 +165,7 @@ namespace FTPboxLib
             }
             catch (Exception ex)
             {
-                Common.LogError(ex);
+                ex.LogException();
                 CheckWorkingDirectory();
                 return TransferStatus.Failure;
             }
@@ -240,7 +240,7 @@ namespace FTPboxLib
             }
             catch (Exception ex)
             {
-                Common.LogError(ex);
+                ex.LogException();
                 if (!Exists(path)) throw;
             }
         }
@@ -318,8 +318,8 @@ namespace FTPboxLib
             }
             catch (Exception ex)
             {
-                Log.Write(l.Warning, "===> {0} is a folder", path);
-                Common.LogError(ex);
+                Log.Write(l.Warning, $"Path is probably a folder: {path}");
+                ex.LogException();
             }
 
             return dt;
@@ -380,7 +380,7 @@ namespace FTPboxLib
             }
             catch (Exception ex)
             {
-                Common.LogError(ex);
+                ex.LogException();
                 ListingFailed = true;
                 yield break;
             }
@@ -462,7 +462,7 @@ namespace FTPboxLib
             catch (Exception ex)
             {
                 if (!IsConnected) Log.Write(l.Warning, "Client not connected!");
-                Common.LogError(ex);
+                ex.LogException();
                 return false;
             }
         }

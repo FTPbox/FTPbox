@@ -105,12 +105,12 @@ namespace FTPboxLib
                 }
                 catch (SshAuthenticationException ex)
                 {
-                    Common.LogError(ex);
+                    ex.LogException();
                     caughtException = ex;
                 }
                 catch (SshConnectionException ex)
                 {
-                    Common.LogError(ex);
+                    ex.LogException();
                     caughtException = ex;
                 }
             });
@@ -157,7 +157,7 @@ namespace FTPboxLib
                 }
                 catch (Exception ex)
                 {
-                    Common.LogError(ex);
+                    ex.LogException();
                     caughtException = ex;
                 }
             });
@@ -242,7 +242,7 @@ namespace FTPboxLib
             }
             catch (Exception ex)
             {
-                Common.LogError(ex);
+                ex.LogException();
                 await Reconnect();
             }
         }
@@ -258,7 +258,7 @@ namespace FTPboxLib
                 }
                 catch (Exception ex)
                 {
-                    Common.LogError(ex);
+                    ex.LogException();
                     caughtException = ex;
                 }
             });
@@ -278,7 +278,7 @@ namespace FTPboxLib
                 }
                 catch (Exception ex)
                 {
-                    Common.LogError(ex);
+                    ex.LogException();
                     caughtException = ex;
                 }
             });
@@ -305,7 +305,7 @@ namespace FTPboxLib
                 }
                 catch (Exception ex)
                 {
-                    Common.LogError(ex);
+                    ex.LogException();
                     caughtException = ex;
                 }
             });
@@ -346,7 +346,7 @@ namespace FTPboxLib
 
         public override void SetCreationTime(SyncQueueItem i, DateTime time)
         {
-            Log.Write(l.Warning, "[Not Supported] On SFTP, cannot set creation time of {0}", i.CommonPath);
+            Log.Write(l.Warning, $"[Not Supported] On SFTP, cannot set creation time of {i.CommonPath}");
         }
 
         public override long SizeOf(string path)

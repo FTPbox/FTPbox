@@ -194,7 +194,7 @@ namespace FTPboxLib
             catch (Exception ex)
             {
                 Log.Write(l.Warning, "Error with version checking");
-                Common.LogError(ex);
+                ex.LogException();
             }
         }
 
@@ -219,7 +219,7 @@ namespace FTPboxLib
             }
             catch (Exception ex)
             {
-                Common.LogError(ex);
+                ex.LogException();
             }
         }
 

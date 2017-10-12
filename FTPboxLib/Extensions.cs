@@ -141,5 +141,19 @@ namespace FTPboxLib
             return string.Format("{0}{1}{2}",
                                  (uint) f.OwnerPermissions, (uint) f.GroupPermissions, (uint) f.OthersPermissions);
         }
+
+        /// <summary>
+        /// displays details of the thrown exception in the console
+        /// </summary>
+        public static void LogException(this Exception error)
+        {
+            Log.Write(l.Error, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            Log.Write(l.Error, $"Message: {error.Message}");
+            Log.Write(l.Error, $"Source: {error.Source} Type: {error.GetType().ToString()}");
+            Log.Write(l.Error, $"StackTrace:\n{error.StackTrace}");
+            foreach (KeyValuePair<string, string> s in error.Data)
+                Log.Write(l.Error, "key: {0} value: {1}", s.Key, s.Value);
+            Log.Write(l.Error, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
     }
 }

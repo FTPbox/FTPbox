@@ -139,7 +139,7 @@ namespace FTPboxLib
         /// </summary>
         private async void OnRenamed(object source, RenamedEventArgs e)
         {
-            Log.Write(l.Debug, "Item {0} was renamed", e.OldName);
+            Log.Write(l.Debug, $"Item was renamed: {e.OldName}");
 
             if (!_controller.ItemGetsSynced(e.FullPath, true) || !_controller.ItemGetsSynced(e.OldFullPath, true))
                 return;
@@ -150,6 +150,9 @@ namespace FTPboxLib
             var renamedToTempFile = new FileInfo(e.FullPath).Attributes.HasFlag(FileAttributes.Temporary);
             // Get common path to old (renamed) file
             var oldCommon = _controller.GetCommonPath(e.OldFullPath, true);
+
+            Log.Write(l.Debug, $"isFile: {isFile} renamedFromTempFile: {renamedFromTempFile} renamedToTempFile: {renamedToTempFile} inFileLog: {_controller.FileLog.Contains(oldCommon)}");
+
             // Add to queue
             //if (isFile && renamedFromTempFile && !renamedToTempFile && !_controller.FileLog.Contains(oldCommon))
             //    AddToQueue(e, ChangeAction.changed);
@@ -191,6 +194,9 @@ namespace FTPboxLib
                     queueItem.Item.NewFullPath = args.FullPath;
                 }
             }
+
+            Log.Write(l.Client, $"Action: {action} Item: {queueItem.CommonPath}");
+
             // Send to the sync queue
             await _controller.SyncQueue.Add(queueItem);
         }

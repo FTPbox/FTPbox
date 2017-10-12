@@ -137,7 +137,7 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                Common.LogError(ex);
+                ex.LogException();
             }
         }
 

@@ -389,7 +389,7 @@ namespace FTPboxLib
             }
             catch (Exception ex)
             {
-                Common.LogError(ex);
+                ex.LogException();
                 _controller.FolderWatcher.Resume();      // Resume watchers
                 return StatusType.Failure;
             }
@@ -403,7 +403,7 @@ namespace FTPboxLib
         {
             try
             {
-                Log.Write(l.Client, "Renaming: {0} into {1}", item.CommonPath, item.NewCommonPath);
+                Log.Write(l.Client, "Renaming: [{0}] -> [{1}]", item.CommonPath, item.NewCommonPath);
                 // Cannot detect remote renaming, atleast not yet
                 if (item.SyncTo == SyncTo.Remote)
                     await _controller.Client.Rename(item.CommonPath, item.NewCommonPath);
@@ -533,8 +533,13 @@ namespace FTPboxLib
                     Item = new ClientItem(local),
                     ActionType = ChangeAction.created
                 };
+
+                Log.Write(l.Info, $"File was not found on server: {cpath}");
+                Log.Write(l.Info, $"Contained in file log: {_controller.FileLog.Contains(cpath)}");
+
                 if (!_controller.FileLog.Contains(cpath) || _controller.FileLog.GetLocal(cpath) != local.LastWriteTime)
                 {
+                    Log.Write(l.Info, $"The file should be uploaded");
                     // The file has not been uploaded yet
                     tbaItem.Item.FullPath = local.FullName;
                     tbaItem.ActionType = ChangeAction.created;
@@ -542,6 +547,7 @@ namespace FTPboxLib
                 }
                 else
                 {
+                    Log.Write(l.Info, $"The file should be deleted");
                     // Seems like the file was deleted from the remote folder
                     tbaItem.Item.FullPath = cpath;
                     tbaItem.ActionType = ChangeAction.deleted;

@@ -123,7 +123,7 @@ namespace FTPbox.Forms
         /// </summary>
         private async Task StartUpWork()
         {
-            Log.Write(l.Debug, "Internet connection available: {0}", ConnectedToInternet().ToString());
+            Log.Write(l.Debug, "Internet connection available: {0}", ConnectedToInternet());
             OfflineMode = false;
 
             if (ConnectedToInternet())
@@ -190,7 +190,7 @@ namespace FTPbox.Forms
                 catch (Exception ex)
                 {
                     Log.Write(l.Warning, "Connecting failed, will retry in 30 seconds...");
-                    Common.LogError(ex);
+                    ex.LogException();
 
                     OfflineMode = true;
                     SetTray(null, new TrayTextNotificationArgs {MessageType = MessageType.Offline});
@@ -395,7 +395,7 @@ namespace FTPbox.Forms
             catch (Exception ex)
             {
                 Log.Write(l.Debug, "Error with version checking");
-                Common.LogError(ex);
+                ex.LogException();
             }
         }
 
@@ -450,7 +450,7 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                Common.LogError(ex);
+                ex.LogException();
             }
         }
 
@@ -720,7 +720,7 @@ namespace FTPbox.Forms
             }
             catch (Exception ex)
             {
-                Common.LogError(ex);
+                ex.LogException();
             }
         }
 
