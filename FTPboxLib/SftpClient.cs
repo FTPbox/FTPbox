@@ -49,7 +49,7 @@ namespace FTPboxLib
             Controller = account;
         }
 
-        public override void Connect(bool reconnecting = false)
+        public override async Task Connect(bool reconnecting = false)
         {
             Notifications.ChangeTrayText(reconnecting ? MessageType.Reconnecting : MessageType.Connecting);
             Log.Write(l.Debug, "{0} client...", reconnecting ? "Reconnecting" : "Connecting");
@@ -67,9 +67,11 @@ namespace FTPboxLib
                     Controller.Account.Username, Controller.Account.Password);
             }
             connectionInfo.Encoding = this.Charset;
+            
+            connectionInfo.AuthenticationBanner += (o, x) =>
+                Log.Write(l.Warning, x.BannerMessage);
 
             _sftpc = new Renci.SshNet.SftpClient(connectionInfo);
-            _sftpc.ConnectionInfo.AuthenticationBanner += (o, x) => Log.Write(l.Warning, x.BannerMessage);
 
             _sftpc.HostKeyReceived += (o, x) =>
             {
@@ -94,9 +96,29 @@ namespace FTPboxLib
                 x.CanTrust = e.IsTrusted;
             };
 
-            _sftpc.Connect();
+            var caughtException = default(Exception);
+            await Task.Run(() =>
+            {
+                try
+                {
+                    _sftpc.Connect();
+                }
+                catch (SshAuthenticationException ex)
+                {
+                    Common.LogError(ex);
+                    caughtException = ex;
+                }
+                catch (SshConnectionException ex)
+                {
+                    Common.LogError(ex);
+                    caughtException = ex;
+                }
+            });
 
-            _sftpc.ErrorOccurred += (o, e) =>
+            if (caughtException != default(Exception))
+                throw caughtException;
+
+            _sftpc.ErrorOccurred += async (o, e) =>
             {
                 if (!IsConnected) Notifications.ChangeTrayText(MessageType.Nothing);
 
@@ -105,7 +127,7 @@ namespace FTPboxLib
                 if (e.Exception is SftpPermissionDeniedException)
                     Log.Write(l.Warning, "Permission denied error occured");
                 if (e.Exception is SshConnectionException)
-                    Reconnect();
+                    await Reconnect();
             };
 
             Controller.HomePath = WorkingDirectory;
@@ -124,9 +146,24 @@ namespace FTPboxLib
             SetKeepAlive();
         }
 
-        public override void Disconnect()
+        public override async Task Disconnect()
         {
-            _sftpc.Disconnect();
+            var caughtException = default(Exception);
+            await Task.Run(() =>
+            {
+                try
+                {
+                    _sftpc.Disconnect();
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex);
+                    caughtException = ex;
+                }
+            });
+
+            if (caughtException != default(Exception))
+                throw caughtException;
         }
 
         public override void Download(string path, string localPath)
@@ -195,7 +232,7 @@ namespace FTPboxLib
             });
         }
 
-        public override void SendKeepAlive()
+        public override async Task SendKeepAlive()
         {
             if (Controller.SyncQueue.Running) return;
 
@@ -206,30 +243,75 @@ namespace FTPboxLib
             catch (Exception ex)
             {
                 Common.LogError(ex);
-                Reconnect();
+                await Reconnect();
             }
         }
 
-        public override void Rename(string oldname, string newname)
+        public override async Task Rename(string oldname, string newname)
         {
-            _sftpc.RenameFile(oldname, newname);
-        }
-
-        protected override void CreateDirectory(string cpath)
-        {
-            _sftpc.CreateDirectory(cpath);
-        }
-
-        public override void Remove(string cpath, bool isFolder = false)
-        {
-            if (isFolder)
+            var caughtException = default(Exception);
+            await Task.Run(() =>
             {
-                _sftpc.DeleteDirectory(cpath);
-            }
-            else
+                try
+                {
+                    _sftpc.RenameFile(oldname, newname);
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex);
+                    caughtException = ex;
+                }
+            });
+
+            if (caughtException != default(Exception))
+                throw caughtException;
+        }
+
+        protected override async Task CreateDirectory(string cpath)
+        {
+            var caughtException = default(Exception);
+            await Task.Run(() =>
             {
-                _sftpc.Delete(cpath);
-            }
+                try
+                {
+                    _sftpc.CreateDirectory(cpath);
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex);
+                    caughtException = ex;
+                }
+            });
+
+            if (caughtException != default(Exception))
+                throw caughtException;
+        }
+
+        public override async Task Remove(string cpath, bool isFolder = false)
+        {
+            var caughtException = default(Exception);
+            await Task.Run(() =>
+            {
+                try
+                {
+                    if (isFolder)
+                    {
+                        _sftpc.DeleteDirectory(cpath);
+                    }
+                    else
+                    {
+                        _sftpc.Delete(cpath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex);
+                    caughtException = ex;
+                }
+            });
+
+            if (caughtException != default(Exception))
+                throw caughtException;
         }
 
         protected override void LogServerInfo()

@@ -110,9 +110,16 @@ namespace FTPboxLib
                 Profiles.Add(def);
             else
                 Profiles[General.DefaultProfile] = def;
-
-            var configProf = JsonConvert.SerializeObject(Profiles, Formatting.Indented);
-            File.WriteAllText(ConfProfiles, configProf);
+            try
+            {
+                var configProf = JsonConvert.SerializeObject(Profiles, Formatting.Indented);
+                File.WriteAllText(ConfProfiles, configProf);
+                Log.Write(l.Info, "Saved profile settings");
+            }
+            catch(Exception ex)
+            {
+                Common.LogError(ex);
+            }
         }
 
         /// <summary>

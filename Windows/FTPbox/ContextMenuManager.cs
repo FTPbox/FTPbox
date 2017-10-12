@@ -132,7 +132,7 @@ namespace FTPbox
         ///     Called when 'Synchronize this file/folder' is clicked from the context menus
         /// </summary>
         /// <param name="path">path to file or folder</param>
-        private static void SyncArgItem(string path)
+        private static async void SyncArgItem(string path)
         {
             if (!path.StartsWith(Program.Account.Paths.Local))
             {
@@ -145,7 +145,7 @@ namespace FTPbox
 
             if (Common.PathIsFile(path) && File.Exists(path))
             {
-                Program.Account.SyncQueue.Add(new SyncQueueItem(Program.Account)
+                await Program.Account.SyncQueue.Add(new SyncQueueItem(Program.Account)
                 {
                     Item = new ClientItem
                     {
@@ -162,7 +162,7 @@ namespace FTPbox
             else if (!Common.PathIsFile(path) && Directory.Exists(path))
             {
                 var di = new DirectoryInfo(path);
-                Program.Account.SyncQueue.Add(new SyncQueueItem(Program.Account)
+                await Program.Account.SyncQueue.Add(new SyncQueueItem(Program.Account)
                 {
                     Item = new ClientItem
                     {

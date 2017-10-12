@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using FTPboxLib;
+using System.Threading.Tasks;
 
 namespace FTPbox.Forms
 {
@@ -231,7 +232,7 @@ namespace FTPbox.Forms
         /// On successful login, move to next tab or
         /// exit if this is a JustPassword dialog.
         /// </summary>
-        private void TryLogin()
+        private async Task TryLogin()
         {
             Program.Account.AddAccount(tHost.Text, tUsername.Text, tPass.Text, Convert.ToInt32(nPort.Value));
             Program.Account.Account.Protocol = ftps ? FtpProtocol.FTPS : (FtpProtocol)cMode.SelectedIndex;
@@ -244,7 +245,7 @@ namespace FTPbox.Forms
 
                 Program.Account.Client.ValidateCertificate += fMain.CheckCertificate;
 
-                Program.Account.Client.Connect();
+                await Program.Account.Client.Connect();
                 Log.Write(l.Debug, "Connected: {0}", Program.Account.Client.IsConnected);
 
                 if (JustPassword)
@@ -415,7 +416,7 @@ namespace FTPbox.Forms
             this.AcceptButton = bNext;
         }
 
-        private void bNext_Click(object sender, EventArgs e)
+        private async void bNext_Click(object sender, EventArgs e)
         {
             switch (_currentTab)
             {
@@ -427,7 +428,7 @@ namespace FTPbox.Forms
                     SwitchTab(AccountSetupTab.Login);
                     break;
                 case AccountSetupTab.Login:
-                    TryLogin();
+                    await TryLogin();
                     break;
                 case AccountSetupTab.LocalFodler:
                     if (!System.IO.Directory.Exists(tLocalPath.Text))
@@ -464,11 +465,11 @@ namespace FTPbox.Forms
             this.AcceptButton = bNext.Enabled ? bNext : bFinish;
         }
 
-        private void bFinish_Click(object sender, EventArgs e)
+        private async void bFinish_Click(object sender, EventArgs e)
         {
             if (JustPassword)
             {
-                TryLogin();
+                await TryLogin();
                 return;
             }
 

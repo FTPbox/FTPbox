@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.FtpClient;
 using System.Net.FtpClient.Async;
+using System.Net.FtpClient.Extensions;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
@@ -58,7 +59,7 @@ namespace FTPboxLib
             _certificates = new X509Certificate2Collection();
         }
 
-        public override void Connect(bool reconnecting = false)
+        public override async Task Connect(bool reconnecting = false)
         {
             Notifications.ChangeTrayText(reconnecting ? MessageType.Reconnecting : MessageType.Connecting);
             Log.Write(l.Debug, "{0} client...", reconnecting ? "Reconnecting" : "Connecting");
@@ -115,7 +116,7 @@ namespace FTPboxLib
 
             try
             {
-                _ftpc.Connect();
+                await _ftpc.ConnectAsync();
             }
             catch (AuthenticationException) when (_ftpc.ClientCertificates.Count <= 0)
             {
@@ -123,7 +124,7 @@ namespace FTPboxLib
                 // attempt to connect will fail with an AuthenticationException. If this is the case, a 
                 // re-connect is attempted, this time with the certificates properly set.
                 // This is a workaround to avoid storing Certificate files locally...
-                Connect();
+                await Connect();
             }
 
             _ftpc.Encoding = this.Charset;
@@ -144,9 +145,9 @@ namespace FTPboxLib
             SetKeepAlive();
         }
 
-        public override void Disconnect()
+        public override async Task Disconnect()
         {
-            _ftpc.Disconnect();
+            await _ftpc.DisconnectAsync();
         }
 
         public override void Download(string path, string localPath)
@@ -185,21 +186,23 @@ namespace FTPboxLib
 
         public override async Task DownloadAsync(SyncQueueItem i, Stream fileStream)
         {
-            var s = await _ftpc.OpenReadAsync(i.CommonPath);
-            var startedOn = DateTime.Now;
-            long transfered = 0;
-
-            var buf = new byte[8192];
-            int read;
-
-            while ((read = s.Read(buf, 0, buf.Length)) > 0)
+            using (var s = await _ftpc.OpenReadAsync(i.CommonPath))
             {
-                await fileStream.WriteAsync(buf, 0, read);
-                transfered += read;
+                var startedOn = DateTime.Now;
+                long transfered = 0;
 
-                ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
+                var buf = new byte[8192];
+                int read;
 
-                ThrottleTransfer(Settings.General.DownloadLimit, transfered, startedOn);
+                while ((read = s.Read(buf, 0, buf.Length)) > 0)
+                {
+                    await fileStream.WriteAsync(buf, 0, read);
+                    transfered += read;
+
+                    ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
+
+                    ThrottleTransfer(Settings.General.DownloadLimit, transfered, startedOn);
+                }
             }
         }
 
@@ -248,59 +251,60 @@ namespace FTPboxLib
 
         public override async Task UploadAsync(SyncQueueItem i, Stream uploadStream, string path)
         {
-            var s = await _ftpc.OpenWriteAsync(path);
-
-            var startedOn = DateTime.Now;
-            long transfered = 0;
-
-            var buf = new byte[8192];
-
-            int read;
-            while ((read = await uploadStream.ReadAsync(buf, 0, buf.Length)) > 0)
+            using (var s = await _ftpc.OpenWriteAsync(path))
             {
-                await s.WriteAsync(buf, 0, read);
-                transfered += read;
+                var startedOn = DateTime.Now;
+                long transfered = 0;
 
-                ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
+                var buf = new byte[8192];
 
-                ThrottleTransfer(Settings.General.UploadLimit, transfered, startedOn);
+                int read;
+                while ((read = await uploadStream.ReadAsync(buf, 0, buf.Length)) > 0)
+                {
+                    await s.WriteAsync(buf, 0, read);
+                    transfered += read;
+
+                    ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
+
+                    ThrottleTransfer(Settings.General.UploadLimit, transfered, startedOn);
+                }
             }
         }
 
-        public override void SendKeepAlive()
+        public override async Task SendKeepAlive()
         {
             if (Controller.SyncQueue.Running) return;
 
             try
             {
-                _ftpc.Execute("NOOP");
+                await _ftpc.ExecuteAsync("NOOP");
             }
             catch (Exception ex)
             {
                 Common.LogError(ex);
-                Reconnect();
+                await Reconnect();
             }
         }
 
-        public override void Rename(string oldname, string newname)
+        public override async Task Rename(string oldname, string newname)
         {
-            _ftpc.Rename(oldname, newname);
+            await _ftpc.RenameAsync(oldname, newname);
         }
 
-        protected override void CreateDirectory(string cpath)
+        protected override async Task CreateDirectory(string cpath)
         {
-            _ftpc.CreateDirectory(cpath);
+            await _ftpc.CreateDirectoryAsync(cpath);
         }
 
-        public override void Remove(string cpath, bool isFolder = false)
+        public override async Task Remove(string cpath, bool isFolder = false)
         {
             if (isFolder)
             {
-                _ftpc.DeleteDirectory(cpath);
+                await _ftpc.DeleteDirectoryAsync(cpath);
             }
             else
             {
-                _ftpc.DeleteFile(cpath);
+                await _ftpc.DeleteFileAsync(cpath);
             }
         }
 

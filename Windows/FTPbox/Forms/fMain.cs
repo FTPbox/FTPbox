@@ -20,7 +20,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using FTPbox.Properties;
 using FTPboxLib;
@@ -55,7 +55,7 @@ namespace FTPbox.Forms
             PopulateLanguages();
         }
 
-        private void fMain_Load(object sender, EventArgs e)
+        private async void fMain_Load(object sender, EventArgs e)
         {
             NetworkChange.NetworkAddressChanged += OnNetworkChange;
 
@@ -111,7 +111,7 @@ namespace FTPbox.Forms
             if (!string.IsNullOrEmpty(Settings.General.Language))
                 Set_Language(Settings.General.Language);
 
-            StartUpWork();
+            await StartUpWork();
 
             CheckForUpdate();
         }
@@ -121,16 +121,16 @@ namespace FTPbox.Forms
         ///     Checks the saved account info, updates the form controls and starts syncing if syncing is automatic.
         ///     If there's no internet connection, puts the program to offline mode.
         /// </summary>
-        private void StartUpWork()
+        private async Task StartUpWork()
         {
             Log.Write(l.Debug, "Internet connection available: {0}", ConnectedToInternet().ToString());
             OfflineMode = false;
 
             if (ConnectedToInternet())
             {
-                CheckAccount();
+                await CheckAccount();
 
-                Invoke(new MethodInvoker(UpdateDetails));
+                await UpdateDetails();
 
                 if (OfflineMode) return;
 
@@ -139,7 +139,7 @@ namespace FTPbox.Forms
                 CheckPaths();
                 Log.Write(l.Debug, "Paths: OK");
 
-                Invoke(new MethodInvoker(UpdateDetails));
+                await UpdateDetails();
 
                 if (!Settings.IsNoMenusMode)
                 {
@@ -156,7 +156,7 @@ namespace FTPbox.Forms
         /// <summary>
         ///     checks if account's information used the last time has changed
         /// </summary>
-        private void CheckAccount()
+        private async Task CheckAccount()
         {
             if (!Program.Account.IsAccountSet || Program.Account.IsPasswordRequired)
             {
@@ -178,7 +178,7 @@ namespace FTPbox.Forms
                     Program.Account.Client.ReconnectingFailed += (o, n) => Log.Write(l.Warning, "Reconnecting failed");
                     Program.Account.Client.ValidateCertificate += CheckCertificate;
 
-                    Program.Account.Client.Connect();
+                    await Program.Account.Client.Connect();
 
                     Invoke(new MethodInvoker(() =>
                     {
@@ -195,7 +195,7 @@ namespace FTPbox.Forms
                     OfflineMode = true;
                     SetTray(null, new TrayTextNotificationArgs {MessageType = MessageType.Offline});
 
-                    _tRetry = new Timer(state => StartUpWork(), null, 30000, 0);
+                    _tRetry = new Timer(async state => await StartUpWork(), null, 30000, 0);
                 }
         }
 
@@ -224,7 +224,7 @@ namespace FTPbox.Forms
         /// <summary>
         ///     Updates the form's labels etc
         /// </summary>
-        public void UpdateDetails()
+        public async Task UpdateDetails()
         {
             Log.Write(l.Debug, "Updating the form details");
 
@@ -300,12 +300,10 @@ namespace FTPbox.Forms
 
             Program.Account.FolderWatcher.Setup();
 
-            // in a separate thread...
-            new Thread(() =>
-            {
-                // ...check local folder for changes
-                var cpath = Program.Account.GetCommonPath(Program.Account.Paths.Local, true);
-                Program.Account.SyncQueue.Add(new SyncQueueItem(Program.Account)
+            // Check local folder for changes
+            var cpath = Program.Account.GetCommonPath(Program.Account.Paths.Local, true);
+            await Program.Account.SyncQueue.Add(
+                new SyncQueueItem(Program.Account)
                 {
                     Item = new ClientItem
                     {
@@ -318,7 +316,6 @@ namespace FTPbox.Forms
                     ActionType = ChangeAction.changed,
                     SyncTo = SyncTo.Remote
                 });
-            }).Start();
         }
 
         /// <summary>
@@ -462,11 +459,14 @@ namespace FTPbox.Forms
         ///     Called from the timer, when remote syncing is automatic.
         /// </summary>
         /// <param name="state"></param>
-        public void StartRemoteSync(object state)
+        public async Task StartRemoteSync(object state)
         {
-            if (Program.Account.Account.SyncMethod == SyncMethod.Automatic) SyncToolStripMenuItem.Enabled = false;
-            Log.Write(l.Debug, "Starting remote sync...");
-            Program.Account.SyncQueue.Add(new SyncQueueItem(Program.Account)
+            if (Program.Account.Account.SyncMethod == SyncMethod.Automatic)
+                SyncToolStripMenuItem.Enabled = false;
+
+            Log.Write(l.Debug, "Remote to Local sync triggered from tray menu");
+
+            await Program.Account.SyncQueue.Add(new SyncQueueItem(Program.Account)
             {
                 Item = new ClientItem
                 {
@@ -667,7 +667,7 @@ namespace FTPbox.Forms
         [DllImport("wininet.dll")]
         private static extern bool InternetGetConnectedState(out int description, int reservedValue);
 
-        public void OnNetworkChange(object sender, EventArgs e)
+        public async void OnNetworkChange(object sender, EventArgs e)
         {
             try
             {
@@ -676,8 +676,8 @@ namespace FTPbox.Forms
                     if (OfflineMode)
                     {
                         while (!ConnectedToInternet())
-                            Thread.Sleep(5000);
-                        StartUpWork();
+                            await Task.Delay(5000);
+                        await StartUpWork();
                     }
                     OfflineMode = false;
                 }
@@ -685,7 +685,7 @@ namespace FTPbox.Forms
                 {
                     if (!OfflineMode)
                     {
-                        Program.Account.Client.Disconnect();
+                        await Program.Account.Client.Disconnect();
                         fswFiles.Dispose();
                         fswFolders.Dispose();
                     }
@@ -1128,11 +1128,12 @@ namespace FTPbox.Forms
             }
         }
 
-        private void SyncToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void SyncToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!Program.Account.Client.IsConnected) return;
+            if (!Program.Account.Client.IsConnected)
+                return;
 
-            StartRemoteSync(".");
+            await StartRemoteSync(".");
         }
 
         public bool ExitedFromTray;

@@ -55,23 +55,23 @@ namespace FTPboxLib
         ///     Connect to the remote servers, with the details from Profile
         /// </summary>
         /// <param name="reconnecting">True if this is an attempt to re-establish a closed connection</param>
-        public abstract void Connect(bool reconnecting = false);
+        public abstract Task Connect(bool reconnecting = false);
 
         /// <summary>
         ///     Close connection to server
         /// </summary>
-        public abstract void Disconnect();
+        public abstract Task Disconnect();
 
         /// <summary>
         ///     Attempt to reconnect to the server. Called when connection has closed.
         /// </summary>
-        public void Reconnect()
+        public async Task Reconnect()
         {
             if (_reconnecting) return;
             try
             {
                 _reconnecting = true;
-                Connect();
+                await Connect();
             }
             catch (Exception ex)
             {
@@ -104,7 +104,7 @@ namespace FTPboxLib
         /// </summary>
         /// <param name="i">The item to download</param>
         /// <returns>TransferStatus.Success on success, TransferStatus.Success on failure</returns>
-        public TransferStatus SafeDownload(SyncQueueItem i)
+        public async Task<TransferStatus> SafeDownload(SyncQueueItem i)
         {
             Notifications.ChangeTrayText(MessageType.Downloading, i.Item.Name);
             var temp = Path.GetTempFileName();
@@ -114,7 +114,7 @@ namespace FTPboxLib
                 // download to a temp file...
                 using (var file = File.OpenWrite(temp))
                 {
-                    Download(i, file);
+                    await DownloadAsync(i, file);
                 }
 
                 if (Controller.TransferValidator.Validate(temp, i.Item))
@@ -138,7 +138,7 @@ namespace FTPboxLib
             return TransferStatus.Failure;
         }
 
-        public TransferStatus SafeUpload(SyncQueueItem i)
+        public async Task<TransferStatus> SafeUpload(SyncQueueItem i)
         {
             // is this the first time we check the files?
             if (Controller.FileLog.IsEmpty())
@@ -160,7 +160,7 @@ namespace FTPboxLib
                 // upload to a temp file...
                 using (Stream file = File.OpenRead(i.LocalPath))
                 {
-                    Upload(i, file, temp);
+                    await UploadAsync(i, file, temp);
                 }
             }
             catch (Exception ex)
@@ -175,22 +175,22 @@ namespace FTPboxLib
                 if (Exists(i.CommonPath))
                 {
                     Log.Write(l.Debug, $"Replacing remote file: [{i.CommonPath}]");
-                    Remove(i.CommonPath);
+                    await Remove(i.CommonPath);
                 }
 
-                Rename(temp, i.CommonPath);
+                await Rename(temp, i.CommonPath);
 
                 return TransferStatus.Success;
             }
 
-            Remove(temp);
+            await Remove(temp);
             return TransferStatus.Failure;
         }
 
         /// <summary>
         ///     Keep the connection to the server alive by sending the NOOP command
         /// </summary>
-        public abstract void SendKeepAlive();
+        public abstract Task SendKeepAlive();
 
         /// <summary>
         ///     Set a timer that will periodically send the NOOP
@@ -201,7 +201,7 @@ namespace FTPboxLib
             // Dispose the existing timer
             UnsetKeepAlive();
 
-            if (_tKeepAlive == null) _tKeepAlive = new Timer(state => SendKeepAlive());
+            if (_tKeepAlive == null) _tKeepAlive = new Timer(async state => await SendKeepAlive());
 
             if (Controller.Account.KeepAliveInterval > 0)
                 _tKeepAlive.Change(1000 * 10, 1000 * Controller.Account.KeepAliveInterval);
@@ -220,23 +220,23 @@ namespace FTPboxLib
         /// </summary>
         /// <param name="oldname">The path to the old file or folder</param>
         /// <param name="newname">The path to the new file or folder</param>
-        public abstract void Rename(string oldname, string newname);
+        public abstract Task Rename(string oldname, string newname);
 
         /// <summary>
         ///     Creates a new directory
         /// </summary>
         /// <param name="path">Path to the directory</param>
-        protected abstract void CreateDirectory(string path);
+        protected abstract Task CreateDirectory(string path);
 
         /// <summary>
         ///     Attempts to create the specified directory
         /// </summary>
         /// <param name="path">Path to the directory</param>
-        public void MakeFolder(string path)
+        public async Task MakeFolder(string path)
         {
             try
             {
-                CreateDirectory(path);
+                await CreateDirectory(path);
             }
             catch (Exception ex)
             {
@@ -250,14 +250,14 @@ namespace FTPboxLib
         /// </summary>
         /// <param name="cpath">Path to the file or folder to delete</param>
         /// <param name="isFolder">If set to <c>true</c>c> the path will be treated as a folder</param>
-        public abstract void Remove(string cpath, bool isFolder = false);
+        public abstract Task Remove(string cpath, bool isFolder = false);
 
         /// <summary>
         ///     Delete a remote folder and everything inside it
         /// </summary>
         /// <param name="path">Path to folder that will be deleted</param>
         /// <param name="skipIgnored">if true, files that are normally ignored will not be deleted</param>
-        public virtual void RemoveFolder(string path, bool skipIgnored = true)
+        public virtual async Task RemoveFolder(string path, bool skipIgnored = true)
         {
             if (!Exists(path)) return;
 
@@ -269,15 +269,15 @@ namespace FTPboxLib
                 Console.Write("\r Removing: {0,50}", i.FullPath);
                 if (i.Type == ClientItemType.File)
                 {
-                    Remove(i.FullPath);
+                    await Remove(i.FullPath);
                 }
                 else
                 {
-                    Remove(i.FullPath, true);
+                    await Remove(i.FullPath, true);
                 }
             }
 
-            Remove(path, true);
+            await Remove(path, true);
 
             Log.Write(l.Client, "Deleted: {0}", path);
         }

@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace FTPboxLib
 {
@@ -97,7 +98,7 @@ namespace FTPboxLib
         /// <summary>
         /// Raised when a file or folder is changed
         /// </summary>
-        private void OnChanged(object source, FileSystemEventArgs e)
+        private async void OnChanged(object source, FileSystemEventArgs e)
         {
             if (isRecentlyRaised(e.FullPath))
                 return;
@@ -120,23 +121,23 @@ namespace FTPboxLib
             }
             // Add to queue
             var actionType = e.ChangeType == WatcherChangeTypes.Changed ? ChangeAction.changed : ChangeAction.created;
-            AddToQueue(e, actionType);
+            await AddToQueue(e, actionType);
         }
 
         /// <summary>
         /// Raised when either a file or a folder was deleted.
         /// </summary>
-        private void OnDeleted(object source, FileSystemEventArgs e)
+        private async void OnDeleted(object source, FileSystemEventArgs e)
         {
             if (!_controller.ItemGetsSynced(e.FullPath, true)) return;
             // Add to queue
-            AddToQueue(e, ChangeAction.deleted);
+            await AddToQueue(e, ChangeAction.deleted);
         }
 
         /// <summary>
         /// Raised when file/folder is renamed
         /// </summary>
-        private void OnRenamed(object source, RenamedEventArgs e)
+        private async void OnRenamed(object source, RenamedEventArgs e)
         {
             Log.Write(l.Debug, "Item {0} was renamed", e.OldName);
 
@@ -150,10 +151,10 @@ namespace FTPboxLib
             // Get common path to old (renamed) file
             var oldCommon = _controller.GetCommonPath(e.OldFullPath, true);
             // Add to queue
-            if (isFile && renamedFromTempFile && !renamedToTempFile && !_controller.FileLog.Contains(oldCommon))
-                AddToQueue(e, ChangeAction.changed);
-            else
-                AddToQueue(e, ChangeAction.renamed);
+            //if (isFile && renamedFromTempFile && !renamedToTempFile && !_controller.FileLog.Contains(oldCommon))
+            //    AddToQueue(e, ChangeAction.changed);
+            //else
+            await AddToQueue(e, ChangeAction.renamed);
         }
         
         #endregion
@@ -161,7 +162,7 @@ namespace FTPboxLib
         /// <summary>
         /// Creates the SyncQueueItem from the given data and adds it to the sync queue
         /// </summary>
-        private void AddToQueue(FileSystemEventArgs e, ChangeAction action)
+        private async Task AddToQueue(FileSystemEventArgs e, ChangeAction action)
         {
             var isFile = Common.PathIsFile(e.FullPath);
             // ignore directory changes
@@ -191,7 +192,7 @@ namespace FTPboxLib
                 }
             }
             // Send to the sync queue
-            _controller.SyncQueue.Add(queueItem);
+            await _controller.SyncQueue.Add(queueItem);
         }
     }
 }
