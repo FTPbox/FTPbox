@@ -26,7 +26,6 @@ using FTPboxLib;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Settings = FTPboxLib.Settings;
-using Timer = System.Threading.Timer;
 
 namespace FTPbox.Forms
 {
@@ -41,7 +40,6 @@ namespace FTPbox.Forms
 
         private TrayTextNotificationArgs _lastTrayStatus = new TrayTextNotificationArgs(MessageType.AllSynced);
 
-        private Timer _tRetry;
         public bool GotPaths; //if the paths have been set or checked
         //Links
         public string Link = string.Empty; //The web link of the last-changed file
@@ -209,8 +207,6 @@ namespace FTPbox.Forms
 
                     OfflineMode = true;
                     SetTray(null, new TrayTextNotificationArgs(MessageType.Offline));
-
-                    _tRetry = new Timer(async state => await StartUpWork(), null, 30000, 0);
                 }
         }
 
@@ -441,34 +437,6 @@ namespace FTPbox.Forms
             {
                 ex.LogException();
             }
-        }
-
-        /// <summary>
-        ///     Starts the remote-to-local syncing on the root folder.
-        ///     Called from the timer, when remote syncing is automatic.
-        /// </summary>
-        /// <param name="state"></param>
-        public async Task StartRemoteSync(object state)
-        {
-            if (Program.Account.Account.SyncMethod == SyncMethod.Automatic)
-                SyncToolStripMenuItem.Enabled = false;
-
-            Log.Write(l.Debug, "Remote to Local sync triggered from tray menu");
-
-            await Program.Account.SyncQueue.Add(new SyncQueueItem(Program.Account)
-            {
-                Item = new ClientItem
-                {
-                    FullPath = (string) state,
-                    Name = (string) state,
-                    Type = ClientItemType.Folder,
-                    Size = 0x0,
-                    LastWriteTime = DateTime.Now
-                },
-                ActionType = ChangeAction.changed,
-                SyncTo = SyncTo.Local,
-                SkipNotification = true
-            });
         }
 
         /// <summary>
@@ -984,7 +952,7 @@ namespace FTPbox.Forms
 
         #region Bandwidth Tab - Event Handlers
 
-        private void cManually_CheckedChanged(object sender, EventArgs e)
+        private async void cManually_CheckedChanged(object sender, EventArgs e)
         {
             SyncToolStripMenuItem.Enabled = cManually.Checked || !Program.Account.SyncQueue.Running;
             Program.Account.Account.SyncMethod = (cManually.Checked) ? SyncMethod.Manual : SyncMethod.Automatic;
@@ -994,29 +962,14 @@ namespace FTPbox.Forms
             {
                 Program.Account.Account.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
                 nSyncFrequency.Enabled = true;
+                // Schedule auto sync
+                await Program.Account.SyncQueue.ScheduleAutoSync();
             }
             else
             {
                 nSyncFrequency.Enabled = false;
-                //TODO: dispose timer?
-            }
-        }
-
-        private void cAuto_CheckedChanged(object sender, EventArgs e)
-        {
-            SyncToolStripMenuItem.Enabled = !cAuto.Checked || !Program.Account.SyncQueue.Running;
-            Program.Account.Account.SyncMethod = (!cAuto.Checked) ? SyncMethod.Manual : SyncMethod.Automatic;
-            Settings.SaveProfile();
-
-            if (Program.Account.Account.SyncMethod == SyncMethod.Automatic)
-            {
-                Program.Account.Account.SyncFrequency = Convert.ToInt32(nSyncFrequency.Value);
-                nSyncFrequency.Enabled = true;
-            }
-            else
-            {
-                nSyncFrequency.Enabled = false;
-                //TODO: dispose timer?
+                // Cancel
+                Program.Account.SyncQueue.CancelAutoSync();
             }
         }
 
@@ -1096,7 +1049,11 @@ namespace FTPbox.Forms
             if (!Program.Account.Client.IsConnected)
                 return;
 
-            await StartRemoteSync(".");
+            Log.Write(l.Debug, "Remote to Local sync triggered from tray menu");
+
+            Program.Account.SyncQueue.CancelAutoSync();
+
+            await Program.Account.SyncQueue.CheckRemoteToLocal();
         }
 
         public bool ExitedFromTray;

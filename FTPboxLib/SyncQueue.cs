@@ -23,22 +23,21 @@ namespace FTPboxLib
     {
         private Dictionary<SyncQueueItem, StatusType> _completedList = new Dictionary<SyncQueueItem, StatusType>();
 
-        // Timer used to schedule automatic syncing according to user's preferences
-        private Timer _tSync;
-
         private readonly AccountController _controller;
 
         public SyncQueue(AccountController account)
         {
             _controller = account;
-            account.WebInterface.InterfaceRemoved += (o, e) =>
+            account.WebInterface.InterfaceRemoved += async (o, e) =>
             {
-                if (account.Account.SyncMethod == SyncMethod.Automatic) SetTimer();
+                if (account.Account.SyncMethod == SyncMethod.Automatic)
+                    await ScheduleAutoSync();
                 Running = false;
             };
-            account.WebInterface.InterfaceUploaded += (o, e) =>
+            account.WebInterface.InterfaceUploaded += async (o, e) =>
             {
-                if (account.Account.SyncMethod == SyncMethod.Automatic) SetTimer();
+                if (account.Account.SyncMethod == SyncMethod.Automatic)
+                    await ScheduleAutoSync();
                 Running = false;
             };
         }
@@ -117,7 +116,12 @@ namespace FTPboxLib
 
         public async Task StartQueue()
         {
-            Notifications.ChangeTrayText(MessageType.Syncing);
+            var isAutoCheck = this.Count == 1
+                && !autoSyncCancelation.IsCancellationRequested
+                && this.ElementAt(0).Item.FullPath == ".";
+
+            if (!isAutoCheck)
+                Notifications.ChangeTrayText(MessageType.Syncing);
 
             while (this.Count > 0)
             {
@@ -211,7 +215,8 @@ namespace FTPboxLib
                 await _controller.WebInterface.Update();
             else
             {
-                if (_controller.Account.SyncMethod == SyncMethod.Automatic) SetTimer();
+                if (_controller.Account.SyncMethod == SyncMethod.Automatic)
+                    await ScheduleAutoSync();
                 Running = false;
             }
         }
@@ -261,26 +266,47 @@ namespace FTPboxLib
             }
         }
 
+        public async Task CheckRemoteToLocal()
+        {
+            var syncItem = new SyncQueueItem(_controller)
+            {
+                Item = new ClientItem(".", ".", ClientItemType.Folder),
+                ActionType = ChangeAction.changed,
+                SyncTo = SyncTo.Local,
+                SkipNotification = true
+            };
+            await Add(syncItem);
+        }
+
         /// <summary>
         /// Used in automatic-syncing mode. Will set a timer to check the remote folder for changes
         /// every x seconds ( where x is the user-specified Profile.SyncFrequency in seconds)
         /// </summary>
-        private void SetTimer()
+        public async Task ScheduleAutoSync()
         {
-            _tSync = new Timer(async state => await Add(new SyncQueueItem (_controller)
+            autoSyncCancelation = new CancellationTokenSource();
+            var delay = TimeSpan.FromSeconds(_controller.Account.SyncFrequency);
+
+            Log.Write(l.Debug, $"Scheduling auto sync for {DateTime.Now.Add(delay)}");
+
+            try
             {
-                Item = new ClientItem
-                {
-                    FullPath = ".",
-                    Name = ".",
-                    Type = ClientItemType.Folder,
-                    Size = 0x0,
-                    LastWriteTime = DateTime.Now
-                },
-                ActionType = ChangeAction.changed,
-                SyncTo = SyncTo.Local,
-                SkipNotification = true
-            }), null, 1000 * _controller.Account.SyncFrequency, 0);
+                await Task.Delay(delay, autoSyncCancelation.Token);
+                Log.Write(l.Debug, $"Starting scheduled auto sync {DateTime.Now}");
+                // no cancel, proceed to sync remote-to-local
+                if (_controller.Account.SyncMethod == SyncMethod.Automatic)
+                    await CheckRemoteToLocal();
+            }
+            catch (TaskCanceledException)
+            {
+                Log.Write(l.Info, "Scheduled auto sync was canceled");
+            }
+        }
+
+        CancellationTokenSource autoSyncCancelation = new CancellationTokenSource();
+        public void CancelAutoSync()
+        {
+            autoSyncCancelation?.Cancel();
         }
 
         #endregion

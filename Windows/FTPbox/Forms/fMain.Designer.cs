@@ -705,7 +705,6 @@
             this.cAuto.TabStop = true;
             this.cAuto.Text = "automatically every";
             this.cAuto.UseVisualStyleBackColor = true;
-            this.cAuto.CheckedChanged += new System.EventHandler(this.cAuto_CheckedChanged);
             // 
             // cManually
             // 
