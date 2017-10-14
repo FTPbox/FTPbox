@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using FTPboxLib;
 using System.Threading.Tasks;
+using System.Security.Authentication;
 
 namespace FTPbox.Forms
 {
@@ -259,11 +260,19 @@ namespace FTPbox.Forms
                 SetDefaultLocalPath();
                 SwitchTab(AccountSetupTab.LocalFodler);
             }
+            catch (CertificateDeclinedException)
+            {
+                Log.Write(l.Debug, "Certificate was declined from user");
+            }
+            catch (AuthenticationException ex)
+            {
+                MessageBox.Show("Could not authenticate. Check your account details and try again."
+                    + Environment.NewLine + "Error message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             catch (Exception ex)
             {
-                ex.LogException();
                 MessageBox.Show("Could not connect to FTP server. Check your account details and try again."
-                    + Environment.NewLine + " Error message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    + Environment.NewLine + "Error message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -428,7 +437,9 @@ namespace FTPbox.Forms
                     SwitchTab(AccountSetupTab.Login);
                     break;
                 case AccountSetupTab.Login:
+                    bNext.Enabled = false;
                     await TryLogin();
+                    bNext.Enabled = true;
                     break;
                 case AccountSetupTab.LocalFodler:
                     if (!System.IO.Directory.Exists(tLocalPath.Text))
@@ -469,7 +480,9 @@ namespace FTPbox.Forms
         {
             if (JustPassword)
             {
+                bFinish.Enabled = false;
                 await TryLogin();
+                bFinish.Enabled = true;
                 return;
             }
 

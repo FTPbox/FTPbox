@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 using Renci.SshNet;
@@ -106,9 +107,14 @@ namespace FTPboxLib
                 catch (SshAuthenticationException ex)
                 {
                     ex.LogException();
-                    caughtException = ex;
+                    caughtException = new AuthenticationException(ex.Message, ex.InnerException);
                 }
                 catch (SshConnectionException ex)
+                {
+                    ex.LogException();
+                    caughtException = new CertificateDeclinedException(ex.Message, ex.InnerException);
+                }
+                catch (Exception ex)
                 {
                     ex.LogException();
                     caughtException = ex;

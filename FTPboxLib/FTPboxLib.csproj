@@ -73,6 +73,7 @@
     <Compile Include="DecryptionInfo.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="EventArgs.cs" />
+    <Compile Include="Exceptions.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FileLog.cs" />
     <Compile Include="FileLogItem.cs" />

@@ -126,6 +126,16 @@ namespace FTPboxLib
                 // This is a workaround to avoid storing Certificate files locally...
                 await Connect();
             }
+            catch (FtpCommandException ex)
+            {
+                ex.LogException();
+                throw new AuthenticationException(ex.Message, ex.InnerException);
+            }
+            catch (Exception ex)
+            {
+                ex.LogException();
+                throw;
+            }
 
             _ftpc.Encoding = this.Charset;
 
