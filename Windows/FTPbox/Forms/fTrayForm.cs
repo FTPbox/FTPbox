@@ -18,11 +18,7 @@ namespace FTPbox.Forms
         /// <summary>
         ///     the latest status used to set the status label
         /// </summary>
-        private TrayTextNotificationArgs _lastStatus = new TrayTextNotificationArgs
-        {
-            AssossiatedFile = null,
-            MessageType = MessageType.AllSynced
-        };
+        private TrayTextNotificationArgs _lastStatus = new TrayTextNotificationArgs(MessageType.AllSynced);
 
         public fTrayForm()
         {

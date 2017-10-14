@@ -60,13 +60,22 @@ namespace FTPboxLib
 
     public class NotificationArgs : EventArgs
     {
-        public string Title = "FTPbox"; 
-        
+        public NotificationArgs(string text, string title = null)
+        {
+            Title = title ?? "FTPbox";
+            Text = text;
+        }
+        public string Title = "FTPbox";        
         public string Text;
     }
 
     public class TrayTextNotificationArgs : EventArgs
     {
+        public TrayTextNotificationArgs(MessageType type, string file = null)
+        {
+            MessageType = type;
+            AssossiatedFile = file;
+        }
         //TODO:  Fix that shit
         public MessageType MessageType;
         public string AssossiatedFile;

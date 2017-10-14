@@ -32,7 +32,7 @@ namespace FTPboxLib
 
             name = Common._name(name);
 
-            NotificationReady.SafeInvoke(null, new NotificationArgs { Title = Common.Languages[ca, file], Text = name });
+            NotificationReady.SafeInvoke(null, new NotificationArgs(name, Common.Languages[ca, file]));
 		}
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace FTPboxLib
             name = Common._name(name);
             newname = Common._name(newname);
             string body = string.Format(Common.Languages[ChangeAction.renamed, true], name, newname);
-            NotificationReady.SafeInvoke(null, new NotificationArgs { Text = body });
+            NotificationReady.SafeInvoke(null, new NotificationArgs(body));
 		}
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace FTPboxLib
             string type = (file) ? Common.Languages[MessageType.Files] : Common.Languages[MessageType.Folders];
             string change = (file) ? Common.Languages[MessageType.FilesOrFoldersUpdated] : Common.Languages[MessageType.FilesOrFoldersCreated];
             string body = string.Format(change, i, type);
-            NotificationReady.SafeInvoke(null, new NotificationArgs { Text = body });
+            NotificationReady.SafeInvoke(null, new NotificationArgs(body));
 		}
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace FTPboxLib
             if (Settings.General.Notifications && (f > 0 || d > 0))
             {
                 string body = string.Format(Common.Languages[MessageType.FilesAndFoldersChanged], d, dType, f, fType);
-                NotificationReady.SafeInvoke(null, new NotificationArgs { Text = body });
+                NotificationReady.SafeInvoke(null, new NotificationArgs(body));
             }
 		}
 
@@ -95,7 +95,7 @@ namespace FTPboxLib
             if (c != ChangeAction.deleted || !Settings.General.Notifications) return;
 
             string body = string.Format(Common.Languages[MessageType.ItemsDeleted], n);
-            NotificationReady.SafeInvoke(null, new NotificationArgs { Text = body });
+            NotificationReady.SafeInvoke(null, new NotificationArgs(body));
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace FTPboxLib
             if (!Settings.General.Notifications) return;
 
             string msg = Common.Languages[a];
-            NotificationReady.SafeInvoke(null, new NotificationArgs { Text = msg });
+            NotificationReady.SafeInvoke(null, new NotificationArgs(msg));
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace FTPboxLib
         /// <param name="name"></param>
         public static void ChangeTrayText(MessageType m, string name = null)
         {
-            var args = new TrayTextNotificationArgs { AssossiatedFile = name, MessageType = m };
+            var args = new TrayTextNotificationArgs(m, name);
             TrayTextNotification.SafeInvoke(null, args);
         }
 

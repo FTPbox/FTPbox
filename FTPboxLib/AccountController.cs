@@ -45,8 +45,6 @@ namespace FTPboxLib
             WebInterface = new WebInterface(this);
             SyncQueue = new SyncQueue(this);
 
-            InitClient();
-
             TransferValidator = new SizeTransferValidator(this);
         }
 

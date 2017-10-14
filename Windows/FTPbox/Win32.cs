@@ -7,7 +7,7 @@ namespace FTPbox
     class Win32
     {
         #region  File extention icon
-        
+
         private const uint SHGFI_ICON = 0x100;
         private const uint SHGFI_LARGEICON = 0x0;    // 'Large icon
         private const uint SHGFI_USEFILEATTRIBUTES = 0x000000010;
@@ -52,7 +52,7 @@ namespace FTPbox
 
         [DllImport("shell32.dll")]
         private static extern IntPtr SHAppBarMessage(uint dwMessage, [In] ref APPBARDATA pData);
-        
+
         private const uint ABM_GETTASKBARPOS = 0x00000005;
 
         private struct APPBARDATA
@@ -85,13 +85,28 @@ namespace FTPbox
         {
             var data = new APPBARDATA();
             var res = SHAppBarMessage(ABM_GETTASKBARPOS, ref data);
-            
+
             location = data.uEdge;
             return Rectangle.FromLTRB(data.rc.left, data.rc.top, data.rc.right, data.rc.bottom);
         }
 
         #endregion
-    }
 
-    
+        #region check internet connection
+
+        [DllImport("wininet.dll")]
+        private static extern bool InternetGetConnectedState(out int description, int reservedValue);
+
+        /// <summary>
+        ///     Check if internet connection is available
+        /// </summary>
+        /// <returns></returns>
+        public static bool ConnectedToInternet()
+        {
+            int desc;
+            return InternetGetConnectedState(out desc, 0);
+        }
+
+        #endregion
+    }
 }

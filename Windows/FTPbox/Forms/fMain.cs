@@ -18,7 +18,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -40,8 +39,7 @@ namespace FTPbox.Forms
         private Translate _ftranslate;
         private fTrayForm _fTrayForm;
 
-        private TrayTextNotificationArgs _lastTrayStatus = new TrayTextNotificationArgs
-        {AssossiatedFile = null, MessageType = MessageType.AllSynced};
+        private TrayTextNotificationArgs _lastTrayStatus = new TrayTextNotificationArgs(MessageType.AllSynced);
 
         private Timer _tRetry;
         public bool GotPaths; //if the paths have been set or checked
@@ -107,7 +105,27 @@ namespace FTPbox.Forms
 
             await StartUpWork();
 
+            while (OfflineMode)
+            {
+                // wait 30 seconds before retrying to connect
+                await Task.Delay(30000);
+                // retry
+                await StartUpWork();
+            }
+
             CheckForUpdate();
+
+            // Check local folder for changes
+            var cpath = Program.Account.GetCommonPath(Program.Account.Paths.Local, true);
+            await Program.Account.SyncQueue.Add(
+                new SyncQueueItem(Program.Account)
+                {
+                    Item = new ClientItem(Common._name(cpath), Program.Account.Paths.Local, ClientItemType.Folder),
+                    ActionType = ChangeAction.changed,
+                    SyncTo = SyncTo.Remote
+                });
+
+            await ContextMenuManager.RunServer();
         }
 
         /// <summary>
@@ -117,14 +135,23 @@ namespace FTPbox.Forms
         /// </summary>
         private async Task StartUpWork()
         {
-            Log.Write(l.Debug, "Internet connection available: {0}", ConnectedToInternet());
+            Log.Write(l.Debug, "Internet connection available: {0}", Win32.ConnectedToInternet());
             OfflineMode = false;
 
-            if (ConnectedToInternet())
+            if (Win32.ConnectedToInternet())
             {
+                if (Program.Account.IsAccountSet)
+                {
+                    UpdateDetails();
+
+                    ShowInTaskbar = false;
+                    Hide();
+                    ShowInTaskbar = true;
+                }
+
                 await CheckAccount();
 
-                await UpdateDetails();
+                UpdateDetails();
 
                 if (OfflineMode) return;
 
@@ -133,17 +160,19 @@ namespace FTPbox.Forms
                 CheckPaths();
                 Log.Write(l.Debug, "Paths: OK");
 
-                await UpdateDetails();
+                UpdateDetails();
 
-                if (!Settings.IsNoMenusMode)
-                {
-                    ContextMenuManager.RunServer();
-                }
+                var e = await Program.Account.WebInterface.CheckForUpdate();
+                chkWebInt.Checked = e;
+                labViewInBrowser.Enabled = e;
+                _changedfromcheck = false;
+
+                Program.Account.FolderWatcher.Setup();
             }
             else
             {
                 OfflineMode = true;
-                SetTray(null, new TrayTextNotificationArgs {MessageType = MessageType.Offline});
+                SetTray(null, new TrayTextNotificationArgs(MessageType.Offline));
             }
         }
 
@@ -154,7 +183,7 @@ namespace FTPbox.Forms
         {
             if (!Program.Account.IsAccountSet || Program.Account.IsPasswordRequired)
             {
-                Log.Write(l.Info, "Will open New FTP form.");
+                Log.Write(l.Info, $"Opening Setup form (just for password: {Program.Account.IsPasswordRequired})");
                 Setup.JustPassword = Program.Account.IsPasswordRequired;
 
                 _fSetup.ShowDialog();
@@ -166,17 +195,12 @@ namespace FTPbox.Forms
             else if (Program.Account.IsAccountSet)
                 try
                 {
-                    Program.Account.InitClient();
                     Program.Account.Client.ConnectionClosed +=
                         (o, n) => Log.Write(l.Warning, "Connection closed: {0}", n.Text ?? string.Empty);
                     Program.Account.Client.ReconnectingFailed += (o, n) => Log.Write(l.Warning, "Reconnecting failed");
                     Program.Account.Client.ValidateCertificate += CheckCertificate;
 
                     await Program.Account.Client.Connect();
-
-                    ShowInTaskbar = false;
-                    Hide();
-                    ShowInTaskbar = true;
                 }
                 catch (Exception ex)
                 {
@@ -184,7 +208,7 @@ namespace FTPbox.Forms
                     ex.LogException();
 
                     OfflineMode = true;
-                    SetTray(null, new TrayTextNotificationArgs {MessageType = MessageType.Offline});
+                    SetTray(null, new TrayTextNotificationArgs(MessageType.Offline));
 
                     _tRetry = new Timer(async state => await StartUpWork(), null, 30000, 0);
                 }
@@ -215,7 +239,7 @@ namespace FTPbox.Forms
         /// <summary>
         ///     Updates the form's labels etc
         /// </summary>
-        public async Task UpdateDetails()
+        public void UpdateDetails()
         {
             Log.Write(l.Debug, "Updating the form details");
 
@@ -281,32 +305,6 @@ namespace FTPbox.Forms
             // Disable the following in offline mode
             chkWebInt.Enabled = !OfflineMode;
             SyncToolStripMenuItem.Enabled = !OfflineMode;
-
-            if (OfflineMode || !GotPaths) return;
-
-            var e = await Program.Account.WebInterface.CheckForUpdate();
-            chkWebInt.Checked = e;
-            labViewInBrowser.Enabled = e;
-            _changedfromcheck = false;
-
-            Program.Account.FolderWatcher.Setup();
-
-            // Check local folder for changes
-            var cpath = Program.Account.GetCommonPath(Program.Account.Paths.Local, true);
-            await Program.Account.SyncQueue.Add(
-                new SyncQueueItem(Program.Account)
-                {
-                    Item = new ClientItem
-                    {
-                        FullPath = Program.Account.Paths.Local,
-                        Name = Common._name(cpath),
-                        Type = ClientItemType.Folder,
-                        Size = 0x0,
-                        LastWriteTime = DateTime.MinValue
-                    },
-                    ActionType = ChangeAction.changed,
-                    SyncTo = SyncTo.Remote
-                });
         }
 
         /// <summary>
@@ -655,9 +653,6 @@ namespace FTPbox.Forms
 
         private bool OfflineMode;
 
-        [DllImport("wininet.dll")]
-        private static extern bool InternetGetConnectedState(out int description, int reservedValue);
-
         public async void OnNetworkChange(object sender, EventArgs e)
         {
             try
@@ -666,7 +661,7 @@ namespace FTPbox.Forms
                 {
                     if (OfflineMode)
                     {
-                        while (!ConnectedToInternet())
+                        while (!Win32.ConnectedToInternet())
                             await Task.Delay(5000);
                         await StartUpWork();
                     }
@@ -679,22 +674,12 @@ namespace FTPbox.Forms
                         await Program.Account.Client.Disconnect();
                     }
                     OfflineMode = true;
-                    SetTray(null, new TrayTextNotificationArgs {MessageType = MessageType.Offline});
+                    SetTray(null, new TrayTextNotificationArgs(MessageType.Offline));
                 }
             }
             catch
             {
             }
-        }
-
-        /// <summary>
-        ///     Check if internet connection is available
-        /// </summary>
-        /// <returns></returns>
-        public static bool ConnectedToInternet()
-        {
-            int desc;
-            return InternetGetConnectedState(out desc, 0);
         }
 
         #endregion
@@ -872,10 +857,11 @@ namespace FTPbox.Forms
 
         private void bRemoveAccount_Click(object sender, EventArgs e)
         {
-            var msg = string.Format("Are you sure you want to delete profile: {0}?",
-                Settings.ProfileTitles[Settings.General.DefaultProfile]);
-            if (MessageBox.Show(msg, "Confirm Account Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
-                DialogResult.Yes)
+            var defProfile = Settings.ProfileTitles[Settings.General.DefaultProfile];
+            var msg = $"Are you sure you want to delete this profile:\n{defProfile}";
+            var result = MessageBox.Show(msg, "Confirm Account Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
             {
                 Settings.RemoveCurrentProfile();
 
@@ -1147,46 +1133,32 @@ namespace FTPbox.Forms
             if (string.IsNullOrWhiteSpace(Link)) return;
 
             if (Link.EndsWith("webint"))
-                Process.Start(Link);
-            else
             {
-                if ((MouseButtons & MouseButtons.Right) != MouseButtons.Right)
+                Process.Start(Link);
+                return;
+            }
+            if ((MouseButtons & MouseButtons.Right) != MouseButtons.Right)
+            {
+                if (Settings.General.TrayAction == TrayAction.CopyLink)
                 {
-                    if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
+                    try
                     {
-                        try
-                        {
-                            Process.Start(Program.Account.LinkToRecent());
-                        }
-                        catch
-                        {
-                            //Gotta catch 'em all 
-                        }
+                        Clipboard.SetText(Program.Account.LinkToRecent());
                     }
-                    else if (Settings.General.TrayAction == TrayAction.CopyLink)
-                    {
-                        try
-                        {
-                            Clipboard.SetText(Program.Account.LinkToRecent());
-                        }
-                        catch
-                        {
-                            //Gotta catch 'em all 
-                        }
-                        SetTray(null, new TrayTextNotificationArgs {MessageType = MessageType.LinkCopied});
-                    }
-                    else
-                    {
-                        try
-                        {
-                            Process.Start(Program.Account.PathToRecent());
-                        }
-                        catch
-                        {
-                            //Gotta catch 'em all
-                        }
-                    }
+                    catch { }
+                    SetTray(null, new TrayTextNotificationArgs(MessageType.LinkCopied));
+                    return;
                 }
+                var link = Program.Account.PathToRecent();
+                if (Settings.General.TrayAction == TrayAction.OpenInBrowser)
+                {
+                    link = Program.Account.LinkToRecent();
+                }
+                try
+                {
+                    Process.Start(link);
+                }
+                catch { }                
             }
         }
 

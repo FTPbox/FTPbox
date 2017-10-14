@@ -65,7 +65,7 @@ namespace FTPboxLib
             if (!string.IsNullOrWhiteSpace(config))
                 Profiles = (List<AccountController>)JsonConvert.DeserializeObject(config, typeof(List<AccountController>));
 
-            //TODO: Profile.Load();
+            DefaultProfile.InitClient();
 
             if (!File.Exists(ConfCertificates)) return;
             // Load trusted certificates
@@ -185,14 +185,12 @@ namespace FTPboxLib
                 Profiles[General.DefaultProfile] = value;
                 SaveProfile();
             }
-        }        
-
-        public static string[] ProfileTitles
-        {
-            get { return Profiles.Select(p => string.Format("{0}@{1}", p.Account.Username, p.Account.Host)).ToArray(); }
         }
 
-        #endregion        
+        public static string[] ProfileTitles 
+            => Profiles.Select(p => $"{p.Account.Username}@{p.Account.Host}").ToArray();
+
+        #endregion
     }
 
     [JsonObject]

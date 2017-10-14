@@ -53,8 +53,11 @@ namespace FTPbox
         /// <summary>
         ///     Run the named-pipe server and wait for clients
         /// </summary>
-        public static async void RunServer()
+        public static async Task RunServer()
         {
+            if (!Settings.IsNoMenusMode)
+                return;
+
             Log.Write(l.Info, "[PipeServer] Starting up");
 
             while (true)
