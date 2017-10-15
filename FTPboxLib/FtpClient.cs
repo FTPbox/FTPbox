@@ -172,7 +172,7 @@ namespace FTPboxLib
             }
         }
 
-        public override async Task Download(SyncQueueItem i, Stream fileStream)
+        public override async Task Download(SyncQueueItem i, Stream fileStream, IProgress<TransferProgress> progress)
         {
             using (var s = await _ftpc.OpenReadAsync(i.CommonPath))
             {
@@ -187,7 +187,7 @@ namespace FTPboxLib
                     await fileStream.WriteAsync(buf, 0, read);
                     transfered += read;
 
-                    ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
+                    progress.Report(new TransferProgress(transfered, i, startedOn));
 
                     ThrottleTransfer(Settings.General.DownloadLimit, transfered, startedOn);
                 }
@@ -218,7 +218,7 @@ namespace FTPboxLib
             }
         }
 
-        public override async Task Upload(SyncQueueItem i, Stream uploadStream, string path)
+        public override async Task Upload(SyncQueueItem i, Stream uploadStream, string path, IProgress<TransferProgress> progress)
         {
             using (var s = await _ftpc.OpenWriteAsync(path))
             {
@@ -232,8 +232,8 @@ namespace FTPboxLib
                 {
                     await s.WriteAsync(buf, 0, read);
                     transfered += read;
-
-                    ReportTransferProgress(new TransferProgressArgs(read, transfered, i, startedOn));
+                    
+                    progress.Report(new TransferProgress(transfered, i, startedOn));
 
                     ThrottleTransfer(Settings.General.UploadLimit, transfered, startedOn);
                 }

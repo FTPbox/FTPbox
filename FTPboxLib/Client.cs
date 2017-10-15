@@ -33,7 +33,7 @@ namespace FTPboxLib
         public event EventHandler<ConnectionClosedEventArgs> ConnectionClosed;
         public event EventHandler ReconnectingFailed;
         public virtual event EventHandler<ValidateCertificateEventArgs> ValidateCertificate;
-        public event EventHandler<TransferProgressArgs> TransferProgress;
+        public Progress<TransferProgress> TransferProgress = new Progress<TransferProgress>();
 
         #endregion
 
@@ -87,11 +87,11 @@ namespace FTPboxLib
 
         public abstract Task Download(string path, string localPath);
 
-        public abstract Task Download(SyncQueueItem i, Stream fileStream);
+        public abstract Task Download(SyncQueueItem i, Stream fileStream, IProgress<TransferProgress> progress);
 
         public abstract Task Upload(string localPath, string path);
 
-        public abstract Task Upload(SyncQueueItem i, Stream uploadStream, string path);
+        public abstract Task Upload(SyncQueueItem i, Stream uploadStream, string path, IProgress<TransferProgress> progress);
 
         /// <summary>
         ///     Download to a temporary file.
@@ -110,7 +110,7 @@ namespace FTPboxLib
                 // download to a temp file...
                 using (var file = File.OpenWrite(temp))
                 {
-                    await Download(i, file);
+                    await Download(i, file, TransferProgress);
                 }
 
                 if (Controller.TransferValidator.Validate(temp, i.Item))
@@ -137,6 +137,7 @@ namespace FTPboxLib
         public async Task<TransferStatus> SafeUpload(SyncQueueItem i)
         {
             // is this the first time we check the files?
+            // TODO: this only works for top level files rn
             if (Controller.FileLog.IsEmpty())
             {
                 // TODO: allow user to select if the following should happen
@@ -156,7 +157,7 @@ namespace FTPboxLib
                 // upload to a temp file...
                 using (Stream file = File.OpenRead(i.LocalPath))
                 {
-                    await Upload(i, file, temp);
+                    await Upload(i, file, temp, TransferProgress);
                 }
             }
             catch (Exception ex)
@@ -466,14 +467,6 @@ namespace FTPboxLib
                 ex.LogException();
                 return false;
             }
-        }
-
-        /// <summary>
-        ///     Safely invoke TransferProgress.
-        /// </summary>
-        protected void ReportTransferProgress(TransferProgressArgs e)
-        {
-            TransferProgress?.Invoke(null, e);
         }
 
         protected void OnConnectionClosed(ConnectionClosedEventArgs e)

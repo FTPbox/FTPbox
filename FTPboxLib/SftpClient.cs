@@ -180,15 +180,14 @@ namespace FTPboxLib
             }
         }
 
-        public override async Task Download(SyncQueueItem i, Stream fileStream)
+        public override async Task Download(SyncQueueItem i, Stream fileStream, IProgress<TransferProgress> progress)
         {
             var startedOn = DateTime.Now;
             long transfered = 0;
 
             await _sftpc.DownloadAsync(i.CommonPath, fileStream, d =>
             {
-                ReportTransferProgress(new TransferProgressArgs((long)d - transfered, (long)d, i,
-                    startedOn));
+                progress.Report(new TransferProgress((long)d, i, startedOn));
                 transfered = (long)d;
 
                 ThrottleTransfer(Settings.General.UploadLimit, transfered, startedOn);
@@ -201,15 +200,14 @@ namespace FTPboxLib
                 await _sftpc.UploadAsync(file, path, true);
         }
 
-        public override async Task Upload(SyncQueueItem i, Stream uploadStream, string path)
+        public override async Task Upload(SyncQueueItem i, Stream uploadStream, string path, IProgress<TransferProgress> progress)
         {
             var startedOn = DateTime.Now;
             long transfered = 0;
 
             await _sftpc.UploadAsync(uploadStream, path, d =>
             {
-                ReportTransferProgress(new TransferProgressArgs((long)d - transfered, (long)d, i,
-                    startedOn));
+                progress.Report(new TransferProgress((long)d, i, startedOn));
                 transfered = (long)d;
 
                 ThrottleTransfer(Settings.General.UploadLimit, transfered, startedOn);
