@@ -190,6 +190,8 @@ namespace FTPboxLib
                 ReportTransferProgress(new TransferProgressArgs((long)d - transfered, (long)d, i,
                     startedOn));
                 transfered = (long)d;
+
+                ThrottleTransfer(Settings.General.UploadLimit, transfered, startedOn);
             });
         }
 
@@ -209,6 +211,8 @@ namespace FTPboxLib
                 ReportTransferProgress(new TransferProgressArgs((long)d - transfered, (long)d, i,
                     startedOn));
                 transfered = (long)d;
+
+                ThrottleTransfer(Settings.General.UploadLimit, transfered, startedOn);
             });
         }
 

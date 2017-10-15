@@ -286,15 +286,8 @@ namespace FTPbox.Forms
             else
                 cManually.Checked = true;
 
-            if (Program.Account.Account.Protocol != FtpProtocol.SFTP)
-            {
-                if (LimitUpSpeed())
-                    nUpLimit.Value = Convert.ToDecimal(Settings.General.UploadLimit);
-                if (LimitDownSpeed())
-                    nDownLimit.Value = Convert.ToDecimal(Settings.General.DownloadLimit);
-            }
-            else
-                gLimits.Visible = false;
+            nUpLimit.Value = Convert.ToDecimal(Settings.General.UploadLimit);
+            nDownLimit.Value = Convert.ToDecimal(Settings.General.DownloadLimit);
 
             Set_Language(Settings.General.Language);
 
@@ -711,20 +704,6 @@ namespace FTPbox.Forms
             var startupKey = Registry.CurrentUser.OpenSubKey(runKey);
 
             return startupKey != null && startupKey.GetValue("FTPbox") != null;
-        }
-
-        #endregion
-
-        #region Speed Limits
-
-        private static bool LimitUpSpeed()
-        {
-            return Settings.General.UploadLimit > 0;
-        }
-
-        private static bool LimitDownSpeed()
-        {
-            return Settings.General.DownloadLimit > 0;
         }
 
         #endregion

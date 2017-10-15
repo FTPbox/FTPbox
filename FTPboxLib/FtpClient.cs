@@ -376,27 +376,6 @@ namespace FTPboxLib
         }
 
         /// <summary>
-        ///     Throttle the file transfer if speed limits apply.
-        /// </summary>
-        /// <param name="limit">The download or upload rate to limit to, in kB/s.</param>
-        /// <param name="transfered">bytes already transferred.</param>
-        /// <param name="startedOn">when did the transfer start.</param>
-        private void ThrottleTransfer(int limit, long transfered, DateTime startedOn)
-        {
-            var elapsed = DateTime.Now.Subtract(startedOn);
-            var rate = (int)(elapsed.TotalSeconds < 1 ? transfered : transfered / elapsed.TotalSeconds);
-            if (limit > 0 && rate > 1000 * limit)
-            {
-                double millisecDelay = (transfered / limit - elapsed.Milliseconds);
-
-                if (millisecDelay > int.MaxValue)
-                    millisecDelay = int.MaxValue;
-
-                Thread.Sleep((int)millisecDelay);
-            }
-        }
-
-        /// <summary>
         ///     Convert an FtpItem to a ClientItem
         /// </summary>
         private ClientItem ConvertItem(FtpListItem f)
