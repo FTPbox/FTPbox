@@ -96,7 +96,6 @@ namespace FTPbox.Forms
             _fSetup = new Setup {Tag = this};
             _ftranslate = new Translate {Tag = this};
             _fSelective = new fSelectiveSync();
-            _fTrayForm = new fTrayForm {Tag = this};
 
             if (!string.IsNullOrEmpty(Settings.General.Language))
                 Set_Language(Settings.General.Language);
@@ -110,6 +109,8 @@ namespace FTPbox.Forms
                 // retry
                 await StartUpWork();
             }
+
+            _fTrayForm = new fTrayForm { Tag = this };
 
             CheckForUpdate();
 
@@ -578,7 +579,7 @@ namespace FTPbox.Forms
 
             SetTray(null, _lastTrayStatus);
 
-            _fTrayForm.Set_Language();
+            _fTrayForm?.Set_Language();
 
             // Is this a right-to-left language?
             RightToLeftLayout = Common.RtlLanguages.Contains(lan);
@@ -1011,7 +1012,7 @@ namespace FTPbox.Forms
 
         private void tray_MouseClick(object sender, MouseEventArgs e)
         {
-            if (!_fTrayForm.Visible && e.Button == MouseButtons.Left)
+            if (_fTrayForm != null && !_fTrayForm.Visible && e.Button == MouseButtons.Left)
             {
                 var mouse = MousePosition;
                 // Show the tray form
