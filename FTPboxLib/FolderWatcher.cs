@@ -141,7 +141,7 @@ namespace FTPboxLib
         {
             Log.Write(l.Debug, $"Item was renamed: {e.OldName}");
 
-            if (!_controller.ItemGetsSynced(e.FullPath, true) || !_controller.ItemGetsSynced(e.OldFullPath, true))
+            if (!_controller.ItemGetsSynced(e.FullPath, true))
                 return;
 
             var isFile = Common.PathIsFile(e.FullPath);
@@ -154,10 +154,10 @@ namespace FTPboxLib
             Log.Write(l.Debug, $"isFile: {isFile} renamedFromTempFile: {renamedFromTempFile} renamedToTempFile: {renamedToTempFile} inFileLog: {_controller.FileLog.Contains(oldCommon)}");
 
             // Add to queue
-            //if (isFile && renamedFromTempFile && !renamedToTempFile && !_controller.FileLog.Contains(oldCommon))
-            //    AddToQueue(e, ChangeAction.changed);
-            //else
-            await AddToQueue(e, ChangeAction.renamed);
+            if (isFile && renamedFromTempFile && !renamedToTempFile && !_controller.FileLog.Contains(oldCommon))
+                await AddToQueue(e, ChangeAction.changed);
+            else
+                await AddToQueue(e, ChangeAction.renamed);
         }
         
         #endregion

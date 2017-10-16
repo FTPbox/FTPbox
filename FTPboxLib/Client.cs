@@ -155,7 +155,7 @@ namespace FTPboxLib
             try
             {
                 // upload to a temp file...
-                using (Stream file = File.OpenRead(i.LocalPath))
+                using (var file = new FileStream(i.LocalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     await Upload(i, file, temp, TransferProgress);
                 }
