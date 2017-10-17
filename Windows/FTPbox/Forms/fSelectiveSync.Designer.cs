@@ -33,6 +33,7 @@
             this.lSelectiveSync = new System.Windows.Forms.TreeView();
             this.labSelectFolders = new System.Windows.Forms.Label();
             this.bDone = new System.Windows.Forms.Button();
+            this.bCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // bRefresh
@@ -59,8 +60,7 @@
             this.lSelectiveSync.Size = new System.Drawing.Size(357, 344);
             this.lSelectiveSync.TabIndex = 10;
             this.lSelectiveSync.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.lSelectiveSync_AfterCheck);
-            this.lSelectiveSync.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.lSelectiveSync_AfterCollapse);
-            this.lSelectiveSync.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.lSelectiveSync_AfterExpand);
+            this.lSelectiveSync.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lSelectiveSync_AfterSelect);
             // 
             // labSelectFolders
             // 
@@ -85,11 +85,26 @@
             this.bDone.UseVisualStyleBackColor = true;
             this.bDone.Click += new System.EventHandler(this.bDone_Click);
             // 
+            // bCancel
+            // 
+            this.bCancel.AccessibleDescription = "cancel configuring selective sync";
+            this.bCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bCancel.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.bCancel.Location = new System.Drawing.Point(188, 391);
+            this.bCancel.Name = "bCancel";
+            this.bCancel.Size = new System.Drawing.Size(89, 23);
+            this.bCancel.TabIndex = 14;
+            this.bCancel.Text = "Cancel";
+            this.bCancel.UseVisualStyleBackColor = true;
+            // 
             // fSelectiveSync
             // 
+            this.AcceptButton = this.bDone;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.bCancel;
             this.ClientSize = new System.Drawing.Size(384, 426);
+            this.Controls.Add(this.bCancel);
             this.Controls.Add(this.bDone);
             this.Controls.Add(this.bRefresh);
             this.Controls.Add(this.lSelectiveSync);
@@ -113,5 +128,6 @@
         private System.Windows.Forms.TreeView lSelectiveSync;
         private System.Windows.Forms.Label labSelectFolders;
         private System.Windows.Forms.Button bDone;
+        private System.Windows.Forms.Button bCancel;
     }
 }
