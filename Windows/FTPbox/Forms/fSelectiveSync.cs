@@ -89,7 +89,7 @@ namespace FTPbox.Forms
                 {
                     if (d.Name == "webint") continue;
 
-                    var parent = ConstructNodeFrom(li, d);
+                    var parent = UIHelpers.ConstructNodeFrom(li, d);
 
                     lSelectiveSync.Nodes.Add(parent);
                 }
@@ -106,105 +106,15 @@ namespace FTPbox.Forms
         }
 
         /// <summary>
-        /// Recursively add child nodes
-        /// </summary>
-        private TreeNode ConstructNodeFrom(List<ClientItem> li, ClientItem d)
-        {
-            var parent = new TreeNode(d.Name);
-
-            var folders = li
-                .Where(x => x.FullPath != d.FullPath)
-                .Where(x => x.Type == ClientItemType.Folder && x.FullPath.StartsWith(d.FullPath));
-
-            var files = li
-                .Where(x => x.Type == ClientItemType.File && x.FullPath.StartsWith(d.FullPath))
-                .Select(x => new TreeNode(x.Name))
-                .ToArray();
-
-            foreach (var f in folders)
-            {
-                parent.Nodes.Add(ConstructNodeFrom(li, f));
-            }
-
-            parent.Nodes.AddRange(files);
-            
-            return parent;
-        }
-
-        /// <summary>
-        /// Checks every parent node of tn
-        /// </summary>
-        private static void CheckSingleRoute(TreeNode tn)
-        {
-            while (true)
-            {
-                if (tn.Checked && tn.Parent != null)
-                    if (!tn.Parent.Checked)
-                    {
-                        tn.Parent.Checked = true;
-                        tn = tn.Parent;
-                        continue;
-                    }
-                break;
-            }
-        }
-
-        /// <summary>
         /// Uncheck items that have been picked as ignored by the user
         /// </summary>
         private void EditNodeCheckboxes()
         {
             _checkingNodes = true;
 
-            EditNodeCheckboxesRecursive(lSelectiveSync.Nodes);
+            UIHelpers.EditNodeCheckboxesRecursive(lSelectiveSync.Nodes, previousList);
 
             _checkingNodes = false;
-        }
-
-        /// <summary>
-        /// Recursively uncheck ignored files/folders
-        /// </summary>
-        private void EditNodeCheckboxesRecursive(TreeNodeCollection nodes)
-        {
-            foreach (TreeNode t in nodes)
-            {
-                t.Checked = !previousList.Contains(t.FullPath);
-
-                if (t.Checked)
-                {
-                    EditNodeCheckboxesRecursive(t.Nodes);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Returns a list of all unchecked items
-        /// </summary>
-        private IEnumerable<string> GetUncheckedItems(TreeNodeCollection t)
-        {
-            foreach (TreeNode node in t)
-            {
-                if (!node.Checked)
-                    yield return node.FullPath;
-
-                if (node.Checked && node.Nodes.Count > 0)
-                {
-                    foreach (var child in GetUncheckedItems(node.Nodes))
-                        yield return child;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Check/uncheck all child nodes
-        /// </summary>
-        /// <param name="t">The parent node</param>
-        /// <param name="c"><c>True</c> to check, <c>False</c> to uncheck</param>
-        private static void CheckUncheckChildNodes(TreeNode t, bool c)
-        {
-            t.Checked = c;
-            foreach (TreeNode tn in t.Nodes)
-                CheckUncheckChildNodes(tn, c);
         }
 
         private void lSelectiveSync_AfterCheck(object sender, TreeViewEventArgs e)
@@ -215,18 +125,17 @@ namespace FTPbox.Forms
             // but only put this node (parent folder) in the ignored list.
 
             _checkingNodes = true;
-            CheckUncheckChildNodes(e.Node, e.Node.Checked);
+            UIHelpers.CheckUncheckChildNodes(e.Node, e.Node.Checked);
 
-            if (e.Node.Checked && e.Node.Parent != null)
-                if (!e.Node.Parent.Checked)
-                {
-                    e.Node.Parent.Checked = true;
-                    CheckSingleRoute(e.Node.Parent);
-                }
+            if (e.Node.Checked && e.Node.Parent != null && !e.Node.Parent.Checked)
+            {
+                e.Node.Parent.Checked = true;
+                UIHelpers.CheckSingleRoute(e.Node.Parent);
+            }
 
             _checkingNodes = false;
 
-            previousList = GetUncheckedItems(lSelectiveSync.Nodes).ToList();
+            previousList = UIHelpers.GetUncheckedItems(lSelectiveSync.Nodes).ToList();
         }
 
         private void Set_Language(string lan)

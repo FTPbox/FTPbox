@@ -284,63 +284,74 @@ namespace FTPbox.Forms
         {
             tRemoteList.Nodes.Clear();
 
-            var first = new TreeNode { Text = "/" };
-            var current = first;
-            foreach (var f in Program.Account.HomePath.Split('/'))
-            {
-                if (string.IsNullOrWhiteSpace(f)) continue;
+            Log.Write(l.Info, $"Listing from directory: {Program.Account.Client.WorkingDirectory}");
 
-                current.Nodes.Add(f);
-                current = current.FirstNode;
-            }
+            var list = (_currentTab == AccountSetupTab.RemoteFolder)
+                ? await Program.Account.Client.List(".", false)
+                : await Program.Account.Client.ListRecursive(".", false);
+
             if (_currentTab == AccountSetupTab.RemoteFolder)
             {
+                list = list.Where(x => x.Type == ClientItemType.Folder);
+
+                var first = new TreeNode("/");
+                var current = first;
+
+                foreach (var f in Program.Account.HomePath.Split('/'))
+                {
+                    if (string.IsNullOrWhiteSpace(f)) continue;
+
+                    current.Nodes.Add(f);
+                    current = current.FirstNode;
+                }
+
                 tRemoteList.AfterExpand -= tRemoteList_AfterExpand;
                 tRemoteList.Nodes.Add(first);
                 tRemoteList.ExpandAll();
-            }
-            Log.Write(l.Warning, Program.Account.Client.WorkingDirectory);
-            foreach (var c in await Program.Account.Client.List(".", false))
-            {
-                if (c.Type == ClientItemType.Folder)
-                {
-                    var parentNode = new TreeNode { Text = c.Name };
-                    if (_currentTab == AccountSetupTab.RemoteFolder)
-                        current.Nodes.Add(parentNode);
-                    else
-                        tRemoteList.Nodes.Add(parentNode);
 
-                    var childNode = new TreeNode { Text = c.Name };
+                foreach (var c in list)
+                {
+                    var parentNode = new TreeNode(c.Name);
+                    current.Nodes.Add(parentNode);
+
+                    var childNode = new TreeNode(c.Name);
                     parentNode.Nodes.Add(childNode);
                 }
-                // Only list files in SelectiveSync tab
-                else if (c.Type == ClientItemType.File && _currentTab == AccountSetupTab.SelectiveSync)
-                    tRemoteList.Nodes.Add(c.Name);
-            }
-            if (_currentTab == AccountSetupTab.RemoteFolder)
-            {
+
                 current.Expand();
                 tFullRemotePath.Text = Program.Account.HomePath;
                 tRemoteList.AfterExpand += tRemoteList_AfterExpand;
             }
             else
-                EditNodeCheckboxes();
-        }
-
-        private static void CheckSingleRoute(TreeNode tn)
-        {
-            while (true)
             {
-                if (tn.Checked && tn.Parent != null)
-                    if (!tn.Parent.Checked)
-                    {
-                        tn.Parent.Checked = true;
-                        if (Program.Account.IgnoreList.Items.Contains(tn.Parent.FullPath))
-                            Program.Account.IgnoreList.Items.Remove(tn.Parent.FullPath);
-                        tn = tn.Parent;
-                        continue;
-                    }
-                break;
+                foreach (var l in list)
+                {
+                    // convert to relative paths
+                    l.FullPath = Program.Account.GetCommonPath(l.FullPath, false);
+                }
+                // get the first level folders
+                var folders = list.Where(d => d.Type == ClientItemType.Folder && !d.FullPath.Contains("/"));
+
+                // get the first level files
+                var files = list
+                    .Where(f => f.Type == ClientItemType.File && folders.All(d => !f.FullPath.StartsWith(d.FullPath)))
+                    .Select(x => new TreeNode(x.Name))
+                    .ToArray();
+
+                // List directories first
+                foreach (var d in folders)
+                {
+                    if (d.Name == "webint") continue;
+
+                    var parent = UIHelpers.ConstructNodeFrom(list.ToList(), d);
+
+                    tRemoteList.Nodes.Add(parent);
+                }
+
+                tRemoteList.Nodes.AddRange(files);
+
+                EditNodeCheckboxes();
+                tRemoteList.CollapseAll();
             }
         }
 
@@ -349,32 +360,11 @@ namespace FTPbox.Forms
         /// </summary>
         private void EditNodeCheckboxes()
         {
-            foreach (TreeNode t in tRemoteList.Nodes)
-            {
-                if (!Program.Account.IgnoreList.isInIgnoredFolders(t.FullPath)) t.Checked = true;
-                if (t.Parent != null)
-                    if (!t.Parent.Checked) t.Checked = false;
+            _checkingNodes = true;
 
-                foreach (TreeNode tn in t.Nodes)
-                    EditNodeCheckboxesRecursive(tn);
-            }
-        }
+            UIHelpers.EditNodeCheckboxesRecursive(tRemoteList.Nodes);
 
-        private static void EditNodeCheckboxesRecursive(TreeNode t)
-        {
-            t.Checked = Program.Account.IgnoreList.isInIgnoredFolders(t.FullPath);
-            if (t.Parent != null)
-                if (!t.Parent.Checked) t.Checked = false;
-
-            foreach (TreeNode tn in t.Nodes)
-                EditNodeCheckboxesRecursive(tn);
-        }
-
-        private static void CheckUncheckChildNodes(TreeNode t, bool c)
-        {
-            t.Checked = c;
-            foreach (TreeNode tn in t.Nodes)
-                CheckUncheckChildNodes(tn, c);
+            _checkingNodes = false;
         }
 
         #region Control event handlers
@@ -586,26 +576,21 @@ namespace FTPbox.Forms
         {
             if (_checkingNodes) return;
 
-            string cpath = Program.Account.GetCommonPath(e.Node.FullPath, false);
-
-            if (e.Node.Checked && Program.Account.IgnoreList.Items.Contains(cpath))
-                Program.Account.IgnoreList.Items.Remove(cpath);
-            else if (!e.Node.Checked && !Program.Account.IgnoreList.Items.Contains(cpath))
-                Program.Account.IgnoreList.Items.Add(cpath);
+            // If this is a folder node: uncheck all child nodes in the GUI
+            // but only put this node (parent folder) in the ignored list.
 
             _checkingNodes = true;
-            CheckUncheckChildNodes(e.Node, e.Node.Checked);
+            UIHelpers.CheckUncheckChildNodes(e.Node, e.Node.Checked);
 
-            if (e.Node.Checked && e.Node.Parent != null)
-                if (!e.Node.Parent.Checked)
-                {
-                    e.Node.Parent.Checked = true;
-                    if (Program.Account.IgnoreList.Items.Contains(e.Node.Parent.FullPath))
-                        Program.Account.IgnoreList.Items.Remove(e.Node.Parent.FullPath);
-                    CheckSingleRoute(e.Node.Parent);
-                }
-            // Program.Account.IgnoreList.Save();
+            if (e.Node.Checked && e.Node.Parent != null && !e.Node.Parent.Checked)
+            {
+                e.Node.Parent.Checked = true;
+                UIHelpers.CheckSingleRoute(e.Node.Parent);
+            }
+
             _checkingNodes = false;
+
+            Program.Account.IgnoreList.Items = UIHelpers.GetUncheckedItems(tRemoteList.Nodes).ToList();
         }
 
         private void tRemoteList_AfterSelect(object sender, TreeViewEventArgs e)
@@ -624,7 +609,10 @@ namespace FTPbox.Forms
 
         private async void tRemoteList_AfterExpand(object sender, TreeViewEventArgs e)
         {
-            string path = (_currentTab == AccountSetupTab.RemoteFolder) ? "/" : "./";
+            if (_currentTab == AccountSetupTab.SelectiveSync)
+                return;
+            
+            string path = "/";
             path += e.Node.FullPath.Replace('\\', '/');
             while (path.Contains("//"))
                 path = path.Replace("//", "/");
@@ -632,22 +620,19 @@ namespace FTPbox.Forms
             if (e.Node.Nodes.Count > 0)
                 e.Node.Nodes.Clear();
 
-            foreach (var c in await Program.Account.Client.List(path, false))
+            var list = await Program.Account.Client.List(path, false);
+
+            foreach (var c in list)
             {
                 if (c.Type == ClientItemType.Folder)
                 {
-                    var parentNode = new TreeNode { Text = c.Name };
+                    var parentNode = new TreeNode(c.Name);
                     e.Node.Nodes.Add(parentNode);
 
-                    var childNode = new TreeNode { Text = c.Name };
+                    var childNode = new TreeNode(c.Name);
                     parentNode.Nodes.Add(childNode);
                 }
-                else if (c.Type == ClientItemType.File && _currentTab == AccountSetupTab.SelectiveSync)
-                    e.Node.Nodes.Add(c.Name);
             }
-            // update checkboxes
-            foreach (TreeNode tn in e.Node.Nodes)
-                tn.Checked = !Program.Account.IgnoreList.isInIgnoredFolders(tn.FullPath);
         }
 
         private void Setup_RightToLeftLayoutChanged(object sender, EventArgs e)
