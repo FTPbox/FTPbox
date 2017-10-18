@@ -244,7 +244,7 @@ namespace FTPbox.Forms
             {
                 Program.Account.InitClient();
 
-                Program.Account.Client.ValidateCertificate += fMain.CheckCertificate;
+                Program.Account.Client.ValidateCertificate += UIHelpers.CheckCertificate;
 
                 await Program.Account.Client.Connect();
                 Log.Write(l.Debug, "Connected: {0}", Program.Account.Client.IsConnected);

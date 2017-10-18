@@ -75,36 +75,33 @@ namespace FTPboxLib
 
             if (Controller.Account.Protocol == FtpProtocol.FTPS)
             {
+                _ftpc.SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12;
                 _ftpc.ValidateCertificate += (sender, x) =>
                 {
-                    var fingerPrint = new X509Certificate2(x.Certificate).Thumbprint;
+                    var certificate = new X509Certificate2(x.Certificate);
 
-                    if (_ftpc.ClientCertificates.Count <= 0 && x.PolicyErrors != SslPolicyErrors.None)
-                    {
-                        _certificates.Add(x.Certificate);
-                        x.Accept = false;
-                        return;
-                    }
+                    Log.Write(l.Warning, $"Policy errors: {x.PolicyErrors}");
 
                     // if ValidateCertificate handler isn't set, accept the certificate and move on
-                    if (ValidateCertificate == null || Settings.TrustedCertificates.Contains(fingerPrint))
+                    if (ValidateCertificate == null || Settings.TrustedCertificates.Contains(certificate.Thumbprint))
                     {
-                        Log.Write(l.Client, "Trusted: {0}", fingerPrint);
+                        Log.Write(l.Client, "Trusted: {0}", certificate.Thumbprint);
                         x.Accept = true;
                         return;
                     }
 
                     var e = new ValidateCertificateEventArgs
                     {
-                        Fingerprint = fingerPrint,
-                        SerialNumber = x.Certificate.GetSerialNumberString(),
-                        Algorithm = x.Certificate.GetKeyAlgorithmParametersString(),
-                        ValidFrom = x.Certificate.GetEffectiveDateString(),
-                        ValidTo = x.Certificate.GetExpirationDateString(),
-                        Issuer = x.Certificate.Issuer
+                        cert = certificate,
+                        Fingerprint = certificate.Thumbprint
                     };
+
                     // Prompt user to validate
                     ValidateCertificate?.Invoke(null, e);
+
+                    if (e.IsTrusted)
+                        _certificates.Add(x.Certificate);
+
                     x.Accept = e.IsTrusted;
                 };
             }
@@ -118,13 +115,9 @@ namespace FTPboxLib
             {
                 await _ftpc.ConnectAsync();
             }
-            catch (AuthenticationException) when (_ftpc.ClientCertificates.Count <= 0)
+            catch (AuthenticationException ex) when (ex.Message.StartsWith("The remote certificate is invalid"))
             {
-                // Since the ClientCertificates are added when accepted in ValidateCertificate, the first 
-                // attempt to connect will fail with an AuthenticationException. If this is the case, a 
-                // re-connect is attempted, this time with the certificates properly set.
-                // This is a workaround to avoid storing Certificate files locally...
-                await Connect();
+                throw new CertificateDeclinedException(ex.Message, ex);
             }
             catch (FtpCommandException ex)
             {

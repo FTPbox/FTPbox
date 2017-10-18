@@ -197,7 +197,7 @@ namespace FTPbox.Forms
                     Program.Account.Client.ConnectionClosed +=
                         (o, n) => Log.Write(l.Warning, "Connection closed: {0}", n.Text ?? string.Empty);
                     Program.Account.Client.ReconnectingFailed += (o, n) => Log.Write(l.Warning, "Reconnecting failed");
-                    Program.Account.Client.ValidateCertificate += CheckCertificate;
+                    Program.Account.Client.ValidateCertificate += UIHelpers.CheckCertificate;
 
                     await Program.Account.Client.Connect();
                 }
@@ -430,24 +430,6 @@ namespace FTPbox.Forms
             catch (Exception ex)
             {
                 ex.LogException();
-            }
-        }
-
-        /// <summary>
-        ///     Display a messagebox with the certificate details, ask user to approve/decline it.
-        /// </summary>
-        public static void CheckCertificate(object sender, ValidateCertificateEventArgs n)
-        {
-            // Do we trust the server's certificate?
-            var certificateTrusted = 
-                MessageBox.Show(n.ValidationMessage(), "Do you trust this certificate?", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Information) == DialogResult.Yes;
-            n.IsTrusted = certificateTrusted;
-
-            if (certificateTrusted)
-            {
-                Settings.TrustedCertificates.Add(n.Fingerprint);
-                Settings.SaveCertificates();
             }
         }
 

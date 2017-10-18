@@ -11,6 +11,7 @@
  */
 
 using System;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FTPboxLib
 {
@@ -29,30 +30,40 @@ namespace FTPboxLib
         public string Key;
         public string KeySize;
         // FTPS info
-        public string SerialNumber;
-        public string Algorithm;
-        public string Issuer;
-        public string ValidFrom;
-        public string ValidTo;
+        public X509Certificate2 cert;
 
         // Trust the certificate?
         public bool IsTrusted;
 
         public string ValidationMessage()
         {
-            var msg = string.Empty;
             // Add certificate info
             if (!string.IsNullOrEmpty(Key) && !string.IsNullOrEmpty(KeySize))
-                msg += string.Format("{0,-8}\t {1}\n{2,-8}\t {3}\n", "Key:", Key, "Key Size:", KeySize);
+            {
+                return $"{"Key:",-8}\t {Key}\n" +
+                       $"{"Key Size:",-8}\t {KeySize}\n" +
+                       $"{"Fingerprint: ",-8}\t {Fingerprint}\n\n" +
+                        "Trust this certificate and continue?";
+            }
             else
-                msg += string.Format("{0,-25}\t {1}\n{2,-25}\t {3}\n{4,-25}\t {5}\n{6,-25}\t {7}\n\n",
-                    "Valid from:", ValidFrom, "Valid to:", ValidTo, 
-                    "Serial number:", SerialNumber, "Algorithm:", Algorithm);
+            {
+                var validFrom = cert.GetEffectiveDateString();
+                var validTo = cert.GetExpirationDateString();
+                var serialNumber = cert.GetSerialNumberString();
+                var algorithm = cert.SignatureAlgorithm.FriendlyName;
+                var publicKey = $"{cert.PublicKey.Oid.FriendlyName} with {cert.PublicKey.Key.KeySize} bits";
+                var issuer = cert.Issuer;
+                var fingerprint = cert.Thumbprint;
 
-            msg += string.Format("Fingerprint: {0}\n\n", Fingerprint);
-            msg += "Trust this certificate and continue?";
-
-            return msg;
+                return $"{"Valid from:",-25}\t {validFrom}\n" +
+                       $"{"Valid to:",-25}\t {validTo}\n" +
+                       $"{"Serial number:",-25}\t {serialNumber}\n" +
+                       $"{"Public key:",-25}\t {publicKey}\n" +
+                       $"{"Algorithm:",-25}\t {algorithm}\n" +
+                       $"{"Issuer:",-25}\n {issuer}\n" +
+                       $"{"Fingerprint: ",-8}\t {fingerprint}\n\n" +
+                       "Trust this certificate and continue?";
+            }
         }
     }
 

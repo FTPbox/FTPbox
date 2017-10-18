@@ -101,5 +101,23 @@ namespace FTPbox
         }
 
         #endregion
+
+        /// <summary>
+        ///     Display a messagebox with the certificate details, ask user to approve/decline it.
+        /// </summary>
+        public static void CheckCertificate(object sender, ValidateCertificateEventArgs n)
+        {
+            // Do we trust the server's certificate?
+            var certificateTrustedResult = MessageBox.Show(n.ValidationMessage(), "Do you trust this certificate?", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            var trusted = (certificateTrustedResult == DialogResult.Yes);
+
+            n.IsTrusted = trusted;
+
+            if (trusted)
+            {
+                Settings.TrustedCertificates.Add(n.Fingerprint);
+                Settings.SaveCertificates();
+            }
+        }
     }
 }
