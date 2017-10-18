@@ -11,4 +11,13 @@ namespace FTPboxLib
 
         }
     }
+
+    public class PermissionDeniedException : Exception
+    {
+        public PermissionDeniedException(Exception ex) 
+            : base(ex.Message, ex.InnerException)
+        {
+
+        }
+    }
 }

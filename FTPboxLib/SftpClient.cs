@@ -343,9 +343,15 @@ namespace FTPboxLib
 
         public override async Task<IEnumerable<ClientItem>> GetFileListing(string path)
         {
-            var list = await _sftpc.ListDirectoryAsync(path);
-
-            return Array.ConvertAll(list.ToArray(), ConvertItem);
+            try
+            {
+                var list = await _sftpc.ListDirectoryAsync(path);
+                return Array.ConvertAll(list.ToArray(), ConvertItem);
+            }
+            catch (SftpPermissionDeniedException ex)
+            {
+                throw new PermissionDeniedException(ex);
+            }
         }
 
         /// <summary>

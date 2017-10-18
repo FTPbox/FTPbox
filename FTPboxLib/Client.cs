@@ -375,11 +375,16 @@ namespace FTPboxLib
                     .Where(x => !skipIgnored || (skipIgnored && !x.FullPath.Contains("webint")))
                     .Where(x => x.Name != "." && x.Name != "..");
             }
+            catch (PermissionDeniedException)
+            {
+                Log.Write(l.Warning, $"Denied permission to list files inside directory: {cpath}");
+                return new List<ClientItem>();
+            }
             catch (Exception ex)
             {
                 ex.LogException();
                 ListingFailed = true;
-                return default(IEnumerable<ClientItem>);
+                return new List<ClientItem>();
             }
 
             //SetKeepAlive();
