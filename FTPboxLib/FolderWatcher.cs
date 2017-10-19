@@ -103,7 +103,7 @@ namespace FTPboxLib
             if (isRecentlyRaised(e.FullPath))
                 return;
 
-            if (!_controller.ItemGetsSynced(e.FullPath, true) || (!File.Exists(e.FullPath) && !Directory.Exists(e.FullPath))) return;
+            if (_controller.ItemSkipped(e.FullPath) || (!File.Exists(e.FullPath) && !Directory.Exists(e.FullPath))) return;
 
             var retries = 0;
             if (File.Exists(e.FullPath))
@@ -129,7 +129,7 @@ namespace FTPboxLib
         /// </summary>
         private async void OnDeleted(object source, FileSystemEventArgs e)
         {
-            if (!_controller.ItemGetsSynced(e.FullPath, true)) return;
+            if (_controller.ItemSkipped(e.FullPath)) return;
             // Add to queue
             await AddToQueue(e, ChangeAction.deleted);
         }
@@ -141,7 +141,7 @@ namespace FTPboxLib
         {
             Log.Write(l.Debug, $"Item was renamed: {e.OldName}");
 
-            if (!_controller.ItemGetsSynced(e.FullPath, true))
+            if (_controller.ItemSkipped(e.FullPath))
                 return;
 
             var isFile = Common.PathIsFile(e.FullPath);

@@ -158,33 +158,70 @@ namespace FTPboxLib
 
         #region Methods
 
-        /// <summary>
-        /// Whether the specified path should be synced. Used to filter out
-        /// the webUI folder, server files, invalid file/folder-names and
-        /// any user-specified ignored files.
-        /// </summary>
-        public bool ItemGetsSynced(string cpath)
+        public bool ItemSkipped(string localPath)
         {
-            if (cpath.EndsWith("/"))
-                cpath = cpath.Substring(0, cpath.Length - 1);
-            var aName = Common._name(cpath);
-
-            var b = !(IgnoreList.IsIgnored(cpath)
-                || cpath.Contains("webint") || aName == "." || aName == ".."                            //web interface, current and parent folders are ignored
-                || aName == ".ftpquota" || aName == "error_log" || aName.StartsWith(".bash")            //server files are ignored
-                || !Common.IsAllowedFilename(aName)                                                     //checks characters not allowed in windows file/folder names
-                || aName.StartsWith(Account.TempFilePrefix)                                             //FTPbox-generated temporary files are ignored
-                );
-
-            return b;
+            if (Common.PathIsFile(localPath))
+            {
+                return ItemSkipped(new FileInfo(localPath));
+            }
+            else
+            {
+                return ItemSkipped(new DirectoryInfo(localPath));
+            }
         }
 
-        public bool ItemGetsSynced(string path, bool isLocal)
+        public bool ItemSkipped(ClientItem item)
         {
-            // Get the common path from the full path
-            var cpath = GetCommonPath(path, isLocal);
-            
-            return ItemGetsSynced(cpath);
+            var cpath = GetCommonPath(item.FullPath, false);
+
+            if (cpath.EndsWith("/"))
+                cpath = cpath.Substring(0, cpath.Length - 1);
+
+            return ItemSkipped(cpath, item.Name) || IgnoreList.IsIgnored(cpath) || IgnoreList.IsFilteredOut(item);
+        }
+
+        public bool ItemSkipped(FileInfo fInfo)
+        {
+            var cpath = GetCommonPath(fInfo.FullName, true);
+
+            if (cpath.EndsWith("/"))
+                cpath = cpath.Substring(0, cpath.Length - 1);
+
+            return ItemSkipped(cpath, fInfo.Name) || IgnoreList.IsIgnored(cpath) || IgnoreList.IsFilteredOut(fInfo);
+        }
+
+        public bool ItemSkipped(DirectoryInfo dInfo)
+        {
+            var cpath = GetCommonPath(dInfo.FullName, true);
+
+            if (cpath.EndsWith("/"))
+                cpath = cpath.Substring(0, cpath.Length - 1);
+
+            return ItemSkipped(cpath, dInfo.Name) || IgnoreList.IsIgnored(cpath);
+        }
+
+        private bool ItemSkipped(string cpath, string name)
+        {
+            if (name == "." || name == "..")
+                return true;
+
+            if (!Common.IsAllowedFilename(name))
+            {
+                Log.Write(l.Debug, $"File ignored because of its name isnt allowed: {cpath}");
+                return true;
+            }
+            if (name.StartsWith(Account.TempFilePrefix))
+            {
+                Log.Write(l.Debug, $"File ignored because of it has the temp prefix ({Account.TempFilePrefix}): {cpath}");
+                return true;
+            }
+            if (cpath.Contains("webint"))
+            {
+                Log.Write(l.Debug, $"File ignored because it contains webint: {cpath}");
+                return true;
+            }
+
+            return IgnoreList.IsIgnored(cpath);
         }
 
         /// <summary>

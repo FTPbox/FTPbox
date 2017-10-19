@@ -34,7 +34,14 @@ namespace FTPboxLib
             FullPath = info.FullName;
             Type = ClientItemType.File;
             LastWriteTime = info.LastWriteTime;
-            Size = info.Length;
+            try
+            {
+                Size = info.Length;
+            }
+            catch
+            {
+                Size = -1;
+            }
         }
 
         public ClientItem(DirectoryInfo info)

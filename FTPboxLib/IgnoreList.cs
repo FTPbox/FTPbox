@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace FTPboxLib
 {
@@ -23,75 +24,59 @@ namespace FTPboxLib
 	    #region Public Fields
 
         [JsonProperty("Folders")]
-	    public List<string> Items = new List<string>();          //list of folders to be ignored
+	    public List<string> Items = new List<string>();
 
         [JsonProperty]
-	    public List<string> Extensions = new List<string>();     //list of extensions to be ignored
+	    public List<string> Extensions = new List<string>();
 
         [JsonProperty("Dotfiles")]
-	    public bool IgnoreDotFiles; //ignore dotfiles?
+	    public bool IgnoreDotFiles;
 
         [JsonProperty("Tempfiles")]
-	    public bool IgnoreTempFiles = true; //ignore temporary files?
+	    public bool IgnoreTempFiles = true;
 
 	    public bool IgnoreOldFiles = false; //ignore files modified before a certain datetime?
 	    public DateTime LastModifiedMinimum = DateTime.MinValue; //the minimum modification datetime
-        
-	    #endregion
 
+        #endregion
+
+        private List<SyncFilter> Filters = new List<SyncFilter>();
+        
         /// <summary>
         /// Saves the current filter settings to the settings file
         /// </summary>
         public void Save()
         {
+            // Refresh filters
+            Filters.Clear();
+            Filters.Add(new ExtensionFilter(Extensions));
+            Filters.Add(new CustomFilter(IgnoreDotFiles, IgnoreTempFiles));
+            
+            // Save profile
             Settings.SaveProfile();
         }
-		
-        /// <summary>
-        /// Clears the ignore lists, restores IgnoreDotFiles and IgnoreTempFiles to their defaults
-        /// </summary>
-		public void Clear()
-		{
-			Items.Clear();	
-			Extensions.Clear();
-            IgnoreDotFiles = false;
-            IgnoreTempFiles = true;
-
-            Save();
-		}
 
         /// <summary>
-        /// Should the given item be ignored during synchronization?
+        /// Was the path filtered out by the user in Selective Sync?
         /// </summary>
-        /// <param name="path">The common path to the given item</param>
-        /// <returns>True if the path matches the ignore filters</returns>
-        public bool IsIgnored(string path)
+        public bool IsIgnored(string cpath)
         {
-            var name = Common._name(path);
-            var ext = name.Contains(".") ? name.Substring(name.LastIndexOf(".", StringComparison.Ordinal) + 1) : null;
-
-            return
-                // are dotfiles ignored?
-                (IgnoreDotFiles && name.StartsWith(".")) ||
-                // are temporary files ignored?
-                (IgnoreTempFiles && (name.ToLower().EndsWith(".tmp") || name.EndsWith("~") || name.StartsWith(".goutputstream") || name.StartsWith("~") || name.Equals("Thumbs.db"))) ||
-                // is this extension ignored?
-                ((Extensions.Contains(ext) || Extensions.Contains("." + ext)) && ext != null) ||
-                // is the item in an ignored folder?
-                isInIgnoredFolders(path);
+            if (Items.Contains(cpath))
+            {
+                Log.Write(l.Debug, $"File ignored because it was filtered out by the user: {cpath}");
+                return true;
+            }
+            if (Items.Any(f => cpath.StartsWith(f + "/") && !string.IsNullOrWhiteSpace(f)))
+            {
+                Log.Write(l.Debug, $"File ignored because a parent folder was filtered out by the user: {cpath}");
+                return true;
+            }
+            return false;
         }
 
-        /// <summary>
-        /// Checks if the given path should be ignored 
-        /// (if one of its parent folders are in the list of ignored folders)
-        /// </summary>
-        /// <param name="path">The common path to the given item</param>
-        /// <returns></returns>
-        public bool isInIgnoredFolders(string path)
-        {
-            if (Items.Count <= 0) return false;
-            return Items.Contains(path) || Items.Any(f => path.StartsWith(f + "/") && !string.IsNullOrWhiteSpace(f));
-        }
+        public bool IsFilteredOut(ClientItem item) => Filters.Any(x => x.IsIgnored(item));
+
+        public bool IsFilteredOut(FileInfo fInfo) => Filters.Any(x => x.IsIgnored(fInfo));
 	}
 }
 

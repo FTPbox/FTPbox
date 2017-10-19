@@ -402,7 +402,7 @@ namespace FTPboxLib
             if (ListingFailed) return default(IEnumerable<ClientItem>);
 
             if (skipIgnored)
-                list = list.Where(x => Controller.ItemGetsSynced(x.FullPath, false));
+                list = list.Where(x => !Controller.ItemSkipped(x));
 
             var subItems = list.Where(x => x.Type == ClientItemType.File).ToList();
 
@@ -432,7 +432,7 @@ namespace FTPboxLib
             if (ListingFailed) return default(IEnumerable<ClientItem>);
 
             if (skipIgnored)
-                list = list.Where(x => Controller.ItemGetsSynced(x.FullPath, false));
+                list = list.Where(x => !Controller.ItemSkipped(x));
             
             var subItems = list.Where(x => x.Type == ClientItemType.File).ToList();
 

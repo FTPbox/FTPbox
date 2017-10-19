@@ -318,7 +318,7 @@ namespace FTPboxLib
         /// </summary>
         private async Task CheckLocalFolder(SyncQueueItem folder)
         {
-            if (!_controller.ItemGetsSynced(folder.CommonPath) && folder.CommonPath != ".") return;
+            if (_controller.ItemSkipped(folder.Item) && folder.CommonPath != ".") return;
 
             var cp = (folder.Item.FullPath == _controller.Paths.Local) ? "." : folder.CommonPath;
 
@@ -351,7 +351,7 @@ namespace FTPboxLib
                 var cpath = _controller.GetCommonPath(d.FullName, true);
 
                 if (remoteFilesList.Contains(cpath)) continue;
-                if (!_controller.ItemGetsSynced(d.FullName, true)) continue;
+                if (_controller.ItemSkipped(d)) continue;
 
                 base.Add(new SyncQueueItem (_controller)
                 {
@@ -365,7 +365,7 @@ namespace FTPboxLib
             foreach (var f in di.GetFiles("*", SearchOption.AllDirectories))
             {
                 var cpath = _controller.GetCommonPath(f.FullName, true);
-                if (!_controller.ItemGetsSynced(cpath)) continue;
+                if (_controller.ItemSkipped(f)) continue;
 
                 if (!remoteFilesList.Contains(cpath) || _controller.FileLog.GetLocal(cpath) != f.LastWriteTime)
                     base.Add(new SyncQueueItem(_controller)
@@ -490,8 +490,8 @@ namespace FTPboxLib
                 allItems.Add(f);
                 var cpath = _controller.GetCommonPath(f.FullPath, false);
                 var lpath = Path.Combine(_controller.Paths.Local, cpath);
-
-                if (!_controller.ItemGetsSynced(cpath)) continue;
+                
+                if (_controller.ItemSkipped(f)) continue;
 
                 if (this.Any(x => x.CommonPath == cpath && x.ActionType == ChangeAction.deleted && x.SyncTo == SyncTo.Remote))
                 {
@@ -550,7 +550,7 @@ namespace FTPboxLib
             {
                 var cpath = _controller.GetCommonPath(local.FullName, true);
                 // continue if the file is ignored
-                if (!_controller.ItemGetsSynced(cpath)) continue;
+                if (_controller.ItemSkipped(local)) continue;
                 // continue if the file was found in the remote list
                 if (allItems.Any(x => _controller.GetCommonPath(x.FullPath, false) == cpath)) continue;
                 // continue if the file is not in the log, or is changed compared to the logged data TODO: Maybe send to remote folder?
@@ -586,7 +586,7 @@ namespace FTPboxLib
             {
                 var cpath = _controller.GetCommonPath(local.FullName, true);
                 // continue if the folder is ignored
-                if (!_controller.ItemGetsSynced(cpath)) continue;
+                if (_controller.ItemSkipped(local)) continue;
                 // continue if the folder was found in the remote list
                 if (allItems.Any(x => _controller.GetCommonPath(x.FullPath, false) == cpath)) continue;
                 // continue if the folder is not in the log TODO: Maybe send to remote folder?
