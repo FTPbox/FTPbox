@@ -75,7 +75,7 @@ namespace FTPboxLib
 
             if (Controller.Account.Protocol == FtpProtocol.FTPS)
             {
-                _ftpc.SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12;
+                _ftpc.SslProtocols = SslProtocols.Ssl3 | SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
                 _ftpc.ValidateCertificate += (sender, x) =>
                 {
                     var certificate = new X509Certificate2(x.Certificate);
