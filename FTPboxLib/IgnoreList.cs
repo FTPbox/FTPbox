@@ -35,8 +35,11 @@ namespace FTPboxLib
         [JsonProperty("Tempfiles")]
 	    public bool IgnoreTempFiles = true;
 
-	    public bool IgnoreOldFiles = false; //ignore files modified before a certain datetime?
-	    public DateTime LastModifiedMinimum = DateTime.MinValue; //the minimum modification datetime
+        [JsonProperty]
+	    public bool IgnoreOldFiles = false;
+
+        [JsonProperty]
+        public DateTime LastModifiedMinimum = DateTime.MinValue;
 
         #endregion
 
@@ -50,6 +53,8 @@ namespace FTPboxLib
             // Refresh filters
             Filters.Clear();
             Filters.Add(new ExtensionFilter(Extensions));
+            if (this.IgnoreOldFiles)
+                Filters.Add(new DateFilter(LastModifiedMinimum));
             Filters.Add(new CustomFilter(IgnoreDotFiles, IgnoreTempFiles));
             
             // Save profile
