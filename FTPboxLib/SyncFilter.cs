@@ -44,6 +44,28 @@ namespace FTPboxLib
         }
     }
 
+    public class DateFilter : SyncFilter
+    {
+        DateTime MinimumLastModified;
+
+        public DateFilter(DateTime threshold)
+        {
+            MinimumLastModified = threshold;
+        }
+
+        public override bool IsIgnored(ClientItem item)
+        {
+            if (item.LastWriteTime < MinimumLastModified)
+            {
+                Log.Write(l.Debug, $"File ignored because it is older than {MinimumLastModified}: {item.FullPath}");
+                return true;
+            }
+            return false;
+        }
+
+        public override bool IsIgnored(FileInfo fInfo) => fInfo.Exists && base.IsIgnored(fInfo);
+    }
+
     public class CustomFilter : SyncFilter
     {
         bool IgnoreDotFiles;

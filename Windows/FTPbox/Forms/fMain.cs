@@ -276,6 +276,9 @@ namespace FTPbox.Forms
 
             cIgnoreDotfiles.Checked = Program.Account.IgnoreList.IgnoreDotFiles;
             cIgnoreTempFiles.Checked = Program.Account.IgnoreList.IgnoreTempFiles;
+            cIgnoreOldFiles.Checked = Program.Account.IgnoreList.IgnoreOldFiles;
+            if (Program.Account.IgnoreList.LastModifiedMinimum != DateTime.MinValue)
+                dtpLastModTime.Value = Program.Account.IgnoreList.LastModifiedMinimum;
 
             //  Bandwidth tab   //
 
@@ -895,9 +898,7 @@ namespace FTPbox.Forms
         {
             dtpLastModTime.Enabled = cIgnoreOldFiles.Checked;
             Program.Account.IgnoreList.IgnoreOldFiles = cIgnoreOldFiles.Checked;
-            Program.Account.IgnoreList.LastModifiedMinimum = (cIgnoreOldFiles.Checked)
-                ? dtpLastModTime.Value
-                : DateTime.MinValue;
+
             Program.Account.IgnoreList.Save();
         }
 
