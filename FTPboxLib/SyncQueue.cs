@@ -494,7 +494,15 @@ namespace FTPboxLib
                 return StatusType.Failure;
             }
 
-            foreach (var f in await _controller.Client.ListRecursive(item.CommonPath))
+            var list = await _controller.Client.ListRecursive(item.CommonPath);
+
+            if (_controller.Client.ListingFailed)
+            {
+                await _controller.Client.Reconnect();
+                return StatusType.Failure;
+            }
+
+            foreach (var f in list)
             {
                 allItems.Add(f);
                 var cpath = _controller.GetCommonPath(f.FullPath, false);
@@ -545,11 +553,6 @@ namespace FTPboxLib
                     if (sqi.Status == StatusType.Success)
                         _controller.FileLog.PutFile(sqi);
                 }
-            }
-            if (_controller.Client.ListingFailed)
-            {
-                await _controller.Client.Reconnect();
-                return StatusType.Failure;
             }
 
             var dInfo = new DirectoryInfo(item.LocalPath);

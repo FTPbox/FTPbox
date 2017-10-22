@@ -364,7 +364,17 @@ namespace FTPboxLib
 
         public override async Task<IEnumerable<ClientItem>> GetFileListing(string path)
         {
-            var list = await _ftpc.GetListingAsync(path);
+            var list = default(FtpListItem[]);
+
+            try
+            {
+                list = await _ftpc.GetListingAsync(path);
+            }
+            catch (FtpCommandException ex) when (ex.ResponseType == FtpResponseType.TransientNegativeCompletion)
+            {
+                Log.Write(l.Warning, $"retrying to list files inside directory: {path}");
+                list = await _ftpc.GetListingAsync(path);
+            }
 
             return Array.ConvertAll(list.ToArray(), ConvertItem);
         }
