@@ -276,6 +276,7 @@ namespace FTPboxLib
             Log.Write(l.Client, "System type: {0}", _ftpc.SystemType);
             Log.Write(l.Client, "Encryption Mode: {0}", _ftpc.EncryptionMode);
             Log.Write(l.Client, "Character Encoding: {0}", _ftpc.Encoding);
+            Log.Write(l.Client, "Capabilities: {0}", _ftpc.Capabilities);
             Log.Write(l.Client, "//////////////////////////////////////////////////");
         }
 
