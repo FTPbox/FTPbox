@@ -111,7 +111,10 @@ namespace FTPboxLib
             }
 
             // Start syncing from the queue
-            await StartQueue();
+            if (!Running)
+                await StartQueue();
+            else
+                Log.Write(l.Error, "Queue already running");
         }
 
         public async Task StartQueue()
@@ -122,6 +125,10 @@ namespace FTPboxLib
 
             if (!isAutoCheck)
                 Notifications.ChangeTrayText(MessageType.Syncing);
+
+            CancelAutoSync();
+
+            Running = true;
 
             while (this.Count > 0)
             {
@@ -160,6 +167,8 @@ namespace FTPboxLib
 
                 if (this.Count == 0) await Task.Delay(1000);
             }
+
+            Running = false;
 
             Settings.SaveProfile();
 
