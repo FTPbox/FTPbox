@@ -24,8 +24,6 @@ namespace FTPboxLib
     {
         private bool _reconnecting; // true when client is already attempting to reconnect
 
-        private Timer _tKeepAlive;
-
         protected AccountController Controller;
 
         #region Public Events
@@ -180,32 +178,9 @@ namespace FTPboxLib
         }
 
         /// <summary>
-        ///     Keep the connection to the server alive by sending the NOOP command
+        ///     Keep the connection alive
         /// </summary>
-        public abstract Task SendKeepAlive();
-
-        /// <summary>
-        ///     Set a timer that will periodically send the NOOP
-        ///     command to the server if a non-zero interval is set
-        /// </summary>
-        public void SetKeepAlive()
-        {
-            // Dispose the existing timer
-            UnsetKeepAlive();
-
-            if (_tKeepAlive == null) _tKeepAlive = new Timer(async state => await SendKeepAlive());
-
-            if (Controller.Account.KeepAliveInterval > 0)
-                _tKeepAlive.Change(1000 * 10, 1000 * Controller.Account.KeepAliveInterval);
-        }
-
-        /// <summary>
-        ///     Dispose the existing KeepAlive timer
-        /// </summary>
-        public void UnsetKeepAlive()
-        {
-            _tKeepAlive?.Change(0, 0);
-        }
+        public abstract void SetKeepAlive();
 
         /// <summary>
         ///     Rename a remote file or folder
@@ -360,7 +335,6 @@ namespace FTPboxLib
         public virtual async Task<IEnumerable<ClientItem>> List(string cpath, bool skipIgnored = true)
         {
             ListingFailed = false;
-            UnsetKeepAlive();
 
             try
             {
@@ -382,8 +356,6 @@ namespace FTPboxLib
                 ListingFailed = true;
                 return new List<ClientItem>();
             }
-
-            //SetKeepAlive();
         }
 
         /// <summary>

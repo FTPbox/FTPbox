@@ -5,8 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Net.FtpClient;
 using System.Net.FtpClient.Async;
-using System.Net.FtpClient.Extensions;
-using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -233,18 +231,28 @@ namespace FTPboxLib
             }
         }
 
-        public override async Task SendKeepAlive()
-        {
-            if (Controller.SyncQueue.Running) return;
+        private Timer _tKeepAlive;
 
-            try
+        public override void SetKeepAlive()
+        {
+            if (Controller.Account.KeepAliveInterval > 0)
             {
-                await _ftpc.ExecuteAsync("NOOP");
-            }
-            catch (Exception ex)
-            {
-                ex.LogException();
-                await Reconnect();
+                _tKeepAlive = new Timer(async state =>
+                {
+                    if (Controller.SyncQueue.Running)
+                        return;
+                    
+                    try
+                    {
+                        Log.Write(l.Debug, "Sending NOOP");
+                        await _ftpc.ExecuteAsync("NOOP");
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.LogException();
+                        await Reconnect();
+                    }
+                }, null, 1000 * 10, 1000 * Controller.Account.KeepAliveInterval);
             }
         }
 

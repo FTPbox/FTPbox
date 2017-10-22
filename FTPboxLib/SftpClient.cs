@@ -214,18 +214,11 @@ namespace FTPboxLib
             });
         }
 
-        public override async Task SendKeepAlive()
+        public override void SetKeepAlive()
         {
-            if (Controller.SyncQueue.Running) return;
-
-            try
+            if (Controller.Account.KeepAliveInterval > 0)
             {
-                _sftpc.SendKeepAlive();
-            }
-            catch (Exception ex)
-            {
-                ex.LogException();
-                await Reconnect();
+                _sftpc.KeepAliveInterval = TimeSpan.FromSeconds(Controller.Account.KeepAliveInterval);
             }
         }
 
