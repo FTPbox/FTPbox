@@ -231,6 +231,12 @@ namespace FTPboxLib
 
         public override async Task Rename(string oldname, string newname)
         {
+            if (Exists(newname))
+            {
+                Log.Write(l.Info, $"Replacing remote file: [{newname}]");
+                await Remove(newname);
+            }
+
             var caughtException = default(Exception);
             await Task.Run(() =>
             {

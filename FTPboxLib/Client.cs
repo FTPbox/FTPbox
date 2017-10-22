@@ -169,11 +169,6 @@ namespace FTPboxLib
 
             if (Controller.TransferValidator.Validate(i.Item, temp))
             {
-                if (Exists(i.CommonPath))
-                {
-                    Log.Write(l.Debug, $"Replacing remote file: [{i.CommonPath}]");
-                    await Remove(i.CommonPath);
-                }
 
                 await Rename(temp, i.CommonPath);
 
@@ -378,6 +373,7 @@ namespace FTPboxLib
             catch (PermissionDeniedException)
             {
                 Log.Write(l.Warning, $"Denied permission to list files inside directory: {cpath}");
+                ListingFailed = true;
                 return new List<ClientItem>();
             }
             catch (Exception ex)
