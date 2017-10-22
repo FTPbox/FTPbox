@@ -228,10 +228,10 @@ namespace FTPboxLib
         {
             get
             {
-                #if DEBUG   //on debug mode, build the portable version. (load settings from exe's folder 
-                    return Environment.CurrentDirectory;
-                #else       //on release, build the full version. (load settings from appdata)
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox");
+                #if DEBUG || PORTABLE   // load settings from exe's folder?
+                return Environment.CurrentDirectory;
+                #else                   // load settings from appdata folder
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox");
                 #endif
             }
         }

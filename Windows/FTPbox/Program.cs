@@ -39,7 +39,11 @@ namespace FTPbox
             if (args.Length > 0 && args.Contains("-console"))
                 aConsole.Allocate();
 
+#if DEBUG
+            Settings.IsDebugMode = true;
+#else
             Settings.IsDebugMode = args.Contains("-debug");
+#endif
             Settings.IsNoMenusMode = args.Contains("-nomenus");
 
             Log.Init(Common.DebugLogPath, l.Debug | l.Info | l.Warning | l.Error | l.Client, true, Settings.IsDebugMode);

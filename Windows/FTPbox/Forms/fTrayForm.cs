@@ -57,6 +57,9 @@ namespace FTPbox.Forms
             // Set the status label and load the recent files
             if (_lastStatus != null)
                 SetStatusLabel(_lastStatus);
+#if DEBUG
+            this.TopMost = true;
+#endif
         }
 
         /// <summary>
@@ -138,12 +141,16 @@ namespace FTPbox.Forms
 
         private void fTrayForm_Leave(object sender, EventArgs e)
         {
+#if !DEBUG
             Hide();
+#endif
         }
 
         private void fTrayForm_Deactivate(object sender, EventArgs e)
         {
+#if !DEBUG
             Hide();
+#endif
         }
 
         /// <summary>
