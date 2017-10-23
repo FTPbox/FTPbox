@@ -3201,6 +3201,7 @@
       <application>Aplikacija</application>
       <start_on_startup>Pokreni program pri pokretanju sustava</start_on_startup>
       <show_nots>prikaži obavijesti</show_nots>
+      <profile>Profil</profile>
       <details>Detalji</details>
       <links>Poveznice</links>
       <remote_path>Udaljena putanja</remote_path>
@@ -3237,11 +3238,29 @@
       <no_limits>(Postavi 0 za isključenje limita)</no_limits>
       <selective>Selektivna sinkronizacija</selective>
       <selective_info>Odznačite elemente koje ne želite sinkronizirati</selective_info>
+      <refresh>Osvježi</refresh>
+      <configure>Postavke</configure>
+      <file_filters>Filteri</file_filters>
+      <ignored_extensions>Ignorirane ekstenzije</ignored_extensions>
+      <remove>Ukloni</remove>
+      <also_ignore>Također ukloni</also_ignore>
+      <dotfiles>dotfiles</dotfiles>
+      <temp_files>Privremene datoteke</temp_files>
+      <old_files>Datoteke modificirane prije</old_files>
+      <enable_logging>Omogući kreiranje logova</enable_logging>
+      <view_log>Pogledaj logove</view_log>
+      <shell_menus>Dodaj u sadržajni izbornik</shell_menus>
+      <way_of_sync>Način sinkronizacije</way_of_sync>
+      <local_to_remote>Lokalno na udaljeno</local_to_remote>
+      <remote_to_local>Udaljeno na lokalno</remote_to_local>
+      <both_ways>Obostrano</both_ways>
+      <temp_file_prefix>Prefiks privremenih datoteka</temp_file_prefix>
     </main_form>
     <new_account>
       <new_ftp>Novi FTP račun</new_ftp>
       <login_details>FTP podatci za prijavu</login_details>
       <encryption>Ekripcija</encryption>
+      <ask_for_password>Uvijek pitaj za lozinku</ask_for_password>
       <add>dodaj</add>
       <done>gotovo</done>
     </new_account>
@@ -3250,9 +3269,18 @@
       <add_dir>dodaj novi direktorij</add_dir>
       <select_dir>odaberi direktorij</select_dir>
       <full_path>puna putanja</full_path>
+      <default_local>Želim koristiti zadani direktorij</default_local>
+      <custom_local>Želim odabrati direktorij</custom_local>
       <local_folder>lokalni direktorij</local_folder>
       <browse>pretraži</browse>
     </paths>
+    <setup>
+      <authentication>Autentifikacija</authentication>
+      <sync_all_files>Želim sinkronizirati sve datoteke</sync_all_files>
+      <sync_specific_files>Želim odabrati koje datoteke će biti sinkronizirane</sync_specific_files>
+      <previous>Prethodno</previous>
+      <next>Slijedeće</next>
+    </setup>
     <new_version>
       <new_ver>Nova verzija</new_ver>
       <update_available>Dostupna je nadogradnja</update_available>
@@ -3291,6 +3319,7 @@
       <link_copied>Poveznica je kopirana u međuspremnik</link_copied>
       <recent_files>Nedavne datoteke</recent_files>
       <not_available>Nije dostupno</not_available>
+      <modified>Izmijenjeno</modified>
       <start_syncing>Započni sinkronizaciju</start_syncing>
       <exit>zatvoriti</exit>
     </tray>
