@@ -28,3 +28,5 @@ FTPboxLib/DecryptionInfo.cs
 *.nupkg
 # The packages folder can be ignored because of Package Restore
 **/packages/*
+
+.vs/
