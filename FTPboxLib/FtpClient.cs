@@ -55,6 +55,23 @@ namespace FTPboxLib
         {
             Controller = account;
             _certificates = new X509Certificate2Collection();
+
+            _tKeepAlive = new Timer(async state =>
+            {
+                if (Controller.SyncQueue.Running || Controller.Account.KeepAliveInterval <= 0)
+                    return;
+
+                try
+                {
+                    Log.Write(l.Debug, "Sending NOOP");
+                    await _ftpc.ExecuteAsync("NOOP");
+                }
+                catch (Exception ex)
+                {
+                    ex.LogException();
+                    await Reconnect();
+                }
+            });
         }
 
         public override async Task Connect(bool reconnecting = false)
@@ -143,7 +160,6 @@ namespace FTPboxLib
                 LogServerInfo();
 
             // Periodically send NOOP (KeepAlive) to server if a non-zero interval is set            
-            SetKeepAlive();
         }
 
         public override async Task Disconnect()
@@ -235,24 +251,10 @@ namespace FTPboxLib
 
         public override void SetKeepAlive()
         {
+            // Periodically send NOOP (KeepAlive) to server if a non-zero interval is set
             if (Controller.Account.KeepAliveInterval > 0)
             {
-                _tKeepAlive = new Timer(async state =>
-                {
-                    if (Controller.SyncQueue.Running)
-                        return;
-                    
-                    try
-                    {
-                        Log.Write(l.Debug, "Sending NOOP");
-                        await _ftpc.ExecuteAsync("NOOP");
-                    }
-                    catch (Exception ex)
-                    {
-                        ex.LogException();
-                        await Reconnect();
-                    }
-                }, null, 1000 * 10, 1000 * Controller.Account.KeepAliveInterval);
+                _tKeepAlive.Change(0, 1000 * Controller.Account.KeepAliveInterval);
             }
         }
 

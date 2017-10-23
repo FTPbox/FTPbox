@@ -147,9 +147,6 @@ namespace FTPboxLib
 
             if (Settings.IsDebugMode)
                 LogServerInfo();
-
-            // Periodically send NOOP (KeepAlive) to server if a non-zero interval is set            
-            SetKeepAlive();
         }
 
         public override async Task Disconnect()

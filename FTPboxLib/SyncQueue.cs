@@ -219,6 +219,8 @@ namespace FTPboxLib
 
             _controller.LoadLocalFolders();
 
+            _controller.Client.SetKeepAlive();
+
             // Check for any pending WebUI actions
             if (_controller.WebInterface.DeletePending || _controller.WebInterface.UpdatePending)
                 await _controller.WebInterface.Update();
