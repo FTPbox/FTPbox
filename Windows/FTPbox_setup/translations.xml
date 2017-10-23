@@ -1899,6 +1899,7 @@
       <selective>Выборочная синхронизация</selective>
       <selective_info>Снимите галочку с файлов которые вы не желаете синхронизировать</selective_info>
       <refresh>Обновить</refresh>
+      <configure>Настроить</configure>
       <file_filters>Фильтры</file_filters>
       <ignored_extensions>Игнорируемые расширения</ignored_extensions>
       <remove>Удалить</remove>
@@ -1908,6 +1909,12 @@
       <old_files>Файлы, изменённые до</old_files>
       <enable_logging>Включить лог</enable_logging>
       <view_log>Открыть лог</view_log>
+      <shell_menus>Добавить в контекстное меню</shell_menus>
+      <way_of_sync>Путь синхронизации</way_of_sync>
+      <local_to_remote>Только удаленно</local_to_remote>
+      <remote_to_local>Только локально</remote_to_local>
+      <both_ways>В обе стороны</both_ways>
+      <temp_file_prefix>Временный префикс файла</temp_file_prefix>
     </main_form>
     <new_account>
       <new_ftp>Добавить FTP аккаунт</new_ftp>
@@ -1972,6 +1979,7 @@
       <link_copied>Ссылка скопирована в буфер обмена</link_copied>
       <recent_files>Последние файлы</recent_files>
       <not_available>Недоступно</not_available>
+      <modified>Изменен</modified>
       <start_syncing>Начать синхронизацию</start_syncing>
       <exit>Выход</exit>
     </tray>
