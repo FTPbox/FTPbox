@@ -1212,6 +1212,7 @@
       <selective>Επιλεκτικός Συγχρονισμός</selective>
       <selective_info>Επιλέξτε μόνο τους φακέλους που θέλετε να συγχρονίσετε.</selective_info>
       <refresh>Ανανέωση</refresh>
+      <configure>Τροποποίηση</configure>
       <file_filters>Φίλτρα</file_filters>
       <ignored_extensions>Παράλειψη Επεκτάσεων</ignored_extensions>
       <remove>Αφαίρεση</remove>
@@ -1221,6 +1222,12 @@
       <old_files>Αρχεία που τροποποιήθηκαν πρίν</old_files>
       <enable_logging>Καταγραφή σφαλμάτων</enable_logging>
       <view_log>Άνοιγμα αρχείου</view_log>
+      <shell_menus>Προσθήκη στο μενού (δεξί κλίκ)</shell_menus>
+      <way_of_sync>Φορά συγχρονισμού</way_of_sync>
+      <local_to_remote>Μόνο προς τον σέρβερ</local_to_remote>
+      <remote_to_local>Μόνο προς αυτό τον υπολογιστή</remote_to_local>
+      <both_ways>Προς κάθε κατεύθυνση</both_ways>
+      <temp_file_prefix>Πρόθεμα προσωρινών αρχείων</temp_file_prefix>
     </main_form>
     <new_account>
       <new_ftp>Νέος Λογαριασμός FTP</new_ftp>
@@ -1241,6 +1248,7 @@
       <browse>Αναζήτηση</browse>
     </paths>
     <setup>
+      <authentication>Ταυτοποίηση</authentication>
       <sync_all_files>Θέλω να γίνει συγχρονισμός όλων των αρχείων</sync_all_files>
       <sync_specific_files>Θέλω να επιλέξω ποια αρχεία θα συγχρονιστούν</sync_specific_files>
       <previous>Προηγούμενο</previous>
@@ -1275,8 +1283,8 @@
       <connecting>FTPbox - Γίνεται Σύνδεση...</connecting>
       <reconnecting>FTPbox - Γίνεται Επανασύνδεση...</reconnecting>
       <listing>FTPbox - Έλεγχος Αρχείων...</listing>
-      <uploading>Mεταφόρτωση του {0}</uploading>
-      <downloading>Λήψη του {0}</downloading>
+      <uploading>Mεταφόρτωση {0}</uploading>
+      <downloading>Λήψη {0}</downloading>
       <ready>FTPbox - Έτοιμο</ready>
       <synced>FTPbox - Όλα τα αρχεία είναι συγχρονισμένα</synced>
       <syncing>FTPbox - Συγχρονισμός...</syncing>
@@ -1284,6 +1292,7 @@
       <link_copied>Ο σύνδεσμος αντιγράφηκε</link_copied>
       <recent_files>Πρόσφατα Αρχεία</recent_files>
       <not_available>Μη Διαθέσιμο</not_available>
+      <modified>Τροποποίηση</modified>
       <start_syncing>Έναρξη Συγχρονισμού</start_syncing>
       <exit>Έξοδος</exit>
     </tray>
