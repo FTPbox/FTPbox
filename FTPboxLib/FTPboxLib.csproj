@@ -70,6 +70,7 @@
     <Compile Include="Common.cs" />
     <Compile Include="Console\aConsole.cs" />
     <Compile Include="Console\Log.cs" />
+    <Compile Include="Crypto\FileMethods.cs" />
     <Compile Include="DecryptionInfo.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="EventArgs.cs" />
