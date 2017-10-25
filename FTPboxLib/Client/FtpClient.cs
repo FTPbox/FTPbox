@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.FtpClient;
+using System.Net.FtpClient.Extensions;
 using System.Net.FtpClient.Async;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
@@ -387,6 +388,44 @@ namespace FTPboxLib
             }
 
             return Array.ConvertAll(list.ToArray(), ConvertItem);
+        }
+
+        public override HashingAlgorithm SupportedHashAlgorithms => (HashingAlgorithm)_ftpc.HashAlgorithms;
+
+        private async Task SetHashAlgorithm(HashingAlgorithm hash)
+        {
+            if (hash == HashingAlgorithm.ServerDefaultHash)
+            {
+                selectedHashingAlgorithm = (HashingAlgorithm)await _ftpc.GetHashAlgorithmAsync();
+
+                var hashAlg = (FtpHashAlgorithm)selectedHashingAlgorithm;
+                await _ftpc.SetHashAlgorithmAsync(hashAlg);
+            }
+            if (SupportedHashAlgorithms.HasFlag(hash))
+            {
+                var hashAlg = (FtpHashAlgorithm)hash;
+                await _ftpc.SetHashAlgorithmAsync(hashAlg);
+
+                selectedHashingAlgorithm = (HashingAlgorithm)await _ftpc.GetHashAlgorithmAsync();
+            }
+        }
+
+        public override async Task<string> GetFileHash(string path, HashingAlgorithm hash = HashingAlgorithm.ServerDefaultHash)
+        {
+            if (SupportedHashAlgorithms == HashingAlgorithm.NONE)
+                return string.Empty;
+
+            if (hash != HashingAlgorithm.NONE && selectedHashingAlgorithm != hash)
+            {
+                await SetHashAlgorithm(hash);
+            }
+
+            var ftpHash = _ftpc.GetChecksum(path);
+            var checksum = ftpHash.Value;
+
+            return (checksum.Contains(" "))
+                ? checksum.Substring(0, ftpHash.Value.IndexOf(' '))
+                : checksum;
         }
 
         /// <summary>

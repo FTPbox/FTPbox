@@ -416,6 +416,12 @@ namespace FTPboxLib
             return subItems;
         }
 
+        public virtual HashingAlgorithm SupportedHashAlgorithms => HashingAlgorithm.NONE;
+
+        protected HashingAlgorithm selectedHashingAlgorithm;
+
+        public virtual Task<string> GetFileHash(string path, HashingAlgorithm hash = HashingAlgorithm.NONE) => Task.FromResult(string.Empty);
+
         /// <summary>
         ///     Make sure that our client's working directory is set to the user-selected Remote Path.
         ///     If a previous operation failed and the working directory wasn't properly restored, this will prevent further

@@ -10,6 +10,8 @@
  * Contains all enums used in FTPboxLib
  */
 
+using System;
+
 namespace FTPboxLib
 {
 
@@ -48,6 +50,18 @@ namespace FTPboxLib
         File,
         Folder,
         Other
+    }
+
+    [Flags]
+    public enum HashingAlgorithm
+    {
+        NONE = 0,
+        SHA1 = 1,
+        SHA256 = 2,
+        SHA512 = 4,
+        MD5 = 8,
+        //CRC = 16
+        ServerDefaultHash = 32
     }
 
     /// <summary>
