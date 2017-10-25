@@ -159,8 +159,6 @@ namespace FTPboxLib
 
             if (Settings.IsDebugMode)
                 LogServerInfo();
-
-            // Periodically send NOOP (KeepAlive) to server if a non-zero interval is set            
         }
 
         public override async Task Disconnect()
@@ -182,7 +180,9 @@ namespace FTPboxLib
 
         public override async Task Download(SyncQueueItem i, Stream fileStream, IProgress<TransferProgress> progress)
         {
-            using (var s = await _ftpc.OpenReadAsync(i.CommonPath))
+            var path = Controller.AbsolutePath(i.CommonPath);
+
+            using (var s = await _ftpc.OpenReadAsync(path))
             {
                 var startedOn = DateTime.Now;
                 long transfered = 0;
@@ -228,6 +228,8 @@ namespace FTPboxLib
 
         public override async Task Upload(SyncQueueItem i, Stream uploadStream, string path, IProgress<TransferProgress> progress)
         {
+            path = Controller.AbsolutePath(path);
+
             using (var s = await _ftpc.OpenWriteAsync(path))
             {
                 var startedOn = DateTime.Now;
@@ -240,7 +242,7 @@ namespace FTPboxLib
                 {
                     await s.WriteAsync(buf, 0, read);
                     transfered += read;
-                    
+
                     progress.Report(new TransferProgress(transfered, i, startedOn));
 
                     ThrottleTransfer(Settings.General.UploadLimit, transfered, startedOn);
@@ -375,6 +377,8 @@ namespace FTPboxLib
 
         public override async Task<IEnumerable<ClientItem>> GetFileListing(string path)
         {
+            path = Controller.AbsolutePath(path);
+
             var list = default(FtpListItem[]);
 
             try

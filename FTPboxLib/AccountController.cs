@@ -355,6 +355,25 @@ namespace FTPboxLib
             Log.Write(l.Info, "Loaded {0} local directories and {1} files", Common.LocalFolders.Count, Common.LocalFiles.Count);
         }
 
+        /// <summary>
+        /// Get absolute path from common path
+        /// </summary>
+        public string AbsolutePath(string cpath)
+        {
+            if (cpath == ".")
+                cpath = string.Empty;
+
+            string root = Paths.Remote;
+            if (root == "/" || root.EndsWith("/"))
+            {
+                return root + cpath;
+            }
+            else
+            {
+                return $"{root}/{cpath}";
+            }
+        }
+
         internal TransferValidator TransferValidator;
 
         #endregion
