@@ -417,7 +417,7 @@ namespace FTPboxLib
                 return false;
             }
 
-            var remote = await GetFileHash(cpath, HashingAlgorithm.ServerDefaultHash);
+            var remote = await GetFileHash(cpath, Controller.Account.FileHashingAlgorithm);
 
             if (remote == string.Empty)
             {

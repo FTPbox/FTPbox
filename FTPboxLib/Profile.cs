@@ -120,6 +120,7 @@ namespace FTPboxLib
         public SyncDirection SyncDirection = SyncDirection.Both;
         public string TempFilePrefix = "~ftpb_";
         public string CharacterEncoding = null;
+        public HashingAlgorithm FileHashingAlgorithm = HashingAlgorithm.ServerDefaultHash;
     }
 
     public class Paths
