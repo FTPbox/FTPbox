@@ -134,19 +134,6 @@ namespace FTPboxLib
 
         public async Task<TransferStatus> SafeUpload(SyncQueueItem i)
         {
-            // is this the first time we check the files?
-            // TODO: this only works for top level files rn
-            if (Controller.FileLog.IsEmpty())
-            {
-                // TODO: allow user to select if the following should happen
-                // skip synchronization if the file already exists and has the exact same size
-                if (Exists(i.CommonPath) && SizeOf(i.CommonPath) == i.Item.Size)
-                {
-                    Log.Write(l.Client, "File seems to be already synced (skipping): {0}", i.CommonPath);
-                    return TransferStatus.Success;
-                }
-            }
-
             Notifications.ChangeTrayText(MessageType.Uploading, i.Item.Name);
             var temp = Common._tempName(i.CommonPath, Controller.Account.TempFilePrefix);
 
@@ -421,6 +408,30 @@ namespace FTPboxLib
         protected HashingAlgorithm selectedHashingAlgorithm;
 
         public virtual Task<string> GetFileHash(string path, HashingAlgorithm hash = HashingAlgorithm.NONE) => Task.FromResult(string.Empty);
+
+        public async Task<bool> FilesAreIdentical(string cpath, string localFile)
+        {
+            if (SupportedHashAlgorithms == HashingAlgorithm.NONE)
+            {
+                // inconclusive, server doesn't support file hashing
+                return false;
+            }
+
+            var remote = await GetFileHash(cpath, HashingAlgorithm.ServerDefaultHash);
+
+            if (remote == string.Empty)
+            {
+                return false;
+            }
+
+            var local = Crypto.GetFileHash(localFile, selectedHashingAlgorithm);
+
+            Log.Write(l.Info, $"Checking if untracked files are identical: {cpath}");
+            Log.Write(l.Info, $"Remote file {selectedHashingAlgorithm} hash: {remote}");
+            Log.Write(l.Info, $"Local file {selectedHashingAlgorithm} hash: {local}");
+
+            return remote.Equals(local, StringComparison.OrdinalIgnoreCase);
+        }
 
         /// <summary>
         ///     Make sure that our client's working directory is set to the user-selected Remote Path.

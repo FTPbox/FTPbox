@@ -155,7 +155,6 @@ namespace FTPboxLib
                             break;
                         case ChangeAction.changed:
                         case ChangeAction.created:
-                            await Task.Delay(2000);
                             status = await CheckUpdateItem(item);
                             break;
                     }
@@ -341,7 +340,7 @@ namespace FTPboxLib
                 base.Add(folder);
             }
 
-            var remoteFilesList = cpExists 
+            var remoteFilesList = cpExists
                 ? (await _controller.Client.ListRecursive(cp)).Select(x => x.FullPath).ToList()
                 : new List<string>();
 
@@ -355,7 +354,7 @@ namespace FTPboxLib
                 await _controller.Client.Reconnect();
                 return;
             }
-            
+
             var di = new DirectoryInfo(folder.LocalPath);
             foreach (var d in di.GetDirectories("*", SearchOption.AllDirectories))
             {
@@ -364,7 +363,7 @@ namespace FTPboxLib
                 if (remoteFilesList.Contains(cpath)) continue;
                 if (_controller.ItemSkipped(d)) continue;
 
-                base.Add(new SyncQueueItem (_controller)
+                base.Add(new SyncQueueItem(_controller)
                 {
                     Item = new ClientItem(d) { FullPath = d.FullName },
                     ActionType = ChangeAction.changed,
@@ -375,17 +374,34 @@ namespace FTPboxLib
 
             foreach (var f in di.GetFiles("*", SearchOption.AllDirectories))
             {
-                var cpath = _controller.GetCommonPath(f.FullName, true);
                 if (_controller.ItemSkipped(f)) continue;
 
-                if (!remoteFilesList.Contains(cpath) || _controller.FileLog.GetLocal(cpath) != f.LastWriteTime)
-                    base.Add(new SyncQueueItem(_controller)
+                var sqi = new SyncQueueItem(_controller)
+                {
+                    Item = new ClientItem(f),
+                    ActionType = ChangeAction.changed,
+                    Status = StatusType.Waiting,
+                    SyncTo = SyncTo.Remote
+                };
+                var cpath = sqi.CommonPath;
+
+                if (!_controller.FileLog.Contains(cpath) && remoteFilesList.Contains(cpath))
+                {
+                    // untracked file, exists both locally and on server.
+                    var areIdentical = await _controller.Client.FilesAreIdentical(cpath, f.FullName);
+                    if (areIdentical)
                     {
-                        Item = new ClientItem(f),
-                        ActionType = ChangeAction.changed,
-                        Status = StatusType.Waiting,
-                        SyncTo = SyncTo.Remote
-                    });
+                        _controller.FileLog.PutFile(sqi);
+                        continue;
+                    }
+                }
+                else if (remoteFilesList.Contains(cpath) && _controller.FileLog.GetLocal(cpath) == f.LastWriteTime)
+                {
+                    // tracked file, local file unmodified.
+                    continue;
+                }
+                // local file should be uploaded.
+                base.Add(sqi);
             }
         }
 
@@ -509,7 +525,7 @@ namespace FTPboxLib
                 allItems.Add(f);
                 var cpath = _controller.GetCommonPath(f.FullPath, false);
                 var lpath = Path.Combine(_controller.Paths.Local, cpath);
-                
+
                 if (_controller.ItemSkipped(f)) continue;
 
                 if (this.Any(x => x.CommonPath == cpath && x.ActionType == ChangeAction.deleted && x.SyncTo == SyncTo.Remote))
@@ -520,14 +536,14 @@ namespace FTPboxLib
                 }
 
                 var sqi = new SyncQueueItem(_controller)
-                    {
-                        Status = StatusType.Success,
-                        Item = f,
-                        ActionType = ChangeAction.created,
-                        AddedOn = DateTime.Now,
-                        CompletedOn = DateTime.Now,
-                        SyncTo = SyncTo.Local
-                    };
+                {
+                    Status = StatusType.Success,
+                    Item = f,
+                    ActionType = ChangeAction.created,
+                    AddedOn = DateTime.Now,
+                    CompletedOn = DateTime.Now,
+                    SyncTo = SyncTo.Local
+                };
 
                 if (f.Type == ClientItemType.Folder && !Directory.Exists(lpath))
                 {
@@ -624,7 +640,7 @@ namespace FTPboxLib
         {
             var locLwt = File.GetLastWriteTime(item.LocalPath);
             var remLwt = (_controller.Account.Protocol != FtpProtocol.SFTP) ? _controller.Client.TryGetModifiedTime(item.CommonPath) : item.Item.LastWriteTime;
-            
+
             var locLog = _controller.FileLog.GetLocal(item.CommonPath);
             var remLog = _controller.FileLog.GetRemote(item.CommonPath);
 
@@ -642,7 +658,7 @@ namespace FTPboxLib
             var remoteChanged = rResult > 0 && remDif.TotalSeconds > 1;
 
             var localChanged = lResult > 0 && locDif.TotalSeconds > 1;
-                
+
             var remoteChangedMore = (remDif.TotalSeconds > locDif.TotalSeconds);
 
             if ((remoteChanged && localChanged && remoteChangedMore) || (!localChanged && remoteChanged))
