@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>FTPbox</id>
+    <title>FTPbox</title>
+    <version>$version$</version>
+    <authors>Ioannis G.</authors>
+    <description>sync your files to your own server, via FTP.</description>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright 2017</copyright>
+    <iconUrl>https://raw.githubusercontent.com/FTPbox/FTPbox/master/Windows/FTPbox/regular.ico</iconUrl>
+    <dependencies />
+  </metadata>
+  <files>
+    <file src="*.*" target="lib\net45\" exclude="*.pdb;*.nupkg;*.vshost.*;*.txt"/>
+  </files>
+</package>
