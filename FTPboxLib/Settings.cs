@@ -53,25 +53,44 @@ namespace FTPboxLib
 
             Profiles.Add(new AccountController());
 
-            if (!File.Exists(ConfGeneral)) return;
-            // Load General Settings
-            var config = File.ReadAllText(ConfGeneral);
-            if (!string.IsNullOrWhiteSpace(config))
-                General = (SettingsGeneral)JsonConvert.DeserializeObject(config, typeof(SettingsGeneral));
+            if (File.Exists(ConfGeneral))
+            {
+                // Load General Settings
+                var config = File.ReadAllText(ConfGeneral);
+                if (!string.IsNullOrWhiteSpace(config))
+                    General = (SettingsGeneral)JsonConvert.DeserializeObject(config, typeof(SettingsGeneral));
+            }
+            else
+            {
+                File.Create(ConfGeneral);
+            }
             
-            if (!File.Exists(ConfProfiles)) return;
-            // Load Profiles
-            config = File.ReadAllText(ConfProfiles);
-            if (!string.IsNullOrWhiteSpace(config))
-                Profiles = (List<AccountController>)JsonConvert.DeserializeObject(config, typeof(List<AccountController>));
+            
+            if (File.Exists(ConfProfiles))
+            {
+                // Load Profiles
+                var config = File.ReadAllText(ConfProfiles);
+                if (!string.IsNullOrWhiteSpace(config))
+                    Profiles = (List<AccountController>)JsonConvert.DeserializeObject(config, typeof(List<AccountController>));
+            }
+            else
+            {
+                File.Create(ConfProfiles);
+            }
 
             DefaultProfile.InitClient();
 
-            if (!File.Exists(ConfCertificates)) return;
-            // Load trusted certificates
-            config = File.ReadAllText(ConfCertificates);
-            if (!string.IsNullOrWhiteSpace(config))
-                TrustedCertificates = (List<string>)JsonConvert.DeserializeObject(config, typeof(List<string>));
+            if (File.Exists(ConfCertificates))
+            {
+                // Load trusted certificates
+                var config = File.ReadAllText(ConfCertificates);
+                if (!string.IsNullOrWhiteSpace(config))
+                    TrustedCertificates = (List<string>)JsonConvert.DeserializeObject(config, typeof(List<string>));
+            }
+            else
+            {
+                File.Create(ConfCertificates);
+            }
 
             Log.Write(l.Info, "Settings Loaded.");
         }

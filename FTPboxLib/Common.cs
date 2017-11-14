@@ -231,7 +231,7 @@ namespace FTPboxLib
                 #if DEBUG || PORTABLE   // load settings from exe's folder?
                 return Environment.CurrentDirectory;
                 #else                   // load settings from appdata folder
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"FTPbox");
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FTPbox");
                 #endif
             }
         }
