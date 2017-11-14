@@ -39,8 +39,13 @@ namespace FTPbox
 
         private void bDownload_Click(object sender, EventArgs e)
         {
+#if PORTABLE
+            Process.Start("http://ftpbox.org/downloads/");
+            Close();
+#else
             update = true;
             Close();
+#endif
         }
 
         private void bLearnMore_Click(object sender, EventArgs e)

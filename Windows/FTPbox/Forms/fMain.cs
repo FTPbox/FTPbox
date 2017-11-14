@@ -344,43 +344,32 @@ namespace FTPbox.Forms
         /// </summary>
         private async Task CheckForUpdate()
         {
+#if PORTABLE
             try
             {
                 var wc = new WebClient();
-                wc.DownloadStringCompleted += (o, e) =>
-                {
-                    if (e.Cancelled || e.Error != null) return;
-
-                    var json =
-                        (Dictionary<string, string>)
-                            JsonConvert.DeserializeObject(e.Result, typeof (Dictionary<string, string>));
-                    var version = json["NewVersion"];
-
-                    //  Check that the downloaded file has the correct version format, using regex.
-                    if (Regex.IsMatch(version, @"[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"))
-                    {
-                        Log.Write(l.Debug, "Current Version: {0} Installed Version: {1}", version,
-                            Application.ProductVersion);
-
-                        if (version == Application.ProductVersion) return;
-
-                        // show dialog box for  download now, learn more and remind me next time
-                        var nvform = new newversion {Tag = this};
-                        newversion.Newvers = json["NewVersion"];
-                        newversion.DownLink = json["DownloadLink"];
-                        nvform.ShowDialog();
-                        Show();
-                    }
-                };
                 // Find out what the latest version is
-                wc.DownloadStringAsync(new Uri(@"http://ftpbox.org/winversion.json"));
+                var latest = await wc.DownloadStringTaskAsync("http://ftpbox.org/releases/version");
+                var current = Application.ProductVersion;
+
+                Log.Write(l.Debug, $"Current Version: {latest} Installed Version: {current}");
+
+                if (Regex.IsMatch(latest, @"([0-9]+\.){3,4}") && latest != current)
+                {
+                    // show dialog box for  download now, learn more and remind me next time
+                    var nvform = new newversion();
+                    newversion.Newvers = latest;
+                    newversion.DownLink = current;
+                    nvform.ShowDialog();
+                    Show();
+                }
             }
             catch (Exception ex)
             {
                 Log.Write(l.Debug, "Error with version checking");
                 ex.LogException();
             }
-#if !DEBUG
+#elif !DEBUG
             using (var updateManager = new UpdateManager("http://ftpbox.org/releases"))
             {
                 var info = await updateManager.CheckForUpdate();
