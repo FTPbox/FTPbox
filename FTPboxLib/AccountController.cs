@@ -154,6 +154,12 @@ namespace FTPboxLib
             }
         }
 
+        /// <summary>
+        /// true if a valid permission mode was loaded from the configuration file
+        /// </summary>
+        public bool SetPermissionsAfterUpload 
+            => Regex.IsMatch(this.Account.ForcePermissions, "^[0-7]{3,4}$");
+
         #endregion
 
         #region Methods

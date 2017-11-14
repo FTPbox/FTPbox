@@ -157,6 +157,13 @@ namespace FTPboxLib
 
                 await Rename(temp, i.CommonPath);
 
+                if (Controller.SetPermissionsAfterUpload)
+                {
+                    var mode = short.Parse(Controller.Account.ForcePermissions);
+                    Log.Write(l.Info, $"Setting permission of uploaded file to {mode}");
+                    SetFilePermissions(i, mode);
+                }
+
                 return TransferStatus.Success;
             }
 
