@@ -170,6 +170,9 @@
   <ItemGroup>
     <Content Include="Resources\folder.jpg" />
     <Content Include="Resources\settings.jpg" />
+    <Content Include="translations.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\syncing.ico" />
     <None Include="Resources\regular_60.ico" />
     <None Include="Resources\offline.ico" />
