@@ -13,7 +13,6 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using FTPboxLib;
@@ -24,6 +23,7 @@ namespace FTPbox
     {
         public static string Newvers;
         public static string DownLink;
+        public static bool update;
 
         public newversion()
         {
@@ -39,30 +39,8 @@ namespace FTPbox
 
         private void bDownload_Click(object sender, EventArgs e)
         {
-            try
-            {
-                var pathtoupdater = Application.StartupPath + @"\FTPbox Updater.exe";
-
-                while (!File.Exists(pathtoupdater))
-                {
-                    var dr =
-                        MessageBox.Show(
-                            "The file updater.exe is missing from the folder. Please put it back there or reinstall before updating.",
-                            "FTPbox - Missing File", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                    if (dr == DialogResult.Cancel)
-                        Process.GetCurrentProcess().Kill();
-                }
-
-                var param = string.Format("{0} {1} {2}", "FTPbox", Newvers, DownLink);
-                var pi = new ProcessStartInfo(pathtoupdater, param);
-                pi.Verb = "runas";
-                Process.Start(pi);
-            }
-            catch
-            {
-            }
-
-            Process.GetCurrentProcess().Kill();
+            update = true;
+            Close();
         }
 
         private void bLearnMore_Click(object sender, EventArgs e)

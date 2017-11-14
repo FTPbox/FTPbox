@@ -26,6 +26,7 @@ using FTPboxLib;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Settings = FTPboxLib.Settings;
+using Squirrel;
 
 namespace FTPbox.Forms
 {
@@ -112,7 +113,7 @@ namespace FTPbox.Forms
 
             _fTrayForm = new fTrayForm { Tag = this };
 
-            CheckForUpdate();
+            await CheckForUpdate();
 
             // Check local folder for changes
             var cpath = Program.Account.GetCommonPath(Program.Account.Paths.Local, true);
@@ -341,7 +342,7 @@ namespace FTPbox.Forms
         ///     checks for an update
         ///     called on each start-up of FTPbox.
         /// </summary>
-        private void CheckForUpdate()
+        private async Task CheckForUpdate()
         {
             try
             {
@@ -379,6 +380,31 @@ namespace FTPbox.Forms
                 Log.Write(l.Debug, "Error with version checking");
                 ex.LogException();
             }
+#if !DEBUG
+            using (var updateManager = new UpdateManager("http://ftpbox.org/releases"))
+            {
+                var info = await updateManager.CheckForUpdate();
+
+                if (info.CurrentlyInstalledVersion == null || info.FutureReleaseEntry == null)
+                    return;
+
+                Log.Write(l.Debug, $"Current Version: {info.CurrentlyInstalledVersion.Version} Installed Version: {info.FutureReleaseEntry.Version}");
+
+                if (info.FutureReleaseEntry.Version > info.CurrentlyInstalledVersion.Version)
+                {
+                    // show dialog box for download now, learn more and remind me next time
+                    var nvform = new newversion();
+                    newversion.Newvers = info.CurrentlyInstalledVersion.Version.ToString();
+                    newversion.DownLink = info.FutureReleaseEntry.Version.ToString();
+                    nvform.ShowDialog();
+
+                    if (newversion.update)
+                    {
+                        await updateManager.UpdateApp();
+                    }
+                }
+            }
+#endif
         }
 
         #endregion
