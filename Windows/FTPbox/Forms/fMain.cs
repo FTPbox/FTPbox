@@ -619,7 +619,7 @@ namespace FTPbox.Forms
         {
             try
             {
-                if (NetworkInterface.GetIsNetworkAvailable())
+                if (Win32.ConnectedToInternet())
                 {
                     if (OfflineMode)
                     {
