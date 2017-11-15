@@ -227,7 +227,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Release if "$(DefineConstants)" == "TRACE" powershell.exe -NoProfile -ExecutionPolicy ByPass -File $(ProjectDir)pack.ps1 $(TargetName) $(ProjectDir) $(TargetDir) $(TargetPath)</PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Release if "$(DefineConstants)" == "TRACE" powershell.exe -NoProfile -ExecutionPolicy ByPass -File $(ProjectDir)pack.ps1 $(TargetName) $(ProjectDir) $(TargetDir) $(TargetPath)
+if $(ConfigurationName) == Release if "$(DefineConstants)" == "TRACE;PORTABLE" powershell.exe -NoProfile -ExecutionPolicy ByPass -File $(ProjectDir)pack_portable.ps1 $(TargetDir) $(TargetPath)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
