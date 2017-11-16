@@ -373,7 +373,7 @@ namespace FTPboxLib
         {
             if (f.IsDirectory)
                 return ClientItemType.Folder;
-            if (f.IsRegularFile)
+            if (f.IsRegularFile && !f.IsSymbolicLink)
                 return ClientItemType.File;
             return ClientItemType.Other;
         }
