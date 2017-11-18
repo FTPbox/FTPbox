@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using FTPboxLib;
 using System.Threading.Tasks;
 using System.Security.Authentication;
+using System.IO;
 
 namespace FTPbox.Forms
 {
@@ -20,7 +21,6 @@ namespace FTPbox.Forms
 
         private bool _checkingNodes = false;
         public static bool JustPassword = false;
-        private string _privateKey;
 
         private bool ftp => cMode.SelectedIndex == 0;
         private bool ftps => ftp && cEncryption.SelectedIndex != 0;
@@ -41,8 +41,7 @@ namespace FTPbox.Forms
                 SetLanguage(Settings.General.Language);
 
             _currentTab = _initialTab;
-
-            labKeyPath.Text = string.Empty;
+            
             cEncryption.SelectedIndex = 0;
             cMode.SelectedIndex = 0;
         }
@@ -66,8 +65,7 @@ namespace FTPbox.Forms
 
                 if (Program.Account.IsPrivateKeyValid)
                 {
-                    _privateKey = Program.Account.Account.PrivateKeyFile;
-                    labKeyPath.Text = new System.IO.FileInfo(_privateKey).Name;
+                    tPrivateKey.Text = Program.Account.Account.PrivateKeyFile;
                     cEncryption.SelectedIndex = 1;
 
                     labEncryption.Text = Common.Languages[UiControl.Authentication];
@@ -238,7 +236,13 @@ namespace FTPbox.Forms
             Program.Account.AddAccount(tHost.Text, tUsername.Text, tPass.Text, Convert.ToInt32(nPort.Value));
             Program.Account.Account.Protocol = ftps ? FtpProtocol.FTPS : (FtpProtocol)cMode.SelectedIndex;
             Program.Account.Account.FtpsMethod = (FtpsMethod) cEncryption.SelectedIndex;
-            Program.Account.Account.PrivateKeyFile = (keyAuth) ? _privateKey : null;
+            Program.Account.Account.PrivateKeyFile = (keyAuth) ? tPrivateKey.Text : null;
+
+            if (keyAuth && !File.Exists(tPrivateKey.Text))
+            {
+                MessageBox.Show("Please select a private key to use.", "No private key selected", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             try
             {
@@ -491,8 +495,7 @@ namespace FTPbox.Forms
         private void cMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             nPort.Value = ftp ? 21 : 22;
-
-            labKeyPath.Text = string.Empty;
+            
             cEncryption.Items.Clear();
             cEncryption.Items.AddRange( 
                 ftp
@@ -501,24 +504,42 @@ namespace FTPbox.Forms
             cEncryption.SelectedIndex = 0;
 
             labEncryption.Text = ftp ? Common.Languages[UiControl.Encryption] : Common.Languages[UiControl.Authentication];
+
+            tPrivateKey.Visible = keyAuth;
+            bBrowsePrivKey.Visible = keyAuth;
+            labPrivKey.Visible = keyAuth;
         }
 
         private void cEncryption_SelectedIndexChanged(object sender, EventArgs e)
         {
-            labKeyPath.Text = string.Empty;
-            if (ftp || cEncryption.SelectedIndex != 1) return;
+            tPrivateKey.Visible = keyAuth;
+            bBrowsePrivKey.Visible = keyAuth;
+            labPrivKey.Visible = keyAuth;
+        }
 
-            var ofd = new OpenFileDialog() { InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), Multiselect = false };
+        private void bBrowsePrivKey_Click(object sender, EventArgs e)
+        {
+            // start from the user's .ssh folder, the key is likely to be in here
+            var folder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            if (Directory.Exists(Path.Combine(folder, ".ssh")))
+            {
+                folder = Path.Combine(folder, ".ssh");
+            }
+
+            var ofd = new OpenFileDialog()
+            {
+                InitialDirectory = folder,
+                Multiselect = false
+            };
 
             if (ofd.ShowDialog() != DialogResult.OK)
             {
-                cEncryption.SelectedIndex = 0;
                 return;
             }
 
             cEncryption.SelectedIndex = 1;
-            _privateKey = ofd.FileName;
-            labKeyPath.Text = new System.IO.FileInfo(ofd.FileName).Name;
+
+            tPrivateKey.Text = ofd.FileName;
         }
 
         private void Setup_FormClosing(object sender, FormClosingEventArgs e)
@@ -660,7 +681,9 @@ namespace FTPbox.Forms
             nPort.Location      = RightToLeftLayout ? new Point(15, 81) : new Point(391, 81);
             tUsername.Location  = RightToLeftLayout ? new Point(15, 107) : new Point(145, 107);
             tPass.Location      = RightToLeftLayout ? new Point(15, 133) : new Point(145, 133);
-            labKeyPath.Location = RightToLeftLayout ? new Point(15, 57) : new Point(324, 57);
+
+            bBrowsePrivKey.Location = RightToLeftLayout ? new Point(15, 157) : new Point(391, 157);
+            tPrivateKey.Location    = RightToLeftLayout ? new Point(78, 159) : new Point(145, 159);
 
             tLocalPath.Location      = RightToLeftLayout ? new Point(95, 133) : new Point(15, 133);
             bBrowse.Location         = RightToLeftLayout ? new Point(15, 131) : new Point(375, 131);

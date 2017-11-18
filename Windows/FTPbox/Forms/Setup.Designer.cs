@@ -31,7 +31,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Setup));
             this.cAskForPass = new System.Windows.Forms.CheckBox();
             this.gLoginDetails = new System.Windows.Forms.GroupBox();
-            this.labKeyPath = new System.Windows.Forms.Label();
+            this.bBrowsePrivKey = new System.Windows.Forms.Button();
+            this.tPrivateKey = new System.Windows.Forms.TextBox();
+            this.labPrivKey = new System.Windows.Forms.Label();
             this.labColon = new System.Windows.Forms.Label();
             this.cEncryption = new System.Windows.Forms.ComboBox();
             this.cMode = new System.Windows.Forms.ComboBox();
@@ -74,9 +76,9 @@
             // 
             this.cAskForPass.AccessibleDescription = "Ask for password on start up";
             this.cAskForPass.AccessibleName = "Always ask for password";
-            this.cAskForPass.Location = new System.Drawing.Point(15, 167);
+            this.cAskForPass.Location = new System.Drawing.Point(15, 196);
             this.cAskForPass.Name = "cAskForPass";
-            this.cAskForPass.Size = new System.Drawing.Size(433, 17);
+            this.cAskForPass.Size = new System.Drawing.Size(433, 23);
             this.cAskForPass.TabIndex = 6;
             this.cAskForPass.Text = "Always ask for password";
             this.cAskForPass.UseVisualStyleBackColor = true;
@@ -85,7 +87,9 @@
             // 
             this.gLoginDetails.AccessibleDescription = "";
             this.gLoginDetails.AccessibleName = "FTP Details";
-            this.gLoginDetails.Controls.Add(this.labKeyPath);
+            this.gLoginDetails.Controls.Add(this.bBrowsePrivKey);
+            this.gLoginDetails.Controls.Add(this.tPrivateKey);
+            this.gLoginDetails.Controls.Add(this.labPrivKey);
             this.gLoginDetails.Controls.Add(this.labColon);
             this.gLoginDetails.Controls.Add(this.cEncryption);
             this.gLoginDetails.Controls.Add(this.cMode);
@@ -101,18 +105,46 @@
             this.gLoginDetails.Controls.Add(this.labUN);
             this.gLoginDetails.Location = new System.Drawing.Point(478, 12);
             this.gLoginDetails.Name = "gLoginDetails";
-            this.gLoginDetails.Size = new System.Drawing.Size(460, 205);
+            this.gLoginDetails.Size = new System.Drawing.Size(460, 225);
             this.gLoginDetails.TabIndex = 36;
             this.gLoginDetails.TabStop = false;
             this.gLoginDetails.Text = "FTP Login Details";
             // 
-            // labKeyPath
+            // bBrowsePrivKey
             // 
-            this.labKeyPath.Location = new System.Drawing.Point(324, 57);
-            this.labKeyPath.Name = "labKeyPath";
-            this.labKeyPath.Size = new System.Drawing.Size(124, 13);
-            this.labKeyPath.TabIndex = 33;
-            this.labKeyPath.Text = "KeyFilePath";
+            this.bBrowsePrivKey.AccessibleDescription = "";
+            this.bBrowsePrivKey.AccessibleName = "Browse for local folder";
+            this.bBrowsePrivKey.Location = new System.Drawing.Point(391, 157);
+            this.bBrowsePrivKey.Name = "bBrowsePrivKey";
+            this.bBrowsePrivKey.Size = new System.Drawing.Size(57, 23);
+            this.bBrowsePrivKey.TabIndex = 35;
+            this.bBrowsePrivKey.Text = "...";
+            this.bBrowsePrivKey.UseVisualStyleBackColor = true;
+            this.bBrowsePrivKey.Visible = false;
+            this.bBrowsePrivKey.Click += new System.EventHandler(this.bBrowsePrivKey_Click);
+            // 
+            // tPrivateKey
+            // 
+            this.tPrivateKey.AccessibleDescription = "";
+            this.tPrivateKey.AccessibleName = "Password";
+            this.tPrivateKey.Enabled = false;
+            this.tPrivateKey.Location = new System.Drawing.Point(145, 159);
+            this.tPrivateKey.Name = "tPrivateKey";
+            this.tPrivateKey.Size = new System.Drawing.Size(240, 20);
+            this.tPrivateKey.TabIndex = 33;
+            this.tPrivateKey.Visible = false;
+            // 
+            // labPrivKey
+            // 
+            this.labPrivKey.AccessibleDescription = "";
+            this.labPrivKey.AccessibleName = "";
+            this.labPrivKey.BackColor = System.Drawing.SystemColors.Control;
+            this.labPrivKey.Location = new System.Drawing.Point(12, 162);
+            this.labPrivKey.Name = "labPrivKey";
+            this.labPrivKey.Size = new System.Drawing.Size(436, 13);
+            this.labPrivKey.TabIndex = 34;
+            this.labPrivKey.Text = "Private Key:";
+            this.labPrivKey.Visible = false;
             // 
             // labColon
             // 
@@ -264,7 +296,7 @@
             this.gLocalFolder.Controls.Add(this.tLocalPath);
             this.gLocalFolder.Location = new System.Drawing.Point(944, 12);
             this.gLocalFolder.Name = "gLocalFolder";
-            this.gLocalFolder.Size = new System.Drawing.Size(460, 205);
+            this.gLocalFolder.Size = new System.Drawing.Size(460, 225);
             this.gLocalFolder.TabIndex = 37;
             this.gLocalFolder.TabStop = false;
             this.gLocalFolder.Text = "Local Folder";
@@ -327,9 +359,9 @@
             this.gRemoteFolder.Controls.Add(this.tFullRemotePath);
             this.gRemoteFolder.Controls.Add(this.labFullPath);
             this.gRemoteFolder.Controls.Add(this.tRemoteList);
-            this.gRemoteFolder.Location = new System.Drawing.Point(12, 284);
+            this.gRemoteFolder.Location = new System.Drawing.Point(12, 310);
             this.gRemoteFolder.Name = "gRemoteFolder";
-            this.gRemoteFolder.Size = new System.Drawing.Size(460, 205);
+            this.gRemoteFolder.Size = new System.Drawing.Size(460, 225);
             this.gRemoteFolder.TabIndex = 73;
             this.gRemoteFolder.TabStop = false;
             this.gRemoteFolder.Text = "Select Directory";
@@ -374,9 +406,9 @@
             this.gSelectiveSync.AccessibleName = "FTP Details";
             this.gSelectiveSync.Controls.Add(this.rSyncAll);
             this.gSelectiveSync.Controls.Add(this.rSyncCustom);
-            this.gSelectiveSync.Location = new System.Drawing.Point(478, 284);
+            this.gSelectiveSync.Location = new System.Drawing.Point(478, 310);
             this.gSelectiveSync.Name = "gSelectiveSync";
-            this.gSelectiveSync.Size = new System.Drawing.Size(460, 205);
+            this.gSelectiveSync.Size = new System.Drawing.Size(460, 225);
             this.gSelectiveSync.TabIndex = 74;
             this.gSelectiveSync.TabStop = false;
             this.gSelectiveSync.Text = "Selective Sync";
@@ -415,7 +447,7 @@
             // 
             this.bNext.AccessibleDescription = "Go to next step";
             this.bNext.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.bNext.Location = new System.Drawing.Point(316, 223);
+            this.bNext.Location = new System.Drawing.Point(316, 246);
             this.bNext.Name = "bNext";
             this.bNext.Size = new System.Drawing.Size(75, 23);
             this.bNext.TabIndex = 75;
@@ -427,7 +459,7 @@
             // 
             this.bFinish.AccessibleDescription = "Finish account set up";
             this.bFinish.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.bFinish.Location = new System.Drawing.Point(397, 223);
+            this.bFinish.Location = new System.Drawing.Point(397, 246);
             this.bFinish.Name = "bFinish";
             this.bFinish.Size = new System.Drawing.Size(75, 23);
             this.bFinish.TabIndex = 76;
@@ -440,7 +472,7 @@
             this.bPrevious.AccessibleDescription = "Go to previous step";
             this.bPrevious.AccessibleName = "";
             this.bPrevious.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.bPrevious.Location = new System.Drawing.Point(235, 223);
+            this.bPrevious.Location = new System.Drawing.Point(235, 246);
             this.bPrevious.Name = "bPrevious";
             this.bPrevious.Size = new System.Drawing.Size(75, 23);
             this.bPrevious.TabIndex = 77;
@@ -456,7 +488,7 @@
             this.gLanguage.Controls.Add(this.cLanguages);
             this.gLanguage.Location = new System.Drawing.Point(12, 12);
             this.gLanguage.Name = "gLanguage";
-            this.gLanguage.Size = new System.Drawing.Size(460, 205);
+            this.gLanguage.Size = new System.Drawing.Size(460, 225);
             this.gLanguage.TabIndex = 76;
             this.gLanguage.TabStop = false;
             this.gLanguage.Text = "Language";
@@ -489,7 +521,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(480, 253);
+            this.ClientSize = new System.Drawing.Size(480, 276);
             this.Controls.Add(this.gLanguage);
             this.Controls.Add(this.bPrevious);
             this.Controls.Add(this.bFinish);
@@ -555,6 +587,8 @@
         private System.Windows.Forms.RadioButton rSyncCustom;
         private System.Windows.Forms.TextBox tFullRemotePath;
         private System.Windows.Forms.Label labFullPath;
-        private System.Windows.Forms.Label labKeyPath;
+        private System.Windows.Forms.Button bBrowsePrivKey;
+        private System.Windows.Forms.TextBox tPrivateKey;
+        private System.Windows.Forms.Label labPrivKey;
     }
 }
